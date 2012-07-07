@@ -246,7 +246,7 @@ load_color()
 if [ $CONN = lcl -a $USR = nou_root ] ; then
   PS1="${WHITE}[\u \w]${NO_COL}"
 elif [ $CONN = lcl -a $USR = u_root ] ; then
-  PS1="${YELLOW}[\w]${NO_COL}"
+  PS1="${YELLOW}[\w]${NO_COL}" # no user name if we are local root
 elif [ $CONN = tel -a $USR = nou_root ] ; then
   PS1="[\u${LIGHT_GREEN}@\h${NO_COL} \w]${NO_COL}"
 elif [ $CONN = tel -a $USR = u_root ] ; then

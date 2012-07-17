@@ -88,7 +88,7 @@ __connection()
 
     # Are we in an SSH connexion?
     SSH_FLAG=0
-    SSH_IP=`echo $SSH_CLIENT | awk '{ print $1 }'`
+    SSH_IP=${SSH_CLIENT%% *}
     if [ $SSH_IP ] ; then
       SSH_FLAG=1
     fi

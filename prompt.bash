@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# An intelligent an non intrusive prompt for bash
+# An intelligent and non intrusive prompt for bash
 
 # Licensed under the AGPL version 3
 #
@@ -18,69 +18,63 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # 2012 (c) nojhan <nojhan@gmail.com>
-
+# 2012 (c) Aurelien Requiem <aurelien@requiem.fr> #major rewrite and adaptation
 
 # Below are function for having a flexible dynamic prompt for power user:
-# - display the colored hostname when connected via ssh
-# - when root, color in yellow the [username path] and in red the sharp
-# - when user, print the colored git branch name (if in a git repository): 
-#     red = some changes are not commited, yellow = some commits are not pushed, 
-#     green = no changes or commits
-# - if necessary, print a counter for jobs that are attached to the current term (e.g. xterm &)
-#     or that are sleeping (e.g. Ctrl-z)
+# - display the battery level (if necessary), with colormap (if any battery attached)
+# - if necessary, prints a counter for jobs that are attached to the current 
+#   term (e.g. xterm &) or that are sleeping (e.g. Ctrl-z)
 # - display the load average, colored with a colormap
-# - display the battery level (if necessary), with colormap
+# - displays the colored login@hostname
+#     - when root displays in red
+#     - when user displays in green
+# - displays the current path in blue
+# - when user, print the colored git branch name (if in a git repository):
+#     red = some changes are not commited, and yellow in parenthesis any unpushed commits (if any)
+#     yellow = some commits are not pushed. Number of commits in parenthesis
+#     green = no changes or commits
 
-# Some colors
-BLUE="\[\033[0;34m\]"
-LIGHT_GRAY="\[\033[0;37m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-LIGHT_BLUE="\[\033[1;34m\]"
-LIGHT_CYAN="\[\033[1;36m\]"
-YELLOW="\[\033[1;33m\]"
-WHITE="\[\033[1;37m\]"
-RED="\[\033[0;31m\]"
-NO_COL="\[\033[00m\]"
+# Check for recent enough version of bash.
+[ -z "$BASH_VERSION" -o -z "$PS1" ] && return;
 
-
-#################
-# Where are we? #
-#################
-
-THIS_TTY=tty`ps aux | grep $$ | grep bash | awk '{ print $7 }'`
-SESS_SRC=`who | grep $THIS_TTY | awk '{ print $6 }'`
-
-# Are we in an SSH connexion?
-SSH_FLAG=0
-SSH_IP=`echo $SSH_CLIENT | awk '{ print $1 }'`
-if [ $SSH_IP ] ; then
-  SSH_FLAG=1
+bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+if [ $bmajor -lt 3 ] || [ $bmajor -eq 3 -a $bminor -lt 2 ]; then
+	unset bash bmajor bminor
+	return
 fi
-SSH2_IP=`echo $SSH2_CLIENT | awk '{ print $1 }'`
-if [ $SSH2_IP ] ; then
-  SSH_FLAG=1
-fi
-if [ $SSH_FLAG -eq 1 ] ; then
-  CONN=ssh
-elif [ -z $SESS_SRC ] ; then
-  CONN=lcl
-elif [ $SESS_SRC = "(:0.0)" -o $SESS_SRC = "" ] ; then
-  CONN=lcl
-else
-  CONN=tel
-fi
+unset bash bmajor bminor
 
 
-###############
-# Who are we? #
-###############
+BLACK="\[$(tput setaf 0)\]"
 
-if [ `/usr/bin/whoami` = "root" ] ; then
-  USR=u_root
-else
-  USR=nou_root
-fi
+GRAY="\[$(tput bold ; tput setaf 0)\]"
+LIGHT_GREY="\[$(tput setaf 7)\]"
+WHITE="\[$(tput bold ; tput setaf 7)\]"
 
+RED="\[$(tput setaf 1)\]"
+LIGHT_RED="\[$(tput bold ; tput setaf 1)\]"
+WARN_RED="\[$(tput setaf 0 ; tput setab 1)\]"
+CRIT_RED="\[$(tput bold; tput setaf 7 ; tput setab 1)\]"
+
+GREEN="\[$(tput setaf 2)\]"
+LIGHT_GREEN="\[$(tput bold ; tput setaf 2)\]"
+
+YELLOW="\[$(tput setaf 3)\]"
+LIGHT_YELLOW="\[$(tput bold ; tput setaf 3)\]"
+
+BLUE="\[$(tput setaf 4)\]"
+LIGHT_BLUE="\[$(tput bold ; tput setaf 4)\]"
+
+PURPLE="\[$(tput setaf 5)\]"
+PINK="\[$(tput bold ; tput setaf 5)\]"
+
+CYAN="\[$(tput setaf 6)\]"
+LIGHT_CYAN="\[$(tput bold ; tput setaf 6)\]"
+
+NO_COL="\[$(tput sgr0)\]"
+
+
+__CPUNUM=$(grep ^processor /proc/cpuinfo | wc -l)
 
 #####################################
 # Count the number of attached jobs #
@@ -88,23 +82,22 @@ fi
 
 # Either attached running jobs (started with $ myjob &)
 # or attached stopped jobs (suspended with Ctrl-Z)
-jobcount()
+__jobcount_color()
 {
-    rep=""
-    running=`jobs -r | wc -l | tr -d " "`
-    stopped=`jobs -s | wc -l | tr -d " "`
+	running=`jobs -r | wc -l | tr -d " "`
+	stopped=`jobs -s | wc -l | tr -d " "`
 
-    if [ $running != "0" -a $stopped != "0" ] ; then
-        rep=" ${running}r/${stopped}s"
-
-    elif [ $running != "0" -a $stopped == "0" ] ; then
-        rep=" ${running}r"
-
-    elif [ $running == "0" -a $stopped != "0" ] ; then
-        rep=" ${stopped}s"
-    fi
-
-    echo -ne "$rep"
+	if [ $running != "0" -a $stopped != "0" ]
+	then
+		rep="${NO_COL}[${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}s${NO_COL}]"
+	elif [ $running != "0" -a $stopped == "0" ]
+	then
+		rep="${NO_COL}[${YELLOW}${running}r${NO_COL}]"
+	elif [ $running == "0" -a $stopped != "0" ]
+	then
+		rep="${NO_COL}[${LIGHT_YELLOW}${stopped}s${NO_COL}]"
+	fi
+	echo -ne "$rep"
 }
 
 ######################
@@ -112,95 +105,98 @@ jobcount()
 ######################
 
 # Get the branch name of the current directory
-git_branch()
+__git_branch()
 {
-    if git rev-parse --git-dir >/dev/null 2>&1 ; then
-        gitver=$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
-    else
-        return 0
-    fi
-    echo -e "$gitver"
+	if git rev-parse --git-dir >/dev/null 2>&1 && [ ! -z "`git branch`" ]; then
+
+		echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
+	fi
 }
 
 # Set a color depending on the branch state:
 # - green if the repository is up to date
 # - yellow if there is some commits not pushed
 # - red if there is changes to commit
-git_branch_color()
+__git_branch_color()
 {
-    if git rev-parse --git-dir >/dev/null 2>&1 ; then
-        red=`tput setaf 1`
-        green=`tput setaf 2`
-        yellow=`tput setaf 3`
-     
-        color=""
-        if git diff --quiet 2>/dev/null >&2 ; then
-            branch="$(git_branch)"
-            has_commit=`git rev-list origin/$branch..$branch`
-            if [ "$has_commit" != "" ] ; then
-                color="${yellow}" # some commits to push
-            else
-                color="${green}" # nothing to commit or push
-            fi
-        else
-            color="${red}" # changes to commit
-        fi
-    else
-        return 0
-    fi
-    echo -ne $color
-}
+	command -v git >/dev/null 2>&1 || return 1;
+	branch=$(__git_branch)
+	if [ ! -z "$branch" ] ; then
 
+		git diff --quiet >/dev/null 2>&1
+		GD=$?
+		git diff --cached --quiet >/dev/null 2>&1
+		GDC=$?
+
+		has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
+		if [ -z "$has_commit" ]; then
+			has_commit=0
+		fi  
+		if [ "$GD" -eq 1 -o "$GDC" -eq "1" ]; then
+			if [ "$has_commit" -gt "0" ] ; then
+				ret=" ${RED}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})" # changes to commit and commits to push
+			else
+				ret=" ${RED}${branch}${NO_COL}" # changes to commit
+			fi
+		else
+			if [ "$has_commit" -gt "0" ] ; then
+				# some commit(s) to push
+				ret=" ${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})" 
+			else
+				ret=" ${GREEN}${branch}${NO_COL}" # nothing to commit or push
+			fi
+		fi
+		echo -ne "$ret"
+	fi
+}
 
 ##################
 # Battery status #
 ##################
 
 # Get the battery status in percent
-battery()
+# returns 1 if no battery support
+__battery()
 {
-    command -v acpi >/dev/null 2>&1 || { echo -n ""; return; }
-    bat=`acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
-    if [ "${bat}x" == "x" ] ; then
-	echo -n ""
-	return
-    fi
-    if [ ${bat} -lt 90 ] ; then
-        echo -n " ${bat}%"
-    else
-        echo -n ""
-    fi
+	command -v acpi >/dev/null 2>&1 || return 1;
+	bat=`acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
+	if [ "${bat}" == "" ] ; then
+		return 1
+   	fi
+	if [ ${bat} -lt 90 ] ; then
+		echo -n "${bat}"
+		return 0
+	else
+		return 1
+	fi
 }
 
-# Compute a gradient of background/forground colors depending on the battery status
-battery_color()
+# Compute a gradient of background/foreground colors depending on the battery status
+__battery_color()
 {
-    gray=0
-    red=1
-    green=2
-    yellow=3
-    blue=4
-    magenta=5
-    cyan=6
-    white=7
-    bat=$(battery)
-    if [ "$bat" != "" ] ; then
-        if [ ${bat} -gt 80 ] ; then
-            tput bold ; tput setaf ${gray}
-        elif [ ${bat} -le 80 ] && [ ${bat} -gt 60 ] ; then
-            tput bold ; tput setaf ${green}
-        elif [ ${bat} -le 60 ] && [ ${bat} -gt 40 ] ; then
-            tput bold ; tput setaf ${yellow}
-        elif [ ${bat} -le 40 ] && [ ${bat} -gt 20 ] ; then
-            tput bold ; tput setaf ${red}
-        elif [ ${bat} -le 20 ] && [ ${bat} -gt 0 ] ; then
-            tput setaf ${gray} ; tput setab ${red}
-        else
-            tput bold ; tput setaf ${white} ; tput setab ${red}
-        fi
-    else
-        echo -n ""
-    fi
+	bat=$(__battery)
+	if [ "$?" = "1" ] ; then return; fi;	# no battery support
+
+	if [ "$bat" != "" ] ; then
+		if [ ${bat} -gt 75 ]; then
+		       	return;	# nothing displayed above 75%
+		fi
+
+		ret="${NO_COL}[battery="
+		if [ ${bat} -le 75 ] && [ ${bat} -gt 50 ] ; then
+			ret="${ret}${LIGHT_GREEN}"
+		elif [ ${bat} -le 40 ] && [ ${bat} -gt 20 ] ; then
+			ret="${ret}${LIGHT_YELLOW}"
+		elif [ ${bat} -le 20 ] && [ ${bat} -gt 10 ] ; then
+			ret="${ret}${LIGHT_RED}"
+		elif [ ${bat} -le 10 ] && ${bat} -gt 5 ] ; then
+			ret="${ret}${WARN_RED}"
+		else
+			ret="${ret}${CRIT_RED}"
+		fi
+
+		echo -ne "${ret}${bat}%${NO_COL}]"
+	fi
 }
 
 
@@ -209,101 +205,99 @@ battery_color()
 ###############
 
 # Get the load average
-load_out()
+__load()
 {
-    load=`uptime | sed -e "s/.*load average: \(.*\...\), \(.*\...\), \(.*\...\).*/\1/" -e "s/ //g"`
-    tmp=$(echo $load*100 | bc)
-    load100=${tmp%.*}
-    if [ ${load100} -gt 50 ] ; then
-        echo -n $load
-    else
-        echo -n ""
-    fi
+	load=$(awk '{print $1}' /proc/loadavg)
+	echo -n "$load"
 }
 
 # Compute a gradient of background/forground colors depending on the battery status
-load_color()
+__load_color()
 {
-  gray=0
-  red=1
-  green=2
-  yellow=3
-  blue=4
-  magenta=5
-  cyan=6
-  white=7
+	# Colour progression is important ...
+	#   bold gray -> bold green -> bold yellow -> bold red ->
+	#   black on red -> bold white on red
+	#
+	# Then we have to choose the values at which the colours switch, with
+	# anything past yellow being pretty important.
 
-  # Colour progression is important ...
-  #   bold gray -> bold green -> bold yellow -> bold red -> 
-  #   black on red -> bold white on red
-  #
-  # Then we have to choose the values at which the colours switch, with
-  # anything past yellow being pretty important.
+	loadval=$(__load)
+	load=$(echo $loadval | sed -E 's/(^0| .*|\.)//g;s/^0*//g' )
+	if [ -z "$load" ]; then
+		load=0
+	fi
+	let "load=$load/$__CPUNUM"
 
-  load=$(load_out)
-  if [ "$load" != "" ] ; then
-
-      tmp=$(echo $load*100 | bc)
-      load100=${tmp%.*}
-
-      if [ ${load100} -lt 70 ] ; then
-        tput bold ; tput setaf ${gray}
-      elif [ ${load100} -ge 70 ] && [ ${load100} -lt 120 ] ; then
-        tput bold ; tput setaf ${green}
-      elif [ ${load100} -ge 120 ] && [ ${load100} -lt 200 ] ; then
-        tput bold ; tput setaf ${yellow}
-      elif [ ${load100} -ge 200 ] && [ ${load100} -lt 300 ] ; then
-        tput bold ; tput setaf ${red}
-      elif [ ${load100} -ge 300 ] && [ ${load100} -lt 500 ] ; then
-        tput setaf ${gray} ; tput setab ${red}
-      else
-        tput bold ; tput setaf ${white} ; tput setab ${red}
-      fi
-  fi
+	if [ "$load" -ge "60" ]
+	then
+		ret="${NO_COL}["
+		if [ $load -lt 70 ] ; then
+			ret="${ret}${LIGHT_GREY}"
+		elif [ $load -ge 1 ] && [ $load -lt 80 ] ; then
+			ret="${ret}${LIGHT_GREEN}"
+		elif [ $load -ge 80 ] && [ $load -lt 95 ] ; then
+			ret="${ret}${LIGHT_YELLOW}"
+		elif [ $load -ge 95 ] && [ $load -lt 150 ] ; then
+			ret="${ret}${LIGHT_RED}"
+		elif [ $load -ge 150 ] && [ $load -lt 200 ] ; then
+			ret="${ret}${WARN_RED}"
+		else
+			ret="${ret}${CRIT_RED}"
+		fi
+		ret="${ret}cpu=$load%${NO_COL}]"
+		echo -ne "${ret}"
+	fi
 }
 
+__smart_prompt()
+{
+	if [ "$EUID" -ne "0" ]
+	then
+		git log -1 >/dev/null 2>&1
+		if [ "$?" -eq "0" ]
+		then
+			echo -n '±'
+		else
+			echo -n '$'
+		fi
+	else
+		echo -n '#'
+	fi
+}
 
+__return_value()
+{
+	if [ "$1" -ne "0" ]
+	then
+		echo -ne "${NO_COL}[${PURPLE}\\\$?=$1${NO_COL}]"
+	fi
+}
+
+__set_bash_prompt()
+{
+	__RETURN="`__return_value $?`"
+	__LOAD="`__load_color`"
+	__JOBS="`__jobcount_color`"
+	__BATT="`__battery_color`"
+	__GIT="`__git_branch_color`"
+	__PROMPT="`__smart_prompt`"
+	PS1="${__BATT}${__LOAD}${__JOBS}"
+	if [ "$EUID" -ne "0" ]
+	then
+		PS1="${PS1}${LIGHT_GREEN}\u@\h${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
+		PS1="${PS1}${__GIT}"
+	else
+		PS1="${PS1}${LIGHT_RED}\u@\h${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
+	fi
+	PS1="${PS1}${__RETURN}${__PROMPT} "
+
+	# Glue the bash prompt always go to the first column .
+	# Avoid glitches after interrupting a command with Ctrl-C
+	PS1="\[\033[G\]${PS1}${NO_COL}"
+}
 ########################
 # Construct the prompt #
 ########################
 
-# different colors depending on connexion type and user
-if [ $CONN = lcl -a $USR = nou_root ] ; then
-  PS1="${WHITE}[\u \w]${NO_COL}"
-elif [ $CONN = lcl -a $USR = u_root ] ; then
-  PS1="${YELLOW}[\w]${NO_COL}" # no user name if we are local root
-elif [ $CONN = tel -a $USR = nou_root ] ; then
-  PS1="[\u${LIGHT_GREEN}@\h${NO_COL} \w]${NO_COL}"
-elif [ $CONN = tel -a $USR = u_root ] ; then
-  PS1="${RED}[\u @${YELLOW}\h${RED} \w]${NO_COL}"
-elif [ $CONN = ssh -a $USR = nou_root ] ; then
-  PS1="[\u @${LIGHT_BLUE}\h${NO_COL} \w]${NO_COL}"
-elif [ $CONN = ssh -a $USR = u_root ] ; then
-  PS1="${RED}[\u @${LIGHT_BLUE}\h${RED} \w]${NO_COL}"
-fi
-
-# add job count
-PS1="$PS1${LIGHT_BLUE}\$(jobcount)${NO_COL}"
-
-if [ $USR = nou_root ] ; then
-    # add git branch and status
-    PS1="$PS1 \$(git_branch_color)\$(git_branch)${NO_COL}"
-fi
-
-# add prompt mark
-if [ $USR = nou_root ] ; then
-    PS1="$PS1${WHITE}\\$ ${NO_COL}"
-elif [ $USR = u_root ] ; then
-    PS1="$PS1${RED}\\$ ${NO_COL}"
-fi
-
-# add battery status
-PS1="\[\$(battery_color)\]\$(battery) ${NO_COL}$PS1"
-
-# add colored load average
-PS1="\[\$(load_color)\]\$(load_out)${NO_COL}$PS1"
-
-# Glue the bash prompt always go to the first column .
-# Avoid glitches after interrupting a command with Ctrl-C
-PS1="\[\033[G\]$PS1"
+PROMPT_COMMAND=__set_bash_prompt
 

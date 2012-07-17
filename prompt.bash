@@ -76,6 +76,61 @@ NO_COL="\[$(tput sgr0)\]"
 
 __CPUNUM=$(grep ^processor /proc/cpuinfo | wc -l)
 
+
+#################
+# Where are we? #
+#################
+
+__connection()
+{
+    THIS_TTY=tty`ps aux | grep $$ | grep bash | awk '{ print $7 }'`
+    SESS_SRC=`who | grep $THIS_TTY | awk '{ print $6 }'`
+
+    # Are we in an SSH connexion?
+    SSH_FLAG=0
+    SSH_IP=`echo $SSH_CLIENT | awk '{ print $1 }'`
+    if [ $SSH_IP ] ; then
+      SSH_FLAG=1
+    fi
+    SSH2_IP=`echo $SSH2_CLIENT | awk '{ print $1 }'`
+    if [ $SSH2_IP ] ; then
+      SSH_FLAG=1
+    fi
+
+    if [ $SSH_FLAG -eq 1 ] ; then
+      CONN="ssh"
+    elif [ -z $SESS_SRC ] ; then
+      CONN="lcl"
+    elif [ $SESS_SRC = "(:0.0)" -o $SESS_SRC = "" ] ; then
+      CONN="lcl"
+    else
+      CONN="tel"
+    fi
+
+    echo -ne $CONN
+}
+
+# Put the hostname if not locally connected
+# color it in cyan within SSH, and a warning red if within telnet
+# else diplay the host without color
+__host_color()
+{
+    conn=$(__connection)
+
+    ret="${NO_COL}"
+    if [ "$conn" == "lcl" ] ; then
+        ret="${ret}" # no hostname if local
+    elif [ "$conn" == "ssh" ] ; then
+        ret="${ret}@${CYAN}\h"
+    elif [ "$conn" == "tel" ] ; then
+        ret="${ret}@${WARN_RED}\h"
+    else
+        ret="${ret}@\h"
+    fi
+
+    echo -ne "${ret}${NO_COL}"
+}
+
 #####################################
 # Count the number of attached jobs #
 #####################################
@@ -249,7 +304,8 @@ __load_color()
     fi
 }
 
-__smart_prompt()
+# Set the prompt mark to ± if git, # if root and else $
+__smart_mark()
 {
     if [ "$EUID" -ne "0" ]
     then
@@ -280,14 +336,15 @@ __set_bash_prompt()
     __JOBS="`__jobcount_color`"
     __BATT="`__battery_color`"
     __GIT="`__git_branch_color`"
-    __PROMPT="`__smart_prompt`"
+    __HOST="`__host_color`"
+    __PROMPT="`__smart_mark`"
     PS1="${__BATT}${__LOAD}${__JOBS}"
     if [ "$EUID" -ne "0" ]
     then
-        PS1="${PS1}${LIGHT_GREEN}\u@\h${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
+        PS1="${PS1}${LIGHT_GREEN}\u${__HOST}${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
         PS1="${PS1}${__GIT}"
     else
-        PS1="${PS1}${LIGHT_RED}\u@\h${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
+        PS1="${PS1}${LIGHT_RED}\u${__HOST}${NO_COL}:${LIGHT_BLUE}\w${NO_COL}"
     fi
     PS1="${PS1}${__RETURN}${__PROMPT} "
 

@@ -159,7 +159,12 @@ git_branch_color()
 # Get the battery status in percent
 battery()
 {
-    bat=`acpi --battery | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
+    command -v acpi >/dev/null 2>&1 || { echo -n ""; return; }
+    bat=`acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
+    if [ "${bat}x" == "x" ] ; then
+	echo -n ""
+	return
+    fi
     if [ ${bat} -lt 90 ] ; then
         echo -n " ${bat}%"
     else

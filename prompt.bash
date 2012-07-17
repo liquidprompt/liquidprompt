@@ -121,11 +121,11 @@ __host_color()
     if [ "$conn" == "lcl" ] ; then
         ret="${ret}" # no hostname if local
     elif [ "$conn" == "ssh" ] ; then
-        ret="${ret}@${LIGHT_CYAN}\h "
+        ret="${ret}@${LIGHT_CYAN}\h"
     elif [ "$conn" == "tel" ] ; then
-        ret="${ret}@${WARN_RED}\h "
+        ret="${ret}@${WARN_RED}\h"
     else
-        ret="${ret}@\h "
+        ret="${ret}@\h"
     fi
 
     echo -ne "${ret}${NO_COL}"

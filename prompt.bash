@@ -345,7 +345,7 @@ __set_bash_prompt()
         PS1="${PS1}[${LIGHT_GREY}\u${NO_COL}${__HOST}:${WHITE}\w${NO_COL}]"
         PS1="${PS1}${__GIT}"
     else
-        PS1="${PS1}${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}"
+        PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
     fi
     PS1="${PS1}${__RETURN}${__PROMPT} "
 

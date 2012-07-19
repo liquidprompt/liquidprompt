@@ -131,9 +131,9 @@ __host_color()
     echo -ne "${ret}${NO_COL}"
 }
 
-#####################################
-# Count the number of attached jobs #
-#####################################
+################
+# Related jobs #
+################
 
 # Either attached running jobs (started with $ myjob &)
 # or attached stopped jobs (suspended with Ctrl-Z)
@@ -153,6 +153,15 @@ __jobcount_color()
         rep="${NO_COL}${LIGHT_YELLOW}${stopped}s${NO_COL}"
     fi
     echo -ne "$rep"
+}
+
+# Display the return value of the last command, if different from zero
+__return_value()
+{
+    if [ "$1" -ne "0" ]
+    then
+        echo -ne "$1"
+    fi
 }
 
 
@@ -376,6 +385,11 @@ __load_color()
     fi
 }
 
+
+##########
+# DESIGN #
+##########
+
 # Set the prompt mark to ± if VCS, # if root and else $
 __smart_mark()
 {
@@ -388,15 +402,6 @@ __smart_mark()
         fi
     else
         echo -ne "${RED}#${NO_COL}"
-    fi
-}
-
-# Display the return value of the last command, if different from zero
-__return_value()
-{
-    if [ "$1" -ne "0" ]
-    then
-        echo -ne "$1"
     fi
 }
 
@@ -423,6 +428,11 @@ __sb()
         echo -n "=$1="
     fi
 }
+
+
+########################
+# Construct the prompt #
+########################
 
 __set_bash_prompt()
 {
@@ -456,9 +466,6 @@ __set_bash_prompt()
     # Avoid glitches after interrupting a command with Ctrl-C
     PS1="\[\033[G\]${PS1}${NO_COL}"
 }
-########################
-# Construct the prompt #
-########################
 
 PROMPT_COMMAND=__set_bash_prompt
 

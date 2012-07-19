@@ -188,7 +188,7 @@ __git_branch_color()
         has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
         if [ -z "$has_commit" ]; then
             has_commit=0
-        fi  
+        fi
         if [ "$GD" -eq 1 -o "$GDC" -eq "1" ]; then
             if [ "$has_commit" -gt "0" ] ; then
                 # changes to commit and commits to push
@@ -233,6 +233,37 @@ __hg_branch_color()
             ret=" ${GREEN}${branch}${NO_COL} "
         else
             ret=" ${RED}${branch}${NO_COL} " # changes to commit
+        fi
+        echo -ne "$ret"
+    fi
+}
+
+
+# SUBVERSION #
+
+__svn_branch()
+{
+    if [ -d ".svn" ] ; then
+        root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([[:alpha:]]*\)<\/root>$/\1/")
+        branch=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\([[:alpha:]]*\)\/.*<\/url>$/\1/")
+        if [[ "$branch" == "<url>"* ]] ; then
+            echo -n $root
+        else
+            echo -n $branch
+        fi
+    fi
+}
+
+__svn_branch_color()
+{
+    command -v svn >/dev/null 2>&1 || return 1;
+    branch=$(__svn_branch)
+    if [ ! -z "$branch" ] ; then
+        commits=$(svn status | grep -v "?" | wc -l)
+        if [ $commits = 0 ] ; then
+            ret=" ${GREEN}${branch}${NO_COL} "
+        else
+            ret=" ${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL}) " # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -343,7 +374,7 @@ __smart_mark()
 {
     if [ "$EUID" -ne "0" ]
     then
-        if [ ! -z $(__git_branch) ] || [ ! -z $(__hg_branch) ] ; then
+        if [ ! -z $(__git_branch) ] || [ ! -z $(__hg_branch) ] || [ ! -z $(__svn_branch) ]; then
             echo -ne "${WHITE}±${NO_COL}"
         else
             echo -ne "${WHITE}\\\$${NO_COL}"
@@ -369,13 +400,14 @@ __set_bash_prompt()
     __BATT="`__battery_color`"
     __GIT="`__git_branch_color`"
     __HG="`__hg_branch_color`"
+    __SVN="`__svn_branch_color`"
     __HOST="`__host_color`"
     __PROMPT="`__smart_mark`"
     PS1="${__BATT}${__LOAD}${__JOBS}"
     if [ "$EUID" -ne "0" ]
     then
         PS1="${PS1}[${LIGHT_GREY}\u${NO_COL}${__HOST}:${WHITE}\w${NO_COL}]"
-        PS1="${PS1}${__GIT}${__HG}"
+        PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
         PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
     fi

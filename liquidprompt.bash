@@ -77,6 +77,29 @@ NO_COL="\[$(tput sgr0)\]"
 __CPUNUM=$(grep ^processor /proc/cpuinfo | wc -l)
 
 
+###############
+# Who are we? #
+###############
+
+# Yellow for root, light grey if the user is not the login one, else no color.
+__user()
+{
+    # if user is not root
+    if [ "$EUID" -ne "0" ] ; then
+        # if user is not login user
+        if [[ ${USER} != $(logname) ]]; then
+            user="${LIGHT_GREY}\u${NO_COL}"
+        else
+            user="\u"
+        fi
+    else
+        user="${LIGHT_YELLOW}\u${NO_COL}"
+    fi
+
+    echo -ne $user
+}
+
+
 #################
 # Where are we? #
 #################
@@ -445,6 +468,7 @@ __set_bash_prompt()
     __BATT=$(__sr "`__battery_color`")
 
     # in main prompt: no space
+    __USER="`__user`"
     __HOST="`__host_color`"
 
     # right of main prompt: space at left
@@ -461,10 +485,10 @@ __set_bash_prompt()
     # if not root
     if [ "$EUID" -ne "0" ]
     then
-        PS1="${PS1}[${LIGHT_GREY}\u${NO_COL}${__HOST}:${WHITE}\w${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}:${WHITE}\w${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
-        PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
         # do not add VCS infos
     fi
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"

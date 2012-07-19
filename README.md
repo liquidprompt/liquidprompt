@@ -36,7 +36,8 @@ colormap that became more and more noticeable with increasing load;
 and bring it back with `fg`), if there is any;
 * the number of attached running jobs (commands started with a `&`), if there is
 any;
-* the current user, in bold yellow if it is root;
+* the current user, in bold yellow if it is root, in light white if it is not
+the same as the login user;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
 * the current directory in bold;

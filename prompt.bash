@@ -144,13 +144,13 @@ __jobcount_color()
 
     if [ $running != "0" -a $stopped != "0" ]
     then
-        rep="${NO_COL}${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}s${NO_COL} "
+        rep="${NO_COL}${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}s${NO_COL}"
     elif [ $running != "0" -a $stopped == "0" ]
     then
-        rep="${NO_COL}${YELLOW}${running}r${NO_COL} "
+        rep="${NO_COL}${YELLOW}${running}r${NO_COL}"
     elif [ $running == "0" -a $stopped != "0" ]
     then
-        rep="${NO_COL}${LIGHT_YELLOW}${stopped}s${NO_COL} "
+        rep="${NO_COL}${LIGHT_YELLOW}${stopped}s${NO_COL}"
     fi
     echo -ne "$rep"
 }
@@ -192,16 +192,16 @@ __git_branch_color()
         if [ "$GD" -eq 1 -o "$GDC" -eq "1" ]; then
             if [ "$has_commit" -gt "0" ] ; then
                 # changes to commit and commits to push
-                ret=" ${RED}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL}) " 
+                ret="${RED}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
             else
-                ret=" ${RED}${branch}${NO_COL} " # changes to commit
+                ret="${RED}${branch}${NO_COL}" # changes to commit
             fi
         else
             if [ "$has_commit" -gt "0" ] ; then
                 # some commit(s) to push
-                ret=" ${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL}) " 
+                ret="${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
             else
-                ret=" ${GREEN}${branch}${NO_COL} " # nothing to commit or push
+                ret="${GREEN}${branch}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -230,9 +230,9 @@ __hg_branch_color()
     branch=$(__hg_branch)
     if [ ! -z "$branch" ] ; then
         if [ $(hg status --quiet -n | wc -l | sed -e "s/ //g") = 0 ] ; then
-            ret=" ${GREEN}${branch}${NO_COL} "
+            ret="${GREEN}${branch}${NO_COL}"
         else
-            ret=" ${RED}${branch}${NO_COL} " # changes to commit
+            ret="${RED}${branch}${NO_COL}" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -268,9 +268,9 @@ __svn_branch_color()
     if [ ! -z "$branch" ] ; then
         commits=$(svn status | grep -v "?" | wc -l)
         if [ $commits = 0 ] ; then
-            ret=" ${GREEN}${branch}${NO_COL} "
+            ret="${GREEN}${branch}${NO_COL}"
         else
-            ret=" ${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL}) " # changes to commit
+            ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -311,15 +311,15 @@ __battery_color()
 
         ret="b${NO_COL}"
         if [ ${bat} -le 75 ] && [ ${bat} -gt 50 ] ; then
-            ret="${ret}${LIGHT_GREEN} "
+            ret="${ret}${LIGHT_GREEN}"
         elif [ ${bat} -le 40 ] && [ ${bat} -gt 20 ] ; then
-            ret="${ret}${LIGHT_YELLOW} "
+            ret="${ret}${LIGHT_YELLOW}"
         elif [ ${bat} -le 20 ] && [ ${bat} -gt 10 ] ; then
-            ret="${ret}${LIGHT_RED} "
+            ret="${ret}${LIGHT_RED}"
         elif [ ${bat} -le 10 ] && ${bat} -gt 5 ] ; then
-            ret="${ret}${WARN_RED} "
+            ret="${ret}${WARN_RED}"
         else
-            ret="${ret}${CRIT_RED} "
+            ret="${ret}${CRIT_RED}"
         fi
 
         echo -ne "${ret}${bat}%${NO_COL}"
@@ -359,19 +359,19 @@ __load_color()
     then
         ret="l${NO_COL}"
         if [ $load -lt 70 ] ; then
-            ret="${ret}${LIGHT_GREY} "
+            ret="${ret}${LIGHT_GREY}"
         elif [ $load -ge 1 ] && [ $load -lt 80 ] ; then
-            ret="${ret}${LIGHT_GREEN} "
+            ret="${ret}${LIGHT_GREEN}"
         elif [ $load -ge 80 ] && [ $load -lt 95 ] ; then
-            ret="${ret}${LIGHT_YELLOW} "
+            ret="${ret}${LIGHT_YELLOW}"
         elif [ $load -ge 95 ] && [ $load -lt 150 ] ; then
-            ret="${ret}${LIGHT_RED} "
+            ret="${ret}${LIGHT_RED}"
         elif [ $load -ge 150 ] && [ $load -lt 200 ] ; then
-            ret="${ret}${WARN_RED} "
+            ret="${ret}${WARN_RED}"
         else
-            ret="${ret}${CRIT_RED} "
+            ret="${ret}${CRIT_RED}"
         fi
-        ret="${ret}$load%${NO_COL} "
+        ret="${ret}$load%${NO_COL}"
         echo -ne "${ret}"
     fi
 }
@@ -395,21 +395,52 @@ __return_value()
 {
     if [ "$1" -ne "0" ]
     then
-        echo -ne " ${NO_COL}${PURPLE}$1${NO_COL}"
+        echo -ne "${NO_COL}${PURPLE}$1${NO_COL}"
+    fi
+}
+
+# space right
+__sr()
+{
+    if [ ! -z "$1" ] ; then
+        echo -n "$1<"
+    fi
+}
+
+# space left
+__sl()
+{
+    if [ ! -z "$1" ] ; then
+        echo -n ">$1"
+    fi
+}
+
+# space both
+__sb()
+{
+    if [ ! -z "$1" ] ; then
+        echo -n "=$1="
     fi
 }
 
 __set_bash_prompt()
 {
-    __RETURN="`__return_value $?`"
-    __LOAD="`__load_color`"
-    __JOBS="`__jobcount_color`"
-    __BATT="`__battery_color`"
-    __GIT="`__git_branch_color`"
-    __HG="`__hg_branch_color`"
-    __SVN="`__svn_branch_color`"
+    # left of main prompt
+    __JOBS=$(__sr "`__jobcount_color`")
+    __LOAD=$(__sr "`__load_color`")
+    __BATT=$(__sr "`__battery_color`")
+
+    # in main prompt
     __HOST="`__host_color`"
-    __PROMPT="`__smart_mark`"
+
+    # right of main prompt
+     __GIT=$(__sl "`__git_branch_color`")
+      __HG=$(__sl "`__hg_branch_color`")
+     __SVN=$(__sl "`__svn_branch_color`")
+     __RET=$(__sl "`__return_value $?`")
+
+    __MARK=$(__sb "`__smart_mark`")
+
     PS1="${__BATT}${__LOAD}${__JOBS}"
     if [ "$EUID" -ne "0" ]
     then
@@ -418,7 +449,7 @@ __set_bash_prompt()
     else
         PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
     fi
-    PS1="${PS1}${__RETURN}${__PROMPT} "
+    PS1="${PS1}${__RET}${__MARK}"
 
     # Glue the bash prompt always go to the first column .
     # Avoid glitches after interrupting a command with Ctrl-C

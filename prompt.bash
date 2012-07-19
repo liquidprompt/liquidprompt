@@ -241,11 +241,13 @@ __hg_branch_color()
 
 # SUBVERSION #
 
+# Get the branch name of the current directory
+# For the first level of the repository, gives the repository name
 __svn_branch()
 {
     if [ -d ".svn" ] ; then
         root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([[:alpha:]]*\)<\/root>$/\1/")
-        branch=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\([[:alpha:]]*\)\/.*<\/url>$/\1/")
+        branch=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\([[:alpha:]]*\).*<\/url>$/\1/")
         if [[ "$branch" == "<url>"* ]] ; then
             echo -n $root
         else
@@ -254,6 +256,11 @@ __svn_branch()
     fi
 }
 
+# Set a color depending on the branch state:
+# - green if the repository is up to date
+# - red if there is changes to commit
+# Note that, due to subversion way of managing changes,
+# informations are only displayed for the CURRENT directory.
 __svn_branch_color()
 {
     command -v svn >/dev/null 2>&1 || return 1;

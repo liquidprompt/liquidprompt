@@ -29,12 +29,11 @@ A liquid prompt displaying everything may look like this:
 It displays:
 
 * the average of the batteries remaining power, if it is under a given
-threshold, with a colormap that became more and more noticeable with decreasing
-power;
+threshold, with a colormap too;
 * the average of the processors load, if it is over a given limit, with a
-colormap too;
-* the number of attached sleeping jobs (when you interrupt a command with
-`Ctrl-Z` and bring it back with `fg`), if there is any;
+colormap that became more and more noticeable with increasing load;
+* the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
+and bring it back with `fg`), if there is any;
 * the number of attached running jobs (commands started with a `&`), if there is
 any;
 * the current user, in bold yellow if it is root;
@@ -53,7 +52,7 @@ there is changes, in yellow if there is pending commits to push;
 
 Include the file in your bash configuration, for example in your `.bashrc`:
 
-`source liquidpromt.bash`
+`source liquidprompt.bash`
 
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER

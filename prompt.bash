@@ -409,7 +409,7 @@ __smart_mark()
 __sr()
 {
     if [ ! -z "$1" ] ; then
-        echo -n "$1<"
+        echo -n "$1 "
     fi
 }
 
@@ -417,7 +417,7 @@ __sr()
 __sl()
 {
     if [ ! -z "$1" ] ; then
-        echo -n ">$1"
+        echo -n " $1"
     fi
 }
 
@@ -425,7 +425,7 @@ __sl()
 __sb()
 {
     if [ ! -z "$1" ] ; then
-        echo -n "=$1="
+        echo -n " $1 "
     fi
 }
 
@@ -436,20 +436,23 @@ __sb()
 
 __set_bash_prompt()
 {
-    # left of main prompt
+    # as this get the last returned code, it should be called first
+    __RET=$(__sl "`__return_value $?`")
+
+    # left of main prompt: space at right
     __JOBS=$(__sr "`__jobcount_color`")
     __LOAD=$(__sr "`__load_color`")
     __BATT=$(__sr "`__battery_color`")
 
-    # in main prompt
+    # in main prompt: no space
     __HOST="`__host_color`"
 
-    # right of main prompt
+    # right of main prompt: space at left
      __GIT=$(__sl "`__git_branch_color`")
       __HG=$(__sl "`__hg_branch_color`")
      __SVN=$(__sl "`__svn_branch_color`")
-     __RET=$(__sl "`__return_value $?`")
 
+    # end of the prompt line: double spaces
     __MARK=$(__sb "`__smart_mark`")
 
     PS1="${__BATT}${__LOAD}${__JOBS}"
@@ -462,7 +465,7 @@ __set_bash_prompt()
     fi
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
 
-    # Glue the bash prompt always go to the first column .
+    # Glue the bash prompt always go to the first column.
     # Avoid glitches after interrupting a command with Ctrl-C
     PS1="\[\033[G\]${PS1}${NO_COL}"
 }

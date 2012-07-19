@@ -391,11 +391,12 @@ __smart_mark()
     fi
 }
 
+# Display the return value of the last command, if different from zero
 __return_value()
 {
     if [ "$1" -ne "0" ]
     then
-        echo -ne "${NO_COL}${PURPLE}$1${NO_COL}"
+        echo -ne "$1"
     fi
 }
 
@@ -449,7 +450,7 @@ __set_bash_prompt()
     else
         PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
     fi
-    PS1="${PS1}${__RET}${__MARK}"
+    PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
 
     # Glue the bash prompt always go to the first column .
     # Avoid glitches after interrupting a command with Ctrl-C

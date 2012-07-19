@@ -405,7 +405,7 @@ __smart_mark()
     fi
 }
 
-# space right
+# insert a space on the right
 __sr()
 {
     if [ ! -z "$1" ] ; then
@@ -413,7 +413,7 @@ __sr()
     fi
 }
 
-# space left
+# insert a space on the left
 __sl()
 {
     if [ ! -z "$1" ] ; then
@@ -421,7 +421,7 @@ __sl()
     fi
 }
 
-# space both
+# insert two space, before and after
 __sb()
 {
     if [ ! -z "$1" ] ; then
@@ -455,13 +455,17 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "`__smart_mark`")
 
+    # add jobs, load and battery
     PS1="${__BATT}${__LOAD}${__JOBS}"
+
+    # if not root
     if [ "$EUID" -ne "0" ]
     then
         PS1="${PS1}[${LIGHT_GREY}\u${NO_COL}${__HOST}:${WHITE}\w${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
         PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
+        # do not add VCS infos
     fi
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
 

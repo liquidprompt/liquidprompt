@@ -155,15 +155,17 @@ __jobcount_color()
     echo -ne "$rep"
 }
 
+
 ######################
-# GIT branch display #
+# VCS branch display #
 ######################
+
+# GIT #
 
 # Get the branch name of the current directory
 __git_branch()
 {
     if git rev-parse --git-dir >/dev/null 2>&1 && [ ! -z "`git branch`" ]; then
-
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }
@@ -205,6 +207,37 @@ __git_branch_color()
         echo -ne "$ret"
     fi
 }
+
+
+# MERCURIAL #
+
+# Get the branch name of the current directory
+__hg_branch()
+{
+    branch="$(hg branch 2>/dev/null)"
+    if [ $? -eq 0 ] && [ ! -z "`hg branch`" ]; then
+        echo -n "$(hg branch)"
+    fi
+}
+
+# Set a color depending on the branch state:
+# - green if the repository is up to date
+# - red if there is changes to commit
+# - TODO: yellow if there is some commits not pushed
+__hg_branch_color()
+{
+    command -v hg >/dev/null 2>&1 || return 1;
+    branch=$(__hg_branch)
+    if [ ! -z "$branch" ] ; then
+        if [ $(hg status --quiet -n | wc -l | sed -e "s/ //g") = 0 ] ; then
+            ret=" ${GREEN}${branch}${NO_COL} "
+        else
+            ret=" ${RED}${branch}${NO_COL} " # changes to commit
+        fi
+        echo -ne "$ret"
+    fi
+}
+
 
 ##################
 # Battery status #
@@ -305,14 +338,12 @@ __load_color()
     fi
 }
 
-# Set the prompt mark to ± if git, # if root and else $
+# Set the prompt mark to ± if VCS, # if root and else $
 __smart_mark()
 {
     if [ "$EUID" -ne "0" ]
     then
-        git log -1 >/dev/null 2>&1
-        if [ "$?" -eq "0" ]
-        then
+        if [ ! -z $(__git_branch) ] || [ ! -z $(__hg_branch) ] ; then
             echo -ne "${WHITE}±${NO_COL}"
         else
             echo -ne "${WHITE}\\\$${NO_COL}"
@@ -326,7 +357,7 @@ __return_value()
 {
     if [ "$1" -ne "0" ]
     then
-        echo -ne "${NO_COL}${PURPLE}$1${NO_COL} "
+        echo -ne " ${NO_COL}${PURPLE}$1${NO_COL}"
     fi
 }
 
@@ -337,13 +368,14 @@ __set_bash_prompt()
     __JOBS="`__jobcount_color`"
     __BATT="`__battery_color`"
     __GIT="`__git_branch_color`"
+    __HG="`__hg_branch_color`"
     __HOST="`__host_color`"
     __PROMPT="`__smart_mark`"
     PS1="${__BATT}${__LOAD}${__JOBS}"
     if [ "$EUID" -ne "0" ]
     then
         PS1="${PS1}[${LIGHT_GREY}\u${NO_COL}${__HOST}:${WHITE}\w${NO_COL}]"
-        PS1="${PS1}${__GIT}"
+        PS1="${PS1}${__GIT}${__HG}"
     else
         PS1="${PS1}[${LIGHT_YELLOW}\u${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
     fi

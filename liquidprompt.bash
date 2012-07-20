@@ -73,8 +73,43 @@ LIGHT_CYAN="\[$(tput bold ; tput setaf 6)\]"
 
 NO_COL="\[$(tput sgr0)\]"
 
+case $(uname) in
+    "Linux"	) OS="Linux" ;;
+    "FreeBSD") OS="FreeBSD" ;;
+esac
 
-__CPUNUM=$(grep ^processor /proc/cpuinfo | wc -l)
+
+###############
+# OS specific #
+###############
+
+# get cpu number
+__cpunum_Linux ()
+{
+    grep ^processor /proc/cpuinfo | wc -l
+}
+
+__cpunum_FreeBSD ()
+{
+    sysctl -n hw.ncpu	
+}
+
+__CPUNUM=$(__cpunum_$OS)
+
+
+# get current load
+
+__load_Linux()
+{
+    load=$(awk '{print $1}' /proc/loadavg)
+    echo -n "$load"
+}
+
+__load_FreeBSD()
+{
+    load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
+    echo -n "$load"
+}
 
 
 ###############
@@ -363,13 +398,6 @@ __battery_color()
 # System load #
 ###############
 
-# Get the load average
-__load()
-{
-    load=$(awk '{print $1}' /proc/loadavg)
-    echo -n "$load"
-}
-
 # Compute a gradient of background/forground colors depending on the battery status
 __load_color()
 {
@@ -380,7 +408,7 @@ __load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    loadval=$(__load)
+    loadval=$(__load_$OS)
     load=$(echo $loadval | sed -E 's/(^0| .*|\.)//g;s/^0*//g' )
     if [ -z "$load" ]; then
         load=0

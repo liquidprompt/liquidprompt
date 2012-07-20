@@ -45,36 +45,71 @@ fi
 unset bash bmajor bminor
 
 
-BLACK="\[$(tput setaf 0)\]"
+BLACK="\[$(tput AF 0)\]"
 
-GRAY="\[$(tput bold ; tput setaf 0)\]"
-LIGHT_GREY="\[$(tput setaf 7)\]"
-WHITE="\[$(tput bold ; tput setaf 7)\]"
+GRAY="\[$(tput md ; tput AF 0)\]"
+LIGHT_GREY="\[$(tput AF 7)\]"
+WHITE="\[$(tput md ; tput AF 7)\]"
 
-RED="\[$(tput setaf 1)\]"
-LIGHT_RED="\[$(tput bold ; tput setaf 1)\]"
-WARN_RED="\[$(tput setaf 0 ; tput setab 1)\]"
-CRIT_RED="\[$(tput bold; tput setaf 7 ; tput setab 1)\]"
+RED="\[$(tput AF 1)\]"
+LIGHT_RED="\[$(tput md ; tput AF 1)\]"
+WARN_RED="\[$(tput AF 0 ; tput setab 1)\]"
+CRIT_RED="\[$(tput md; tput AF 7 ; tput setab 1)\]"
 
-GREEN="\[$(tput setaf 2)\]"
-LIGHT_GREEN="\[$(tput bold ; tput setaf 2)\]"
+GREEN="\[$(tput AF 2)\]"
+LIGHT_GREEN="\[$(tput md ; tput AF 2)\]"
 
-YELLOW="\[$(tput setaf 3)\]"
-LIGHT_YELLOW="\[$(tput bold ; tput setaf 3)\]"
+YELLOW="\[$(tput AF 3)\]"
+LIGHT_YELLOW="\[$(tput md ; tput AF 3)\]"
 
-BLUE="\[$(tput setaf 4)\]"
-LIGHT_BLUE="\[$(tput bold ; tput setaf 4)\]"
+BLUE="\[$(tput AF 4)\]"
+LIGHT_BLUE="\[$(tput md ; tput AF 4)\]"
 
-PURPLE="\[$(tput setaf 5)\]"
-PINK="\[$(tput bold ; tput setaf 5)\]"
+PURPLE="\[$(tput AF 5)\]"
+PINK="\[$(tput md ; tput AF 5)\]"
 
-CYAN="\[$(tput setaf 6)\]"
-LIGHT_CYAN="\[$(tput bold ; tput setaf 6)\]"
+CYAN="\[$(tput AF 6)\]"
+LIGHT_CYAN="\[$(tput md ; tput AF 6)\]"
 
-NO_COL="\[$(tput sgr0)\]"
+NO_COL="\[$(tput me)\]"
+
+case $(uname) in
+    "Linux"	) OS="Linux" ;;
+    "FreeBSD") OS="FreeBSD" ;;
+esac
 
 
-__CPUNUM=$(grep ^processor /proc/cpuinfo | wc -l)
+###############
+# OS specific #
+###############
+
+# get cpu number
+__cpunum_Linux ()
+{
+    grep ^processor /proc/cpuinfo | wc -l
+}
+
+__cpunum_FreeBSD ()
+{
+    sysctl -n hw.ncpu	
+}
+
+__CPUNUM=$(__cpunum_$OS)
+
+
+# get current load
+
+__load_Linux()
+{
+    load=$(awk '{print $1}' /proc/loadavg)
+    echo -n "$load"
+}
+
+__load_FreeBSD()
+{
+    load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
+    echo -n "$load"
+}
 
 
 ###############
@@ -87,7 +122,7 @@ __user()
     # if user is not root
     if [ "$EUID" -ne "0" ] ; then
         # if user is not login user
-        if [[ ${USER} != $(logname) ]]; then
+        if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
             user="${LIGHT_GREY}\u${NO_COL}"
         else
             user="\u"
@@ -363,13 +398,6 @@ __battery_color()
 # System load #
 ###############
 
-# Get the load average
-__load()
-{
-    load=$(awk '{print $1}' /proc/loadavg)
-    echo -n "$load"
-}
-
 # Compute a gradient of background/forground colors depending on the battery status
 __load_color()
 {
@@ -380,7 +408,7 @@ __load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    loadval=$(__load)
+    loadval=$(__load_$OS)
     load=$(echo $loadval | sed -E 's/(^0| .*|\.)//g;s/^0*//g' )
     if [ -z "$load" ]; then
         load=0

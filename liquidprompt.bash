@@ -122,7 +122,7 @@ __user()
     # if user is not root
     if [ "$EUID" -ne "0" ] ; then
         # if user is not login user
-        if [[ ${USER} != $(logname) ]]; then
+        if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
             user="${LIGHT_GREY}\u${NO_COL}"
         else
             user="\u"

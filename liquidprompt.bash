@@ -44,39 +44,75 @@ if [ $bmajor -lt 3 ] || [ $bmajor -eq 3 -a $bminor -lt 2 ]; then
 fi
 unset bash bmajor bminor
 
-
-BLACK="\[$(tput AF 0)\]"
-
-GRAY="\[$(tput md ; tput AF 0)\]"
-LIGHT_GREY="\[$(tput AF 7)\]"
-WHITE="\[$(tput md ; tput AF 7)\]"
-
-RED="\[$(tput AF 1)\]"
-LIGHT_RED="\[$(tput md ; tput AF 1)\]"
-WARN_RED="\[$(tput AF 0 ; tput setab 1)\]"
-CRIT_RED="\[$(tput md; tput AF 7 ; tput setab 1)\]"
-
-GREEN="\[$(tput AF 2)\]"
-LIGHT_GREEN="\[$(tput md ; tput AF 2)\]"
-
-YELLOW="\[$(tput AF 3)\]"
-LIGHT_YELLOW="\[$(tput md ; tput AF 3)\]"
-
-BLUE="\[$(tput AF 4)\]"
-LIGHT_BLUE="\[$(tput md ; tput AF 4)\]"
-
-PURPLE="\[$(tput AF 5)\]"
-PINK="\[$(tput md ; tput AF 5)\]"
-
-CYAN="\[$(tput AF 6)\]"
-LIGHT_CYAN="\[$(tput md ; tput AF 6)\]"
-
-NO_COL="\[$(tput me)\]"
-
 case $(uname) in
     "Linux"	) OS="Linux" ;;
     "FreeBSD") OS="FreeBSD" ;;
 esac
+
+
+if [[ "$OS" == "FreeBSD" ]] ; then
+
+    BLACK="\[$(tput AF 0)\]"
+
+    GRAY="\[$(tput md ; tput AF 0)\]"
+    LIGHT_GREY="\[$(tput AF 7)\]"
+    WHITE="\[$(tput md ; tput AF 7)\]"
+
+    RED="\[$(tput AF 1)\]"
+    LIGHT_RED="\[$(tput md ; tput AF 1)\]"
+    WARN_RED="\[$(tput AF 0 ; tput setab 1)\]"
+    CRIT_RED="\[$(tput md; tput AF 7 ; tput setab 1)\]"
+
+    GREEN="\[$(tput AF 2)\]"
+    LIGHT_GREEN="\[$(tput md ; tput AF 2)\]"
+
+    YELLOW="\[$(tput AF 3)\]"
+    LIGHT_YELLOW="\[$(tput md ; tput AF 3)\]"
+
+    BLUE="\[$(tput AF 4)\]"
+    LIGHT_BLUE="\[$(tput md ; tput AF 4)\]"
+
+    PURPLE="\[$(tput AF 5)\]"
+    PINK="\[$(tput md ; tput AF 5)\]"
+
+    CYAN="\[$(tput AF 6)\]"
+    LIGHT_CYAN="\[$(tput md ; tput AF 6)\]"
+
+    NO_COL="\[$(tput me)\]"
+
+else
+    # default to Linux
+    BLACK="\[$(tput setaf 0)\]"
+
+    GRAY="\[$(tput bold ; tput setaf 0)\]"
+    LIGHT_GREY="\[$(tput setaf 7)\]"
+    WHITE="\[$(tput bold ; tput setaf 7)\]"
+
+    RED="\[$(tput setaf 1)\]"
+    LIGHT_RED="\[$(tput bold ; tput setaf 1)\]"
+    WARN_RED="\[$(tput setaf 0 ; tput setab 1)\]"
+    CRIT_RED="\[$(tput bold; tput setaf 7 ; tput setab 1)\]"
+
+    GREEN="\[$(tput setaf 2)\]"
+    LIGHT_GREEN="\[$(tput bold ; tput setaf 2)\]"
+
+    YELLOW="\[$(tput setaf 3)\]"
+    LIGHT_YELLOW="\[$(tput bold ; tput setaf 3)\]"
+
+    BLUE="\[$(tput setaf 4)\]"
+    LIGHT_BLUE="\[$(tput bold ; tput setaf 4)\]"
+
+    PURPLE="\[$(tput setaf 5)\]"
+    PINK="\[$(tput bold ; tput setaf 5)\]"
+
+    CYAN="\[$(tput setaf 6)\]"
+    LIGHT_CYAN="\[$(tput bold ; tput setaf 6)\]"
+
+    NO_COL="\[$(tput sgr0)\]"
+
+fi
+
+
 
 
 ###############
@@ -91,7 +127,7 @@ __cpunum_Linux ()
 
 __cpunum_FreeBSD ()
 {
-    sysctl -n hw.ncpu	
+    sysctl -n hw.ncpu
 }
 
 __CPUNUM=$(__cpunum_$OS)

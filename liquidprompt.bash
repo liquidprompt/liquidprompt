@@ -44,12 +44,19 @@ if [ $bmajor -lt 3 ] || [ $bmajor -eq 3 -a $bminor -lt 2 ]; then
 fi
 unset bash bmajor bminor
 
+
+###############
+# OS specific #
+###############
+
+# OS detection, default to Linux
+OS="Linux"
 case $(uname) in
-    "Linux"	) OS="Linux" ;;
+    "Linux"  ) OS="Linux"   ;;
     "FreeBSD") OS="FreeBSD" ;;
 esac
 
-
+# Colors declarations
 if [[ "$OS" == "FreeBSD" ]] ; then
 
     BLACK="\[$(tput AF 0)\]"
@@ -111,13 +118,6 @@ else
     NO_COL="\[$(tput sgr0)\]"
 
 fi
-
-
-
-
-###############
-# OS specific #
-###############
 
 # get cpu number
 __cpunum_Linux ()
@@ -224,6 +224,7 @@ __host_color()
 
     echo -ne "${ret}${NO_COL}"
 }
+
 
 ################
 # Related jobs #

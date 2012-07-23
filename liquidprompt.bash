@@ -589,7 +589,11 @@ __smart_mark()
             echo -ne "${WHITE}\\\$${NO_COL}"
         fi
     else
-        echo -ne "${RED}#${NO_COL}"
+        if [ ! -z $(__git_branch) ]; then
+            echo -ne "${RED}±${NO_COL}"
+        else
+            echo -ne "${RED}#${NO_COL}"
+        fi
     fi
 }
 

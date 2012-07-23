@@ -122,17 +122,17 @@ else
 fi
 
 # get cpu number
-__cpunum_Linux ()
+__cpunum_Linux()
 {
     grep ^processor /proc/cpuinfo | wc -l
 }
 
-__cpunum_FreeBSD ()
+__cpunum_FreeBSD()
 {
     sysctl -n hw.ncpu
 }
 
-__cpunum_SunOS ()
+__cpunum_SunOS()
 {
     kstat -m cpu_info | grep "module: cpu_info"  | wc -l
 }

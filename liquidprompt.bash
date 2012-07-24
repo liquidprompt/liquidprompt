@@ -45,6 +45,19 @@ fi
 unset bash bmajor bminor
 
 
+#################
+# CONFIGURATION #
+#################
+
+# Maximal value under which the battery level is displayed
+# Recommended value is 75
+BATTERY_THRESHOLD=75
+
+# Minimal value after which the load average is displayed
+# Recommended value is 60
+LOAD_THRESHOLD=60
+
+
 ###############
 # OS specific #
 ###############
@@ -394,7 +407,7 @@ __battery()
     if [ "${bat}" == "" ] ; then
         return 1
        fi
-    if [ ${bat} -lt 90 ] ; then
+    if [ ${bat} -le $BATTERY_THRESHOLD ] ; then
         echo -n "${bat}"
         return 0
     else
@@ -409,7 +422,7 @@ __battery_color()
     if [ "$?" = "1" ] ; then return; fi;    # no battery support
 
     if [ "$bat" != "" ] ; then
-        if [ ${bat} -gt 75 ]; then
+        if [ ${bat} -gt $BATTERY_THRESHOLD ]; then
             return;    # nothing displayed above 75%
         fi
 
@@ -452,7 +465,7 @@ __load_color()
     fi
     let "load=$load/$__CPUNUM"
 
-    if [ "$load" -ge "60" ]
+    if [ $load -ge $LOAD_THRESHOLD ]
     then
         ret="l${NO_COL}"
         if [ $load -lt 70 ] ; then

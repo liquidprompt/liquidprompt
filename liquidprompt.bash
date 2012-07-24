@@ -420,7 +420,7 @@ __battery_color()
             ret="${ret}${LIGHT_YELLOW}"
         elif [ ${bat} -le 20 ] && [ ${bat} -gt 10 ] ; then
             ret="${ret}${LIGHT_RED}"
-        elif [ ${bat} -le 10 ] && ${bat} -gt 5 ] ; then
+        elif [ ${bat} -le 10 ] && [ ${bat} -gt 5 ] ; then
             ret="${ret}${WARN_RED}"
         else
             ret="${ret}${CRIT_RED}"

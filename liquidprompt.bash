@@ -472,7 +472,7 @@ __load_color()
     # anything past yellow being pretty important.
 
     loadval=$(__load_$OS)
-    load=$(echo $loadval | sed -E 's/(^0| .*|\.)//g;s/^0*//g' )
+    load=$(echo $loadval | sed 's/\.//g;s/^0*//g' )
     if [ -z "$load" ]; then
         load=0
     fi

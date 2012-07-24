@@ -67,6 +67,8 @@ OS="Linux"
 case $(uname) in
     "Linux"  ) OS="Linux"   ;;
     "FreeBSD") OS="FreeBSD" ;;
+    "DragonFly") OS="FreeBSD" ;;
+    "SunOS") OS="SunOS" ;;
 esac
 
 # Colors declarations
@@ -133,14 +135,19 @@ else
 fi
 
 # get cpu number
-__cpunum_Linux ()
+__cpunum_Linux()
 {
     grep ^processor /proc/cpuinfo | wc -l
 }
 
-__cpunum_FreeBSD ()
+__cpunum_FreeBSD()
 {
     sysctl -n hw.ncpu
+}
+
+__cpunum_SunOS()
+{
+    kstat -m cpu_info | grep "module: cpu_info"  | wc -l
 }
 
 __CPUNUM=$(__cpunum_$OS)
@@ -157,6 +164,12 @@ __load_Linux()
 __load_FreeBSD()
 {
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
+    echo -n "$load"
+}
+
+__load_SunOS()
+{
+    load=$(LANG=C uptime | awk '{print $10}'| sed -e 's/,//')
     echo -n "$load"
 }
 

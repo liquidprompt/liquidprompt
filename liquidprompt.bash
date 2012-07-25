@@ -57,6 +57,9 @@ BATTERY_THRESHOLD=75
 # Recommended value is 60
 LOAD_THRESHOLD=60
 
+# Number of characters of the displayed path
+# Recommended value is 35
+PATH_LENGTH=35
 
 ###############
 # OS specific #
@@ -648,7 +651,7 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "`__smart_mark`")
 
-    __PWD=$(__shorten_path $PWD 35)
+    __PWD=$(__shorten_path $PWD $PATH_LENGTH)
 
     # add jobs, load and battery
     PS1="${__BATT}${__LOAD}${__JOBS}"

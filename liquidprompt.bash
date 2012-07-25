@@ -368,6 +368,80 @@ __hg_branch_color()
     fi
 }
 
+# Simple BASH function that shortens
+# a very long path for display by removing
+# the left most parts and replacing them
+# with a leading ...
+#
+# the first argument is the path
+#
+# the second argument is the maximum allowed
+# length including the '/'s and ...
+# http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
+#
+__shorten_path()
+{
+	local p="$1"
+	local len="${#p}"
+	local max_len="$2"
+
+	if [ "$len" -gt "$max_len" ]
+	then
+		# finds all the '/' in
+		# the path and stores their
+		# positions
+		#
+		local pos=()
+		for ((i=0;i<len;i++))
+		do
+			if [ "${p:i:1}" == "/" ]
+			then
+				pos=(${pos[@]} $i)
+			fi
+		done
+		pos=(${pos[@]} $len)
+
+		# we have the '/'s, let's find the
+		# left-most that doesn't break the
+		# length limit
+		#
+		local i=0
+		while [ "$((len-pos[i]))" -gt "$((max_len-3))" ]
+		do
+			i=$((i+1))
+		done
+
+		# let us check if it's OK to
+		# print the whole thing
+		#
+		if [ "${pos[i]}" -eq "0" ]
+		then
+			# the path is shorter than
+			# the maximum allowed length,
+			# so no need for ...
+			#
+			echo "$p"
+
+		elif [ "${pos[i]}" = "$len" ]
+		then
+			# constraints are broken because
+			# the maximum allowed size is smaller
+			# than the last part of the path, plus
+			# '...'
+			#
+			echo "...${p:((len-max_len+3))}"
+		else
+			# constraints are satisfied, at least
+			# some parts of the path, plus ..., are
+			# shorter than the maximum allowed size
+			#
+			echo "...${p:pos[i]}"
+		fi
+	else
+		echo "$p"
+	fi
+}
+
 
 # SUBVERSION #
 
@@ -570,16 +644,18 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "`__smart_mark`")
 
+    __PWD=$(__shorten_path $PWD 35)
+
     # add jobs, load and battery
     PS1="${__BATT}${__LOAD}${__JOBS}"
 
     # if not root
     if [ "$EUID" -ne "0" ]
     then
-        PS1="${PS1}[${__USER}${__HOST}:${WHITE}\w${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}:${WHITE}${__PWD}${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
-        PS1="${PS1}[${__USER}${__HOST}${NO_COL}:${YELLOW}\w${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${NO_COL}:${YELLOW}${__PWD}${NO_COL}]"
         # do not add VCS infos
     fi
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"

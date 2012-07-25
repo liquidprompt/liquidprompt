@@ -35,7 +35,7 @@
 #     green = no changes or commits
 
 # Check for recent enough version of bash.
-[ -z "$BASH_VERSION" -o -z "$PS1" ] && return;
+[ -z "$BASH_VERSION" -o -z "$PS1" -o -z "$TERM" ] && return;
 
 bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
 if [ $bmajor -lt 3 ] || [ $bmajor -eq 3 -a $bminor -lt 2 ]; then

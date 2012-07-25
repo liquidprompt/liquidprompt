@@ -381,65 +381,65 @@ __hg_branch_color()
 #
 __shorten_path()
 {
-	local p="$1"
-	local len="${#p}"
-	local max_len="$2"
+    local p="$1"
+    local len="${#p}"
+    local max_len="$2"
 
-	if [ "$len" -gt "$max_len" ]
-	then
-		# finds all the '/' in
-		# the path and stores their
-		# positions
-		#
-		local pos=()
-		for ((i=0;i<len;i++))
-		do
-			if [ "${p:i:1}" == "/" ]
-			then
-				pos=(${pos[@]} $i)
-			fi
-		done
-		pos=(${pos[@]} $len)
+    if [ "$len" -gt "$max_len" ]
+    then
+        # finds all the '/' in
+        # the path and stores their
+        # positions
+        #
+        local pos=()
+        for ((i=0;i<len;i++))
+        do
+            if [ "${p:i:1}" == "/" ]
+            then
+                pos=(${pos[@]} $i)
+            fi
+        done
+        pos=(${pos[@]} $len)
 
-		# we have the '/'s, let's find the
-		# left-most that doesn't break the
-		# length limit
-		#
-		local i=0
-		while [ "$((len-pos[i]))" -gt "$((max_len-3))" ]
-		do
-			i=$((i+1))
-		done
+        # we have the '/'s, let's find the
+        # left-most that doesn't break the
+        # length limit
+        #
+        local i=0
+        while [ "$((len-pos[i]))" -gt "$((max_len-3))" ]
+        do
+            i=$((i+1))
+        done
 
-		# let us check if it's OK to
-		# print the whole thing
-		#
-		if [ "${pos[i]}" -eq "0" ]
-		then
-			# the path is shorter than
-			# the maximum allowed length,
-			# so no need for ...
-			#
-			echo "$p"
+        # let us check if it's OK to
+        # print the whole thing
+        #
+        if [ "${pos[i]}" -eq "0" ]
+        then
+            # the path is shorter than
+            # the maximum allowed length,
+            # so no need for ...
+            #
+            echo "$p"
 
-		elif [ "${pos[i]}" = "$len" ]
-		then
-			# constraints are broken because
-			# the maximum allowed size is smaller
-			# than the last part of the path, plus
-			# '...'
-			#
-			echo "...${p:((len-max_len+3))}"
-		else
-			# constraints are satisfied, at least
-			# some parts of the path, plus ..., are
-			# shorter than the maximum allowed size
-			#
-			echo "...${p:pos[i]}"
-		fi
-	else
-		echo "$p"
-	fi
+        elif [ "${pos[i]}" = "$len" ]
+        then
+            # constraints are broken because
+            # the maximum allowed size is smaller
+            # than the last part of the path, plus
+            # '...'
+            #
+            echo "...${p:((len-max_len+3))}"
+        else
+            # constraints are satisfied, at least
+            # some parts of the path, plus ..., are
+            # shorter than the maximum allowed size
+            #
+            echo "...${p:pos[i]}"
+        fi
+    else
+        echo "$p"
+    fi
 }
 
 
@@ -671,3 +671,4 @@ __set_bash_prompt()
 
 PROMPT_COMMAND=__set_bash_prompt
 
+# vim: set ts=4 sw=4 tw=120 :

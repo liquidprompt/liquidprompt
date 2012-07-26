@@ -433,13 +433,13 @@ __shorten_path()
             # than the last part of the path, plus
             # '...'
             #
-            echo "...${p:((len-max_len+3))}"
+            echo "…${p:((len-max_len+3))}"
         else
             # constraints are satisfied, at least
             # some parts of the path, plus ..., are
             # shorter than the maximum allowed size
             #
-            echo "...${p:pos[i]}"
+            echo "…${p:pos[i]}"
         fi
     else
         echo "$p"

@@ -61,6 +61,7 @@ LOAD_THRESHOLD=60
 # Recommended value is 35
 PATH_LENGTH=35
 
+
 ###############
 # OS specific #
 ###############
@@ -670,7 +671,8 @@ __set_bash_prompt()
 
     # Glue the bash prompt always go to the first column.
     # Avoid glitches after interrupting a command with Ctrl-C
-    PS1="\[\033[G\]${PS1}${NO_COL}"
+    # Does not seem to be necessary anymore?
+    #PS1="\[\033[G\]${PS1}${NO_COL}"
 }
 
 PROMPT_COMMAND=__set_bash_prompt

@@ -141,7 +141,7 @@ fi
 # get cpu number
 __cpunum_Linux()
 {
-    grep ^processor /proc/cpuinfo | wc -l
+    grep ^[Pp]rocessor /proc/cpuinfo | wc -l
 }
 
 __cpunum_FreeBSD()

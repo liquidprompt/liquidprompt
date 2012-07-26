@@ -57,7 +57,7 @@ BATTERY_THRESHOLD=75
 # Recommended value is 60
 LOAD_THRESHOLD=60
 
-# Number of characters of the displayed path
+# The maximum percentage of the screen width used to display the path
 # Recommended value is 35
 PATH_LENGTH=35
 
@@ -386,7 +386,8 @@ __shorten_path()
 {
     local p="$1"
     local len="${#p}"
-    local max_len="$2"
+    local len_percent=$2
+    local max_len=$(($COLUMNS*$len_percent/100))
 
     if [ "$len" -gt "$max_len" ]
     then

@@ -22,7 +22,7 @@
 
 # Below are function for having a flexible dynamic prompt for power user:
 # - display the battery level (if necessary), with colormap (if any battery attached)
-# - if necessary, prints a counter for jobs that are attached to the current 
+# - if necessary, prints a counter for jobs that are attached to the current
 #   term (e.g. xterm &) or that are sleeping (e.g. Ctrl-z)
 # - display the load average, colored with a colormap
 # - displays the colored login@hostname
@@ -141,7 +141,7 @@ fi
 # get cpu number
 __cpunum_Linux()
 {
-    grep ^processor /proc/cpuinfo | wc -l
+    grep ^[Pp]rocessor /proc/cpuinfo | wc -l
 }
 
 __cpunum_FreeBSD()
@@ -385,7 +385,7 @@ __hg_branch_color()
 #
 __shorten_path()
 {
-    local p="$1"
+    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
     local len_percent=$2
     local max_len=$(($COLUMNS*$len_percent/100))

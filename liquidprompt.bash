@@ -61,6 +61,9 @@ LOAD_THRESHOLD=60
 # Recommended value is 35
 PATH_LENGTH=35
 
+# How many directories to keep at the beginning of a shortened path
+# Recommended value is 2
+PATH_KEEP=2
 
 ###############
 # OS specific #
@@ -372,7 +375,7 @@ __hg_branch_color()
     fi
 }
 
-# Simple BASH function that shortens
+# BASH function that shortens
 # a very long path for display by removing
 # the left most parts and replacing them
 # with a leading ...
@@ -383,12 +386,20 @@ __hg_branch_color()
 # length including the '/'s and ...
 # http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
 #
+# + keep some left part of the path if asked
 __shorten_path()
 {
+    # the character that will replace the part of the path that is masked
+    local mask=" … "
+    # index of the directory to keep from the root (starts at 0)
+    local keep=$((PATH_KEEP-1))
+
+    local len_percent=$2
+
     local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
-    local len_percent=$2
     local max_len=$(($COLUMNS*$len_percent/100))
+    local mask_len="${#mask}"
 
     if [ "$len" -gt "$max_len" ]
     then
@@ -410,8 +421,8 @@ __shorten_path()
         # left-most that doesn't break the
         # length limit
         #
-        local i=0
-        while [ "$((len-pos[i]))" -gt "$((max_len-3))" ]
+        local i=$keep
+        while [ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]
         do
             i=$((i+1))
         done
@@ -432,15 +443,15 @@ __shorten_path()
             # constraints are broken because
             # the maximum allowed size is smaller
             # than the last part of the path, plus
-            # '...'
+            # '…'
             #
-            echo "…${p:((len-max_len+3))}"
+            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
         else
             # constraints are satisfied, at least
-            # some parts of the path, plus ..., are
+            # some parts of the path, plus …, are
             # shorter than the maximum allowed size
             #
-            echo "…${p:pos[i]}"
+            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
         fi
     else
         echo "$p"

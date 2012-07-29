@@ -258,6 +258,101 @@ __host_color()
     echo -ne "${ret}${NO_COL}"
 }
 
+# BASH function that shortens
+# a very long path for display by removing
+# the left most parts and replacing them
+# with a leading ...
+#
+# the first argument is the path
+#
+# the second argument is the maximum allowed
+# length including the '/'s and ...
+# http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
+#
+# + keep some left part of the path if asked
+__shorten_path()
+{
+    # the character that will replace the part of the path that is masked
+    local mask=" … "
+    # index of the directory to keep from the root (starts at 0)
+    local keep=$((PATH_KEEP-1))
+
+    local len_percent=$2
+
+    local p=$(echo "$1" | sed -e "s|$HOME|~|")
+    local len="${#p}"
+    local max_len=$(($COLUMNS*$len_percent/100))
+    local mask_len="${#mask}"
+
+    if [ "$len" -gt "$max_len" ]
+    then
+        # finds all the '/' in
+        # the path and stores their
+        # positions
+        #
+        local pos=()
+        for ((i=0;i<len;i++))
+        do
+            if [ "${p:i:1}" == "/" ]
+            then
+                pos=(${pos[@]} $i)
+            fi
+        done
+        pos=(${pos[@]} $len)
+
+        # we have the '/'s, let's find the
+        # left-most that doesn't break the
+        # length limit
+        #
+        local i=$keep
+        while [ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]
+        do
+            i=$((i+1))
+        done
+
+        # let us check if it's OK to
+        # print the whole thing
+        #
+        if [ "${pos[i]}" -eq "0" ]
+        then
+            # the path is shorter than
+            # the maximum allowed length,
+            # so no need for ...
+            #
+            echo "$p"
+
+        elif [ "${pos[i]}" = "$len" ]
+        then
+            # constraints are broken because
+            # the maximum allowed size is smaller
+            # than the last part of the path, plus
+            # '…'
+            #
+            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
+        else
+            # constraints are satisfied, at least
+            # some parts of the path, plus …, are
+            # shorter than the maximum allowed size
+            #
+            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
+        fi
+    else
+        echo "$p"
+    fi
+}
+
+# Display a ":"
+# colored in green if user have write permission on the current directory
+# colored in red if it have not.
+__permissions_color()
+{
+    if [ -w "${PWD}" ]; then 
+        echo "${GREEN}:${NO_COL}"
+    else
+        echo "${RED}:${NO_COL}"
+    fi
+}
+
 
 ################
 # Related jobs #
@@ -384,90 +479,6 @@ __hg_branch_color()
         echo -ne "$ret"
     fi
 }
-
-# BASH function that shortens
-# a very long path for display by removing
-# the left most parts and replacing them
-# with a leading ...
-#
-# the first argument is the path
-#
-# the second argument is the maximum allowed
-# length including the '/'s and ...
-# http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
-#
-# + keep some left part of the path if asked
-__shorten_path()
-{
-    # the character that will replace the part of the path that is masked
-    local mask=" … "
-    # index of the directory to keep from the root (starts at 0)
-    local keep=$((PATH_KEEP-1))
-
-    local len_percent=$2
-
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
-    local len="${#p}"
-    local max_len=$(($COLUMNS*$len_percent/100))
-    local mask_len="${#mask}"
-
-    if [ "$len" -gt "$max_len" ]
-    then
-        # finds all the '/' in
-        # the path and stores their
-        # positions
-        #
-        local pos=()
-        for ((i=0;i<len;i++))
-        do
-            if [ "${p:i:1}" == "/" ]
-            then
-                pos=(${pos[@]} $i)
-            fi
-        done
-        pos=(${pos[@]} $len)
-
-        # we have the '/'s, let's find the
-        # left-most that doesn't break the
-        # length limit
-        #
-        local i=$keep
-        while [ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]
-        do
-            i=$((i+1))
-        done
-
-        # let us check if it's OK to
-        # print the whole thing
-        #
-        if [ "${pos[i]}" -eq "0" ]
-        then
-            # the path is shorter than
-            # the maximum allowed length,
-            # so no need for ...
-            #
-            echo "$p"
-
-        elif [ "${pos[i]}" = "$len" ]
-        then
-            # constraints are broken because
-            # the maximum allowed size is smaller
-            # than the last part of the path, plus
-            # '…'
-            #
-            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
-        else
-            # constraints are satisfied, at least
-            # some parts of the path, plus …, are
-            # shorter than the maximum allowed size
-            #
-            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
-        fi
-    else
-        echo "$p"
-    fi
-}
-
 
 # SUBVERSION #
 
@@ -665,6 +676,8 @@ __set_bash_prompt()
     # in main prompt: no space
     __USER="`__user`"
     __HOST="`__host_color`"
+    __PERM="`__permissions_color`"
+    __PWD=$(__shorten_path $PWD $PATH_LENGTH)
 
     # right of main prompt: space at left
      __GIT=$(__sl "`__git_branch_color`")
@@ -674,7 +687,6 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "`__smart_mark`")
 
-    __PWD=$(__shorten_path $PWD $PATH_LENGTH)
 
     # add jobs, load and battery
     PS1="${__BATT}${__LOAD}${__JOBS}"
@@ -682,10 +694,10 @@ __set_bash_prompt()
     # if not root
     if [ "$EUID" -ne "0" ]
     then
-        PS1="${PS1}[${__USER}${__HOST}:${WHITE}${__PWD}${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${__PERM}${WHITE}${__PWD}${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
-        PS1="${PS1}[${__USER}${__HOST}${NO_COL}:${YELLOW}${__PWD}${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}${YELLOW}${__PWD}${NO_COL}]"
         # do not add VCS infos
     fi
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"

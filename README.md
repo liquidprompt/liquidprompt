@@ -41,6 +41,8 @@ any;
 the same as the login user;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
+* a green colon if the user has write permissions on the current directory, a red
+one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
 * the name of the current branch if you are in a version control repository

@@ -24,7 +24,7 @@ in a git repository, on branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`25% 12.5 1s/1r [user@server:~/liquidprompt] master(3) 125 ± `
+`25% 12.5 1s/1r/1t [user@server:~/liquidprompt] master(3) 125 ± `
 
 It displays:
 
@@ -32,6 +32,7 @@ It displays:
 threshold, with a colormap too;
 * the average of the processors load, if it is over a given limit, with a
 colormap that became more and more noticeable with increasing load;
+* the number of detached `screen` sessions, if there is any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
 and bring it back with `fg`), if there is any;
 * the number of attached running jobs (commands started with a `&`), if there is

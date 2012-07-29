@@ -23,7 +23,7 @@
 # Below are function for having a flexible dynamic prompt for power user:
 # - display the battery level (if necessary), with colormap (if any battery attached)
 # - if necessary, prints a counter for jobs that are attached to the current
-#   term (e.g. xterm &) or that are sleeping (e.g. Ctrl-z)
+#   term (e.g. xterm &) or that are sleeping (e.g. Ctrl-z) or detached "screen" sessions
 # - display the load average, colored with a colormap
 # - displays the colored login@hostname
 #     - when root displays in red
@@ -265,20 +265,30 @@ __host_color()
 
 # Either attached running jobs (started with $ myjob &)
 # or attached stopped jobs (suspended with Ctrl-Z)
+# or detached screens sessions running on the host
 __jobcount_color()
 {
-    running=`jobs -r | wc -l | tr -d " "`
-    stopped=`jobs -s | wc -l | tr -d " "`
+    local running=$(jobs -r | wc -l | tr -d " ")
+    local stopped=$(jobs -s | wc -l | tr -d " ")
+    local screens=$(screen -ls | grep -c Detach )
 
-    if [ $running != "0" -a $stopped != "0" ]
-    then
-        rep="${NO_COL}${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}s${NO_COL}"
-    elif [ $running != "0" -a $stopped == "0" ]
-    then
+    if   [ $running != "0" -a $stopped != "0" -a $screens != "0" ] ; then
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
+
+    elif [ $running != "0" -a $stopped == "0" -a $screens == "0" ] ; then
         rep="${NO_COL}${YELLOW}${running}r${NO_COL}"
-    elif [ $running == "0" -a $stopped != "0" ]
-    then
-        rep="${NO_COL}${LIGHT_YELLOW}${stopped}s${NO_COL}"
+
+    elif [ $running == "0" -a $stopped != "0" -a $screens == "0" ] ; then
+        rep="${NO_COL}${LIGHT_YELLOW}${stopped}t${NO_COL}"
+
+    elif [ $running == "0" -a $stopped == "0" -a $screens != "0" ] ; then
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}"
+
+    elif [ $running != "0" -a $stopped == "0" -a $screens != "0" ] ; then
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}"
+
+    elif [ $running == "0" -a $stopped != "0" -a $screens != "0" ] ; then
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
     fi
     echo -ne "$rep"
 }

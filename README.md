@@ -24,7 +24,7 @@ in a git repository, on branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`25% 12.5 1s/1r/1t [user@server:~/liquidprompt] master(3) 125 ± `
+`b24% l42% 1s/1r/1t [user@server:~/ … /code/liquidprompt] master(3) 125 ± `
 
 It displays:
 
@@ -41,7 +41,8 @@ any;
 the same as the login user;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
-* the current directory in bold;
+* the current directory in bold, shortened if it takes too much space, while
+preserving the first two directories;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if
 there is changes, in yellow if there is pending commits to push;

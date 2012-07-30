@@ -74,6 +74,7 @@ OS="Linux"
 case $(uname) in
     "Linux"  ) OS="Linux"   ;;
     "FreeBSD") OS="FreeBSD" ;;
+    "Darwin") OS="Darwin" ;;
     "DragonFly") OS="FreeBSD" ;;
     "SunOS") OS="SunOS" ;;
 esac
@@ -152,6 +153,11 @@ __cpunum_FreeBSD()
     sysctl -n hw.ncpu
 }
 
+__cpunum_Darwin()
+{
+	__cpunum_FreeBSD
+}
+
 __cpunum_SunOS()
 {
     kstat -m cpu_info | grep "module: cpu_info"  | wc -l
@@ -172,6 +178,11 @@ __load_FreeBSD()
 {
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
     echo -n "$load"
+}
+
+__load_Darwin()
+{
+	__load_FreeBSD
 }
 
 __load_SunOS()
@@ -365,7 +376,7 @@ __jobcount_color()
 {
     local running=$(jobs -r | wc -l | tr -d " ")
     local stopped=$(jobs -s | wc -l | tr -d " ")
-    local screens=$(screen -ls | grep -c Detach )
+    local screens=$(screen -ls 2> /dev/null | grep -c Detach )
 
     if   [ $running != "0" -a $stopped != "0" -a $screens != "0" ] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"

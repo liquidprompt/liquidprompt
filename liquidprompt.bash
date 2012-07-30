@@ -211,8 +211,8 @@ __user()
 
 __connection()
 {
-    THIS_TTY=tty`ps aux | grep $$ | grep bash | awk '{ print $7 }'`
-    SESS_SRC=`who | grep $THIS_TTY | awk '{ print $6 }'`
+    THIS_TTY=tty$(ps aux | grep $$ | grep bash | awk '{ print $7 }')
+    SESS_SRC=$(who | grep $THIS_TTY | awk '{ print $6 }')
 
     # Are we in an SSH connexion?
     SSH_FLAG=0
@@ -220,7 +220,7 @@ __connection()
     if [[ $SSH_IP ]] ; then
       SSH_FLAG=1
     fi
-    SSH2_IP=`echo $SSH2_CLIENT | awk '{ print $1 }'`
+    SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
     if [[ $SSH2_IP ]] ; then
       SSH_FLAG=1
     fi
@@ -408,7 +408,7 @@ __return_value()
 # Get the branch name of the current directory
 __git_branch()
 {
-    if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "`git branch`" ]] ; then
+    if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }
@@ -458,7 +458,7 @@ __git_branch_color()
 __hg_branch()
 {
     branch="$(hg branch 2>/dev/null)"
-    if [[ $? -eq 0 ]] && [[ ! -z "`hg branch`" ]] ; then
+    if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
         echo -n "$(hg branch)"
     fi
 }
@@ -528,7 +528,7 @@ __svn_branch_color()
 __battery()
 {
     command -v acpi >/dev/null 2>&1 || return 1;
-    bat=`acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
+    bat=$(acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
     if [[ "${bat}" == "" ]] ; then
         return 1
        fi
@@ -667,26 +667,26 @@ __sb()
 __set_bash_prompt()
 {
     # as this get the last returned code, it should be called first
-    __RET=$(__sl "`__return_value $?`")
+    __RET=$(__sl "$(__return_value $?)")
 
     # left of main prompt: space at right
-    __JOBS=$(__sr "`__jobcount_color`")
-    __LOAD=$(__sr "`__load_color`")
-    __BATT=$(__sr "`__battery_color`")
+    __JOBS=$(__sr "$(__jobcount_color)")
+    __LOAD=$(__sr "$(__load_color)")
+    __BATT=$(__sr "$(__battery_color)")
 
     # in main prompt: no space
-    __USER="`__user`"
-    __HOST="`__host_color`"
-    __PERM="`__permissions_color`"
-    __PWD=$(__shorten_path $PWD $PATH_LENGTH)
+    __USER=$(__user)
+    __HOST=$(__host_color)
+    __PERM=$(__permissions_color)
+     __PWD=$(__shorten_path $PWD $PATH_LENGTH)
 
     # right of main prompt: space at left
-     __GIT=$(__sl "`__git_branch_color`")
-      __HG=$(__sl "`__hg_branch_color`")
-     __SVN=$(__sl "`__svn_branch_color`")
+     __GIT=$(__sl "$(__git_branch_color)")
+      __HG=$(__sl "$(__hg_branch_color)")
+     __SVN=$(__sl "$(__svn_branch_color)")
 
     # end of the prompt line: double spaces
-    __MARK=$(__sb "`__smart_mark`")
+    __MARK=$(__sb "$(__smart_mark)")
 
 
     # add jobs, load and battery

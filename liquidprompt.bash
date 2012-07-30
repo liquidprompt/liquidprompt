@@ -65,6 +65,12 @@ PATH_LENGTH=35
 # Recommended value is 2
 PATH_KEEP=2
 
+# Do we use reverse colors (black on white) instead of normal theme (white on black)
+# Defaults to 0 (normal colors)
+# set to 1 if you use black on white
+REVERSE=0
+
+
 ###############
 # OS specific #
 ###############
@@ -83,64 +89,72 @@ esac
 if [[ "$OS" == "FreeBSD" ]] ; then
 
     BLACK="\[$(tput AF 0)\]"
-
-    GRAY="\[$(tput md ; tput AF 0)\]"
-    LIGHT_GREY="\[$(tput AF 7)\]"
-    WHITE="\[$(tput md ; tput AF 7)\]"
+    BOLD_GRAY="\[$(tput md ; tput AF 0)\]"
+    WHITE="\[$(tput AF 7)\]"
+    BOLD_WHITE="\[$(tput md ; tput AF 7)\]"
 
     RED="\[$(tput AF 1)\]"
-    LIGHT_RED="\[$(tput md ; tput AF 1)\]"
+    BOLD_RED="\[$(tput md ; tput AF 1)\]"
     WARN_RED="\[$(tput AF 0 ; tput setab 1)\]"
     CRIT_RED="\[$(tput md; tput AF 7 ; tput setab 1)\]"
 
     GREEN="\[$(tput AF 2)\]"
-    LIGHT_GREEN="\[$(tput md ; tput AF 2)\]"
+    BOLD_GREEN="\[$(tput md ; tput AF 2)\]"
 
     YELLOW="\[$(tput AF 3)\]"
-    LIGHT_YELLOW="\[$(tput md ; tput AF 3)\]"
+    BOLD_YELLOW="\[$(tput md ; tput AF 3)\]"
 
     BLUE="\[$(tput AF 4)\]"
-    LIGHT_BLUE="\[$(tput md ; tput AF 4)\]"
+    BOLD_BLUE="\[$(tput md ; tput AF 4)\]"
 
     PURPLE="\[$(tput AF 5)\]"
     PINK="\[$(tput md ; tput AF 5)\]"
 
     CYAN="\[$(tput AF 6)\]"
-    LIGHT_CYAN="\[$(tput md ; tput AF 6)\]"
+    BOLD_CYAN="\[$(tput md ; tput AF 6)\]"
 
     NO_COL="\[$(tput me)\]"
 
 else
     # default to Linux
     BLACK="\[$(tput setaf 0)\]"
-
-    GRAY="\[$(tput bold ; tput setaf 0)\]"
-    LIGHT_GREY="\[$(tput setaf 7)\]"
-    WHITE="\[$(tput bold ; tput setaf 7)\]"
+    BOLD_GRAY="\[$(tput bold ; tput setaf 0)\]"
+    WHITE="\[$(tput setaf 7)\]"
+    BOLD_WHITE="\[$(tput bold ; tput setaf 7)\]"
 
     RED="\[$(tput setaf 1)\]"
-    LIGHT_RED="\[$(tput bold ; tput setaf 1)\]"
+    BOLD_RED="\[$(tput bold ; tput setaf 1)\]"
     WARN_RED="\[$(tput setaf 0 ; tput setab 1)\]"
     CRIT_RED="\[$(tput bold; tput setaf 7 ; tput setab 1)\]"
 
     GREEN="\[$(tput setaf 2)\]"
-    LIGHT_GREEN="\[$(tput bold ; tput setaf 2)\]"
+    BOLD_GREEN="\[$(tput bold ; tput setaf 2)\]"
 
     YELLOW="\[$(tput setaf 3)\]"
-    LIGHT_YELLOW="\[$(tput bold ; tput setaf 3)\]"
+    BOLD_YELLOW="\[$(tput bold ; tput setaf 3)\]"
 
     BLUE="\[$(tput setaf 4)\]"
-    LIGHT_BLUE="\[$(tput bold ; tput setaf 4)\]"
+    BOLD_BLUE="\[$(tput bold ; tput setaf 4)\]"
 
     PURPLE="\[$(tput setaf 5)\]"
     PINK="\[$(tput bold ; tput setaf 5)\]"
 
     CYAN="\[$(tput setaf 6)\]"
-    LIGHT_CYAN="\[$(tput bold ; tput setaf 6)\]"
+    BOLD_CYAN="\[$(tput bold ; tput setaf 6)\]"
 
     NO_COL="\[$(tput sgr0)\]"
 
 fi
+
+# Foreground colors
+# can be set to white or black
+FG=$WHITE
+BOLD_FG=$BOLD_WHITE
+if [[ $REVERSE == 1 ]] ; then
+    FG=$BLACK
+    BOLD_FG=$BOLD_GRAY
+fi
+
 
 # get cpu number
 __cpunum_Linux()
@@ -193,12 +207,12 @@ __user()
     if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${LIGHT_GREY}\u${NO_COL}"
+            user="${FG}\u${NO_COL}"
         else
             user="\u"
         fi
     else
-        user="${LIGHT_YELLOW}\u${NO_COL}"
+        user="${BOLD_YELLOW}\u${NO_COL}"
     fi
 
     echo -ne $user
@@ -249,7 +263,7 @@ __host_color()
     if [[ "$conn" == "lcl" ]] ; then
         ret="${ret}" # no hostname if local
     elif [[ "$conn" == "ssh" ]] ; then
-        ret="${ret}@${LIGHT_CYAN}\h"
+        ret="${ret}@${BOLD_CYAN}\h"
     elif [[ "$conn" == "tel" ]] ; then
         ret="${ret}@${WARN_RED}\h"
     else
@@ -369,13 +383,13 @@ __jobcount_color()
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
 
     if   [[ $running != "0" && $stopped != "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${BOLD_YELLOW}${stopped}t${NO_COL}"
 
     elif [[ $running != "0" && $stopped == "0" && $screens == "0" ]] ; then
         rep="${NO_COL}${YELLOW}${running}r${NO_COL}"
 
     elif [[ $running == "0" && $stopped != "0" && $screens == "0" ]] ; then
-        rep="${NO_COL}${LIGHT_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${BOLD_YELLOW}${stopped}t${NO_COL}"
 
     elif [[ $running == "0" && $stopped == "0" && $screens != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}"
@@ -384,7 +398,7 @@ __jobcount_color()
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}"
 
     elif [[ $running == "0" && $stopped != "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${BOLD_YELLOW}${stopped}t${NO_COL}"
     fi
     echo -ne "$rep"
 }
@@ -553,11 +567,11 @@ __battery_color()
 
         ret="b${NO_COL}"
         if [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
-            ret="${ret}${LIGHT_GREEN}"
+            ret="${ret}${BOLD_GREEN}"
         elif [[ ${bat} -le 40 ]] && [[ ${bat} -gt 20 ]] ; then
-            ret="${ret}${LIGHT_YELLOW}"
+            ret="${ret}${BOLD_YELLOW}"
         elif [[ ${bat} -le 20 ]] && [[ ${bat} -gt 10 ]] ; then
-            ret="${ret}${LIGHT_RED}"
+            ret="${ret}${BOLD_RED}"
         elif [[ ${bat} -le 10 ]] && [[ ${bat} -gt 5 ]] ; then
             ret="${ret}${WARN_RED}"
         else
@@ -594,13 +608,13 @@ __load_color()
     then
         ret="l${NO_COL}"
         if [[ $load -lt 70 ]] ; then
-            ret="${ret}${LIGHT_GREY}"
+            ret="${ret}${FG}"
         elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
-            ret="${ret}${LIGHT_GREEN}"
+            ret="${ret}${BOLD_GREEN}"
         elif [[ $load -ge 80 ]] && [[ $load -lt 95 ]] ; then
-            ret="${ret}${LIGHT_YELLOW}"
+            ret="${ret}${BOLD_YELLOW}"
         elif [[ $load -ge 95 ]] && [[ $load -lt 150 ]] ; then
-            ret="${ret}${LIGHT_RED}"
+            ret="${ret}${BOLD_RED}"
         elif [[ $load -ge 150 ]] && [[ $load -lt 200 ]] ; then
             ret="${ret}${WARN_RED}"
         else
@@ -622,15 +636,15 @@ __smart_mark()
     if [[ "$EUID" -ne "0" ]]
     then
         if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
-            echo -ne "${WHITE}±${NO_COL}"
+            echo -ne "${BOLD_FG}±${NO_COL}"
         else
-            echo -ne "${WHITE}\\\$${NO_COL}"
+            echo -ne "${BOLD_FG}\\\$${NO_COL}"
         fi
     else
         if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
-            echo -ne "${LIGHT_RED}±${NO_COL}"
+            echo -ne "${BOLD_RED}±${NO_COL}"
         else
-            echo -ne "${LIGHT_RED}#${NO_COL}"
+            echo -ne "${BOLD_RED}#${NO_COL}"
         fi
     fi
 }
@@ -695,7 +709,7 @@ __set_bash_prompt()
     # if not root
     if [[ "$EUID" -ne "0" ]]
     then
-        PS1="${PS1}[${__USER}${__HOST}${__PERM}${WHITE}${__PWD}${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${__PERM}${BOLD_FG}${__PWD}${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
         PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}${YELLOW}${__PWD}${NO_COL}]"

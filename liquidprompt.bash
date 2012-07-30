@@ -35,10 +35,10 @@
 #     green = no changes or commits
 
 # Check for recent enough version of bash.
-[ -z "$BASH_VERSION" -o -z "$PS1" -o -z "$TERM" ] && return;
+[[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;
 
 bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-if [ $bmajor -lt 3 ] || [ $bmajor -eq 3 -a $bminor -lt 2 ]; then
+if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
     unset bash bmajor bminor
     return
 fi
@@ -190,7 +190,7 @@ __load_SunOS()
 __user()
 {
     # if user is not root
-    if [ "$EUID" -ne "0" ] ; then
+    if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
             user="${LIGHT_GREY}\u${NO_COL}"
@@ -217,19 +217,19 @@ __connection()
     # Are we in an SSH connexion?
     SSH_FLAG=0
     SSH_IP=${SSH_CLIENT%% *}
-    if [ $SSH_IP ] ; then
+    if [[ $SSH_IP ]] ; then
       SSH_FLAG=1
     fi
     SSH2_IP=`echo $SSH2_CLIENT | awk '{ print $1 }'`
-    if [ $SSH2_IP ] ; then
+    if [[ $SSH2_IP ]] ; then
       SSH_FLAG=1
     fi
 
-    if [ $SSH_FLAG -eq 1 ] ; then
+    if [[ $SSH_FLAG -eq 1 ]] ; then
       CONN="ssh"
-    elif [ -z $SESS_SRC ] ; then
+    elif [[ -z $SESS_SRC ]] ; then
       CONN="lcl"
-    elif [ $SESS_SRC = "(:0.0)" -o $SESS_SRC = "" ] ; then
+    elif [[ $SESS_SRC = "(:0.0)" || $SESS_SRC = "" ]] ; then
       CONN="lcl"
     else
       CONN="tel"
@@ -246,11 +246,11 @@ __host_color()
     conn=$(__connection)
 
     ret="${NO_COL}"
-    if [ "$conn" == "lcl" ] ; then
+    if [[ "$conn" == "lcl" ]] ; then
         ret="${ret}" # no hostname if local
-    elif [ "$conn" == "ssh" ] ; then
+    elif [[ "$conn" == "ssh" ]] ; then
         ret="${ret}@${LIGHT_CYAN}\h"
-    elif [ "$conn" == "tel" ] ; then
+    elif [[ "$conn" == "tel" ]] ; then
         ret="${ret}@${WARN_RED}\h"
     else
         ret="${ret}@\h"
@@ -285,7 +285,7 @@ __shorten_path()
     local max_len=$(($COLUMNS*$len_percent/100))
     local mask_len="${#mask}"
 
-    if [ "$len" -gt "$max_len" ]
+    if [[ "$len" -gt "$max_len" ]]
     then
         # finds all the '/' in
         # the path and stores their
@@ -294,7 +294,7 @@ __shorten_path()
         local pos=()
         for ((i=0;i<len;i++))
         do
-            if [ "${p:i:1}" == "/" ]
+            if [[ "${p:i:1}" == "/" ]]
             then
                 pos=(${pos[@]} $i)
             fi
@@ -306,7 +306,7 @@ __shorten_path()
         # length limit
         #
         local i=$keep
-        while [ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]
+        while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
         do
             i=$((i+1))
         done
@@ -314,7 +314,7 @@ __shorten_path()
         # let us check if it's OK to
         # print the whole thing
         #
-        if [ "${pos[i]}" -eq "0" ]
+        if [[ "${pos[i]}" -eq "0" ]]
         then
             # the path is shorter than
             # the maximum allowed length,
@@ -322,7 +322,7 @@ __shorten_path()
             #
             echo "$p"
 
-        elif [ "${pos[i]}" = "$len" ]
+        elif [[ "${pos[i]}" = "$len" ]]
         then
             # constraints are broken because
             # the maximum allowed size is smaller
@@ -347,7 +347,7 @@ __shorten_path()
 # colored in red if it have not.
 __permissions_color()
 {
-    if [ -w "${PWD}" ]; then 
+    if [[ -w "${PWD}" ]]; then 
         echo "${GREEN}:${NO_COL}"
     else
         echo "${RED}:${NO_COL}"
@@ -368,22 +368,22 @@ __jobcount_color()
     local stopped=$(jobs -s | wc -l | tr -d " ")
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
 
-    if   [ $running != "0" -a $stopped != "0" -a $screens != "0" ] ; then
+    if   [[ $running != "0" && $stopped != "0" && $screens != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
 
-    elif [ $running != "0" -a $stopped == "0" -a $screens == "0" ] ; then
+    elif [[ $running != "0" && $stopped == "0" && $screens == "0" ]] ; then
         rep="${NO_COL}${YELLOW}${running}r${NO_COL}"
 
-    elif [ $running == "0" -a $stopped != "0" -a $screens == "0" ] ; then
+    elif [[ $running == "0" && $stopped != "0" && $screens == "0" ]] ; then
         rep="${NO_COL}${LIGHT_YELLOW}${stopped}t${NO_COL}"
 
-    elif [ $running == "0" -a $stopped == "0" -a $screens != "0" ] ; then
+    elif [[ $running == "0" && $stopped == "0" && $screens != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}"
 
-    elif [ $running != "0" -a $stopped == "0" -a $screens != "0" ] ; then
+    elif [[ $running != "0" && $stopped == "0" && $screens != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}"
 
-    elif [ $running == "0" -a $stopped != "0" -a $screens != "0" ] ; then
+    elif [[ $running == "0" && $stopped != "0" && $screens != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"
     fi
     echo -ne "$rep"
@@ -392,7 +392,7 @@ __jobcount_color()
 # Display the return value of the last command, if different from zero
 __return_value()
 {
-    if [ "$1" -ne "0" ]
+    if [[ "$1" -ne "0" ]]
     then
         echo -ne "$1"
     fi
@@ -408,7 +408,7 @@ __return_value()
 # Get the branch name of the current directory
 __git_branch()
 {
-    if git rev-parse --git-dir >/dev/null 2>&1 && [ ! -z "`git branch`" ]; then
+    if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "`git branch`" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }
@@ -421,7 +421,7 @@ __git_branch_color()
 {
     command -v git >/dev/null 2>&1 || return 1;
     branch=$(__git_branch)
-    if [ ! -z "$branch" ] ; then
+    if [[ ! -z "$branch" ]] ; then
 
         git diff --quiet >/dev/null 2>&1
         GD=$?
@@ -429,18 +429,18 @@ __git_branch_color()
         GDC=$?
 
         has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
-        if [ -z "$has_commit" ]; then
+        if [[ -z "$has_commit" ]] ; then
             has_commit=0
         fi
-        if [ "$GD" -eq 1 -o "$GDC" -eq "1" ]; then
-            if [ "$has_commit" -gt "0" ] ; then
+        if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
+            if [[ "$has_commit" -gt "0" ]] ; then
                 # changes to commit and commits to push
                 ret="${RED}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
             else
                 ret="${RED}${branch}${NO_COL}" # changes to commit
             fi
         else
-            if [ "$has_commit" -gt "0" ] ; then
+            if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
                 ret="${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
             else
@@ -458,7 +458,7 @@ __git_branch_color()
 __hg_branch()
 {
     branch="$(hg branch 2>/dev/null)"
-    if [ $? -eq 0 ] && [ ! -z "`hg branch`" ]; then
+    if [[ $? -eq 0 ]] && [[ ! -z "`hg branch`" ]] ; then
         echo -n "$(hg branch)"
     fi
 }
@@ -471,8 +471,8 @@ __hg_branch_color()
 {
     command -v hg >/dev/null 2>&1 || return 1;
     branch=$(__hg_branch)
-    if [ ! -z "$branch" ] ; then
-        if [ $(hg status --quiet -n | wc -l | sed -e "s/ //g") = 0 ] ; then
+    if [[ ! -z "$branch" ]] ; then
+        if [[ $(hg status --quiet -n | wc -l | sed -e "s/ //g") = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else
             ret="${RED}${branch}${NO_COL}" # changes to commit
@@ -487,7 +487,7 @@ __hg_branch_color()
 # For the first level of the repository, gives the repository name
 __svn_branch()
 {
-    if [ -d ".svn" ] ; then
+    if [[ -d ".svn" ]] ; then
         root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([[:alpha:]]*\)<\/root>$/\1/")
         branch=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\([[:alpha:]]*\).*<\/url>$/\1/")
         if [[ "$branch" == "<url>"* ]] ; then
@@ -507,9 +507,9 @@ __svn_branch_color()
 {
     command -v svn >/dev/null 2>&1 || return 1;
     branch=$(__svn_branch)
-    if [ ! -z "$branch" ] ; then
+    if [[ ! -z "$branch" ]] ; then
         commits=$(svn status | grep -v "?" | wc -l)
-        if [ $commits = 0 ] ; then
+        if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else
             ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
@@ -529,10 +529,10 @@ __battery()
 {
     command -v acpi >/dev/null 2>&1 || return 1;
     bat=`acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/"`
-    if [ "${bat}" == "" ] ; then
+    if [[ "${bat}" == "" ]] ; then
         return 1
        fi
-    if [ ${bat} -le $BATTERY_THRESHOLD ] ; then
+    if [[ ${bat} -le $BATTERY_THRESHOLD ]] ; then
         echo -n "${bat}"
         return 0
     else
@@ -544,21 +544,21 @@ __battery()
 __battery_color()
 {
     bat=$(__battery)
-    if [ "$?" = "1" ] ; then return; fi;    # no battery support
+    if [[ "$?" = "1" ]] ; then return; fi;    # no battery support
 
-    if [ "$bat" != "" ] ; then
-        if [ ${bat} -gt $BATTERY_THRESHOLD ]; then
+    if [[ "$bat" != "" ]] ; then
+        if [[ ${bat} -gt $BATTERY_THRESHOLD ]] ; then
             return;    # nothing displayed above 75%
         fi
 
         ret="b${NO_COL}"
-        if [ ${bat} -le 75 ] && [ ${bat} -gt 50 ] ; then
+        if [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
             ret="${ret}${LIGHT_GREEN}"
-        elif [ ${bat} -le 40 ] && [ ${bat} -gt 20 ] ; then
+        elif [[ ${bat} -le 40 ]] && [[ ${bat} -gt 20 ]] ; then
             ret="${ret}${LIGHT_YELLOW}"
-        elif [ ${bat} -le 20 ] && [ ${bat} -gt 10 ] ; then
+        elif [[ ${bat} -le 20 ]] && [[ ${bat} -gt 10 ]] ; then
             ret="${ret}${LIGHT_RED}"
-        elif [ ${bat} -le 10 ] && [ ${bat} -gt 5 ] ; then
+        elif [[ ${bat} -le 10 ]] && [[ ${bat} -gt 5 ]] ; then
             ret="${ret}${WARN_RED}"
         else
             ret="${ret}${CRIT_RED}"
@@ -585,23 +585,23 @@ __load_color()
 
     loadval=$(__load_$OS)
     load=$(echo $loadval | sed 's/\.//g;s/^0*//g' )
-    if [ -z "$load" ]; then
+    if [[ -z "$load" ]] ; then
         load=0
     fi
     let "load=$load/$__CPUNUM"
 
-    if [ $load -ge $LOAD_THRESHOLD ]
+    if [[ $load -ge $LOAD_THRESHOLD ]]
     then
         ret="l${NO_COL}"
-        if [ $load -lt 70 ] ; then
+        if [[ $load -lt 70 ]] ; then
             ret="${ret}${LIGHT_GREY}"
-        elif [ $load -ge 1 ] && [ $load -lt 80 ] ; then
+        elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
             ret="${ret}${LIGHT_GREEN}"
-        elif [ $load -ge 80 ] && [ $load -lt 95 ] ; then
+        elif [[ $load -ge 80 ]] && [[ $load -lt 95 ]] ; then
             ret="${ret}${LIGHT_YELLOW}"
-        elif [ $load -ge 95 ] && [ $load -lt 150 ] ; then
+        elif [[ $load -ge 95 ]] && [[ $load -lt 150 ]] ; then
             ret="${ret}${LIGHT_RED}"
-        elif [ $load -ge 150 ] && [ $load -lt 200 ] ; then
+        elif [[ $load -ge 150 ]] && [[ $load -lt 200 ]] ; then
             ret="${ret}${WARN_RED}"
         else
             ret="${ret}${CRIT_RED}"
@@ -619,15 +619,15 @@ __load_color()
 # Set the prompt mark to ± if VCS, # if root and else $
 __smart_mark()
 {
-    if [ "$EUID" -ne "0" ]
+    if [[ "$EUID" -ne "0" ]]
     then
-        if [ ! -z $(__git_branch) ] || [ ! -z $(__hg_branch) ] || [ ! -z $(__svn_branch) ]; then
+        if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
             echo -ne "${WHITE}±${NO_COL}"
         else
             echo -ne "${WHITE}\\\$${NO_COL}"
         fi
     else
-        if [ ! -z $(__git_branch) ] || [ ! -z $(__hg_branch) ] || [ ! -z $(__svn_branch) ]; then
+        if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
             echo -ne "${LIGHT_RED}±${NO_COL}"
         else
             echo -ne "${LIGHT_RED}#${NO_COL}"
@@ -638,7 +638,7 @@ __smart_mark()
 # insert a space on the right
 __sr()
 {
-    if [ ! -z "$1" ] ; then
+    if [[ ! -z "$1" ]] ; then
         echo -n "$1 "
     fi
 }
@@ -646,7 +646,7 @@ __sr()
 # insert a space on the left
 __sl()
 {
-    if [ ! -z "$1" ] ; then
+    if [[ ! -z "$1" ]] ; then
         echo -n " $1"
     fi
 }
@@ -654,7 +654,7 @@ __sl()
 # insert two space, before and after
 __sb()
 {
-    if [ ! -z "$1" ] ; then
+    if [[ ! -z "$1" ]] ; then
         echo -n " $1 "
     fi
 }
@@ -693,7 +693,7 @@ __set_bash_prompt()
     PS1="${__BATT}${__LOAD}${__JOBS}"
 
     # if not root
-    if [ "$EUID" -ne "0" ]
+    if [[ "$EUID" -ne "0" ]]
     then
         PS1="${PS1}[${__USER}${__HOST}${__PERM}${WHITE}${__PWD}${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"

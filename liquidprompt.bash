@@ -376,7 +376,7 @@ __jobcount_color()
 {
     local running=$(jobs -r | wc -l | tr -d " ")
     local stopped=$(jobs -s | wc -l | tr -d " ")
-    local screens=$(screen -ls | grep -c Detach )
+    local screens=$(screen -ls 2> /dev/null | grep -c Detach )
 
     if   [ $running != "0" -a $stopped != "0" -a $screens != "0" ] ; then
         rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${LIGHT_YELLOW}${stopped}t${NO_COL}"

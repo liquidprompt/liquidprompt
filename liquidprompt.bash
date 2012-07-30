@@ -82,11 +82,9 @@ esac
 # Colors declarations
 if [[ "$OS" == "FreeBSD" ]] ; then
 
-    BLACK="\[$(tput AF 0)\]"
-
     GRAY="\[$(tput md ; tput AF 0)\]"
     LIGHT_GREY="\[$(tput AF 7)\]"
-    WHITE="\[$(tput md ; tput AF 7)\]"
+    BOLD="\[$(tput me ; tput md)\]"
 
     RED="\[$(tput AF 1)\]"
     LIGHT_RED="\[$(tput md ; tput AF 1)\]"
@@ -112,11 +110,9 @@ if [[ "$OS" == "FreeBSD" ]] ; then
 
 else
     # default to Linux
-    BLACK="\[$(tput setaf 0)\]"
-
     GRAY="\[$(tput bold ; tput setaf 0)\]"
     LIGHT_GREY="\[$(tput setaf 7)\]"
-    WHITE="\[$(tput bold ; tput setaf 7)\]"
+    BOLD="\[$(tput sgr0 ; tput bold)\]"
 
     RED="\[$(tput setaf 1)\]"
     LIGHT_RED="\[$(tput bold ; tput setaf 1)\]"
@@ -347,7 +343,7 @@ __shorten_path()
 # colored in red if it have not.
 __permissions_color()
 {
-    if [[ -w "${PWD}" ]]; then 
+    if [[ -w "${PWD}" ]]; then
         echo "${GREEN}:${NO_COL}"
     else
         echo "${RED}:${NO_COL}"
@@ -622,9 +618,9 @@ __smart_mark()
     if [[ "$EUID" -ne "0" ]]
     then
         if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
-            echo -ne "${WHITE}±${NO_COL}"
+            echo -ne "${BOLD}±${NO_COL}"
         else
-            echo -ne "${WHITE}\\\$${NO_COL}"
+            echo -ne "${BOLD}\\\$${NO_COL}"
         fi
     else
         if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
@@ -695,7 +691,7 @@ __set_bash_prompt()
     # if not root
     if [[ "$EUID" -ne "0" ]]
     then
-        PS1="${PS1}[${__USER}${__HOST}${__PERM}${WHITE}${__PWD}${NO_COL}]"
+        PS1="${PS1}[${__USER}${__HOST}${__PERM}${BOLD}${__PWD}${NO_COL}]"
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
         PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}${YELLOW}${__PWD}${NO_COL}]"

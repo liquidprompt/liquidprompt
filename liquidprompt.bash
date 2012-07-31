@@ -79,7 +79,7 @@ OS="Linux"
 case $(uname) in
     "Linux"  ) OS="Linux"   ;;
     "FreeBSD") OS="FreeBSD" ;;
-    "Darwin") OS="FreeBSD" ;;
+    "Darwin") OS="Darwin" ;;
     "DragonFly") OS="FreeBSD" ;;
     "SunOS") OS="SunOS" ;;
 esac
@@ -166,6 +166,11 @@ __cpunum_FreeBSD()
     sysctl -n hw.ncpu
 }
 
+__cpunum_Darwin()
+{
+	__cpunum_FreeBSD
+}
+
 __cpunum_SunOS()
 {
     kstat -m cpu_info | grep "module: cpu_info"  | wc -l
@@ -186,6 +191,11 @@ __load_FreeBSD()
 {
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
     echo -n "$load"
+}
+
+__load_Darwin()
+{
+	__load_FreeBSD
 }
 
 __load_SunOS()

@@ -66,9 +66,8 @@ PATH_LENGTH=35
 PATH_KEEP=2
 
 # Do we use reverse colors (black on white) instead of normal theme (white on black)
-# Defaults to 0 (normal colors)
-# set to 1 if you use black on white
-REVERSE=0
+# Defaults to unset (white on black)
+# Otherwise use REVERSE="1" source liquidprompt.bash
 
 
 ###############
@@ -150,7 +149,7 @@ fi
 # can be set to white or black
 FG=$WHITE
 BOLD_FG=$BOLD_WHITE
-if [[ $REVERSE == 1 ]] ; then
+if [[ $REVERSE ]] ; then
     FG=$BLACK
     BOLD_FG=$BOLD_GRAY
 fi

@@ -66,9 +66,8 @@ PATH_LENGTH=35
 PATH_KEEP=2
 
 # Do we use reverse colors (black on white) instead of normal theme (white on black)
-# Defaults to 0 (normal colors)
-# set to 1 if you use black on white
-REVERSE=0
+# Defaults to unset (white on black)
+# Otherwise use REVERSE="1" source liquidprompt.bash
 
 
 ###############
@@ -80,7 +79,7 @@ OS="Linux"
 case $(uname) in
     "Linux"  ) OS="Linux"   ;;
     "FreeBSD") OS="FreeBSD" ;;
-    "Darwin") OS="FreeBSD" ;;
+    "Darwin") OS="Darwin" ;;
     "DragonFly") OS="FreeBSD" ;;
     "SunOS") OS="SunOS" ;;
 esac
@@ -150,7 +149,7 @@ fi
 # can be set to white or black
 FG=$WHITE
 BOLD_FG=$BOLD_WHITE
-if [[ $REVERSE == 1 ]] ; then
+if [[ $REVERSE ]] ; then
     FG=$BLACK
     BOLD_FG=$BOLD_GRAY
 fi
@@ -165,6 +164,11 @@ __cpunum_Linux()
 __cpunum_FreeBSD()
 {
     sysctl -n hw.ncpu
+}
+
+__cpunum_Darwin()
+{
+	__cpunum_FreeBSD
 }
 
 __cpunum_SunOS()
@@ -187,6 +191,11 @@ __load_FreeBSD()
 {
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
     echo -n "$load"
+}
+
+__load_Darwin()
+{
+	__load_FreeBSD
 }
 
 __load_SunOS()
@@ -523,6 +532,7 @@ __svn_branch_color()
     branch=$(__svn_branch)
     if [[ ! -z "$branch" ]] ; then
         commits=$(svn status | grep -v "?" | wc -l)
+        commits=$((commits))
         if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else
@@ -692,7 +702,7 @@ __set_bash_prompt()
     __USER=$(__user)
     __HOST=$(__host_color)
     __PERM=$(__permissions_color)
-     __PWD=$(__shorten_path $PWD $PATH_LENGTH)
+     __PWD=$(__shorten_path "$PWD" $PATH_LENGTH)
 
     # right of main prompt: space at left
      __GIT=$(__sl "$(__git_branch_color)")

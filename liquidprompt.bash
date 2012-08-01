@@ -532,6 +532,7 @@ __svn_branch_color()
     branch=$(__svn_branch)
     if [[ ! -z "$branch" ]] ; then
         commits=$(svn status | grep -v "?" | wc -l)
+        commits=$((commits))
         if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else

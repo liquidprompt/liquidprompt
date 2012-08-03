@@ -49,25 +49,13 @@ unset bash bmajor bminor
 # CONFIGURATION #
 #################
 
-# Maximal value under which the battery level is displayed
-# Recommended value is 75
-BATTERY_THRESHOLD=75
+LP_BATTERY_THRESHOLD=75
+LP_LOAD_THRESHOLD=60
+LP_PATH_LENGTH=35
+LP_PATH_KEEP=2
+LP_REVERSE=0
 
-# Minimal value after which the load average is displayed
-# Recommended value is 60
-LOAD_THRESHOLD=60
-
-# The maximum percentage of the screen width used to display the path
-# Recommended value is 35
-PATH_LENGTH=35
-
-# How many directories to keep at the beginning of a shortened path
-# Recommended value is 2
-PATH_KEEP=2
-
-# Do we use reverse colors (black on white) instead of normal theme (white on black)
-# Defaults to unset (white on black)
-# Otherwise use REVERSE="1" source liquidprompt.bash
+source ~/.liquidpromptrc 2> /dev/null
 
 
 ###############
@@ -149,7 +137,7 @@ fi
 # can be set to white or black
 FG=$WHITE
 BOLD_FG=$BOLD_WHITE
-if [[ $REVERSE ]] ; then
+if [[ $LP_REVERSE == 1 ]] ; then
     FG=$BLACK
     BOLD_FG=$BOLD_GRAY
 fi
@@ -168,7 +156,7 @@ __cpunum_FreeBSD()
 
 __cpunum_Darwin()
 {
-	__cpunum_FreeBSD
+       __cpunum_FreeBSD
 }
 
 __cpunum_SunOS()
@@ -195,7 +183,7 @@ __load_FreeBSD()
 
 __load_Darwin()
 {
-	__load_FreeBSD
+       __load_FreeBSD
 }
 
 __load_SunOS()
@@ -299,13 +287,20 @@ __shorten_path()
     # the character that will replace the part of the path that is masked
     local mask=" … "
     # index of the directory to keep from the root (starts at 0)
-    local keep=$((PATH_KEEP-1))
+    local keep=$((LP_PATH_KEEP-1))
 
     local len_percent=$2
 
     local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
-    local max_len=$(($COLUMNS*$len_percent/100))
+
+    if [ -z "$COLUMNS" ]
+    then
+        local columns=80
+    else
+        local columns=$COLUMNS
+    fi
+    local max_len=$(($columns*$len_percent/100))
     local mask_len="${#mask}"
 
     if [[ "$len" -gt "$max_len" ]]
@@ -556,7 +551,7 @@ __battery()
     if [[ "${bat}" == "" ]] ; then
         return 1
        fi
-    if [[ ${bat} -le $BATTERY_THRESHOLD ]] ; then
+    if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
         echo -n "${bat}"
         return 0
     else
@@ -571,7 +566,7 @@ __battery_color()
     if [[ "$?" = "1" ]] ; then return; fi;    # no battery support
 
     if [[ "$bat" != "" ]] ; then
-        if [[ ${bat} -gt $BATTERY_THRESHOLD ]] ; then
+        if [[ ${bat} -gt $LP_BATTERY_THRESHOLD ]] ; then
             return;    # nothing displayed above 75%
         fi
 
@@ -614,7 +609,7 @@ __load_color()
     fi
     let "load=$load/$__CPUNUM"
 
-    if [[ $load -ge $LOAD_THRESHOLD ]]
+    if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         ret="l${NO_COL}"
         if [[ $load -lt 70 ]] ; then
@@ -702,7 +697,7 @@ __set_bash_prompt()
     __USER=$(__user)
     __HOST=$(__host_color)
     __PERM=$(__permissions_color)
-     __PWD=$(__shorten_path "$PWD" $PATH_LENGTH)
+     __PWD=$(__shorten_path $PWD $LP_PATH_LENGTH)
 
     # right of main prompt: space at left
      __GIT=$(__sl "$(__git_branch_color)")

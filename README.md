@@ -53,18 +53,35 @@ there is changes, in yellow if there is pending commits to push;
 * a smart mark: ± for VCS directories, $ for simple user, a red # for root.
 
 
-## USAGE
+## INSTALL
 
 Include the file in your bash configuration, for example in your `.bashrc`:
 
 `source liquidprompt.bash`
 
+Copy the `liquidpromptrc-dist` file in your home directory as
+`~/.liquidpromptrc` and edit it according to your preferences. If you skip this
+step, the default behaviour will be used.
+
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER
 
+You can configure some variables in the `~/.liquidpromptrc` file:
+
+* `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is
+displayed
+* `LP_LOAD_THRESHOLD`, the minimal value after which the load average is
+displayed
+* `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display
+the path
+* `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened
+path
+* `LP_REVERSE`, choose between reverse colors (black on white) instead of normal
+theme (white on black)
+
 Most of the display is prepared in the `__set_bash_prompt` function, apart from
 features that needs several colors (such as the load colormap). You can sort
-what you want to see by editing the PS1 variable.
+what you want to see by editing the PS1 variable here.
 
 
 ## KNOWN LIMITATIONS AND BUGS

@@ -1,0 +1,26 @@
+
+####################################
+# LIQUID PROMPT CONFIGURATION FILE #
+####################################
+
+# Maximal value under which the battery level is displayed
+# Recommended value is 75
+LP_BATTERY_THRESHOLD=75
+
+# Minimal value after which the load average is displayed
+# Recommended value is 60
+LP_LOAD_THRESHOLD=60
+
+# The maximum percentage of the screen width used to display the path
+# Recommended value is 35
+LP_PATH_LENGTH=35
+
+# How many directories to keep at the beginning of a shortened path
+# Recommended value is 2
+LP_PATH_KEEP=2
+
+# Do we use reverse colors (black on white) instead of normal theme (white on black)
+# Defaults to 0 (normal colors)
+# set to 1 if you use black on white
+LP_REVERSE=0
+

@@ -293,7 +293,14 @@ __shorten_path()
 
     local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
-    local max_len=$(($COLUMNS*$len_percent/100))
+
+    if [ -z "$COLUMNS" ]
+    then
+        local columns=80
+    else
+        local columns=$COLUMNS
+    fi
+    local max_len=$(($columns*$len_percent/100))
     local mask_len="${#mask}"
 
     if [[ "$len" -gt "$max_len" ]]

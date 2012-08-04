@@ -475,7 +475,7 @@ __git_branch_color()
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL}${YELLOW}$has_commit${NO_COL})"
+                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL},${YELLOW}$has_commit${NO_COL})"
             else
                 ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL})" # changes to commit
             fi

@@ -18,13 +18,13 @@ to a default prompt:
 `[user:~] $ `
 
 If you have ran one command in background that is still running and that you are
-in a git repository, on branch "myb":
+in a git repository on a server, at branch "myb":
 
 `1r [user@server:~/liquidprompt] myb ± `
 
 A liquid prompt displaying everything may look like this:
 
-`b24% l42% 1s/1r/1t [user@server:~/ … /code/liquidprompt] master(3) 125 ± `
+`b24% l42% 1s/1r/1t [user@server:~/ … /code/liquidprompt] master(+10/-5,3) 125 ± `
 
 It displays:
 

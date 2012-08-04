@@ -454,6 +454,8 @@ __git_branch()
 # - green if the repository is up to date
 # - yellow if there is some commits not pushed
 # - red if there is changes to commit
+#
+# Add the number of pending commits and the impacted lines.
 __git_branch_color()
 {
     command -v git >/dev/null 2>&1 || return 1;
@@ -470,11 +472,12 @@ __git_branch_color()
             has_commit=0
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
+            has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
-                # changes to commit and commits to push
-                ret="${RED}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
+                # Changes to commit and commits to push
+                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL}${YELLOW}$has_commit${NO_COL})"
             else
-                ret="${RED}${branch}${NO_COL}" # changes to commit
+                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL})" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then

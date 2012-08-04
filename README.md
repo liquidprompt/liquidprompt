@@ -48,7 +48,8 @@ preserving the first two directories;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if
 there is changes, in yellow if there is pending commits to push;
-* the number of pending commits, if any;
+* the number of added/deleted lines, if changes have been made and the number
+of pending commits, if any;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for VCS directories, $ for simple user, a red # for root.
 

@@ -52,6 +52,9 @@ there is changes, in yellow if there is pending commits to push;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for VCS directories, $ for simple user, a red # for root.
 
+You can temporarily deactivate the liquid prompt and come back to your previous
+one by typing `prompt_off`. Use `prompt_on` to bring it back.
+
 
 ## INSTALL
 

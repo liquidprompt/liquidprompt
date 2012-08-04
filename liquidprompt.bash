@@ -752,6 +752,21 @@ __set_bash_prompt()
     #PS1="\[\033[G\]${PS1}${NO_COL}"
 }
 
-PROMPT_COMMAND=__set_bash_prompt
+# Activate the liquid prompt
+prompt_on()
+{
+    LP_OLD_PROMPT="$PS1"
+    PROMPT_COMMAND=__set_bash_prompt
+}
+
+# Come back to the old prompt
+prompt_off()
+{
+    PS1=$LP_OLD_PROMPT
+    PROMPT_COMMAND=""
+}
+
+# By default, sourcing liquidprompt.bash will activate the liquid prompt
+prompt_on
 
 # vim: set ts=4 sw=4 tw=120 :

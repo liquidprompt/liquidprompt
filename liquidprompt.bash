@@ -53,26 +53,29 @@ unset bash bmajor bminor
 # CONFIGURATION #
 #################
 
+# Default values
 LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
 LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
 LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
 
-# Default config file is standard ~/.config/liquidpromt, but heirloom dotfile is also supported
+# Default config file may be the XDG standard ~/.config/liquidpromt,
+# but heirloom dotfile has priority.
 if [ -f "$HOME/.liquidpromptrc" ]
 then
     configfile="$HOME/.liquidpromtrc"
 elif [ -z "$XDG_HOME_DIR" ]
 then
-    configfile="$HOME/.config/liquidprompt"
+    configfile="$HOME/.config/liquidpromptrc"
 else
-    configfile="$XDG_HOME_DIR/liquidprompt"
+    configfile="$XDG_HOME_DIR/liquidpromptrc"
 fi
 if [ -f "$configfile" ]
 then
-    source "$configfile" 2> /dev/null
+    source "$configfile"
 fi
+
 
 ###############
 # OS specific #

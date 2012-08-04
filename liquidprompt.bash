@@ -1,6 +1,10 @@
 #!/bin/bash
 
+################################################################################
+# LIQUID PROMPT
 # An intelligent and non intrusive prompt for bash
+################################################################################
+
 
 # Licensed under the AGPL version 3
 #
@@ -17,22 +21,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# 2012 (c) nojhan <nojhan@gmail.com>
-# 2012 (c) Aurelien Requiem <aurelien@requiem.fr> #major rewrite and adaptation
+###########
+# AUTHORS #
+###########
 
-# Below are function for having a flexible dynamic prompt for power user:
-# - display the battery level (if necessary), with colormap (if any battery attached)
-# - if necessary, prints a counter for jobs that are attached to the current
-#   term (e.g. xterm &) or that are sleeping (e.g. Ctrl-z) or detached "screen" sessions
-# - display the load average, colored with a colormap
-# - displays the colored login@hostname
-#     - when root displays in red
-#     - when user displays in green
-# - displays the current path in blue
-# - when user, print the colored git branch name (if in a git repository):
-#     red = some changes are not commited, and yellow in parenthesis any unpushed commits (if any)
-#     yellow = some commits are not pushed. Number of commits in parenthesis
-#     green = no changes or commits
+# nojhan <nojhan@gmail.com>                     # Main author.
+# Aurelien Requiem <aurelien@requiem.fr>        # Major clean refactoring, variable path length, error codes, several bugfixes.
+# Joris Dedieu <joris@pontiac3.nfrance.com>     # Portability framework, FreeBSD support, bugfixes.
+# Ludovic Rousseau <ludovic.rousseau@gmail.com> # Lot of bugfixes.
+# Yann 'Ze' Richard <ze@nbox.org>               # Do not fail on missing commands.
+# François Schmidts <fschmidts@olfeo.com>       # Simpler SSH_IP acquiring method.
+# Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
+# Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
+
+
+# See the README.md file for a summary of features.
+
 
 # Check for recent enough version of bash.
 [[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;

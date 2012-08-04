@@ -60,8 +60,8 @@ Include the file in your bash configuration, for example in your `.bashrc`:
 `source liquidprompt.bash`
 
 Copy the `liquidpromptrc-dist` file in your home directory as
-`~/.liquidpromptrc` and edit it according to your preferences. If you skip this
-step, the default behaviour will be used.
+`~/.config/liquidpromptrc` or `~/.liquidpromptrc` and edit it according to your
+preferences. If you skip this step, the default behaviour will be used.
 
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER

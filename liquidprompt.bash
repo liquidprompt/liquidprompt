@@ -59,8 +59,20 @@ LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
 
-source ~/.liquidpromptrc 2> /dev/null
-
+# Default config file is standard ~/.config/liquidpromt, but heirloom dotfile is also supported
+if [ -f "$HOME/.liquidpromptrc" ]
+then
+    configfile="$HOME/.liquidpromtrc"
+elif [ -z "$XDG_HOME_DIR" ]
+then
+    configfile="$HOME/.config/liquidprompt"
+else
+    configfile="$XDG_HOME_DIR/liquidprompt"
+fi
+if [ -f "$configfile" ]
+then
+    source "$configfile" 2> /dev/null
+fi
 
 ###############
 # OS specific #

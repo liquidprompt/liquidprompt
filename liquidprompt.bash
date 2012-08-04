@@ -364,12 +364,12 @@ __shorten_path()
             # constraints are broken because
             # the maximum allowed size is smaller
             # than the last part of the path, plus
-            # '…'
+            # ' … '
             #
             echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
         else
             # constraints are satisfied, at least
-            # some parts of the path, plus …, are
+            # some parts of the path, plus ' … ', are
             # shorter than the maximum allowed size
             #
             echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
@@ -726,19 +726,24 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "$(__smart_mark)")
 
-
     # add jobs, load and battery
     PS1="${__BATT}${__LOAD}${__JOBS}"
+    # add user, host and permissions colon
+    PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}"
 
     # if not root
     if [[ "$EUID" -ne "0" ]]
     then
-        PS1="${PS1}[${__USER}${__HOST}${__PERM}${BOLD_FG}${__PWD}${NO_COL}]"
+        # path in foreground color
+        PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]"
+        # add VCS infos
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
-        PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}${YELLOW}${__PWD}${NO_COL}]"
+        # path in yellow
+        PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]"
         # do not add VCS infos
     fi
+    # add return code and prompt mark
     PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
 
     # Glue the bash prompt always go to the first column.

@@ -49,11 +49,11 @@ unset bash bmajor bminor
 # CONFIGURATION #
 #################
 
-LP_BATTERY_THRESHOLD=75
-LP_LOAD_THRESHOLD=60
-LP_PATH_LENGTH=35
-LP_PATH_KEEP=2
-LP_REVERSE=0
+LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
+LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
+LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
+LP_PATH_KEEP=${LP_PATH_KEEP:-2}
+LP_REVERSE=${LP_REVERSE:-0}
 
 source ~/.liquidpromptrc 2> /dev/null
 
@@ -527,6 +527,7 @@ __svn_branch_color()
     branch=$(__svn_branch)
     if [[ ! -z "$branch" ]] ; then
         commits=$(svn status | grep -v "?" | wc -l)
+        commits=$((commits))
         if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else

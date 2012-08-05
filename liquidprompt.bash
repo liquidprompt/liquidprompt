@@ -708,11 +708,11 @@ __sb()
 
 __set_bash_prompt()
 {
-    # execute the old prompt
-    $LP_OLD_PROMPT_COMMAND
-
     # as this get the last returned code, it should be called first
     __RET=$(__sl "$(__return_value $?)")
+
+    # execute the old prompt
+    $LP_OLD_PROMPT_COMMAND
 
     # left of main prompt: space at right
     __JOBS=$(__sr "$(__jobcount_color)")

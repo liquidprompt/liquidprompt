@@ -528,8 +528,9 @@ __hg_branch_color()
 __svn_branch()
 {
     if [[ -d ".svn" ]] ; then
-        root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([[:alpha:]]*\)<\/root>$/\1/")
-        branch=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\([[:alpha:]]*\).*<\/url>$/\1/")
+        root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([^\/]*\)<\/root>$/\1/")
+        subrep=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\(.*\)<\/url>$/\1/")
+        branch=$(basename $subrep)
         if [[ "$branch" == "<url>"* ]] ; then
             echo -n $root
         else

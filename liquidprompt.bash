@@ -527,13 +527,15 @@ __hg_branch_color()
 # For the first level of the repository, gives the repository name
 __svn_branch()
 {
-    if [[ -d ".svn" ]] ; then
-        root=$(svn info --xml 2>/dev/null | grep "^<root>" | sed "s/^.*\/\([^\/]*\)<\/root>$/\1/")
-        subrep=$(svn info --xml 2>/dev/null | grep "^<url>" | sed "s/.*\/$root\/\(.*\)<\/url>$/\1/")
-        branch=$(basename $subrep)
-        if [[ "$branch" == "<url>"* ]] ; then
+    infos=$(svn info --xml 2>/dev/null)
+    ret=$?
+    if [[ $ret -eq 0 ]] ; then
+        root=$(echo "$infos" | grep "^<root>" | sed "s/^<root>.*\/\([^\/]*\)<\/root>$/\1/")
+        subrep=$(echo "$infos" | grep "^<url>" | sed "s/^<url>.*\/$root\/\(.*\)<\/url>$/\1/")
+        if [[ "$subrep" == *"url>"* ]] ; then
             echo -n $root
         else
+            branch=$(basename $subrep)
             echo -n $branch
         fi
     fi

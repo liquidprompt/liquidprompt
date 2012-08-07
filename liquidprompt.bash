@@ -59,19 +59,20 @@ LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
 LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
+LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 
 # Default config file may be the XDG standard ~/.config/liquidpromt,
 # but heirloom dotfile has priority.
-if [ -f "$HOME/.liquidpromptrc" ]
+if [[ -f "$HOME/.liquidpromptrc" ]]
 then
-    configfile="$HOME/.liquidpromtrc"
-elif [ -z "$XDG_HOME_DIR" ]
+    configfile="$HOME/.liquidpromptrc"
+elif [[ -z "$XDG_HOME_DIR" ]]
 then
     configfile="$HOME/.config/liquidpromptrc"
 else
     configfile="$XDG_HOME_DIR/liquidpromptrc"
 fi
-if [ -f "$configfile" ]
+if [[ -f "$configfile" ]]
 then
     source "$configfile"
 fi

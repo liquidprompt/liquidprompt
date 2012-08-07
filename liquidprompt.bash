@@ -320,6 +320,7 @@ __shorten_path()
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
+    local slashes=0
 
     if [[ "$len" -gt "$max_len" ]]
     then
@@ -333,6 +334,7 @@ __shorten_path()
             if [[ "${p:i:1}" == "/" ]]
             then
                 pos=(${pos[@]} $i)
+                slashes=$((${slashes}+1))
             fi
         done
         pos=(${pos[@]} $len)
@@ -342,6 +344,9 @@ __shorten_path()
         # length limit
         #
         local i=$keep
+        if [[ $keep > $slashes ]] ; then
+            i=$slashes
+        fi
         while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
         do
             i=$((i+1))

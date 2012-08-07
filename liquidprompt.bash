@@ -59,19 +59,20 @@ LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
 LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
+LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 
 # Default config file may be the XDG standard ~/.config/liquidpromt,
 # but heirloom dotfile has priority.
-if [ -f "$HOME/.liquidpromptrc" ]
+if [[ -f "$HOME/.liquidpromptrc" ]]
 then
-    configfile="$HOME/.liquidpromtrc"
-elif [ -z "$XDG_HOME_DIR" ]
+    configfile="$HOME/.liquidpromptrc"
+elif [[ -z "$XDG_HOME_DIR" ]]
 then
     configfile="$HOME/.config/liquidpromptrc"
 else
     configfile="$XDG_HOME_DIR/liquidpromptrc"
 fi
-if [ -f "$configfile" ]
+if [[ -f "$configfile" ]]
 then
     source "$configfile"
 fi
@@ -277,7 +278,11 @@ __host_color()
 
     ret="${NO_COL}"
     if [[ "$conn" == "lcl" ]] ; then
-        ret="${ret}" # no hostname if local
+        if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+            ret="${ret}" # no hostname if local
+        else
+            ret="${ret}@\h"
+        fi
     elif [[ "$conn" == "ssh" ]] ; then
         ret="${ret}@${BOLD_CYAN}\h"
     elif [[ "$conn" == "tel" ]] ; then
@@ -313,14 +318,9 @@ __shorten_path()
     local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
 
-    if [ -z "$COLUMNS" ]
-    then
-        local columns=80
-    else
-        local columns=$COLUMNS
-    fi
-    local max_len=$(($columns*$len_percent/100))
+    local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
+    local slashes=0
 
     if [[ "$len" -gt "$max_len" ]]
     then
@@ -334,6 +334,7 @@ __shorten_path()
             if [[ "${p:i:1}" == "/" ]]
             then
                 pos=(${pos[@]} $i)
+                slashes=$((${slashes}+1))
             fi
         done
         pos=(${pos[@]} $len)
@@ -343,6 +344,9 @@ __shorten_path()
         # length limit
         #
         local i=$keep
+        if [[ $keep > $slashes ]] ; then
+            i=$slashes
+        fi
         while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
         do
             i=$((i+1))
@@ -764,9 +768,16 @@ __set_bash_prompt()
 # Activate the liquid prompt
 prompt_on()
 {
-    LP_OLD_PS1="$PS1"
-    LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+    # if liquidprompt has not been already set
+    if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
+        LP_OLD_PS1="$PS1"
+        LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+    fi
     PROMPT_COMMAND=__set_bash_prompt
+
+    # Keep in mind that LP has been sourced
+    # (to avoid recursive prompt command).
+    LP_LIQUIDPROMPT=1
 }
 
 # Come back to the old prompt

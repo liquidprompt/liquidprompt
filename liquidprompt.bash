@@ -768,9 +768,16 @@ __set_bash_prompt()
 # Activate the liquid prompt
 prompt_on()
 {
-    LP_OLD_PS1="$PS1"
-    LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+    # if liquidprompt has not been already set
+    if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
+        LP_OLD_PS1="$PS1"
+        LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+    fi
     PROMPT_COMMAND=__set_bash_prompt
+
+    # Keep in mind that LP has been sourced
+    # (to avoid recursive prompt command).
+    LP_LIQUIDPROMPT=1
 }
 
 # Come back to the old prompt

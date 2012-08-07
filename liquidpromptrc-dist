@@ -24,3 +24,8 @@ LP_PATH_KEEP=2
 # set to 1 if you use black on white
 LP_REVERSE=0
 
+# Do you want to display the hostname, even if not connected through network?
+# Defaults to 0 (do not display hostname when localy connected)
+# set to 1 if you want to always see the hostname
+LP_HOSTNAME_ALWAYS=0
+

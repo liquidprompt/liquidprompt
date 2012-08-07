@@ -278,7 +278,11 @@ __host_color()
 
     ret="${NO_COL}"
     if [[ "$conn" == "lcl" ]] ; then
-        ret="${ret}" # no hostname if local
+        if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+            ret="${ret}" # no hostname if local
+        else
+            ret="${ret}@\h"
+        fi
     elif [[ "$conn" == "ssh" ]] ; then
         ret="${ret}@${BOLD_CYAN}\h"
     elif [[ "$conn" == "tel" ]] ; then

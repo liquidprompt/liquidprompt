@@ -80,8 +80,10 @@ displayed
 the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened
 path
-* `LP_REVERSE`, choose between reverse colors (black on white) instead of normal
-theme (white on black)
+* `LP_REVERSE`, choose between reverse colors (black on white) or normal theme
+(white on black)
+* `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
+it only when connected with a remote shell
 
 Most of the display is prepared in the `__set_bash_prompt` function, apart from
 features that needs several colors (such as the load colormap). You can sort

@@ -729,7 +729,7 @@ __set_bash_prompt()
     __USER=$(__user)
     __HOST=$(__host_color)
     __PERM=$(__permissions_color)
-     __PWD=$(__shorten_path "$PWD" $PATH_LENGTH)
+     __PWD=$(__shorten_path "$PWD" $LP_PATH_LENGTH)
 
     # right of main prompt: space at left
      __GIT=$(__sl "$(__git_branch_color)")

@@ -24,7 +24,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`b24% l42% 1s/1r/1t [user@server:~/ … /code/liquidprompt] master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 1s/1r/1t [user@server:~/ … /code/liquidprompt]↥ g·master(+10/-5,3) 125 ± `
 
 It displays:
 

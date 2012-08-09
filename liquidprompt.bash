@@ -294,6 +294,14 @@ __host_color()
     echo -ne "${ret}${NO_COL}"
 }
 
+# put an arrow if an http proxy is set
+__proxy()
+{
+    if [[ ! -z "$http_proxy" ]] ; then
+        echo -ne "↥"
+    fi
+}
+
 # BASH function that shortens
 # a very long path for display by removing
 # the left most parts and replacing them
@@ -730,6 +738,7 @@ __set_bash_prompt()
     __HOST=$(__host_color)
     __PERM=$(__permissions_color)
      __PWD=$(__shorten_path "$PWD" $LP_PATH_LENGTH)
+    __PROXY=$(__proxy)
 
     # right of main prompt: space at left
      __GIT=$(__sl "$(__git_branch_color)")
@@ -748,12 +757,12 @@ __set_bash_prompt()
     if [[ "$EUID" -ne "0" ]]
     then
         # path in foreground color
-        PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]"
+        PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]${__PROXY}"
         # add VCS infos
         PS1="${PS1}${__GIT}${__HG}${__SVN}"
     else
         # path in yellow
-        PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]"
+        PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]${__PROXY}"
         # do not add VCS infos
     fi
     # add return code and prompt mark

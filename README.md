@@ -45,6 +45,7 @@ different colors for each case;
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
+* an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if
 there is changes, in yellow if there is pending commits to push;
@@ -95,4 +96,5 @@ what you want to see by editing the PS1 variable here.
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
+* The proxy detection only uses the `$http_proxy` environment variable.
 

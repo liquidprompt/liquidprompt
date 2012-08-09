@@ -673,6 +673,7 @@ __load_color()
 ##########
 
 # Set the prompt mark to ± if VCS, # if root and else $
+# FIXME use the mercury unicode char for mercurial
 __smart_mark()
 {
     if [[ "$EUID" -ne "0" ]]

@@ -479,9 +479,9 @@ __git_branch_color()
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL},${YELLOW}$has_commit${NO_COL})"
+                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL},${YELLOW}$has_commit${NO_COL})"
             else
-                ret="${RED}${branch}${NO_COL}(${RED}$has_lines${NO_COL})" # changes to commit
+                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL})" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
@@ -491,7 +491,7 @@ __git_branch_color()
                 ret="${GREEN}${branch}${NO_COL}" # nothing to commit or push
             fi
         fi
-        echo -ne "$ret"
+        echo -ne "g·$ret"
     fi
 }
 
@@ -521,7 +521,7 @@ __hg_branch_color()
         else
             ret="${RED}${branch}${NO_COL}" # changes to commit
         fi
-        echo -ne "$ret"
+        echo -ne "h·$ret"
     fi
 }
 
@@ -562,7 +562,7 @@ __svn_branch_color()
         else
             ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
         fi
-        echo -ne "$ret"
+        echo -ne "s·$ret"
     fi
 }
 
@@ -599,7 +599,7 @@ __battery_color()
             return;    # nothing displayed above 75%
         fi
 
-        ret="b${NO_COL}"
+        ret="⌁${NO_COL}"
         if [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
             ret="${ret}${BOLD_GREEN}"
         elif [[ ${bat} -le 40 ]] && [[ ${bat} -gt 20 ]] ; then
@@ -640,7 +640,7 @@ __load_color()
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
-        ret="l${NO_COL}"
+        ret="⌂${NO_COL}"
         if [[ $load -lt 70 ]] ; then
             ret="${ret}${FG}"
         elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then

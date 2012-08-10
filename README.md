@@ -99,13 +99,26 @@ path
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
 
-Most of the display is prepared in the `__set_bash_prompt` function, apart from
-features that needs several colors (such as the load colormap). You can sort
-what you want to see by editing the `PS1` variable here.
+You can sort what you want to see by exporting the `LP_PS1` variable, using the
+variables you will found in the `__set_bash_prompt` function.
+
+For example, if you just want to have a liquidprompt displaying the user and the
+host, with a normal path in blue and only the git support:
+
+    export LP_PS1=`echo -ne "[\${__USER}\${__HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${__GIT} \\\$ "`
+
+Note that you need to properly escape dollars in a string that wil be
+interpreted by bash at each prompt.
+
+To erase your new formatting, just bring the `LP_PS1` to a null string:
+
+     export LP_PS1=""
 
 
 ## KNOWN LIMITATIONS AND BUGS
 
+* Cannot easily change the colors of features having different state colors
+(like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Subversion repository cannot display commits to be pushed, this is a

@@ -60,8 +60,9 @@ LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
+LP_PS1=${LP_PS1:-""}
 
-# Default config file may be the XDG standard ~/.config/liquidpromt,
+# Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
 if [[ -f "$HOME/.liquidpromptrc" ]]
 then
@@ -762,30 +763,34 @@ __set_bash_prompt()
     # end of the prompt line: double spaces
     __MARK=$(__sb "$(__smart_mark)")
 
-    # add jobs, load and battery
-    PS1="${__BATT}${__LOAD}${__JOBS}"
-    # add user, host and permissions colon
-    PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}"
+    if [[ -z $LP_PS1 ]] ; then
+        # add jobs, load and battery
+        PS1="${__BATT}${__LOAD}${__JOBS}"
+        # add user, host and permissions colon
+        PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}"
 
-    # if not root
-    if [[ "$EUID" -ne "0" ]]
-    then
-        # path in foreground color
-        PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]${__PROXY}"
-        # add VCS infos
-        PS1="${PS1}${__GIT}${__HG}${__SVN}"
+        # if not root
+        if [[ "$EUID" -ne "0" ]]
+        then
+            # path in foreground color
+            PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]${__PROXY}"
+            # add VCS infos
+            PS1="${PS1}${__GIT}${__HG}${__SVN}"
+        else
+            # path in yellow
+            PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]${__PROXY}"
+            # do not add VCS infos
+        fi
+        # add return code and prompt mark
+        PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
+
+        # Glue the bash prompt always go to the first column.
+        # Avoid glitches after interrupting a command with Ctrl-C
+        # Does not seem to be necessary anymore?
+        #PS1="\[\033[G\]${PS1}${NO_COL}"
     else
-        # path in yellow
-        PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]${__PROXY}"
-        # do not add VCS infos
+        PS1=$LP_PS1
     fi
-    # add return code and prompt mark
-    PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
-
-    # Glue the bash prompt always go to the first column.
-    # Avoid glitches after interrupting a command with Ctrl-C
-    # Does not seem to be necessary anymore?
-    #PS1="\[\033[G\]${PS1}${NO_COL}"
 }
 
 # Activate the liquid prompt

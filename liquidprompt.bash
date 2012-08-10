@@ -420,23 +420,33 @@ __jobcount_color()
     local m_stop="z"
     local m_run="&"
 
-    if   [[ $running != "0" && $stopped != "0" && $screens != "0" ]] ; then
+    # d/&/z
+    if   [[ $screens != "0" && $running != "0" && $stopped != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${YELLOW}${running}${m_run}${NO_COL}/${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
 
-    elif [[ $running != "0" && $stopped == "0" && $screens == "0" ]] ; then
+    # _/&/_
+    elif [[ $screens == "0" && $running != "0" && $stopped == "0" ]] ; then
         rep="${NO_COL}${YELLOW}${running}${m_run}${NO_COL}"
 
-    elif [[ $running == "0" && $stopped != "0" && $screens == "0" ]] ; then
+    # _/_/z
+    elif [[ $screens == "0" && $running == "0" && $stopped != "0" ]] ; then
         rep="${NO_COL}${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
 
-    elif [[ $running == "0" && $stopped == "0" && $screens != "0" ]] ; then
+    # d/_/_
+    elif [[ $screens != "0" && $running == "0" && $stopped == "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}"
 
-    elif [[ $running != "0" && $stopped == "0" && $screens != "0" ]] ; then
+    # d/&/_
+    elif [[ $screens != "0" && $running != "0" && $stopped == "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${YELLOW}${running}${m_run}${NO_COL}"
 
-    elif [[ $running == "0" && $stopped != "0" && $screens != "0" ]] ; then
+    # d/_/z
+    elif [[ $screens != "0" && $running == "0" && $stopped != "0" ]] ; then
         rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
+
+    # _/&/z
+    elif [[ $screens == "0" && $running != "0" && $stopped != "0" ]] ; then
+        rep="${NO_COL}${YELLOW}${running}${m_run}${NO_COL}/${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
     fi
     echo -ne "$rep"
 }

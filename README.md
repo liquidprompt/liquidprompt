@@ -69,6 +69,18 @@ Copy the `liquidpromptrc-dist` file in your home directory as
 preferences. If you skip this step, the default behaviour will be used.
 
 
+## DEPENDENCIES
+
+Apart from obvious ones, some features depends on specific commands
+(if you want a git support you'd better install git…):
+
+* battery status need `acpi`,
+* detached sessions is looking for `screen`.
+
+For other features, the script uses commands that should be available on a large
+variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
+
+
 ## PUT THE PROMPT IN A DIFFERENT ORDER
 
 You can configure some variables in the `~/.liquidpromptrc` file:

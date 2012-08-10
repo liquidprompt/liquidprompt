@@ -502,7 +502,7 @@ __git_branch_color()
                 ret="${GREEN}${branch}${NO_COL}" # nothing to commit or push
             fi
         fi
-        echo -ne "g·$ret"
+        echo -ne "$ret"
     fi
 }
 
@@ -532,7 +532,7 @@ __hg_branch_color()
         else
             ret="${RED}${branch}${NO_COL}" # changes to commit
         fi
-        echo -ne "h·$ret"
+        echo -ne "$ret"
     fi
 }
 
@@ -573,7 +573,7 @@ __svn_branch_color()
         else
             ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
         fi
-        echo -ne "s·$ret"
+        echo -ne "$ret"
     fi
 }
 
@@ -675,24 +675,24 @@ __load_color()
 # DESIGN #
 ##########
 
-# Set the prompt mark to ± if VCS, # if root and else $
-# FIXME use the mercury unicode char for mercurial
+# Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
+# to # if root and else $
 __smart_mark()
 {
-    if [[ "$EUID" -ne "0" ]]
-    then
-        if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
-            echo -ne "${BOLD_FG}±${NO_COL}"
-        else
-            echo -ne "${BOLD_FG}\\\$${NO_COL}"
-        fi
-    else
-        if [[ ! -z $(__git_branch) ]] || [[ ! -z $(__hg_branch) ]] || [[ ! -z $(__svn_branch) ]] ; then
-            echo -ne "${BOLD_RED}±${NO_COL}"
-        else
-            echo -ne "${BOLD_RED}#${NO_COL}"
-        fi
+    local COL=${BOLD_FG}
+    if [[ "$EUID" -eq "0" ]] ; then
+        COL=${BOLD_RED}
     fi
+
+    local mark="\\\$"
+    if   [[ ! -z $(__git_branch) ]] ; then
+        mark="±"
+    elif [[ ! -z $(__hg_branch)  ]]  ; then
+        mark="☿"
+    elif [[ ! -z $(__svn_branch) ]] ; then
+        mark="‡"
+    fi
+    echo -ne "${COL}${mark}${NO_COL}"
 }
 
 # insert a space on the right

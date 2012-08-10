@@ -24,7 +24,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ g·master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3) 125 ± `
 
 It displays:
 
@@ -52,7 +52,8 @@ there is changes, in yellow if there is pending commits to push;
 * the number of added/deleted lines, if changes have been made and the number
 of pending commits, if any;
 * the error code of the last command, if it has failed in some way;
-* a smart mark: ± for VCS directories, $ for simple user, a red # for root.
+* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
+user, a red # for root.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back.

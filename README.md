@@ -117,6 +117,9 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 
 ## KNOWN LIMITATIONS AND BUGS
 
+Liquid prompt is distributed under the GNU Affero General Public License
+version 3.
+
 * Cannot easily change the colors of features having different state colors
 (like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…

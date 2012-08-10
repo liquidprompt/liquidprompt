@@ -416,24 +416,27 @@ __jobcount_color()
     local running=$(jobs -r | wc -l | tr -d " ")
     local stopped=$(jobs -s | wc -l | tr -d " ")
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
+    local m_detached="d"
+    local m_stop="z"
+    local m_run="&"
 
     if   [[ $running != "0" && $stopped != "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}/${BOLD_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${YELLOW}${running}${m_run}${NO_COL}/${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
 
     elif [[ $running != "0" && $stopped == "0" && $screens == "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${running}r${NO_COL}"
+        rep="${NO_COL}${YELLOW}${running}${m_run}${NO_COL}"
 
     elif [[ $running == "0" && $stopped != "0" && $screens == "0" ]] ; then
-        rep="${NO_COL}${BOLD_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
 
     elif [[ $running == "0" && $stopped == "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}"
 
     elif [[ $running != "0" && $stopped == "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${YELLOW}${running}r${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${YELLOW}${running}${m_run}${NO_COL}"
 
     elif [[ $running == "0" && $stopped != "0" && $screens != "0" ]] ; then
-        rep="${NO_COL}${YELLOW}${screens}s${NO_COL}/${BOLD_YELLOW}${stopped}t${NO_COL}"
+        rep="${NO_COL}${YELLOW}${screens}${m_detached}${NO_COL}/${BOLD_YELLOW}${stopped}${m_stop}${NO_COL}"
     fi
     echo -ne "$rep"
 }

@@ -24,7 +24,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`⌁24% ⌂42% 1s/1r/1t [user@server:~/ … /code/liquidprompt]↥ g·master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ g·master(+10/-5,3) 125 ± `
 
 It displays:
 
@@ -32,7 +32,7 @@ It displays:
 threshold, with a colormap too;
 * the average of the processors load, if it is over a given limit, with a
 colormap that became more and more noticeable with increasing load;
-* the number of detached `screen` sessions, if there is any;
+* the number of detached sessions (`screen`), if there is any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
 and bring it back with `fg`), if there is any;
 * the number of attached running jobs (commands started with a `&`), if there is
@@ -88,11 +88,12 @@ it only when connected with a remote shell
 
 Most of the display is prepared in the `__set_bash_prompt` function, apart from
 features that needs several colors (such as the load colormap). You can sort
-what you want to see by editing the PS1 variable here.
+what you want to see by editing the `PS1` variable here.
 
 
 ## KNOWN LIMITATIONS AND BUGS
 
+* detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.

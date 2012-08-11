@@ -56,7 +56,9 @@ of pending commits, if any;
 user, a red # for root.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
-one by typing `prompt_off`. Use `prompt_on` to bring it back.
+one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
+any prompt and use a single mark sign (`$ ` for user and `# ` for root) with the
+`prompt_OFF` command.
 
 
 ## INSTALL

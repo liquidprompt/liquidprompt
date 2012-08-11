@@ -815,6 +815,13 @@ prompt_off()
     PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
 }
 
+# Use an empty prompt: just the \$ mark
+prompt_OFF()
+{
+    PS1="\$ "
+    PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
+}
+
 # By default, sourcing liquidprompt.bash will activate the liquid prompt
 prompt_on
 

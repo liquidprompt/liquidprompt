@@ -209,7 +209,7 @@ __load_Darwin()
 
 __load_SunOS()
 {
-    load=$(LANG=C uptime | awk '{print $10}'| sed -e 's/,//')
+    load=$(LANG=C uptime | awk '{print substr($10,0,length($10))}')
     echo -n "$load"
 }
 

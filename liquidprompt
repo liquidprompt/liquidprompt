@@ -1,8 +1,7 @@
-#!/bin/bash
 
 ################################################################################
 # LIQUID PROMPT
-# An intelligent and non intrusive prompt for bash
+# An intelligent and non intrusive prompt for bash and zsh
 ################################################################################
 
 
@@ -33,20 +32,34 @@
 # François Schmidts <fschmidts@olfeo.com>       # Simpler SSH_IP acquiring method.
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
+# Luc Didry <luc@fiat-tux.fr>                   # Zsh port
 
 
 # See the README.md file for a summary of features.
 
+WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
 
-# Check for recent enough version of bash.
-[[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;
+if [[ "$WORKING_SHELL" == "bash" ]]; then
+    # Check for recent enough version of bash.
+    [[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;
 
-bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
+    bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+    if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
+        unset bash bmajor bminor
+        return
+    fi
     unset bash bmajor bminor
-    return
+
+     OPENESCAPE="\["
+    CLOSEESCAPE="\]"
+     USERSYMBOL="\u"
+     HOSTSYMBOL="\h"
+elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+     OPENESCAPE="%{"
+    CLOSEESCAPE="%}"
+     USERSYMBOL="%n"
+     HOSTSYMBOL="%m"
 fi
-unset bash bmajor bminor
 
 
 #################
@@ -96,61 +109,61 @@ esac
 # Colors declarations
 if [[ "$OS" == "FreeBSD" ]] ; then
 
-    BLACK="\[$(tput AF 0)\]"
-    BOLD_GRAY="\[$(tput md ; tput AF 0)\]"
-    WHITE="\[$(tput AF 7)\]"
-    BOLD_WHITE="\[$(tput md ; tput AF 7)\]"
+    BLACK="${OPENESCAPE}$(tput AF 0)${CLOSEESCAPE}"
+    BOLD_GRAY="${OPENESCAPE}$(tput md ; tput AF 0)${CLOSEESCAPE}"
+    WHITE="${OPENESCAPE}$(tput AF 7)${CLOSEESCAPE}"
+    BOLD_WHITE="${OPENESCAPE}$(tput md ; tput AF 7)${CLOSEESCAPE}"
 
-    RED="\[$(tput AF 1)\]"
-    BOLD_RED="\[$(tput md ; tput AF 1)\]"
-    WARN_RED="\[$(tput AF 0 ; tput setab 1)\]"
-    CRIT_RED="\[$(tput md; tput AF 7 ; tput setab 1)\]"
+    RED="${OPENESCAPE}$(tput AF 1)${CLOSEESCAPE}"
+    BOLD_RED="${OPENESCAPE}$(tput md ; tput AF 1)${CLOSEESCAPE}"
+    WARN_RED="${OPENESCAPE}$(tput AF 0 ; tput setab 1)${CLOSEESCAPE}"
+    CRIT_RED="${OPENESCAPE}$(tput md; tput AF 7 ; tput setab 1)${CLOSEESCAPE}"
 
-    GREEN="\[$(tput AF 2)\]"
-    BOLD_GREEN="\[$(tput md ; tput AF 2)\]"
+    GREEN="${OPENESCAPE}$(tput AF 2)${CLOSEESCAPE}"
+    BOLD_GREEN="${OPENESCAPE}$(tput md ; tput AF 2)${CLOSEESCAPE}"
 
-    YELLOW="\[$(tput AF 3)\]"
-    BOLD_YELLOW="\[$(tput md ; tput AF 3)\]"
+    YELLOW="${OPENESCAPE}$(tput AF 3)${CLOSEESCAPE}"
+    BOLD_YELLOW="${OPENESCAPE}$(tput md ; tput AF 3)${CLOSEESCAPE}"
 
-    BLUE="\[$(tput AF 4)\]"
-    BOLD_BLUE="\[$(tput md ; tput AF 4)\]"
+    BLUE="${OPENESCAPE}$(tput AF 4)${CLOSEESCAPE}"
+    BOLD_BLUE="${OPENESCAPE}$(tput md ; tput AF 4)${CLOSEESCAPE}"
 
-    PURPLE="\[$(tput AF 5)\]"
-    PINK="\[$(tput md ; tput AF 5)\]"
+    PURPLE="${OPENESCAPE}$(tput AF 5)${CLOSEESCAPE}"
+    PINK="${OPENESCAPE}$(tput md ; tput AF 5)${CLOSEESCAPE}"
 
-    CYAN="\[$(tput AF 6)\]"
-    BOLD_CYAN="\[$(tput md ; tput AF 6)\]"
+    CYAN="${OPENESCAPE}$(tput AF 6)${CLOSEESCAPE}"
+    BOLD_CYAN="${OPENESCAPE}$(tput md ; tput AF 6)${CLOSEESCAPE}"
 
-    NO_COL="\[$(tput me)\]"
+    NO_COL="${OPENESCAPE}$(tput me)${CLOSEESCAPE}"
 
 else
     # default to Linux
-    BLACK="\[$(tput setaf 0)\]"
-    BOLD_GRAY="\[$(tput bold ; tput setaf 0)\]"
-    WHITE="\[$(tput setaf 7)\]"
-    BOLD_WHITE="\[$(tput bold ; tput setaf 7)\]"
+    BLACK="${OPENESCAPE}$(tput setaf 0)${CLOSEESCAPE}"
+    BOLD_GRAY="${OPENESCAPE}$(tput bold ; tput setaf 0)${CLOSEESCAPE}"
+    WHITE="${OPENESCAPE}$(tput setaf 7)${CLOSEESCAPE}"
+    BOLD_WHITE="${OPENESCAPE}$(tput bold ; tput setaf 7)${CLOSEESCAPE}"
 
-    RED="\[$(tput setaf 1)\]"
-    BOLD_RED="\[$(tput bold ; tput setaf 1)\]"
-    WARN_RED="\[$(tput setaf 0 ; tput setab 1)\]"
-    CRIT_RED="\[$(tput bold; tput setaf 7 ; tput setab 1)\]"
+    RED="${OPENESCAPE}$(tput setaf 1)${CLOSEESCAPE}"
+    BOLD_RED="${OPENESCAPE}$(tput bold ; tput setaf 1)${CLOSEESCAPE}"
+    WARN_RED="${OPENESCAPE}$(tput setaf 0 ; tput setab 1)${CLOSEESCAPE}"
+    CRIT_RED="${OPENESCAPE}$(tput bold; tput setaf 7 ; tput setab 1)${CLOSEESCAPE}"
 
-    GREEN="\[$(tput setaf 2)\]"
-    BOLD_GREEN="\[$(tput bold ; tput setaf 2)\]"
+    GREEN="${OPENESCAPE}$(tput setaf 2)${CLOSEESCAPE}"
+    BOLD_GREEN="${OPENESCAPE}$(tput bold ; tput setaf 2)${CLOSEESCAPE}"
 
-    YELLOW="\[$(tput setaf 3)\]"
-    BOLD_YELLOW="\[$(tput bold ; tput setaf 3)\]"
+    YELLOW="${OPENESCAPE}$(tput setaf 3)${CLOSEESCAPE}"
+    BOLD_YELLOW="${OPENESCAPE}$(tput bold ; tput setaf 3)${CLOSEESCAPE}"
 
-    BLUE="\[$(tput setaf 4)\]"
-    BOLD_BLUE="\[$(tput bold ; tput setaf 4)\]"
+    BLUE="${OPENESCAPE}$(tput setaf 4)${CLOSEESCAPE}"
+    BOLD_BLUE="${OPENESCAPE}$(tput bold ; tput setaf 4)${CLOSEESCAPE}"
 
-    PURPLE="\[$(tput setaf 5)\]"
-    PINK="\[$(tput bold ; tput setaf 5)\]"
+    PURPLE="${OPENESCAPE}$(tput setaf 5)${CLOSEESCAPE}"
+    PINK="${OPENESCAPE}$(tput bold ; tput setaf 5)${CLOSEESCAPE}"
 
-    CYAN="\[$(tput setaf 6)\]"
-    BOLD_CYAN="\[$(tput bold ; tput setaf 6)\]"
+    CYAN="${OPENESCAPE}$(tput setaf 6)${CLOSEESCAPE}"
+    BOLD_CYAN="${OPENESCAPE}$(tput bold ; tput setaf 6)${CLOSEESCAPE}"
 
-    NO_COL="\[$(tput sgr0)\]"
+    NO_COL="${OPENESCAPE}$(tput sgr0)${CLOSEESCAPE}"
 
 fi
 
@@ -167,7 +180,7 @@ fi
 # get cpu number
 __cpunum_Linux()
 {
-    grep -c ^[Pp]rocessor /proc/cpuinfo
+    grep -c '^[Pp]rocessor' /proc/cpuinfo
 }
 
 __cpunum_FreeBSD()
@@ -225,12 +238,12 @@ __user()
     if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${FG}\u${NO_COL}"
+            user="${FG}${USERSYMBOL}${NO_COL}"
         else
-            user="\u"
+            user="${USERSYMBOL}"
         fi
     else
-        user="${BOLD_YELLOW}\u${NO_COL}"
+        user="${BOLD_YELLOW}${USERSYMBOL}${NO_COL}"
     fi
 
     echo -ne $user
@@ -249,11 +262,11 @@ __connection()
     # Are we in an SSH connexion?
     SSH_FLAG=0
     SSH_IP=${SSH_CLIENT%% *}
-    if [[ $SSH_IP ]] ; then
+    if [[ ! -z $SSH_IP ]] ; then
       SSH_FLAG=1
     fi
     SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
-    if [[ $SSH2_IP ]] ; then
+    if [[ ! -z $SSH2_IP ]] ; then
       SSH_FLAG=1
     fi
 
@@ -282,14 +295,14 @@ __host_color()
         if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
             ret="${ret}" # no hostname if local
         else
-            ret="${ret}@\h"
+            ret="${ret}@${HOSTSYMBOL}"
         fi
     elif [[ "$conn" == "ssh" ]] ; then
-        ret="${ret}@${BOLD_CYAN}\h"
+        ret="${ret}@${BOLD_CYAN}${HOSTSYMBOL}"
     elif [[ "$conn" == "tel" ]] ; then
-        ret="${ret}@${WARN_RED}\h"
+        ret="${ret}@${WARN_RED}${HOSTSYMBOL}"
     else
-        ret="${ret}@\h"
+        ret="${ret}@${HOSTSYMBOL}"
     fi
 
     echo -ne "${ret}${NO_COL}"
@@ -303,7 +316,7 @@ __proxy()
     fi
 }
 
-# BASH function that shortens
+# BASH/ZSH function that shortens
 # a very long path for display by removing
 # the left most parts and replacing them
 # with a leading ...
@@ -319,76 +332,83 @@ __shorten_path()
 {
     # the character that will replace the part of the path that is masked
     local mask=" … "
-    # index of the directory to keep from the root (starts at 0)
+    # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
     local keep=$((LP_PATH_KEEP-1))
+    if [[ "$WORKING_SHELL" == "zsh" ]]; then
+       keep=$LP_PATH_KEEP
+    fi
 
     local len_percent=$2
 
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     local slashes=0
 
-    if [[ "$len" -gt "$max_len" ]]
-    then
-        # finds all the '/' in
-        # the path and stores their
-        # positions
-        #
-        local pos=()
-        for ((i=0;i<len;i++))
-        do
-            if [[ "${p:i:1}" == "/" ]]
-            then
-                pos=(${pos[@]} $i)
-                slashes=$((${slashes}+1))
+    if [[ "$WORKING_SHELL" == "bash" ]]; then
+        if [[ "$len" -gt "$max_len" ]]
+        then
+            local p=$(echo "$1" | sed -e "s|$HOME|~|")
+            # finds all the '/' in
+            # the path and stores their
+            # positions
+            #
+            local pos=()
+            for ((i=0;i<len;i++))
+            do
+                if [[ "${p:i:1}" == "/" ]]
+                then
+                    pos=(${pos[@]} $i)
+                    slashes=$((${slashes}+1))
+                fi
+            done
+            pos=(${pos[@]} $len)
+
+            # we have the '/'s, let's find the
+            # left-most that doesn't break the
+            # length limit
+            #
+            local i=$keep
+            if [[ $keep > $slashes ]] ; then
+                i=$slashes
             fi
-        done
-        pos=(${pos[@]} $len)
+            while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
+            do
+                i=$((i+1))
+            done
 
-        # we have the '/'s, let's find the
-        # left-most that doesn't break the
-        # length limit
-        #
-        local i=$keep
-        if [[ $keep > $slashes ]] ; then
-            i=$slashes
-        fi
-        while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
-        do
-            i=$((i+1))
-        done
-
-        # let us check if it's OK to
-        # print the whole thing
-        #
-        if [[ "${pos[i]}" -eq "0" ]]
-        then
-            # the path is shorter than
-            # the maximum allowed length,
-            # so no need for ...
+            # let us check if it's OK to
+            # print the whole thing
             #
-            echo "$p"
+            if [[ "${pos[i]}" -eq "0" ]]
+            then
+                # the path is shorter than
+                # the maximum allowed length,
+                # so no need for ...
+                #
+                echo "$p"
 
-        elif [[ "${pos[i]}" = "$len" ]]
-        then
-            # constraints are broken because
-            # the maximum allowed size is smaller
-            # than the last part of the path, plus
-            # ' … '
-            #
-            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
+            elif [[ "${pos[i]}" = "$len" ]]
+            then
+                # constraints are broken because
+                # the maximum allowed size is smaller
+                # than the last part of the path, plus
+                # ' … '
+                #
+                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
+            else
+                # constraints are satisfied, at least
+                # some parts of the path, plus ' … ', are
+                # shorter than the maximum allowed size
+                #
+                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
+            fi
         else
-            # constraints are satisfied, at least
-            # some parts of the path, plus ' … ', are
-            # shorter than the maximum allowed size
-            #
-            echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
+            echo "$p"
         fi
-    else
-        echo "$p"
+    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        echo "%-${keep}~%${max_len}<${mask}<%~%<<"
     fi
 }
 
@@ -634,8 +654,11 @@ __battery_color()
             ret="${ret}${CRIT_RED}"
         fi
 
-        echo -ne "${ret}${bat}%${NO_COL}"
-    fi
+        if [[ "$WORKING_SHELL" == "bash" ]]; then
+            echo -ne "${ret}${bat}%${NO_COL}"
+        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+            echo -ne "${ret}${bat}%%${NO_COL}"
+        fi
 }
 
 
@@ -695,7 +718,10 @@ __smart_mark()
         COL=${BOLD_RED}
     fi
 
-    local mark="\\\$"
+    local mark="\$"
+    if [[ "$WORKING_SHELL" == "zsh" ]]; then
+        mark="%(!.#.$)"
+    fi
     if   [[ ! -z $(__git_branch) ]] ; then
         mark="±"
     elif [[ ! -z $(__hg_branch)  ]]  ; then
@@ -799,9 +825,19 @@ prompt_on()
     # if liquidprompt has not been already set
     if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
         LP_OLD_PS1="$PS1"
-        LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+        if [[ "$WORKING_SHELL" == "bash" ]]; then
+            LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+            LP_OLD_PROMPT_COMMAND="$precmd"
+        fi
     fi
-    PROMPT_COMMAND=__set_bash_prompt
+    if [[ "$WORKING_SHELL" == "bash" ]]; then
+        PROMPT_COMMAND=__set_bash_prompt
+    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        function precmd {
+            __set_bash_prompt
+        }
+    fi
 
     # Keep in mind that LP has been sourced
     # (to avoid recursive prompt command).
@@ -812,14 +848,22 @@ prompt_on()
 prompt_off()
 {
     PS1=$LP_OLD_PS1
-    PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
+    if [[ "$WORKING_SHELL" == "bash" ]]; then
+        PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
+    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        precmd=$LP_OLD_PROMPT_COMMAND
+    fi
 }
 
 # Use an empty prompt: just the \$ mark
 prompt_OFF()
 {
     PS1="\$ "
-    PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
+    if [[ "$WORKING_SHELL" == "bash" ]]; then
+        PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
+    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        precmd=$LP_OLD_PROMPT_COMMAND
+    fi
 }
 
 # By default, sourcing liquidprompt.bash will activate the liquid prompt

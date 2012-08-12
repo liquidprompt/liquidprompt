@@ -421,7 +421,7 @@ __shorten_path()
 # colored in red if it have not.
 __permissions_color()
 {
-    if [[ -w "${PWD}" ]]; then 
+    if [[ -w "${PWD}" ]]; then
         echo "${GREEN}:${NO_COL}"
     else
         echo "${RED}:${NO_COL}"
@@ -663,6 +663,7 @@ __battery_color()
         elif [[ "$WORKING_SHELL" == "zsh" ]]; then
             echo -ne "${ret}${bat}%%${NO_COL}"
         fi
+    fi
 }
 
 

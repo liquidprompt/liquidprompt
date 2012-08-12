@@ -342,6 +342,7 @@ __shorten_path()
 
     local len="${#p}"
 
+    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     local slashes=0
@@ -349,7 +350,6 @@ __shorten_path()
     if [[ "$WORKING_SHELL" == "bash" ]]; then
         if [[ "$len" -gt "$max_len" ]]
         then
-            local p=$(echo "$1" | sed -e "s|$HOME|~|")
             # finds all the '/' in
             # the path and stores their
             # positions

@@ -1,7 +1,8 @@
 Liquid prompt -- A useful adaptive Bash prompt
 ==============================================
 
-Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash).
+Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
+Zsh.
 
 The basic idea of the liquid prompt is to nicely display useful informations on
 the shell prompt, only when they are needed. It adds carefuly chosen colors to
@@ -9,6 +10,7 @@ draw your attention on what differs from the normal context. Thus, you will
 notice what changes, when it changes, because you do not become accommodated to
 informations that are always displayed in the same way.
 
+You can use it with either bash and zsh.
 
 ## FEATURES
 
@@ -65,7 +67,7 @@ any prompt and use a single mark sign (`$ ` for user and `# ` for root) with the
 
 Include the file in your bash configuration, for example in your `.bashrc`:
 
-`source liquidprompt.bash`
+`source liquidprompt`
 
 Copy the `liquidpromptrc-dist` file in your home directory as
 `~/.config/liquidpromptrc` or `~/.liquidpromptrc` and edit it according to your

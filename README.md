@@ -30,8 +30,11 @@ A liquid prompt displaying everything may look like this:
 
 It displays:
 
-* the average of the batteries remaining power, if it is under a given
-threshold, with a colormap too;
+* a green ⌁ if the battery is charging and above a given threshold,
+a yellow ⌁ if the battery is charging and under threshold,
+a red ⌁ if the battery is discharging but above threshold;
+* the average of the batteries remaining power, if it is under the given
+threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
 colormap that became more and more noticeable with increasing load;
 * the number of detached sessions (`screen`), if there is any;

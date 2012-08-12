@@ -618,37 +618,87 @@ __svn_branch_color()
 ##################
 
 # Get the battery status in percent
-# returns 1 if no battery support
+# returns 0 (and battery level) if battery is discharging and under threshold
+# returns 1 (and battery level) if battery is discharging and above threshold
+# returns 2 (and battery level) if battery is charging but under threshold
+# returns 3 (and battery level) if battery is charging and above threshold
+# returns 4 if no battery support
 __battery()
 {
-    command -v acpi >/dev/null 2>&1 || return 1;
-    bat=$(acpi --battery 2>/dev/null | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
-    if [[ "${bat}" == "" ]] ; then
-        return 1
-       fi
-    if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
-        echo -n "${bat}"
-        return 0
+    command -v acpi >/dev/null 2>&1 || return 4; # or no battery support
+    local acpi=$(acpi --battery 2>/dev/null)
+    local bat=$( echo $acpi | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
+
+    if [[ -z "${bat}" ]] ; then
+        # not battery level found
+        return 4
+
+    # discharging
+    elif [[ "$acpi" == *"Discharging"* ]] ; then
+        if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+            # under threshold
+            echo -n "${bat}"
+            return 0
+        else
+            # above threshold
+            echo -n "${bat}"
+            return 1
+        fi
+
+    # charging
     else
-        return 1
+        if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+            # under threshold
+            echo -n "${bat}"
+            return 2
+        else
+            # above threshold
+            echo -n "${bat}"
+            return 3
+        fi
     fi
 }
 
 # Compute a gradient of background/foreground colors depending on the battery status
+# Display:
+# a  green ⌁ if the battery is charging    and above threshold
+# a yellow ⌁ if the battery is charging    and under threshold
+# a    red ⌁ if the battery is discharging but above threshold
 __battery_color()
 {
+    local mark="⌁"
+    local bat
+    local ret
     bat=$(__battery)
-    if [[ "$?" = "1" ]] ; then return; fi;    # no battery support
+    ret=$?
 
-    if [[ "$bat" != "" ]] ; then
-        if [[ ${bat} -gt $LP_BATTERY_THRESHOLD ]] ; then
-            return;    # nothing displayed above 75%
-        fi
+    if [[ $ret == 4 || $bat == 100 ]] ; then
+        # no battery support or battery full: nothing displayed
+        return
+    elif [[ $ret == 3 && $bat != 100 ]] ; then
+        # charging and above threshold and not 100%
+        # green ⌁
+        echo -ne "${GREEN}$mark${NO_COL}" 
+        return
+    elif [[ $ret == 2 ]] ; then
+        # charging but under threshold
+        # yellow ⌁
+        echo -ne "${YELLOW}$mark${NO_COL}"
+        return
+    elif [[ $ret == 1 ]] ; then
+        # discharging but above threshold
+        # red ⌁
+        echo -ne "${RED}$mark${NO_COL}"
+        return
 
-        ret="⌁${NO_COL}"
-        if [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
+    # discharging and under threshold
+    elif [[ "$bat" != "" ]] ; then
+        ret="${mark}${NO_COL}"
+        if [[ ${bat} -le 100 ]] && [[ ${bat} -gt 75 ]] ; then
+            ret="${ret}${GREEN}"
+        elif [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
             ret="${ret}${BOLD_GREEN}"
-        elif [[ ${bat} -le 40 ]] && [[ ${bat} -gt 20 ]] ; then
+        elif [[ ${bat} -le 50 ]] && [[ ${bat} -gt 20 ]] ; then
             ret="${ret}${BOLD_YELLOW}"
         elif [[ ${bat} -le 20 ]] && [[ ${bat} -gt 10 ]] ; then
             ret="${ret}${BOLD_RED}"

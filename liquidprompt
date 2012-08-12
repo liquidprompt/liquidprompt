@@ -654,8 +654,11 @@ __battery_color()
             ret="${ret}${CRIT_RED}"
         fi
 
-        echo -ne "${ret}${bat}%${NO_COL}"
-    fi
+        if [[ "$WORKING_SHELL" == "bash" ]]; then
+            echo -ne "${ret}${bat}%${NO_COL}"
+        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+            echo -ne "${ret}${bat}%%${NO_COL}"
+        fi
 }
 
 

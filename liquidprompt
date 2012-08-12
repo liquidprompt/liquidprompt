@@ -340,20 +340,20 @@ __shorten_path()
 
     local len_percent=$2
 
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     local slashes=0
 
-    if [[ "$len" -gt "$max_len" ]]
-    then
-        # finds all the '/' in
-        # the path and stores their
-        # positions
-        #
-        if [[ "$WORKING_SHELL" == "bash" ]]; then
+    if [[ "$WORKING_SHELL" == "bash" ]]; then
+        if [[ "$len" -gt "$max_len" ]]
+        then
+            local p=$(echo "$1" | sed -e "s|$HOME|~|")
+            # finds all the '/' in
+            # the path and stores their
+            # positions
+            #
             local pos=()
             for ((i=0;i<len;i++))
             do
@@ -404,60 +404,11 @@ __shorten_path()
                 #
                 echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
             fi
-        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
-            pos=()
-            for ((i=0;i<len;i++))
-            do
-                if [[ "$(echo $p[$i,$i])" == "/" ]]
-                then
-                    pos+=($i)
-                    slashes=$(( $slashes + 1 ))
-                fi
-            done
-            pos+=($len)
-
-            # we have the '/'s, let's find the
-            # left-most that doesn't break the
-            # length limit
-            #
-            local i=$keep
-            if [[ $keep > $slashes ]] ; then
-                i=$slashes
-            fi
-            i=$(( $i + 1 ))
-            while [[ $(( $len - $pos[$i] )) -gt $(( $max_len - $mask_len )) ]]
-            do
-                i=$(( $i + 1 ))
-            done
-
-            # let us check if it's OK to
-            # print the whole thing
-            #
-            if [[ $pos[$i] -eq "0" ]]
-            then
-                # the path is shorter than
-                # the maximum allowed length,
-                # so no need for ...
-                #
-                echo "$p"
-            elif [[ $pos[$i] == "$len" ]]
-            then
-                # constraints are broken because
-                # the maximum allowed size is smaller
-                # than the last part of the path, plus
-                # ' … '
-                #
-                echo "$( echo $p[1,$(( $pos[$keep] ))] )${mask}$( echo $p[$(( 0 - $max_len + $mask_len )),-1] )"
-            else
-                # constraints are satisfied, at least
-                # some parts of the path, plus ' … ', are
-                # shorter than the maximum allowed size
-                #
-                echo "$( echo $p[1,$(( $pos[$keep] ))])${mask}$( echo $p[$pos[$i],-1] )"
-            fi
+        else
+            echo "$p"
         fi
-    else
-        echo "$p"
+    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        echo "%-${keep}~%${max_len}<${mask}<%~%<<"
     fi
 }
 

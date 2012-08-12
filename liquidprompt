@@ -408,7 +408,11 @@ __shorten_path()
             echo "$p"
         fi
     elif [[ "$WORKING_SHELL" == "zsh" ]]; then
-        echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+        if [[ "$len" -gt "$max_len" ]]; then
+            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+        else
+            echo "%~"
+        fi
     fi
 }
 
@@ -417,7 +421,7 @@ __shorten_path()
 # colored in red if it have not.
 __permissions_color()
 {
-    if [[ -w "${PWD}" ]]; then 
+    if [[ -w "${PWD}" ]]; then
         echo "${GREEN}:${NO_COL}"
     else
         echo "${RED}:${NO_COL}"
@@ -659,6 +663,7 @@ __battery_color()
         elif [[ "$WORKING_SHELL" == "zsh" ]]; then
             echo -ne "${ret}${bat}%%${NO_COL}"
         fi
+    fi
 }
 
 

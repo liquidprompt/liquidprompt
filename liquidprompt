@@ -340,9 +340,9 @@ __shorten_path()
 
     local len_percent=$2
 
+    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
 
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     local slashes=0

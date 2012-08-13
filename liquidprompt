@@ -131,10 +131,7 @@ esac
 # Colors declarations
 if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
-    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_CLOSE_ESC}"
+    BOLD="${_LP_OPEN_ESC}$(tput md)${_LP_CLOSE_ESC}"
 
     RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_CLOSE_ESC}"
     BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
@@ -160,10 +157,7 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
 else
     # default to Linux
-    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_CLOSE_ESC}"
+    BOLD="${_LP_OPEN_ESC}$(tput bold)${_LP_CLOSE_ESC}"
 
     RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_CLOSE_ESC}"
     BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
@@ -188,16 +182,6 @@ else
     NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_CLOSE_ESC}"
 
 fi
-
-# Foreground colors
-# can be set to white or black
-FG=$WHITE
-BOLD_FG=$BOLD_WHITE
-if [[ $LP_REVERSE == 1 ]] ; then
-    FG=$BLACK
-    BOLD_FG=$BOLD_GRAY
-fi
-
 
 # get cpu number
 _lp_cpunum_Linux()
@@ -264,7 +248,7 @@ _lp_user()
     if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${FG}${_LP_USER_SYMBOL}${NO_COL}"
+            user="${_LP_USER_SYMBOL}${NO_COL}"
         else
             user="${_LP_USER_SYMBOL}"
         fi
@@ -801,7 +785,7 @@ _lp_load_color()
         local ret
         ret="${LP_LOAD_MARK}${NO_COL}"
         if [[ $load -lt 70 ]] ; then
-            ret="${ret}${FG}"
+            ret="${ret}"
         elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
             ret="${ret}${BOLD_GREEN}"
         elif [[ $load -ge 80 ]] && [[ $load -lt 95 ]] ; then
@@ -832,7 +816,7 @@ _lp_load_color()
 _lp_smart_mark()
 {
     local COL
-    COL=${BOLD_FG}
+    COL=${BOLD}
     if [[ "$EUID" -eq "0" ]] ; then
         COL=${BOLD_RED}
     fi
@@ -919,7 +903,7 @@ _lp_set_bash_prompt()
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${BOLD_FG}${LP_PWD}${NO_COL}]${LP_PROXY}"
+            PS1="${PS1}${BOLD}${LP_PWD}${NO_COL}]${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else

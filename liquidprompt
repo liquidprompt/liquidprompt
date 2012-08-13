@@ -56,12 +56,12 @@ if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
     unset bash bmajor bminor
 
     _LP_OPEN_ESC="\["
-    _LP_OPEN_ESC="\]"
+    _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
 elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
     _LP_OPEN_ESC="%{"
-    _LP_OPEN_ESC="%}"
+    _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
 fi
@@ -131,61 +131,61 @@ esac
 # Colors declarations
 if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
-    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_OPEN_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_OPEN_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_OPEN_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_OPEN_ESC}"
+    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_CLOSE_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_CLOSE_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_CLOSE_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_CLOSE_ESC}"
 
-    RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_OPEN_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_OPEN_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_OPEN_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_OPEN_ESC}"
+    RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_CLOSE_ESC}"
+    BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
+    WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
+    CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_CLOSE_ESC}"
 
-    GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_OPEN_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_OPEN_ESC}"
+    GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_CLOSE_ESC}"
+    BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_CLOSE_ESC}"
 
-    YELLOW="${_LP_OPEN_ESC}$(tput AF 3)${_LP_OPEN_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput md ; tput AF 3)${_LP_OPEN_ESC}"
+    YELLOW="${_LP_OPEN_ESC}$(tput AF 3)${_LP_CLOSE_ESC}"
+    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput md ; tput AF 3)${_LP_CLOSE_ESC}"
 
-    BLUE="${_LP_OPEN_ESC}$(tput AF 4)${_LP_OPEN_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput md ; tput AF 4)${_LP_OPEN_ESC}"
+    BLUE="${_LP_OPEN_ESC}$(tput AF 4)${_LP_CLOSE_ESC}"
+    BOLD_BLUE="${_LP_OPEN_ESC}$(tput md ; tput AF 4)${_LP_CLOSE_ESC}"
 
-    PURPLE="${_LP_OPEN_ESC}$(tput AF 5)${_LP_OPEN_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput md ; tput AF 5)${_LP_OPEN_ESC}"
+    PURPLE="${_LP_OPEN_ESC}$(tput AF 5)${_LP_CLOSE_ESC}"
+    PINK="${_LP_OPEN_ESC}$(tput md ; tput AF 5)${_LP_CLOSE_ESC}"
 
-    CYAN="${_LP_OPEN_ESC}$(tput AF 6)${_LP_OPEN_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput md ; tput AF 6)${_LP_OPEN_ESC}"
+    CYAN="${_LP_OPEN_ESC}$(tput AF 6)${_LP_CLOSE_ESC}"
+    BOLD_CYAN="${_LP_OPEN_ESC}$(tput md ; tput AF 6)${_LP_CLOSE_ESC}"
 
-    NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_OPEN_ESC}"
+    NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_CLOSE_ESC}"
 
 else
     # default to Linux
-    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_OPEN_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_OPEN_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_OPEN_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_OPEN_ESC}"
+    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_CLOSE_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_CLOSE_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_CLOSE_ESC}"
 
-    RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_OPEN_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_OPEN_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_OPEN_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_OPEN_ESC}"
+    RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_CLOSE_ESC}"
+    BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
+    WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
+    CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
 
-    GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_OPEN_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_OPEN_ESC}"
+    GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_CLOSE_ESC}"
+    BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_CLOSE_ESC}"
 
-    YELLOW="${_LP_OPEN_ESC}$(tput setaf 3)${_LP_OPEN_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput bold ; tput setaf 3)${_LP_OPEN_ESC}"
+    YELLOW="${_LP_OPEN_ESC}$(tput setaf 3)${_LP_CLOSE_ESC}"
+    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput bold ; tput setaf 3)${_LP_CLOSE_ESC}"
 
-    BLUE="${_LP_OPEN_ESC}$(tput setaf 4)${_LP_OPEN_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 4)${_LP_OPEN_ESC}"
+    BLUE="${_LP_OPEN_ESC}$(tput setaf 4)${_LP_CLOSE_ESC}"
+    BOLD_BLUE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 4)${_LP_CLOSE_ESC}"
 
-    PURPLE="${_LP_OPEN_ESC}$(tput setaf 5)${_LP_OPEN_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput bold ; tput setaf 5)${_LP_OPEN_ESC}"
+    PURPLE="${_LP_OPEN_ESC}$(tput setaf 5)${_LP_CLOSE_ESC}"
+    PINK="${_LP_OPEN_ESC}$(tput bold ; tput setaf 5)${_LP_CLOSE_ESC}"
 
-    CYAN="${_LP_OPEN_ESC}$(tput setaf 6)${_LP_OPEN_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 6)${_LP_OPEN_ESC}"
+    CYAN="${_LP_OPEN_ESC}$(tput setaf 6)${_LP_CLOSE_ESC}"
+    BOLD_CYAN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 6)${_LP_CLOSE_ESC}"
 
-    NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_OPEN_ESC}"
+    NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_CLOSE_ESC}"
 
 fi
 

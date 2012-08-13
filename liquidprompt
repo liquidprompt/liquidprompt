@@ -37,7 +37,7 @@
 
 # See the README.md file for a summary of features.
 
-WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
+WORKING_SHELL=${SHELL##*/}
 
 # A login shell starts with a "-"
 if [[ "$WORKING_SHELL" == "-bash" ]]; then
@@ -200,7 +200,7 @@ __cpunum_Darwin()
 
 __cpunum_SunOS()
 {
-    kstat -m cpu_info | grep "module: cpu_info"  | wc -l
+    kstat -m cpu_info | grep -c "module: cpu_info"
 }
 
 __CPUNUM=$(__cpunum_$OS)
@@ -261,8 +261,8 @@ __user()
 
 __connection()
 {
-    THIS_TTY=tty$(ps aux | grep $$ | grep bash | awk '{ print $7 }')
-    SESS_SRC=$(who | grep $THIS_TTY | awk '{ print $6 }')
+    THIS_TTY=tty$(ps aux | awk -v pid=$$ '$0 ~ pid && /bash/{ print $7 }')
+    SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
 
     # Are we in an SSH connexion?
     SSH_FLAG=0
@@ -443,8 +443,8 @@ __permissions_color()
 # or detached screens sessions running on the host
 __jobcount_color()
 {
-    local running=$(jobs -r | wc -l | tr -d " ")
-    local stopped=$(jobs -s | wc -l | tr -d " ")
+    local running=$(( $(jobs -r | wc -l) ))
+    local stopped=$(( $(jobs -s | wc -l) ))
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
     local m_detached="d"
     local m_stop="z"
@@ -567,7 +567,7 @@ __hg_branch_color()
     command -v hg >/dev/null 2>&1 || return 1;
     branch=$(__hg_branch)
     if [[ ! -z "$branch" ]] ; then
-        if [[ $(hg status --quiet -n | wc -l | sed -e "s/ //g") = 0 ]] ; then
+        if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else
             ret="${RED}${branch}${NO_COL}" # changes to commit
@@ -585,8 +585,8 @@ __svn_branch()
     infos=$(svn info --xml 2>/dev/null)
     ret=$?
     if [[ $ret -eq 0 ]] ; then
-        root=$(echo "$infos" | grep "^<root>" | sed "s/^<root>.*\/\([^\/]*\)<\/root>$/\1/")
-        subrep=$(echo "$infos" | grep "^<url>" | sed "s/^<url>.*\/$root\/\(.*\)<\/url>$/\1/")
+        root=$(echo "$infos" | awk -v FS=">|</" '/^<root>/ { print $2 }')
+        subrep=$(echo "$infos" |  awk -v FS=">|</" '/^<url>/ { print $2 }')
         if [[ "$subrep" == *"url>"* ]] ; then
             echo -n $root
         else
@@ -606,8 +606,7 @@ __svn_branch_color()
     command -v svn >/dev/null 2>&1 || return 1;
     branch=$(__svn_branch)
     if [[ ! -z "$branch" ]] ; then
-        commits=$(svn status | grep -v "?" | wc -l)
-        commits=$((commits))
+        commits=$(( $(svn status | grep -v "?" -c) ))
         if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else

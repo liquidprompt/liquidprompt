@@ -884,6 +884,8 @@ prompt_on()
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
         elif [[ "$WORKING_SHELL" == "zsh" ]]; then
             LP_OLD_PROMPT_COMMAND="$precmd"
+		else
+			echo "${RED}Shell $WORKING_SHELL not supported $NO_COL"
         fi
     fi
     if [[ "$WORKING_SHELL" == "bash" ]]; then

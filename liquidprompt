@@ -273,7 +273,7 @@ __user()
 
 __connection()
 {
-    THIS_TTY=$(awk -v pid=$$ '$0 ~ pid && /bash/{ print $7 }' < <(ps aux) )
+    THIS_TTY=$(awk -v pid=$$ '$0 ~ pid && /${WORKING_SHELL}/{ print $7 }' < <(ps aux) )
     SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
 
     # Are we in an SSH connexion?

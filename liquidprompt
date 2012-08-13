@@ -665,9 +665,10 @@ __battery()
 
 # Compute a gradient of background/foreground colors depending on the battery status
 # Display:
-# a  green ⌁ if the battery is charging    and above threshold
-# a yellow ⌁ if the battery is charging    and under threshold
-# a    red ⌁ if the battery is discharging but above threshold
+# a  green ⏚ if the battery is charging    and above threshold
+# a yellow ⏚ if the battery is charging    and under threshold
+# a yellow ⌁ if the battery is discharging but above threshold
+# a    red ⌁ if the battery is discharging and above threshold
 __battery_color()
 {
     local mark="⌁"

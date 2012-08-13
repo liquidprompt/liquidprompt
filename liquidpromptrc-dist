@@ -32,7 +32,7 @@ LP_HOSTNAME_ALWAYS=0
 # If charset is UTF-8
 if [[ $(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p') == *"UTF-8"* ]] ; then
     LP_BATTERY_MARK="⌁"
-    LP_ADAPTER_MARK=""
+    LP_ADAPTER_MARK="⏚"
     LP_LOAD_MARK="⌂"
     LP_PROXY_MARK="↥"
     LP_GIT_MARK="±"

@@ -37,7 +37,7 @@
 
 # See the README.md file for a summary of features.
 
-WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
+WORKING_SHELL=$(ps -p $$ | awk '{n=$NF}END{print n}')
 
 # A login shell starts with a "-"
 if [[ "$WORKING_SHELL" == "-bash" ]]; then
@@ -80,7 +80,7 @@ LP_REVERSE=${LP_REVERSE:-0}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 LP_PS1=${LP_PS1:-""}
 LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
-LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-""}
+LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
 LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
 LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
 LP_GIT_MARK=${LP_GIT_MARK:-"±"}
@@ -90,6 +90,10 @@ LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
+if [[ -f "/etc/liquidpromptrc" ]]
+then
+    configfile="/etc/liquidpromptrc"
+fi
 if [[ -f "$HOME/.liquidpromptrc" ]]
 then
     configfile="$HOME/.liquidpromptrc"
@@ -674,12 +678,15 @@ __battery()
 
 # Compute a gradient of background/foreground colors depending on the battery status
 # Display:
-# a  green ⌁ if the battery is charging    and above threshold
-# a yellow ⌁ if the battery is charging    and under threshold
-# a    red ⌁ if the battery is discharging but above threshold
+# a  green ⏚ if the battery is charging    and above threshold
+# a yellow ⏚ if the battery is charging    and under threshold
+# a yellow ⌁ if the battery is discharging but above threshold
+# a    red ⌁ if the battery is discharging and above threshold
 __battery_color()
 {
+<<<<<<< HEAD
     local mark=$LP_BATTERY_MARK
+    local chargingmark=$LP_ADAPTER_MARK
     local bat
     local ret
     bat=$(__battery)
@@ -690,18 +697,18 @@ __battery_color()
         return
     elif [[ $ret == 3 && $bat != 100 ]] ; then
         # charging and above threshold and not 100%
-        # green ⌁
-        echo -ne "${GREEN}$mark${NO_COL}" 
+        # green ⏚
+        echo -ne "${GREEN}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 2 ]] ; then
         # charging but under threshold
-        # yellow ⌁
-        echo -ne "${YELLOW}$mark${NO_COL}"
+        # yellow ⏚
+        echo -ne "${YELLOW}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 1 ]] ; then
         # discharging but above threshold
-        # red ⌁
-        echo -ne "${RED}$mark${NO_COL}"
+        # yellow ⌁
+        echo -ne "${YELLOW}$mark${NO_COL}"
         return
 
     # discharging and under threshold
@@ -767,7 +774,11 @@ __load_color()
         else
             ret="${ret}${CRIT_RED}"
         fi
-        ret="${ret}$load%${NO_COL}"
+        if [[ "$WORKING_SHELL" == "bash" ]]; then
+            ret="${ret}$load%${NO_COL}"
+        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+            ret="${ret}$load%%${NO_COL}"
+        fi
         echo -ne "${ret}"
     fi
 }
@@ -939,4 +950,4 @@ prompt_OFF()
 # By default, sourcing liquidprompt.bash will activate the liquid prompt
 prompt_on
 
-# vim: set ts=4 sw=4 tw=120 :
+# vim: set ts=4 sw=4 tw=120 ft=sh:

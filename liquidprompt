@@ -74,6 +74,14 @@ LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_REVERSE=${LP_REVERSE:-0}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 LP_PS1=${LP_PS1:-""}
+LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
+LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-""}
+LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
+LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
+LP_GIT_MARK=${LP_GIT_MARK:-"±"}
+LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
+LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
@@ -312,7 +320,7 @@ __host_color()
 __proxy()
 {
     if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne "↥"
+        echo -ne $LP_PROXY_MARK
     fi
 }
 
@@ -666,7 +674,7 @@ __battery()
 # a    red ⌁ if the battery is discharging but above threshold
 __battery_color()
 {
-    local mark="⌁"
+    local mark=$LP_BATTERY_MARK
     local bat
     local ret
     bat=$(__battery)
@@ -740,7 +748,7 @@ __load_color()
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
-        ret="⌂${NO_COL}"
+        ret="${LP_LOAD_MARK}${NO_COL}"
         if [[ $load -lt 70 ]] ; then
             ret="${ret}${FG}"
         elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
@@ -778,11 +786,11 @@ __smart_mark()
         mark="%(!.#.$)"
     fi
     if   [[ ! -z $(__git_branch) ]] ; then
-        mark="±"
+        mark=$LP_GIT_MARK
     elif [[ ! -z $(__hg_branch)  ]]  ; then
-        mark="☿"
+        mark=$LP_MERCURIAL_MARK
     elif [[ ! -z $(__svn_branch) ]] ; then
-        mark="‡"
+        mark=$LP_SUBVERSION_MARK
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }

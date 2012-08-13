@@ -29,3 +29,21 @@ LP_REVERSE=0
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
+# If charset is UTF-8
+if [[ $(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p') == *"UTF-8"* ]] ; then
+    LP_BATTERY_MARK="⌁"
+    LP_ADAPTER_MARK=""
+    LP_LOAD_MARK="⌂"
+    LP_PROXY_MARK="↥"
+    LP_GIT_MARK="±"
+    LP_MERCURIAL_MARK="☿"
+    LP_SUBVERSION_MARK="‡"
+else
+    LP_BATTERY_MARK="b"
+    LP_ADAPTER_MARK="p"
+    LP_LOAD_MARK="c"
+    LP_PROXY_MARK="^"
+    LP_GIT_MARK="+"
+    LP_MERCURIAL_MARK="m"
+    LP_SUBVERSION_MARK="="
+fi

@@ -580,8 +580,8 @@ __svn_branch()
     infos=$(svn info --xml 2>/dev/null)
     ret=$?
     if [[ $ret -eq 0 ]] ; then
-        root=$(echo "$infos" | grep "^<root>" | sed "s/^<root>.*\/\([^\/]*\)<\/root>$/\1/")
-        subrep=$(echo "$infos" | grep "^<url>" | sed "s/^<url>.*\/$root\/\(.*\)<\/url>$/\1/")
+        root=$(echo "$infos" | awk -v FS=">|</" '/^<root>/ { print $2 }')
+        subrep=$(echo "$infos" |  awk -v FS=">|</" '/^<url>/ { print $2 }')
         if [[ "$subrep" == *"url>"* ]] ; then
             echo -n $root
         else
@@ -601,7 +601,7 @@ __svn_branch_color()
     command -v svn >/dev/null 2>&1 || return 1;
     branch=$(__svn_branch)
     if [[ ! -z "$branch" ]] ; then
-        commits=$(( $(svn status | grep -v "?" | wc -l) ))
+        commits=$(( $(svn status | grep -v "?" -c) ))
         if [[ $commits = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
         else

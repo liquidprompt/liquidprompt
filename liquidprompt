@@ -683,7 +683,6 @@ __battery()
 # a    red ⌁ if the battery is discharging and above threshold
 __battery_color()
 {
-<<<<<<< HEAD
     local mark=$LP_BATTERY_MARK
     local chargingmark=$LP_ADAPTER_MARK
     local bat

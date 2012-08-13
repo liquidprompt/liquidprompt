@@ -667,6 +667,7 @@ __battery()
 __battery_color()
 {
     local mark="⌁"
+    local chargingmark="⏚"
     local bat
     local ret
     bat=$(__battery)
@@ -677,18 +678,18 @@ __battery_color()
         return
     elif [[ $ret == 3 && $bat != 100 ]] ; then
         # charging and above threshold and not 100%
-        # green ⌁
-        echo -ne "${GREEN}$mark${NO_COL}" 
+        # green ⏚
+        echo -ne "${GREEN}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 2 ]] ; then
         # charging but under threshold
-        # yellow ⌁
-        echo -ne "${YELLOW}$mark${NO_COL}"
+        # yellow ⏚
+        echo -ne "${YELLOW}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 1 ]] ; then
         # discharging but above threshold
-        # red ⌁
-        echo -ne "${RED}$mark${NO_COL}"
+        # yellow ⌁
+        echo -ne "${YELLOW}$mark${NO_COL}"
         return
 
     # discharging and under threshold

@@ -759,7 +759,11 @@ __load_color()
         else
             ret="${ret}${CRIT_RED}"
         fi
-        ret="${ret}$load%${NO_COL}"
+        if [[ "$WORKING_SHELL" == "bash" ]]; then
+            ret="${ret}$load%${NO_COL}"
+        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+            ret="${ret}$load%%${NO_COL}"
+        fi
         echo -ne "${ret}"
     fi
 }

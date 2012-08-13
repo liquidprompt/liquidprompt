@@ -202,7 +202,7 @@ fi
 # get cpu number
 _lp_cpunum_Linux()
 {
-    grep -c '^[Pp]rocessor' /proc/cpuinfo
+    nproc
 }
 
 _lp_cpunum_FreeBSD()

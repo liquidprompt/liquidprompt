@@ -39,6 +39,11 @@
 
 WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
 
+# A login shell starts with a "-"
+if [[ "$WORKING_SHELL" == "-bash" ]]; then
+	WORKING_SHELL="bash"
+fi
+
 if [[ "$WORKING_SHELL" == "bash" ]]; then
     # Check for recent enough version of bash.
     [[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;

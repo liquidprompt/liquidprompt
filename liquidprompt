@@ -626,7 +626,7 @@ __svn_branch_color()
 __battery()
 {
     command -v acpi >/dev/null 2>&1 || return 4; # or no battery support
-    local acpi=$(acpi --battery 2>/dev/null)
+    local acpi="$(acpi --battery 2>/dev/null)"
     local bat=$( echo $acpi | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
 
     if [[ -z "${bat}" ]] ; then

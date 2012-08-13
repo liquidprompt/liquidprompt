@@ -39,6 +39,11 @@
 
 WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
 
+# A login shell starts with a "-"
+if [[ "$WORKING_SHELL" == "-bash" ]]; then
+	WORKING_SHELL="bash"
+fi
+
 if [[ "$WORKING_SHELL" == "bash" ]]; then
     # Check for recent enough version of bash.
     [[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;
@@ -892,6 +897,8 @@ prompt_on()
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
         elif [[ "$WORKING_SHELL" == "zsh" ]]; then
             LP_OLD_PROMPT_COMMAND="$precmd"
+		else
+			echo "${RED}Shell $WORKING_SHELL not supported $NO_COL"
         fi
     fi
     if [[ "$WORKING_SHELL" == "bash" ]]; then

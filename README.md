@@ -12,6 +12,7 @@ informations that are always displayed in the same way.
 
 You can use it with either bash and zsh.
 
+
 ## FEATURES
 
 If there is nothing special in the current context, the liquid prompt is close
@@ -79,11 +80,13 @@ preferences. If you skip this step, the default behaviour will be used.
 
 ## DEPENDENCIES
 
-Apart from obvious ones, some features depends on specific commands
-(if you want a git support you'd better install git…):
+Apart from obvious ones, some features depends on specific commands. If you do
+not install them, the corresponding feature will not be available, but you will
+see no error.
 
 * battery status need `acpi`,
 * detached sessions is looking for `screen`.
+* VCS support features needs… `git`, `hg` or `svn`, but you knew it.
 
 For other features, the script uses commands that should be available on a large
 variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
@@ -131,6 +134,8 @@ version 3.
 (like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
+* Browsing into very large subversion repositories may dramatically slow down
+the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.

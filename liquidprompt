@@ -77,6 +77,10 @@ LP_PS1=${LP_PS1:-""}
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
+if [[ -f "/etc/liquidpromptrc" ]]
+then
+    configfile="/etc/liquidpromptrc"
+fi
 if [[ -f "$HOME/.liquidpromptrc" ]]
 then
     configfile="$HOME/.liquidpromptrc"

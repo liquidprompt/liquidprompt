@@ -37,7 +37,7 @@
 
 # See the README.md file for a summary of features.
 
-WORKING_SHELL=$(ps -p $$ | tail -n1 | awk '{print $NF}')
+WORKING_SHELL=${SHELL##*/}
 
 if [[ "$WORKING_SHELL" == "bash" ]]; then
     # Check for recent enough version of bash.

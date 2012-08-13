@@ -110,12 +110,12 @@ path
 it only when connected with a remote shell
 
 You can sort what you want to see by exporting the `LP_PS1` variable, using the
-variables you will found in the `__set_bash_prompt` function.
+variables you will found in the `_lp_set_bash_prompt` function.
 
 For example, if you just want to have a liquidprompt displaying the user and the
 host, with a normal path in blue and only the git support:
 
-    export LP_PS1=`echo -ne "[\${__USER}\${__HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${__GIT} \\\$ "`
+    export LP_PS1=`echo -ne "[\${LP_USER}\${LP_HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${LP_GIT} \\\$ "`
 
 Note that you need to properly escape dollars in a string that wil be
 interpreted by bash at each prompt.

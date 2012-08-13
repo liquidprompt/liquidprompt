@@ -37,14 +37,14 @@
 
 # See the README.md file for a summary of features.
 
-WORKING_SHELL=${SHELL##*/}
+_LP_WORKING_SHELL=${SHELL##*/}
 
 # A login shell starts with a "-"
-if [[ "$WORKING_SHELL" == "-bash" ]]; then
-    WORKING_SHELL="bash"
+if [[ "$_LP_WORKING_SHELL" == "-bash" ]]; then
+    _LP_WORKING_SHELL="bash"
 fi
 
-if [[ "$WORKING_SHELL" == "bash" ]]; then
+if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
     # Check for recent enough version of bash.
     [[ -z "$BASH_VERSION" || -z "$PS1" || -z "$TERM" ]] && return;
 
@@ -55,15 +55,15 @@ if [[ "$WORKING_SHELL" == "bash" ]]; then
     fi
     unset bash bmajor bminor
 
-     OPENESCAPE="\["
-    CLOSEESCAPE="\]"
-     USERSYMBOL="\u"
-     HOSTSYMBOL="\h"
-elif [[ "$WORKING_SHELL" == "zsh" ]]; then
-     OPENESCAPE="%{"
-    CLOSEESCAPE="%}"
-     USERSYMBOL="%n"
-     HOSTSYMBOL="%m"
+    _LP_OPEN_ESC="\["
+    _LP_OPEN_ESC="\]"
+    _LP_USER_SYMBOL="\u"
+    _LP_HOST_SYMBOL="\h"
+elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    _LP_OPEN_ESC="%{"
+    _LP_OPEN_ESC="%}"
+    _LP_USER_SYMBOL="%n"
+    _LP_HOST_SYMBOL="%m"
 fi
 
 
@@ -90,97 +90,102 @@ LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
-if [[ -f "/etc/liquidpromptrc" ]]
-then
-    configfile="/etc/liquidpromptrc"
-fi
-if [[ -f "$HOME/.liquidpromptrc" ]]
-then
-    configfile="$HOME/.liquidpromptrc"
-elif [[ -z "$XDG_HOME_DIR" ]]
-then
-    configfile="$HOME/.config/liquidpromptrc"
-else
-    configfile="$XDG_HOME_DIR/liquidpromptrc"
-fi
-if [[ -f "$configfile" ]]
-then
-    source "$configfile"
-fi
-
+_lp_source_config()
+{
+    local configfile
+    if [[ -f "/etc/liquidpromptrc" ]]
+    then
+        configfile="/etc/liquidpromptrc"
+    fi
+    if [[ -f "$HOME/.liquidpromptrc" ]]
+    then
+        configfile="$HOME/.liquidpromptrc"
+    elif [[ -z "$XDG_HOME_DIR" ]]
+    then
+        configfile="$HOME/.config/liquidpromptrc"
+    else
+        configfile="$XDG_HOME_DIR/liquidpromptrc"
+    fi
+    if [[ -f "$configfile" ]]
+    then
+        source "$configfile"
+    fi
+}
+# do source config files
+_lp_source_config
 
 ###############
-# OS specific #
+# LP_OS specific #
 ###############
 
-# OS detection, default to Linux
-OS="Linux"
+# LP_OS detection, default to Linux
+LP_OS="Linux"
 case $(uname) in
-    "Linux"  ) OS="Linux"   ;;
-    "FreeBSD") OS="FreeBSD" ;;
-    "Darwin") OS="Darwin" ;;
-    "DragonFly") OS="FreeBSD" ;;
-    "SunOS") OS="SunOS" ;;
+    "Linux"  ) LP_OS="Linux"   ;;
+    "FreeBSD") LP_OS="FreeBSD" ;;
+    "Darwin") LP_OS="Darwin" ;;
+    "DragonFly") LP_OS="FreeBSD" ;;
+    "SunOS") LP_OS="SunOS" ;;
 esac
 
 # Colors declarations
-if [[ "$OS" == "FreeBSD" ]] ; then
+if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
-    BLACK="${OPENESCAPE}$(tput AF 0)${CLOSEESCAPE}"
-    BOLD_GRAY="${OPENESCAPE}$(tput md ; tput AF 0)${CLOSEESCAPE}"
-    WHITE="${OPENESCAPE}$(tput AF 7)${CLOSEESCAPE}"
-    BOLD_WHITE="${OPENESCAPE}$(tput md ; tput AF 7)${CLOSEESCAPE}"
+    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_OPEN_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_OPEN_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_OPEN_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_OPEN_ESC}"
 
-    RED="${OPENESCAPE}$(tput AF 1)${CLOSEESCAPE}"
-    BOLD_RED="${OPENESCAPE}$(tput md ; tput AF 1)${CLOSEESCAPE}"
-    WARN_RED="${OPENESCAPE}$(tput AF 0 ; tput setab 1)${CLOSEESCAPE}"
-    CRIT_RED="${OPENESCAPE}$(tput md; tput AF 7 ; tput setab 1)${CLOSEESCAPE}"
+    RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_OPEN_ESC}"
+    BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_OPEN_ESC}"
+    WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_OPEN_ESC}"
+    CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_OPEN_ESC}"
 
-    GREEN="${OPENESCAPE}$(tput AF 2)${CLOSEESCAPE}"
-    BOLD_GREEN="${OPENESCAPE}$(tput md ; tput AF 2)${CLOSEESCAPE}"
+    GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_OPEN_ESC}"
+    BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_OPEN_ESC}"
 
-    YELLOW="${OPENESCAPE}$(tput AF 3)${CLOSEESCAPE}"
-    BOLD_YELLOW="${OPENESCAPE}$(tput md ; tput AF 3)${CLOSEESCAPE}"
+    YELLOW="${_LP_OPEN_ESC}$(tput AF 3)${_LP_OPEN_ESC}"
+    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput md ; tput AF 3)${_LP_OPEN_ESC}"
 
-    BLUE="${OPENESCAPE}$(tput AF 4)${CLOSEESCAPE}"
-    BOLD_BLUE="${OPENESCAPE}$(tput md ; tput AF 4)${CLOSEESCAPE}"
+    BLUE="${_LP_OPEN_ESC}$(tput AF 4)${_LP_OPEN_ESC}"
+    BOLD_BLUE="${_LP_OPEN_ESC}$(tput md ; tput AF 4)${_LP_OPEN_ESC}"
 
-    PURPLE="${OPENESCAPE}$(tput AF 5)${CLOSEESCAPE}"
-    PINK="${OPENESCAPE}$(tput md ; tput AF 5)${CLOSEESCAPE}"
+    PURPLE="${_LP_OPEN_ESC}$(tput AF 5)${_LP_OPEN_ESC}"
+    PINK="${_LP_OPEN_ESC}$(tput md ; tput AF 5)${_LP_OPEN_ESC}"
 
-    CYAN="${OPENESCAPE}$(tput AF 6)${CLOSEESCAPE}"
-    BOLD_CYAN="${OPENESCAPE}$(tput md ; tput AF 6)${CLOSEESCAPE}"
+    CYAN="${_LP_OPEN_ESC}$(tput AF 6)${_LP_OPEN_ESC}"
+    BOLD_CYAN="${_LP_OPEN_ESC}$(tput md ; tput AF 6)${_LP_OPEN_ESC}"
 
-    NO_COL="${OPENESCAPE}$(tput me)${CLOSEESCAPE}"
+    NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_OPEN_ESC}"
 
 else
     # default to Linux
-    BLACK="${OPENESCAPE}$(tput setaf 0)${CLOSEESCAPE}"
-    BOLD_GRAY="${OPENESCAPE}$(tput bold ; tput setaf 0)${CLOSEESCAPE}"
-    WHITE="${OPENESCAPE}$(tput setaf 7)${CLOSEESCAPE}"
-    BOLD_WHITE="${OPENESCAPE}$(tput bold ; tput setaf 7)${CLOSEESCAPE}"
+    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_OPEN_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_OPEN_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_OPEN_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_OPEN_ESC}"
 
-    RED="${OPENESCAPE}$(tput setaf 1)${CLOSEESCAPE}"
-    BOLD_RED="${OPENESCAPE}$(tput bold ; tput setaf 1)${CLOSEESCAPE}"
-    WARN_RED="${OPENESCAPE}$(tput setaf 0 ; tput setab 1)${CLOSEESCAPE}"
-    CRIT_RED="${OPENESCAPE}$(tput bold; tput setaf 7 ; tput setab 1)${CLOSEESCAPE}"
+    RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_OPEN_ESC}"
+    BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_OPEN_ESC}"
+    WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_OPEN_ESC}"
+    CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_OPEN_ESC}"
 
-    GREEN="${OPENESCAPE}$(tput setaf 2)${CLOSEESCAPE}"
-    BOLD_GREEN="${OPENESCAPE}$(tput bold ; tput setaf 2)${CLOSEESCAPE}"
+    GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_OPEN_ESC}"
+    BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_OPEN_ESC}"
 
-    YELLOW="${OPENESCAPE}$(tput setaf 3)${CLOSEESCAPE}"
-    BOLD_YELLOW="${OPENESCAPE}$(tput bold ; tput setaf 3)${CLOSEESCAPE}"
+    YELLOW="${_LP_OPEN_ESC}$(tput setaf 3)${_LP_OPEN_ESC}"
+    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput bold ; tput setaf 3)${_LP_OPEN_ESC}"
 
-    BLUE="${OPENESCAPE}$(tput setaf 4)${CLOSEESCAPE}"
-    BOLD_BLUE="${OPENESCAPE}$(tput bold ; tput setaf 4)${CLOSEESCAPE}"
+    BLUE="${_LP_OPEN_ESC}$(tput setaf 4)${_LP_OPEN_ESC}"
+    BOLD_BLUE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 4)${_LP_OPEN_ESC}"
 
-    PURPLE="${OPENESCAPE}$(tput setaf 5)${CLOSEESCAPE}"
-    PINK="${OPENESCAPE}$(tput bold ; tput setaf 5)${CLOSEESCAPE}"
+    PURPLE="${_LP_OPEN_ESC}$(tput setaf 5)${_LP_OPEN_ESC}"
+    PINK="${_LP_OPEN_ESC}$(tput bold ; tput setaf 5)${_LP_OPEN_ESC}"
 
-    CYAN="${OPENESCAPE}$(tput setaf 6)${CLOSEESCAPE}"
-    BOLD_CYAN="${OPENESCAPE}$(tput bold ; tput setaf 6)${CLOSEESCAPE}"
+    CYAN="${_LP_OPEN_ESC}$(tput setaf 6)${_LP_OPEN_ESC}"
+    BOLD_CYAN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 6)${_LP_OPEN_ESC}"
 
-    NO_COL="${OPENESCAPE}$(tput sgr0)${CLOSEESCAPE}"
+    NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_OPEN_ESC}"
 
 fi
 
@@ -195,50 +200,53 @@ fi
 
 
 # get cpu number
-__cpunum_Linux()
+_lp_cpunum_Linux()
 {
     grep -c '^[Pp]rocessor' /proc/cpuinfo
 }
 
-__cpunum_FreeBSD()
+_lp_cpunum_FreeBSD()
 {
     sysctl -n hw.ncpu
 }
 
-__cpunum_Darwin()
+_lp_cpunum_Darwin()
 {
-       __cpunum_FreeBSD
+       _lp_cpunum_FreeBSD
 }
 
-__cpunum_SunOS()
+_lp_cpunum_SunOS()
 {
     kstat -m cpu_info | grep -c "module: cpu_info"
 }
 
-__CPUNUM=$(__cpunum_$OS)
+_lp_CPUNUM=$(_lp_cpunum_$LP_OS)
 
 
 # get current load
 
-__load_Linux()
+_lp_load_Linux()
 {
+    local load
     load=$(awk '{print $1}' /proc/loadavg)
     echo -n "$load"
 }
 
-__load_FreeBSD()
+_lp_load_FreeBSD()
 {
+    local load
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
     echo -n "$load"
 }
 
-__load_Darwin()
+_lp_load_Darwin()
 {
-       __load_FreeBSD
+    _lp_load_FreeBSD
 }
 
-__load_SunOS()
+_lp_load_SunOS()
 {
+    local load
     load=$(LANG=C uptime | awk '{print substr($10,0,length($10))}')
     echo -n "$load"
 }
@@ -249,18 +257,19 @@ __load_SunOS()
 ###############
 
 # Yellow for root, light grey if the user is not the login one, else no color.
-__user()
+_lp_user()
 {
+    local user
     # if user is not root
     if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${FG}${USERSYMBOL}${NO_COL}"
+            user="${FG}${_LP_USER_SYMBOL}${NO_COL}"
         else
-            user="${USERSYMBOL}"
+            user="${_LP_USER_SYMBOL}"
         fi
     else
-        user="${BOLD_YELLOW}${USERSYMBOL}${NO_COL}"
+        user="${BOLD_YELLOW}${_LP_USER_SYMBOL}${NO_COL}"
     fi
 
     echo -ne $user
@@ -271,22 +280,28 @@ __user()
 # Where are we? #
 #################
 
-__connection()
+_lp_connection()
 {
+    local THIS_TTY
     THIS_TTY=$(awk -v pid=$$ '$0 ~ pid && /bash/{ print $7 }' < <(ps aux) )
+    local SESS_SRC
     SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
 
     # Are we in an SSH connexion?
+    local SSH_FLAG
     SSH_FLAG=0
+    local SSH_IP
     SSH_IP=${SSH_CLIENT%% *}
     if [[ ! -z $SSH_IP ]] ; then
       SSH_FLAG=1
     fi
+    local SSH2_IP
     SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
     if [[ ! -z $SSH2_IP ]] ; then
       SSH_FLAG=1
     fi
 
+    local CONN
     if [[ $SSH_FLAG -eq 1 ]] ; then
       CONN="ssh"
     elif [[ -z $SESS_SRC ]] ; then
@@ -303,30 +318,32 @@ __connection()
 # Put the hostname if not locally connected
 # color it in cyan within SSH, and a warning red if within telnet
 # else diplay the host without color
-__host_color()
+_lp_host_color()
 {
-    conn=$(__connection)
+    local conn
+    conn=$(_lp_connection)
 
+    local ret
     ret="${NO_COL}"
     if [[ "$conn" == "lcl" ]] ; then
         if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
             ret="${ret}" # no hostname if local
         else
-            ret="${ret}@${HOSTSYMBOL}"
+            ret="${ret}@${_LP_HOST_SYMBOL}"
         fi
     elif [[ "$conn" == "ssh" ]] ; then
-        ret="${ret}@${BOLD_CYAN}${HOSTSYMBOL}"
+        ret="${ret}@${BOLD_CYAN}${_LP_HOST_SYMBOL}"
     elif [[ "$conn" == "tel" ]] ; then
-        ret="${ret}@${WARN_RED}${HOSTSYMBOL}"
+        ret="${ret}@${WARN_RED}${_LP_HOST_SYMBOL}"
     else
-        ret="${ret}@${HOSTSYMBOL}"
+        ret="${ret}@${_LP_HOST_SYMBOL}"
     fi
 
     echo -ne "${ret}${NO_COL}"
 }
 
 # put an arrow if an http proxy is set
-__proxy()
+_lp_proxy()
 {
     if [[ ! -z "$http_proxy" ]] ; then
         echo -ne $LP_PROXY_MARK
@@ -345,13 +362,13 @@ __proxy()
 # http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
 #
 # + keep some left part of the path if asked
-__shorten_path()
+_lp_shorten_path()
 {
     # the character that will replace the part of the path that is masked
     local mask=" … "
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
     local keep=$((LP_PATH_KEEP-1))
-    if [[ "$WORKING_SHELL" == "zsh" ]]; then
+    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
        keep=$LP_PATH_KEEP
     fi
 
@@ -364,7 +381,7 @@ __shorten_path()
     local mask_len="${#mask}"
     local slashes=0
 
-    if [[ "$WORKING_SHELL" == "bash" ]]; then
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
         if [[ "$len" -gt "$max_len" ]]
         then
             # finds all the '/' in
@@ -424,7 +441,7 @@ __shorten_path()
         else
             echo "$p"
         fi
-    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         if [[ "$len" -gt "$max_len" ]]; then
             echo "%-${keep}~%${max_len}<${mask}<%~%<<"
         else
@@ -436,7 +453,7 @@ __shorten_path()
 # Display a ":"
 # colored in green if user have write permission on the current directory
 # colored in red if it have not.
-__permissions_color()
+_lp_permissions_color()
 {
     if [[ -w "${PWD}" ]]; then
         echo "${GREEN}:${NO_COL}"
@@ -453,7 +470,7 @@ __permissions_color()
 # Either attached running jobs (started with $ myjob &)
 # or attached stopped jobs (suspended with Ctrl-Z)
 # or detached screens sessions running on the host
-__jobcount_color()
+_lp_jobcount_color()
 {
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
@@ -461,6 +478,7 @@ __jobcount_color()
     local m_detached="d"
     local m_stop="z"
     local m_run="&"
+    local rep
 
     # d/&/z
     if   [[ $screens != "0" && $running != "0" && $stopped != "0" ]] ; then
@@ -494,7 +512,7 @@ __jobcount_color()
 }
 
 # Display the return value of the last command, if different from zero
-__return_value()
+_lp_return_value()
 {
     if [[ "$1" -ne "0" ]]
     then
@@ -510,7 +528,7 @@ __return_value()
 # GIT #
 
 # Get the branch name of the current directory
-__git_branch()
+_lp_git_branch()
 {
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
@@ -523,22 +541,28 @@ __git_branch()
 # - red if there is changes to commit
 #
 # Add the number of pending commits and the impacted lines.
-__git_branch_color()
+_lp_git_branch_color()
 {
     command -v git >/dev/null 2>&1 || return 1;
-    branch=$(__git_branch)
+    local branch
+    branch=$(_lp_git_branch)
     if [[ ! -z "$branch" ]] ; then
 
+        local GD
         git diff --quiet >/dev/null 2>&1
         GD=$?
+
+        local GDC
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
+        local has_commit
         has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
         if [[ -z "$has_commit" ]] ; then
             has_commit=0
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
+            local has_line
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
@@ -562,8 +586,9 @@ __git_branch_color()
 # MERCURIAL #
 
 # Get the branch name of the current directory
-__hg_branch()
+_lp_hg_branch()
 {
+    local branch
     branch="$(hg branch 2>/dev/null)"
     if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
         echo -n "$(hg branch)"
@@ -574,10 +599,12 @@ __hg_branch()
 # - green if the repository is up to date
 # - red if there is changes to commit
 # - TODO: yellow if there is some commits not pushed
-__hg_branch_color()
+_lp_hg_branch_color()
 {
     command -v hg >/dev/null 2>&1 || return 1;
-    branch=$(__hg_branch)
+    local branch
+    local ret
+    branch=$(_lp_hg_branch)
     if [[ ! -z "$branch" ]] ; then
         if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
             ret="${GREEN}${branch}${NO_COL}"
@@ -592,16 +619,21 @@ __hg_branch_color()
 
 # Get the branch name of the current directory
 # For the first level of the repository, gives the repository name
-__svn_branch()
+_lp_svn_branch()
 {
+    local infos
+    local ret
     infos=$(svn info --xml 2>/dev/null)
     ret=$?
     if [[ $ret -eq 0 ]] ; then
+        local root
         root=$(echo "$infos" | awk -v FS=">|</" '/^<root>/ { print $2 }')
+        local subrep
         subrep=$(echo "$infos" |  awk -v FS=">|</" '/^<url>/ { print $2 }')
         if [[ "$subrep" == *"url>"* ]] ; then
             echo -n $root
         else
+            local branch
             branch=$(basename $subrep)
             echo -n $branch
         fi
@@ -613,13 +645,16 @@ __svn_branch()
 # - red if there is changes to commit
 # Note that, due to subversion way of managing changes,
 # informations are only displayed for the CURRENT directory.
-__svn_branch_color()
+_lp_svn_branch_color()
 {
     command -v svn >/dev/null 2>&1 || return 1;
-    branch=$(__svn_branch)
+    local branch
+    branch=$(_lp_svn_branch)
     if [[ ! -z "$branch" ]] ; then
+        local commits
         commits=$(( $(svn status | grep -v "?" -c) ))
         if [[ $commits = 0 ]] ; then
+            local ret
             ret="${GREEN}${branch}${NO_COL}"
         else
             ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
@@ -639,11 +674,13 @@ __svn_branch_color()
 # returns 2 (and battery level) if battery is charging but under threshold
 # returns 3 (and battery level) if battery is charging and above threshold
 # returns 4 if no battery support
-__battery()
+_lp_battery()
 {
     command -v acpi >/dev/null 2>&1 || return 4; # or no battery support
-    local acpi="$(acpi --battery 2>/dev/null)"
-    local bat=$( echo $acpi | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
+    local acpi
+    acpi="$(acpi --battery 2>/dev/null)"
+    local bat
+    bat=$( echo $acpi | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
 
     if [[ -z "${bat}" ]] ; then
         # not battery level found
@@ -681,13 +718,13 @@ __battery()
 # a yellow ⏚ if the battery is charging    and under threshold
 # a yellow ⌁ if the battery is discharging but above threshold
 # a    red ⌁ if the battery is discharging and above threshold
-__battery_color()
+_lp_battery_color()
 {
     local mark=$LP_BATTERY_MARK
     local chargingmark=$LP_ADAPTER_MARK
     local bat
     local ret
-    bat=$(__battery)
+    bat=$(_lp_battery)
     ret=$?
 
     if [[ $ret == 4 || $bat == 100 ]] ; then
@@ -711,6 +748,7 @@ __battery_color()
 
     # discharging and under threshold
     elif [[ "$bat" != "" ]] ; then
+        local ret
         ret="${mark}${NO_COL}"
         if [[ ${bat} -le 100 ]] && [[ ${bat} -gt 75 ]] ; then
             ret="${ret}${GREEN}"
@@ -726,9 +764,9 @@ __battery_color()
             ret="${ret}${CRIT_RED}"
         fi
 
-        if [[ "$WORKING_SHELL" == "bash" ]]; then
+        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
             echo -ne "${ret}${bat}%${NO_COL}"
-        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
             echo -ne "${ret}${bat}%%${NO_COL}"
         fi
     fi
@@ -740,7 +778,7 @@ __battery_color()
 ###############
 
 # Compute a gradient of background/forground colors depending on the battery status
-__load_color()
+_lp_load_color()
 {
     # Colour progression is important ...
     #   bold gray -> bold green -> bold yellow -> bold red ->
@@ -749,15 +787,18 @@ __load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    loadval=$(__load_$OS)
+    local loadval
+    local load
+    loadval=$(_lp_load_$LP_OS)
     load=$(echo $loadval | sed 's/\.//g;s/^0*//g' )
     if [[ -z "$load" ]] ; then
         load=0
     fi
-    let "load=$load/$__CPUNUM"
+    let "load=$load/$_lp_CPUNUM"
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
+        local ret
         ret="${LP_LOAD_MARK}${NO_COL}"
         if [[ $load -lt 70 ]] ; then
             ret="${ret}${FG}"
@@ -772,9 +813,9 @@ __load_color()
         else
             ret="${ret}${CRIT_RED}"
         fi
-        if [[ "$WORKING_SHELL" == "bash" ]]; then
+        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
             ret="${ret}$load%${NO_COL}"
-        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
             ret="${ret}$load%%${NO_COL}"
         fi
         echo -ne "${ret}"
@@ -788,29 +829,31 @@ __load_color()
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
 # to # if root and else $
-__smart_mark()
+_lp_smart_mark()
 {
-    local COL=${BOLD_FG}
+    local COL
+    COL=${BOLD_FG}
     if [[ "$EUID" -eq "0" ]] ; then
         COL=${BOLD_RED}
     fi
 
-    local mark="\$"
-    if [[ "$WORKING_SHELL" == "zsh" ]]; then
+    local mark
+    mark="\$"
+    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         mark="%(!.#.$)"
     fi
-    if   [[ ! -z $(__git_branch) ]] ; then
+    if   [[ ! -z $(_lp_git_branch) ]] ; then
         mark=$LP_GIT_MARK
-    elif [[ ! -z $(__hg_branch)  ]]  ; then
+    elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
         mark=$LP_MERCURIAL_MARK
-    elif [[ ! -z $(__svn_branch) ]] ; then
+    elif [[ ! -z $(_lp_svn_branch) ]] ; then
         mark=$LP_SUBVERSION_MARK
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
 
 # insert a space on the right
-__sr()
+_lp_sr()
 {
     if [[ ! -z "$1" ]] ; then
         echo -n "$1 "
@@ -818,7 +861,7 @@ __sr()
 }
 
 # insert a space on the left
-__sl()
+_lp_sl()
 {
     if [[ ! -z "$1" ]] ; then
         echo -n " $1"
@@ -826,7 +869,7 @@ __sl()
 }
 
 # insert two space, before and after
-__sb()
+_lp_sb()
 {
     if [[ ! -z "$1" ]] ; then
         echo -n " $1 "
@@ -838,54 +881,54 @@ __sb()
 # Construct the prompt #
 ########################
 
-__set_bash_prompt()
+_lp_set_bash_prompt()
 {
     # as this get the last returned code, it should be called first
-    __RET=$(__sl "$(__return_value $?)")
+    LP_RET=$(_lp_sl "$(_lp_return_value $?)")
 
     # execute the old prompt
     $LP_OLD_PROMPT_COMMAND
 
     # left of main prompt: space at right
-    __JOBS=$(__sr "$(__jobcount_color)")
-    __LOAD=$(__sr "$(__load_color)")
-    __BATT=$(__sr "$(__battery_color)")
+    LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
+    LP_LOAD=$(_lp_sr "$(_lp_load_color)")
+    LP_BATT=$(_lp_sr "$(_lp_battery_color)")
 
     # in main prompt: no space
-    __USER=$(__user)
-    __HOST=$(__host_color)
-    __PERM=$(__permissions_color)
-     __PWD=$(__shorten_path "$PWD" $LP_PATH_LENGTH)
-    __PROXY=$(__proxy)
+    LP_USER=$(_lp_user)
+    LP_HOST=$(_lp_host_color)
+    LP_PERM=$(_lp_permissions_color)
+     LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
+    LP_PROXY=$(_lp_proxy)
 
     # right of main prompt: space at left
-     __GIT=$(__sl "$(__git_branch_color)")
-      __HG=$(__sl "$(__hg_branch_color)")
-     __SVN=$(__sl "$(__svn_branch_color)")
+     LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
+      LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
+     LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
 
     # end of the prompt line: double spaces
-    __MARK=$(__sb "$(__smart_mark)")
+    LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
 
     if [[ -z $LP_PS1 ]] ; then
         # add jobs, load and battery
-        PS1="${__BATT}${__LOAD}${__JOBS}"
+        PS1="${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
-        PS1="${PS1}[${__USER}${__HOST}${NO_COL}${__PERM}"
+        PS1="${PS1}[${LP_USER}${LP_HOST}${NO_COL}${LP_PERM}"
 
         # if not root
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${BOLD_FG}${__PWD}${NO_COL}]${__PROXY}"
+            PS1="${PS1}${BOLD_FG}${LP_PWD}${NO_COL}]${LP_PROXY}"
             # add VCS infos
-            PS1="${PS1}${__GIT}${__HG}${__SVN}"
+            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${YELLOW}${__PWD}${NO_COL}]${__PROXY}"
+            PS1="${PS1}${YELLOW}${LP_PWD}${NO_COL}]${LP_PROXY}"
             # do not add VCS infos
         fi
         # add return code and prompt mark
-        PS1="${PS1}${PURPLE}${__RET}${NO_COL}${__MARK}"
+        PS1="${PS1}${PURPLE}${LP_RET}${NO_COL}${LP_MARK}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
@@ -902,19 +945,19 @@ prompt_on()
     # if liquidprompt has not been already set
     if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
         LP_OLD_PS1="$PS1"
-        if [[ "$WORKING_SHELL" == "bash" ]]; then
+        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
-        elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
             LP_OLD_PROMPT_COMMAND="$precmd"
-		else
-			echo "${RED}Shell $WORKING_SHELL not supported $NO_COL"
+        else
+            echo "${RED}Shell $_LP_WORKING_SHELL not supported $NO_COL"
         fi
     fi
-    if [[ "$WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=__set_bash_prompt
-    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        PROMPT_COMMAND=_lp_set_bash_prompt
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         function precmd {
-            __set_bash_prompt
+            _lp_set_bash_prompt
         }
     fi
 
@@ -927,9 +970,9 @@ prompt_on()
 prompt_off()
 {
     PS1=$LP_OLD_PS1
-    if [[ "$WORKING_SHELL" == "bash" ]]; then
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }
@@ -938,9 +981,9 @@ prompt_off()
 prompt_OFF()
 {
     PS1="\$ "
-    if [[ "$WORKING_SHELL" == "bash" ]]; then
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$WORKING_SHELL" == "zsh" ]]; then
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }

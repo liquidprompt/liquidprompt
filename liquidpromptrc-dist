@@ -30,7 +30,7 @@ LP_REVERSE=0
 LP_HOSTNAME_ALWAYS=0
 
 # If charset is UTF-8
-if [[ $(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p') == *"UTF-8"* ]] ; then
+if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]] ; then
     LP_BATTERY_MARK="⌁"
     LP_ADAPTER_MARK="⏚"
     LP_LOAD_MARK="⌂"
@@ -47,3 +47,5 @@ else
     LP_MERCURIAL_MARK="m"
     LP_SUBVERSION_MARK="="
 fi
+
+# vim: set ts=4 sw=4 tw=120 ft=sh:

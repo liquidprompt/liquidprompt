@@ -933,4 +933,4 @@ prompt_OFF()
 # By default, sourcing liquidprompt.bash will activate the liquid prompt
 prompt_on
 
-# vim: set ts=4 sw=4 tw=120 :
+# vim: set ts=4 sw=4 tw=120 ft=sh:

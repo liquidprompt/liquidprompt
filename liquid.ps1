@@ -32,7 +32,7 @@ then
     LP_PS1="${LP_PS1}${LP_GIT}${LP_HG}${LP_SVN}"
 else
     # path in yellow
-    LP_PS1="${LP_PS1}${LP_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+    LP_PS1="${LP_PS1}${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
     # do not add VCS infos
 fi
 # add return code and prompt mark

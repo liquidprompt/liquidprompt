@@ -319,7 +319,7 @@ _lp_connection()
     else
         # TODO check on *BSD
         local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
-        if [[ -z "$sess_src" || "$sess_src" = :0.0 ]] ; then
+        if [[ -z "$sess_src" || "$sess_src" = :0.0 || "$sess_src" == :0 ]] ; then
             echo lcl  # Local
         else
             echo tel  # Telnet

@@ -256,8 +256,6 @@ __user()
 
 __connection()
 {
-    THIS_TTY=tty$(ps aux | awk -v pid=$$ '$0 ~ pid && /bash/{ print $7 }')
-    SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
 
     # Are we in an SSH connexion?
     SSH_FLAG=0
@@ -265,19 +263,20 @@ __connection()
     if [[ ! -z $SSH_IP ]] ; then
       SSH_FLAG=1
     fi
-    SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
+    SSH2_IP=${SSH2_CLIENT%% *}
     if [[ ! -z $SSH2_IP ]] ; then
       SSH_FLAG=1
     fi
 
     if [[ $SSH_FLAG -eq 1 ]] ; then
       CONN="ssh"
-    elif [[ -z $SESS_SRC ]] ; then
-      CONN="lcl"
-    elif [[ $SESS_SRC = "(:0.0)" || $SESS_SRC = "" ]] ; then
-      CONN="lcl"
     else
-      CONN="tel"
+      SESS_SRC=$(tty)
+      if [[ -z $SESS_SRC ]]; then
+        CONN="lcl"
+      else
+        CONN="tel"
+      fi
     fi
 
     echo -ne $CONN

@@ -97,4 +97,16 @@ LP_COLOR_TELNET="$WARN_RED"  # connected via telnet
 LP_COLOR_WRITE="$GREEN"  # have write permission
 LP_COLOR_NOWRITE="$RED"  # do not have write permission
 
+# VCS
+LP_COLOR_UP="$GREEN"        # repository is up to date / a push have been made
+LP_COLOR_COMMITS="$YELLOW"  # some commits have not been pushed
+LP_COLOR_CHANGES="$RED"     # there is some changes to commit
+LP_COLOR_DIFF="$PURPLE"     # number of lines impacted by current changes
+
+# Battery
+LP_COLOR_CHARGING_ABOVE="$GREEN"      # charging and above threshold
+LP_COLOR_CHARGING_UNDER="$YELLOW"     # charging but under threshold
+LP_COLOR_DISCHARGING_ABOVE="$YELLOW"  # discharging but above threshold
+LP_COLOR_DISCHARGING_UNDER="$RED"     # discharging and under threshold
+
 # vim: set ts=4 sw=4 tw=120 ft=sh:

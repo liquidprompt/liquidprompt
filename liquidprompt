@@ -233,7 +233,14 @@ LP_COLOR_SSH=${LP_COLOR_SSH:-$BOLD_CYAN}
 LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
 LP_COLOR_WRITE=${LP_COLOR_WRITE:-$GREEN}
 LP_COLOR_NOWRITE=${LP_COLOR_NOWRITE:-$RED}
-
+LP_COLOR_UP=${LP_COLOR_UP:-$GREEN}
+LP_COLOR_COMMITS=${LP_COLOR_COMMITS:-$YELLOW}
+LP_COLOR_CHANGES=${LP_COLOR_CHANGES:-$RED}
+LP_COLOR_DIFF=${LP_COLOR_DIFF:-$PURPLE}
+LP_COLOR_CHARGING_ABOVE=${LP_COLOR_CHARGING_ABOVE:-$GREEN}
+LP_COLOR_CHARGING_UNDER=${LP_COLOR_CHARGING_UNDER:-$YELLOW}
+LP_COLOR_DISCHARGING_ABOVE=${LP_COLOR_DISCHARGING_ABOVE:-$YELLOW}
+LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
@@ -576,16 +583,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL},${YELLOW}$has_commit${NO_COL})"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})"
             else
-                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL})" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})"
             else
-                ret="${GREEN}${branch}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -617,9 +624,9 @@ _lp_hg_branch_color()
     branch=$(_lp_hg_branch)
     if [[ ! -z "$branch" ]] ; then
         if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
-            ret="${GREEN}${branch}${NO_COL}"
+            ret="${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            ret="${RED}${branch}${NO_COL}" # changes to commit
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -665,9 +672,9 @@ _lp_svn_branch_color()
         commits=$(( $(svn status | grep -v "?" -c) ))
         if [[ $commits = 0 ]] ; then
             local ret
-            ret="${GREEN}${branch}${NO_COL}"
+            ret="${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -743,23 +750,23 @@ _lp_battery_color()
     elif [[ $ret == 3 && $bat != 100 ]] ; then
         # charging and above threshold and not 100%
         # green ⏚
-        echo -ne "${GREEN}$chargingmark${NO_COL}"
+        echo -ne "${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 2 ]] ; then
         # charging but under threshold
         # yellow ⏚
-        echo -ne "${YELLOW}$chargingmark${NO_COL}"
+        echo -ne "${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 1 ]] ; then
         # discharging but above threshold
         # yellow ⌁
-        echo -ne "${YELLOW}$mark${NO_COL}"
+        echo -ne "${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
         return
 
     # discharging and under threshold
     elif [[ "$bat" != "" ]] ; then
         local ret
-        ret="${mark}${NO_COL}"
+        ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
         if [[ ${bat} -le 100 ]] && [[ ${bat} -gt 75 ]] ; then
             ret="${ret}${GREEN}"
         elif [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then

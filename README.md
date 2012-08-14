@@ -1,5 +1,5 @@
-Liquid prompt -- A useful adaptive Bash & Zsh prompt
-====================================================
+Liquid prompt -- A useful adaptive prompt for Bash & Zsh
+========================================================
 
 Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
 Zsh.
@@ -160,6 +160,16 @@ Set to a null string "" if you do not want color.
 * Separation mark (aka permiison in the working dir)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission
+* VCS
+    * `LP_COLOR_UP` repository is up to date / a push have been made
+    * `LP_COLOR_COMMITS` some commits have not been pushed
+    * `LP_COLOR_CHANGES` there is some changes to commit
+    * `LP_COLOR_DIFF` number of lines impacted by current changes
+* Battery
+    * `LP_COLOR_CHARGING_ABOVE` charging and above threshold
+    * `LP_COLOR_CHARGING_UNDER` charging but under threshold
+    * `LP_COLOR_DISCHARGING_ABOVE` discharging but above threshold
+    * `LP_COLOR_DISCHARGING_UNDER` discharging and under threshold
 
 
 ## KNOWN LIMITATIONS AND BUGS

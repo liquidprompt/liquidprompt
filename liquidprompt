@@ -37,7 +37,7 @@
 
 # See the README.md file for a summary of features.
 
-_LP_WORKING_SHELL=${SHELL##*/}
+_LP_WORKING_SHELL=$(ps -p $$ | awk '{n=$NF}END{print n}')
 
 # A login shell starts with a "-"
 if [[ "$_LP_WORKING_SHELL" == "-bash" ]]; then

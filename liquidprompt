@@ -283,7 +283,7 @@ _lp_user()
 _lp_connection()
 {
     local THIS_TTY
-    THIS_TTY=$(awk -v pid=$$ '$0 ~ pid && /${WORKING_SHELL}/{ print $7 }' < <(ps aux) )
+    THIS_TTY=$(awk -v pid=$$ -v wkshell=${_LP_WORKING_SHELL} '$0 ~ pid && $0 ~ wkshell { print $7 }' < <(ps aux) )
     local SESS_SRC
     SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
 

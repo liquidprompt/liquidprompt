@@ -91,6 +91,7 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
     BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
     WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
     CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    DANGER_RED="${_LP_OPEN_ESC}$(tput md; tput AF 3 ; tput setab 1)${_LP_CLOSE_ESC}"
 
     GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_CLOSE_ESC}"
     BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_CLOSE_ESC}"
@@ -122,6 +123,7 @@ else
     BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
     WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
     CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    DANGER_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
 
     GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_CLOSE_ESC}"
     BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_CLOSE_ESC}"
@@ -225,10 +227,10 @@ LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
 LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
 LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD_WHITE}
 LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
-LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-}
+LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-""}
 LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
 LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
-LP_COLOR_HOST=${LP_COLOR_HOST:-}
+LP_COLOR_HOST=${LP_COLOR_HOST:-""}
 LP_COLOR_SSH=${LP_COLOR_SSH:-$BOLD_CYAN}
 LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
 LP_COLOR_WRITE=${LP_COLOR_WRITE:-$GREEN}
@@ -241,6 +243,18 @@ LP_COLOR_CHARGING_ABOVE=${LP_COLOR_CHARGING_ABOVE:-$GREEN}
 LP_COLOR_CHARGING_UNDER=${LP_COLOR_CHARGING_UNDER:-$YELLOW}
 LP_COLOR_DISCHARGING_ABOVE=${LP_COLOR_DISCHARGING_ABOVE:-$YELLOW}
 LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
+
+LP_COLORMAP_0=${LP_COLORMAP_0:-""}
+LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
+LP_COLORMAP_2=${LP_COLORMAP_2:-$BOLD_GREEN}
+LP_COLORMAP_3=${LP_COLORMAP_3:-$YELLOW}
+LP_COLORMAP_4=${LP_COLORMAP_4:-$BOLD_YELLOW}
+LP_COLORMAP_5=${LP_COLORMAP_5:-$RED}
+LP_COLORMAP_6=${LP_COLORMAP_6:-$BOLD_RED}
+LP_COLORMAP_7=${LP_COLORMAP_7:-$WARN_RED}
+LP_COLORMAP_8=${LP_COLORMAP_8:-$CRIT_RED}
+LP_COLORMAP_9=${LP_COLORMAP_9:-$DANGER_RED}
+
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
 # but heirloom dotfile has priority.
@@ -767,18 +781,27 @@ _lp_battery_color()
     elif [[ "$bat" != "" ]] ; then
         local ret
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
-        if [[ ${bat} -le 100 ]] && [[ ${bat} -gt 75 ]] ; then
-            ret="${ret}${GREEN}"
-        elif [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
-            ret="${ret}${BOLD_GREEN}"
-        elif [[ ${bat} -le 50 ]] && [[ ${bat} -gt 20 ]] ; then
-            ret="${ret}${BOLD_YELLOW}"
-        elif [[ ${bat} -le 20 ]] && [[ ${bat} -gt 10 ]] ; then
-            ret="${ret}${BOLD_RED}"
-        elif [[ ${bat} -le 10 ]] && [[ ${bat} -gt 5 ]] ; then
-            ret="${ret}${WARN_RED}"
+        if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
+            ret="${ret}${LP_COLORMAP_1}"
+        elif [[ ${bat} -le 80  ]] && [[ ${bat} -gt 65 ]] ; then # -15
+            ret="${ret}${LP_COLORMAP_2}"
+        elif [[ ${bat} -le 65  ]] && [[ ${bat} -gt 50 ]] ; then # -15
+            ret="${ret}${LP_COLORMAP_3}"
+        elif [[ ${bat} -le 50  ]] && [[ ${bat} -gt 40 ]] ; then # -10
+            ret="${ret}${LP_COLORMAP_4}"
+        elif [[ ${bat} -le 40  ]] && [[ ${bat} -gt 30 ]] ; then # …
+            ret="${ret}${LP_COLORMAP_5}"
+        elif [[ ${bat} -le 30  ]] && [[ ${bat} -gt 20 ]] ; then
+            ret="${ret}${LP_COLORMAP_6}"
+        elif [[ ${bat} -le 20  ]] && [[ ${bat} -gt 10 ]] ; then
+            ret="${ret}${LP_COLORMAP_7}"
+        elif [[ ${bat} -le 10  ]] && [[ ${bat} -gt 5  ]] ; then
+            ret="${ret}${LP_COLORMAP_8}"
+        elif [[ ${bat} -le 5   ]] && [[ ${bat} -gt 0  ]] ; then
+            ret="${ret}${LP_COLORMAP_9}"
         else
-            ret="${ret}${CRIT_RED}"
+            # for debugging purpose
+            ret="${ret}${LP_COLORMAP_0}"
         fi
 
         if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
@@ -817,18 +840,28 @@ _lp_load_color()
     then
         local ret
         ret="${LP_LOAD_MARK}${NO_COL}"
-        if [[ $load -lt 70 ]] ; then
-            ret="${ret}"
-        elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
-            ret="${ret}${BOLD_GREEN}"
-        elif [[ $load -ge 80 ]] && [[ $load -lt 95 ]] ; then
-            ret="${ret}${BOLD_YELLOW}"
-        elif [[ $load -ge 95 ]] && [[ $load -lt 150 ]] ; then
-            ret="${ret}${BOLD_RED}"
-        elif [[ $load -ge 150 ]] && [[ $load -lt 200 ]] ; then
-            ret="${ret}${WARN_RED}"
+        if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
+            ret="${ret}${LP_COLORMAP_0}"
+        elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
+            ret="${ret}${LP_COLORMAP_1}"
+        elif [[ $load -ge 40  ]] && [[ $load -lt 60  ]] ; then
+            ret="${ret}${LP_COLORMAP_2}"
+        elif [[ $load -ge 60  ]] && [[ $load -lt 80  ]] ; then
+            ret="${ret}${LP_COLORMAP_3}"
+        elif [[ $load -ge 80  ]] && [[ $load -lt 100 ]] ; then
+            ret="${ret}${LP_COLORMAP_4}"
+        elif [[ $load -ge 100 ]] && [[ $load -lt 120 ]] ; then
+            ret="${ret}${LP_COLORMAP_5}"
+        elif [[ $load -ge 120 ]] && [[ $load -lt 140 ]] ; then
+            ret="${ret}${LP_COLORMAP_6}"
+        elif [[ $load -ge 140 ]] && [[ $load -lt 160 ]] ; then
+            ret="${ret}${LP_COLORMAP_7}"
+        elif [[ $load -ge 160 ]] && [[ $load -lt 180 ]] ; then
+            ret="${ret}${LP_COLORMAP_8}"
+        elif [[ $load -ge 180 ]] ; then
+            ret="${ret}${LP_COLORMAP_9}"
         else
-            ret="${ret}${CRIT_RED}"
+            ret="${ret}${LP_COLORMAP_0}"
         fi
         if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
             ret="${ret}$load%${NO_COL}"

@@ -60,8 +60,9 @@ fi
 
 # Colors
 # Available colors are:
-# BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE, RED, BOLD_RED, WARN_RED, CRIT_RED,
+# BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
 # GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
+# RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
 # Set to a null string "" if you do not want color.
 
 # Current working directory
@@ -108,5 +109,18 @@ LP_COLOR_CHARGING_ABOVE="$GREEN"      # charging and above threshold
 LP_COLOR_CHARGING_UNDER="$YELLOW"     # charging but under threshold
 LP_COLOR_DISCHARGING_ABOVE="$YELLOW"  # discharging but above threshold
 LP_COLOR_DISCHARGING_UNDER="$RED"     # discharging and under threshold
+
+# Color maps (battery and load levels)
+# Range from 0 (nothing special) to 9 (alert)
+LP_COLORMAP_0=""
+LP_COLORMAP_1="$GREEN"
+LP_COLORMAP_2="$BOLD_GREEN"
+LP_COLORMAP_3="$YELLOW"
+LP_COLORMAP_4="$BOLD_YELLOW"
+LP_COLORMAP_5="$RED"
+LP_COLORMAP_6="$BOLD_RED"
+LP_COLORMAP_7="$WARN_RED"
+LP_COLORMAP_8="$CRIT_RED"
+LP_COLORMAP_9="$DANGER_RED"
 
 # vim: set ts=4 sw=4 tw=120 ft=sh:

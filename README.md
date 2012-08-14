@@ -104,8 +104,6 @@ displayed
 the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened
 path
-* `LP_REVERSE`, choose between reverse colors (black on white) or normal theme
-(white on black)
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
 
@@ -131,8 +129,9 @@ You can change the colors of some part of the liquid prompt by changing the
 following parameters in the config file.
 
 Available colors are:
-BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE, RED, BOLD_RED, WARN_RED, CRIT_RED,
-GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN.
+BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
+GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
+RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
 Set to a null string "" if you do not want color.
 
 * Current working directory

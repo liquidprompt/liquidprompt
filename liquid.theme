@@ -93,4 +93,4 @@ LP_COLORMAP_7="$WARN_RED"
 LP_COLORMAP_8="$CRIT_RED"
 LP_COLORMAP_9="$DANGER_RED"
 
-# vim: set ts=4 sw=4 tw=120 ft=sh:
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

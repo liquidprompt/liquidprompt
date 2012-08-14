@@ -38,4 +38,4 @@ fi
 # add return code and prompt mark
 LP_PS1="${LP_PS1}${LP_COLOR_ERR}${LP_ERR}${NO_COL}${LP_MARK}"
 
-# vim: set ts=4 sw=4 tw=120 ft=sh:
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

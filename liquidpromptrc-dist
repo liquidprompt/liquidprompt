@@ -28,4 +28,4 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
-# vim: set ts=4 sw=4 tw=120 ft=sh:
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

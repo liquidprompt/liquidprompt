@@ -133,6 +133,11 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
     BOLD="${_LP_OPEN_ESC}$(tput md)${_LP_CLOSE_ESC}"
 
+    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_CLOSE_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_CLOSE_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_CLOSE_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_CLOSE_ESC}"
+
     RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_CLOSE_ESC}"
     BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
     WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
@@ -158,6 +163,11 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
 else
     # default to Linux
     BOLD="${_LP_OPEN_ESC}$(tput bold)${_LP_CLOSE_ESC}"
+
+    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_CLOSE_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_CLOSE_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_CLOSE_ESC}"
 
     RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_CLOSE_ESC}"
     BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
@@ -248,7 +258,7 @@ _lp_user()
     if [[ "$EUID" -ne "0" ]] ; then
         # if user is not login user
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${_LP_USER_SYMBOL}${NO_COL}"
+            user="${BOLD}${_LP_USER_SYMBOL}${NO_COL}"
         else
             user="${_LP_USER_SYMBOL}"
         fi

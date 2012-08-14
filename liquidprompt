@@ -67,55 +67,8 @@ elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
 fi
 
 
-#################
-# CONFIGURATION #
-#################
-
-# Default values
-LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
-LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
-LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
-LP_PATH_KEEP=${LP_PATH_KEEP:-2}
-LP_REVERSE=${LP_REVERSE:-0}
-LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
-LP_PS1=${LP_PS1:-""}
-LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
-LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
-LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
-LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
-LP_GIT_MARK=${LP_GIT_MARK:-"±"}
-LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
-LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
-
-
-# Default config file may be the XDG standard ~/.config/liquidpromptrc,
-# but heirloom dotfile has priority.
-_lp_source_config()
-{
-    local configfile
-    if [[ -f "/etc/liquidpromptrc" ]]
-    then
-        configfile="/etc/liquidpromptrc"
-    fi
-    if [[ -f "$HOME/.liquidpromptrc" ]]
-    then
-        configfile="$HOME/.liquidpromptrc"
-    elif [[ -z "$XDG_HOME_DIR" ]]
-    then
-        configfile="$HOME/.config/liquidpromptrc"
-    else
-        configfile="$XDG_HOME_DIR/liquidpromptrc"
-    fi
-    if [[ -f "$configfile" ]]
-    then
-        source "$configfile"
-    fi
-}
-# do source config files
-_lp_source_config
-
 ###############
-# LP_OS specific #
+# OS specific #
 ###############
 
 # LP_OS detection, default to Linux
@@ -244,6 +197,56 @@ _lp_load_SunOS()
     load=$(LANG=C uptime | awk '{print substr($10,0,length($10))}')
     echo -n "$load"
 }
+
+
+#################
+# CONFIGURATION #
+#################
+
+# Note: configuration is called _after_ colors declarations, because of themes.
+
+# Default values
+LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
+LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
+LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
+LP_PATH_KEEP=${LP_PATH_KEEP:-2}
+LP_REVERSE=${LP_REVERSE:-0}
+LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
+LP_PS1=${LP_PS1:-""}
+LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
+LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
+LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
+LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
+LP_GIT_MARK=${LP_GIT_MARK:-"±"}
+LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
+LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+
+
+# Default config file may be the XDG standard ~/.config/liquidpromptrc,
+# but heirloom dotfile has priority.
+_lp_source_config()
+{
+    local configfile
+    if [[ -f "/etc/liquidpromptrc" ]]
+    then
+        source "/etc/liquidpromptrc"
+    fi
+    if [[ -f "$HOME/.liquidpromptrc" ]]
+    then
+        configfile="$HOME/.liquidpromptrc"
+    elif [[ -z "$XDG_HOME_DIR" ]]
+    then
+        configfile="$HOME/.config/liquidpromptrc"
+    else
+        configfile="$XDG_HOME_DIR/liquidpromptrc"
+    fi
+    if [[ -f "$configfile" ]]
+    then
+        source "$configfile"
+    fi
+}
+# do source config files
+_lp_source_config
 
 
 ###############
@@ -907,7 +910,7 @@ _lp_set_bash_prompt()
         # add jobs, load and battery
         PS1="${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
-        PS1="${PS1}[${LP_USER}${LP_HOST}${NO_COL}${LP_PERM}"
+        PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 
         # if not root
         if [[ "$EUID" -ne "0" ]]

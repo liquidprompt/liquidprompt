@@ -125,6 +125,43 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
      export LP_PS1=""
 
 
+## COLOR THEMES
+
+You can change the colors of some part of the liquid prompt by changing the
+following parameters in the config file.
+
+Available colors are:
+BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE, RED, BOLD_RED, WARN_RED, CRIT_RED,
+GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN.
+Set to a null string "" if you do not want color.
+
+* Current working directory
+    * `LP_COLOR_PATH` as normal user
+    * `LP_COLOR_PATH_ROOT` as root
+* Color of the proxy mark
+    * `LP_COLOR_PROXY`
+* Jobs count
+    * `LP_COLOR_JOB_D` Detached (aka screen sessions)
+    * `LP_COLOR_JOB_R` Running (xterm &)
+    * `LP_COLOR_JOB_Z` Sleeping (Ctrl-Z)
+* Last error code
+    * `LP_COLOR_ERR`
+* Prompt mark
+    * `LP_COLOR_MARK` as user
+    * `LP_COLOR_MARK_ROOT` as root
+* Current user
+    * `LP_COLOR_USER_LOGGED` user who logged in
+    * `LP_COLOR_USER_ALT` user but not the one who logged in
+    * `LP_COLOR_USER_ROOT` root
+* Hostname
+    * `LP_COLOR_HOST` local host
+    * `LP_COLOR_SSH` connected via SSH
+    * `LP_COLOR_TELNET` connected via telnet
+* Separation mark (aka permiison in the working dir)
+    * `LP_COLOR_WRITE` have write permission
+    * `LP_COLOR_NOWRITE` do not have write permission
+
+
 ## KNOWN LIMITATIONS AND BUGS
 
 Liquid prompt is distributed under the GNU Affero General Public License

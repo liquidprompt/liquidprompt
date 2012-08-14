@@ -292,65 +292,46 @@ _lp_user()
 
 _lp_connection()
 {
-    local THIS_TTY
-    THIS_TTY=$(awk -v pid=$$ -v wkshell=${_LP_WORKING_SHELL} '$0 ~ pid && $0 ~ wkshell { print $7 }' < <(ps aux) )
-    local SESS_SRC
-    SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
-
-    # Are we in an SSH connexion?
-    local SSH_FLAG
-    SSH_FLAG=0
-    local SSH_IP
-    SSH_IP=${SSH_CLIENT%% *}
-    if [[ ! -z $SSH_IP ]] ; then
-      SSH_FLAG=1
-    fi
-    local SSH2_IP
-    SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
-    if [[ ! -z $SSH2_IP ]] ; then
-      SSH_FLAG=1
-    fi
-
-    local CONN
-    if [[ $SSH_FLAG -eq 1 ]] ; then
-      CONN="ssh"
-    elif [[ -z $SESS_SRC ]] ; then
-      CONN="lcl"
-    elif [[ $SESS_SRC = "(:0.0)" || $SESS_SRC = "" ]] ; then
-      CONN="lcl"
-    else
-      CONN="tel"
-    fi
-
-    echo -ne $CONN
+	if [[ -n "$SSH_CLIENT$SSH2_CLIENT" ]] ; then
+		echo ssh
+	else
+		# TODO check on *BSD
+		local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
+		if [[ -z "$sess_src" || "$sess_src" = :0.0 ]] ; then
+			echo lcl  # Local
+		else
+			echo tel  # Telnet
+		fi
+	fi
 }
 
 # Put the hostname if not locally connected
 # color it in cyan within SSH, and a warning red if within telnet
 # else diplay the host without color
-_lp_host_color()
-{
-    local conn
-    conn=$(_lp_connection)
+# The connection is not expected to change from inside the shell, so we
+# build this just once
+case "$(_lp_connection)" in
+lcl)
+	if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+		LP_HOST="${NO_COL}" # no hostname if local
+	else
+		LP_HOST="${NO_COL}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+	fi
+	;;
+ssh)
+    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+	;;
+tel)
+    LP_HOST="${NO_COL}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+    ;;
+*)
+    LP_HOST="${NO_COL}@${_LP_HOST_SYMBOL}" # defaults to no color
+    ;;
+esac
 
-    local ret
-    ret="${NO_COL}"
-    if [[ "$conn" == "lcl" ]] ; then
-        if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
-            ret="${ret}" # no hostname if local
-        else
-            ret="${ret}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}"
-        fi
-    elif [[ "$conn" == "ssh" ]] ; then
-        ret="${ret}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}"
-    elif [[ "$conn" == "tel" ]] ; then
-        ret="${ret}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}"
-    else
-        ret="${ret}@${_LP_HOST_SYMBOL}" # defaults to no color
-    fi
+# Useless now, so undefine
+unset _lp_connection
 
-    echo -ne "${ret}${NO_COL}"
-}
 
 # put an arrow if an http proxy is set
 _lp_proxy()
@@ -906,7 +887,7 @@ _lp_set_bash_prompt()
 
     # in main prompt: no space
     LP_USER=$(_lp_user)
-    LP_HOST=$(_lp_host_color)
+    # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
      LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
     LP_PROXY=$(_lp_proxy)

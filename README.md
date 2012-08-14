@@ -154,7 +154,7 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 ## COLOR THEMES
 
 You can change the colors of some part of the liquid prompt by sourcing your
-favorite theme file (`*.theme`), before or after having sourced the liquid prompt.
+favorite theme file (`*.theme`), before having sourced the liquid prompt.
 
 Available colors are:
 BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,

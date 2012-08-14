@@ -1,5 +1,5 @@
-Liquid prompt -- A useful adaptive Bash prompt
-==============================================
+Liquid prompt -- A useful adaptive Bash & Zsh prompt
+====================================================
 
 Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
 Zsh.

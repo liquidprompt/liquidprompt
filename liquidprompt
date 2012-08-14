@@ -33,6 +33,7 @@
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
+# Olivier Mengué <dolmen@cpan.org>              # Major optimizations
 
 
 # See the README.md file for a summary of features.

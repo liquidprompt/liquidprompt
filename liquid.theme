@@ -1,0 +1,96 @@
+
+####################################
+# LIQUID PROMPT DEFAULT THEME FILE #
+####################################
+
+# Special characters
+# Be sure to use characters that exists in the font you use. You can use several
+# characters at once.
+# Below is an example of how to fallback to ascii if the term is not unicode capable.
+# Defaults to UTF-8 characters.
+if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]] ; then
+    # If charset is UTF-8.
+    LP_BATTERY_MARK="⌁"     # in front of the battery charge
+    LP_ADAPTER_MARK="⏚"     # displayed when plugged
+    LP_LOAD_MARK="⌂"        # in front of the load
+    LP_PROXY_MARK="↥"       # indicate a proxy in use
+    LP_GIT_MARK="±"         # prompt mark in git repositories
+    LP_MERCURIAL_MARK="☿"   # prompt mark in hg repositories
+    LP_SUBVERSION_MARK="‡"  # prompt mark in svn repositories
+else
+    # If charset is anything else, fallback to ASCII chars
+    LP_BATTERY_MARK="b"
+    LP_ADAPTER_MARK="p"
+    LP_LOAD_MARK="c"
+    LP_PROXY_MARK="^"
+    LP_GIT_MARK="+"
+    LP_MERCURIAL_MARK="m"
+    LP_SUBVERSION_MARK="="
+fi
+
+# Colors
+# Available colors are:
+# BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
+# GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
+# RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
+# Set to a null string "" if you do not want color.
+
+# Current working directory
+LP_COLOR_PATH="$BOLD_WHITE"         # as normal user
+LP_COLOR_PATH_ROOT="$BOLD_YELLOW"   # as root
+
+# Color of the proxy mark
+LP_COLOR_PROXY="$BOLD_BLUE"
+
+# Jobs count
+LP_COLOR_JOB_D="$YELLOW"        # Detached (aka screen sessions)
+LP_COLOR_JOB_R="$BOLD_YELLOW"   # Running (xterm &)
+LP_COLOR_JOB_Z="$BOLD_YELLOW"   # Sleeping (Ctrl-Z)
+
+# Last error code
+LP_COLOR_ERR="$PURPLE"
+
+# Prompt mark
+LP_COLOR_MARK="$BOLD_WHITE"     # as user
+LP_COLOR_MARK_ROOT="$BOLD_RED"  # as root
+
+# Current user
+LP_COLOR_USER_LOGGED=""           # user who logged in
+LP_COLOR_USER_ALT="$BOLD"         # user but not the one who logged in
+LP_COLOR_USER_ROOT="$BOLD_YELLOW" # root
+
+# Hostname
+LP_COLOR_HOST=""             # local host
+LP_COLOR_SSH="$BOLD_CYAN"    # connected via SSH
+LP_COLOR_TELNET="$WARN_RED"  # connected via telnet
+
+# Separation mark (aka permiison in the working dir)
+LP_COLOR_WRITE="$GREEN"  # have write permission
+LP_COLOR_NOWRITE="$RED"  # do not have write permission
+
+# VCS
+LP_COLOR_UP="$GREEN"        # repository is up to date / a push have been made
+LP_COLOR_COMMITS="$YELLOW"  # some commits have not been pushed
+LP_COLOR_CHANGES="$RED"     # there is some changes to commit
+LP_COLOR_DIFF="$PURPLE"     # number of lines impacted by current changes
+
+# Battery
+LP_COLOR_CHARGING_ABOVE="$GREEN"      # charging and above threshold
+LP_COLOR_CHARGING_UNDER="$YELLOW"     # charging but under threshold
+LP_COLOR_DISCHARGING_ABOVE="$YELLOW"  # discharging but above threshold
+LP_COLOR_DISCHARGING_UNDER="$RED"     # discharging and under threshold
+
+# Color maps (battery and load levels)
+# Range from 0 (nothing special) to 9 (alert)
+LP_COLORMAP_0=""
+LP_COLORMAP_1="$GREEN"
+LP_COLORMAP_2="$BOLD_GREEN"
+LP_COLORMAP_3="$YELLOW"
+LP_COLORMAP_4="$BOLD_YELLOW"
+LP_COLORMAP_5="$RED"
+LP_COLORMAP_6="$BOLD_RED"
+LP_COLORMAP_7="$WARN_RED"
+LP_COLORMAP_8="$CRIT_RED"
+LP_COLORMAP_9="$DANGER_RED"
+
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

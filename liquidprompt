@@ -69,13 +69,12 @@ fi
 ###############
 
 # LP_OS detection, default to Linux
-LP_OS="Linux"
 case $(uname) in
-    "Linux"  ) LP_OS="Linux"   ;;
-    "FreeBSD") LP_OS="FreeBSD" ;;
-    "Darwin") LP_OS="Darwin" ;;
-    "DragonFly") LP_OS="FreeBSD" ;;
-    "SunOS") LP_OS="SunOS" ;;
+    FreeBSD)   LP_OS=FreeBSD ;;
+    DragonFly) LP_OS=FreeBSD ;;
+    Darwin)    LP_OS=FreeBSD ;;
+    SunOS)     LP_OS=SunOS   ;;
+    *)         LP_OS=Linux   ;;
 esac
 
 # Colors declarations
@@ -156,11 +155,6 @@ _lp_cpunum_FreeBSD()
     sysctl -n hw.ncpu
 }
 
-_lp_cpunum_Darwin()
-{
-       _lp_cpunum_FreeBSD
-}
-
 _lp_cpunum_SunOS()
 {
     kstat -m cpu_info | grep -c "module: cpu_info"
@@ -183,11 +177,6 @@ _lp_load_FreeBSD()
     local load
     load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
     echo -n "$load"
-}
-
-_lp_load_Darwin()
-{
-    _lp_load_FreeBSD
 }
 
 _lp_load_SunOS()

@@ -33,7 +33,7 @@
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
-# Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
+# Olivier Mengué <dolmen@cpan.org>              # Major optimizations: host parsing, terminfo compiler
 
 
 # See the README.md file for a summary of features.
@@ -79,71 +79,82 @@ case $(uname) in
 esac
 
 # Colors declarations
-if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
-    BOLD="${_LP_OPEN_ESC}$(tput md)${_LP_CLOSE_ESC}"
+# TermInfo color compiler by Olivier Mengué <dolmen@cpan.org>
+# - calls 'tput', as few as possible (use a cache)
+# - handles terminfo fallback (example: use 'md' if 'sgr0' is not available)
+# - optimize escape sequences: "\033[1m\033[37m" is reduced to "\033[1;37m"
+# The output is shell code that is evalued.
+_terminfo_compiler='
+    chomp;
+    next if /^#/;
+    # Aliases
+    if (/([a-z0-9]+):\s+(.*)/) {
+        my $k = $1;
+        my @aliases = split /\s/, $2;
+        foreach (@aliases) {
+            $v = `tput $_ 2>/dev/null`;
+            if (($? >> 8) == 0) {
+                $ALIAS{$k} = $_;
+                $TI{$k} = $v;
+            }
+        }
+        next;
+    }
+    # Variable definition
+    my ($k, $v) = split /=/ or die;
+    my @v = split /\s*,\s*/, $v;
+    foreach (@v) {
+        unless (exists $TI{$_}) {
+            ($p, $q) = m/(\S+)(?:\s+(\S.*))?/;
+            $p = $ALIAS{$p} if exists $ALIAS{$p};
+            if (defined $q) {
+                $TI{$_} = `tput $p $q`;
+            } else {
+                $TI{$_} = `tput $p`;
+            }
+        }
+        $_ = $TI{$_};
+    }
+    $v = join(q[], @v);
+    # Optimize
+    1 while $v =~ s/^\033\[([0-9;]*)m\033\[([0-9;]*)m/\033[\1;\2m/g;
+    # Print output
+    print qq<$k="\${_LP_OPEN_ESC}"\047$v\047"\${_LP_CLOSE_ESC}" >;
+'
 
-    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_CLOSE_ESC}"
+eval $( perl -ne "$_terminfo_compiler" <<'EOF'
+# Aliases with fallbacks
+bold: bold md
+setaf: setaf AF
+sgr0: sgr0 me
+# Variable definitions
+BOLD=bold
+BLACK=setaf 0
+BOLD_GRAY=bold, setaf 0
+WHITE=setaf 7
+BOLD_WHITE=bold, setaf 7
+RED=setaf 1
+BOLD_RED=bold, setaf 1
+WARN_RED=setaf 0, setab 1
+CRIT_RED=bold, setaf 7, setab 1
+DANGER_RED=bold, setaf 3, setab 1
+GREEN=setaf 2
+BOLD_GREEN=bold, setaf 2
+YELLOW=setaf 3
+BOLD_YELLOW=bold, setaf 3
+BLUE=setaf 4
+BOLD_BLUE=bold, setaf 4
+PURPLE=setaf 5
+PINK=bold, setaf 5
+CYAN=setaf 6
+BOLD_CYAN=bold, setaf 6
+NO_COL=sgr0
+EOF
+)
 
-    RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_CLOSE_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    DANGER_RED="${_LP_OPEN_ESC}$(tput md; tput AF 3 ; tput setab 1)${_LP_CLOSE_ESC}"
+unset _terminfo_compiler
 
-    GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_CLOSE_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_CLOSE_ESC}"
-
-    YELLOW="${_LP_OPEN_ESC}$(tput AF 3)${_LP_CLOSE_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput md ; tput AF 3)${_LP_CLOSE_ESC}"
-
-    BLUE="${_LP_OPEN_ESC}$(tput AF 4)${_LP_CLOSE_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput md ; tput AF 4)${_LP_CLOSE_ESC}"
-
-    PURPLE="${_LP_OPEN_ESC}$(tput AF 5)${_LP_CLOSE_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput md ; tput AF 5)${_LP_CLOSE_ESC}"
-
-    CYAN="${_LP_OPEN_ESC}$(tput AF 6)${_LP_CLOSE_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput md ; tput AF 6)${_LP_CLOSE_ESC}"
-
-    NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_CLOSE_ESC}"
-
-else
-    # default to Linux
-    BOLD="${_LP_OPEN_ESC}$(tput bold)${_LP_CLOSE_ESC}"
-
-    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_CLOSE_ESC}"
-
-    RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_CLOSE_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    DANGER_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
-
-    GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_CLOSE_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_CLOSE_ESC}"
-
-    YELLOW="${_LP_OPEN_ESC}$(tput setaf 3)${_LP_CLOSE_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput bold ; tput setaf 3)${_LP_CLOSE_ESC}"
-
-    BLUE="${_LP_OPEN_ESC}$(tput setaf 4)${_LP_CLOSE_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 4)${_LP_CLOSE_ESC}"
-
-    PURPLE="${_LP_OPEN_ESC}$(tput setaf 5)${_LP_CLOSE_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput bold ; tput setaf 5)${_LP_CLOSE_ESC}"
-
-    CYAN="${_LP_OPEN_ESC}$(tput setaf 6)${_LP_CLOSE_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 6)${_LP_CLOSE_ESC}"
-
-    NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_CLOSE_ESC}"
-
-fi
 
 # get cpu number
 _lp_cpunum_Linux()
@@ -283,6 +294,7 @@ _lp_source_config()
 # do source config files
 _lp_source_config
 
+# TODO unset colors variables (BLACK, WHITE, BLUE...)
 
 ###############
 # Who are we? #

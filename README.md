@@ -47,7 +47,7 @@ any;
 the same as the login user;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
-* a green colon if the user has write permissions on the current directory, 
+* a green colon if the user has write permissions on the current directory,
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
@@ -92,7 +92,7 @@ For other features, the script uses commands that should be available on a large
 variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
 
 
-## PUT THE PROMPT IN A DIFFERENT ORDER
+## FEATURES CONFIGURATION
 
 You can configure some variables in the `~/.liquidpromptrc` file:
 
@@ -107,11 +107,39 @@ path
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
 
-You can sort what you want to see by exporting the `LP_PS1` variable, using the
-variables you will found in the `_lp_set_bash_prompt` function.
+
+## PUT THE PROMPT IN A DIFFERENT ORDER
+
+You can sort what you want to see by sourcing your favorite template file
+(`*.ps1`), after having sourced the liquid prompt.
+
+Those scripts basically export the `LP_PS1` variable, by appending features and
+theme colors.
+
+Available features:
+* `LP_BATT` battery
+* `LP_LOAD` load
+* `LP_JOBS` screen sessions/running jobs/suspended jobs
+* `LP_USER` user
+* `LP_HOST` hostname
+* `LP_PERM` a colon ":"
+* `LP_PWD` current working directory
+* `LP_PROXY` HTTP proxy
+* `LP_GIT` git
+* `LP_HG` mercurial
+* `LP_SVN` subversion
+* `LP_ERR` last error code
+* `LP_MARK` prompt mark
+
+Some indicators are not colored by default (mainly those that are _static_), to
+put colors on theme you should not forget to add themed colors variable around
+them:
+
+    LP_PS1="${LP_ERR}" # no color
+    LP_PS1="${LP_COLOR_ERR}${LP_ERR}${NO_COL}" # colored
 
 For example, if you just want to have a liquidprompt displaying the user and the
-host, with a normal path in blue and only the git support:
+host, with a normal full path in blue and only the git support:
 
     export LP_PS1=`echo -ne "[\${LP_USER}\${LP_HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${LP_GIT} \\\$ "`
 
@@ -125,13 +153,14 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 
 ## COLOR THEMES
 
-You can change the colors of some part of the liquid prompt by changing the
-following parameters in the config file.
+You can change the colors of some part of the liquid prompt by sourcing your
+favorite theme file (`*.theme`), before or after having sourced the liquid prompt.
 
 Available colors are:
 BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
 GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
 RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
+NO_COL.
 Set to a null string "" if you do not want color.
 
 * Current working directory

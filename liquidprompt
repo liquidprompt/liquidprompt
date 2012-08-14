@@ -144,23 +144,12 @@ else
 
 fi
 
-# get cpu number
-_lp_cpunum_Linux()
-{
-    grep -c '^[Pp]rocessor' /proc/cpuinfo
-}
-
-_lp_cpunum_FreeBSD()
-{
-    sysctl -n hw.ncpu
-}
-
-_lp_cpunum_SunOS()
-{
-    kstat -m cpu_info | grep -c "module: cpu_info"
-}
-
-_lp_CPUNUM=$(_lp_cpunum_$LP_OS)
+# Get cpu count
+case "$LP_OS" in
+    Linux)   _lp_CPUNUM=$( nproc || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
+    FreeBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
+    SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
+esac
 
 
 # get current load

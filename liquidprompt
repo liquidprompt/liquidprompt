@@ -218,6 +218,9 @@ LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
 LP_GIT_MARK=${LP_GIT_MARK:-"±"}
 LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
 LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
+LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
+LP_ENABLE_MERCURIAL=${LP_ENABLE_MERCURIAL:-1}
 
 LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
 LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -543,6 +546,9 @@ _lp_return_value()
 # Get the branch name of the current directory
 _lp_git_branch()
 {
+    if [[ $LP_ENABLE_GIT == 0 ]] ; then
+        return ""
+    fi
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
@@ -556,6 +562,9 @@ _lp_git_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_git_branch_color()
 {
+    if [[ $LP_ENABLE_GIT == 0 ]] ; then
+        return ""
+    fi
     command -v git >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_git_branch)
@@ -601,6 +610,9 @@ _lp_git_branch_color()
 # Get the branch name of the current directory
 _lp_hg_branch()
 {
+    if [[ $LP_ENABLE_MERCURIAL == 0 ]] ; then
+        return ""
+    fi
     local branch
     branch="$(hg branch 2>/dev/null)"
     if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
@@ -614,6 +626,9 @@ _lp_hg_branch()
 # - TODO: yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
+    if [[ $LP_ENABLE_MERCURIAL == 0 ]] ; then
+        return ""
+    fi
     command -v hg >/dev/null 2>&1 || return 1;
     local branch
     local ret
@@ -634,6 +649,9 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
+    if [[ $LP_ENABLE_SVN == 0 ]] ; then
+        return ""
+    fi
     local infos
     local ret
     infos=$(svn info --xml 2>/dev/null)
@@ -660,6 +678,9 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
+    if [[ $LP_ENABLE_SVN == 0 ]] ; then
+        return ""
+    fi
     command -v svn >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_svn_branch)
@@ -956,7 +977,7 @@ _lp_set_bash_prompt()
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+            PS1="${PS1}${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
             # do not add VCS infos
         fi
         # add return code and prompt mark

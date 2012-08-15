@@ -146,7 +146,7 @@ fi
 
 # Get cpu count
 case "$LP_OS" in
-    Linux)   _lp_CPUNUM=$( nproc || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
+    Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
     FreeBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
     SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
 esac

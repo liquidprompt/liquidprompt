@@ -127,7 +127,6 @@ eval $( perl -ne "$_terminfo_compiler" <<'EOF'
 # Aliases with fallbacks
 bold: bold md
 setaf: setaf AF
-sgr0: sgr0 me
 # Variable definitions
 BOLD=bold
 BLACK=setaf 0
@@ -149,11 +148,13 @@ PURPLE=setaf 5
 PINK=bold, setaf 5
 CYAN=setaf 6
 BOLD_CYAN=bold, setaf 6
-NO_COL=sgr0
 EOF
 )
 
 unset _terminfo_compiler
+
+# NO_COL is special: it is needed at runtime, not just for config
+NO_COL="${_LP_OPEN_ESC}$( tput sgr0 2>/dev/null || tput me )${_LP_CLOSE_ESC}"
 
 
 # get cpu number

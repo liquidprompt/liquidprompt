@@ -12,6 +12,7 @@ informations that are always displayed in the same way.
 
 You can use it with either bash and zsh.
 
+![Screenshot](https://raw.github.com/nojhan/liquidprompt/master/demo.png)
 
 ## FEATURES
 

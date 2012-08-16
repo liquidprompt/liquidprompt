@@ -265,6 +265,12 @@ _lp_source_config()
 # do source config files
 _lp_source_config
 
+# Disable features if the tool is not installed
+[[ "$LP_ENABLE_GIT" = 1 ]] && { command -v git >/dev/null || LP_ENABLE_GIT=0 ; }
+[[ "$LP_ENABLE_SVN" = 1 ]] && { command -v svn >/dev/null || LP_ENABLE_SVN=0 ; }
+[[ "$LP_ENABLE_HG"  = 1 ]] && { command -v hg  >/dev/null || LP_ENABLE_HG=0  ; }
+
+
 
 ###############
 # Who are we? #
@@ -540,7 +546,6 @@ _lp_git_branch()
 _lp_git_branch_color()
 {
     [[ "$LP_ENABLE_GIT" == 1 ]] || return
-    command -v git >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_git_branch)
     if [[ ! -z "$branch" ]] ; then
@@ -608,7 +613,6 @@ _lp_hg_branch()
 _lp_hg_branch_color()
 {
     [[ "$LP_ENABLE_HG" == 1 ]] || return
-    command -v hg >/dev/null 2>&1 || return 1;
     local branch
     local ret
     branch=$(_lp_hg_branch)
@@ -656,7 +660,6 @@ _lp_svn_branch()
 _lp_svn_branch_color()
 {
     [[ "$LP_ENABLE_SVN" == 1 ]] || return
-    command -v svn >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_svn_branch)
     if [[ ! -z "$branch" ]] ; then

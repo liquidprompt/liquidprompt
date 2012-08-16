@@ -357,7 +357,7 @@ _lp_proxy()
     [[ "$LP_ENABLE_PROXY" != 1 ]] && return
 
     if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne $LP_PROXY_MARK
+        echo -ne $LP_MARK_PROXY
     fi
 }
 

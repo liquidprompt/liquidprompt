@@ -901,11 +901,11 @@ _lp_smart_mark()
         mark="%(!.#.%%)"
     fi
     if   [[ ! -z $(_lp_git_branch) ]] ; then
-        mark=$LP_GIT_MARK
+        mark=$LP_MARK_GIT
     elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
-        mark=$LP_HG_MARK
+        mark=$LP_MARK_HG
     elif [[ ! -z $(_lp_svn_branch) ]] ; then
-        mark=$LP_SVN_MARK
+        mark=$LP_MARK_SVN
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }

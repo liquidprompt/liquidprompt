@@ -354,10 +354,8 @@ unset _lp_connection
 # put an arrow if an http proxy is set
 _lp_proxy()
 {
-    if [[ $LP_ENABLE_PROXY == 0 ]] ; then
-        echo -n ''
-        return
-    fi
+    [[ "$LP_ENABLE_PROXY" != 1 ]] && return
+
     if [[ ! -z "$http_proxy" ]] ; then
         echo -ne $LP_PROXY_MARK
     fi
@@ -377,7 +375,7 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    if [[ $LP_ENABLE_SHORTEN_PATH == 0 ]] ; then
+    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
         echo $(echo "$1" | sed -e "s|$HOME|~|")
         return
     fi
@@ -472,8 +470,8 @@ _lp_shorten_path()
 # colored in red if it have not.
 _lp_permissions_color()
 {
-    if [[ $LP_ENABLE_PERM == 0 ]]; then
-        echo ":" # without color
+    if [[ "$LP_ENABLE_PERM" != 1 ]]; then
+        echo : # without color
     else
         if [[ -w "${PWD}" ]]; then
             echo "${LP_COLOR_WRITE}:${NO_COL}"
@@ -493,10 +491,8 @@ _lp_permissions_color()
 # or detached screens sessions running on the host
 _lp_jobcount_color()
 {
-    if [[ $LP_ENABLE_JOBS == 0 ]] ; then
-        echo -n ''
-        return
-    fi
+    [[ "$LP_ENABLE_JOBS" != 1 ]] && return
+
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
@@ -555,7 +551,8 @@ _lp_return_value()
 # Get the branch name of the current directory
 _lp_git_branch()
 {
-    [[ "$LP_ENABLE_GIT" == 1 ]] || return
+    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
@@ -569,7 +566,8 @@ _lp_git_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_git_branch_color()
 {
-    [[ "$LP_ENABLE_GIT" == 1 ]] || return
+    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+
     local branch
     branch=$(_lp_git_branch)
     if [[ ! -z "$branch" ]] ; then
@@ -622,7 +620,8 @@ _lp_git_branch_color()
 # Get the branch name of the current directory
 _lp_hg_branch()
 {
-    [[ "$LP_ENABLE_HG" == 1 ]] || return
+    [[ "$LP_ENABLE_HG" != 1 ]] && return
+
     local branch
     branch="$(hg branch 2>/dev/null)"
     if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
@@ -636,7 +635,8 @@ _lp_hg_branch()
 # - TODO: yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
-    [[ "$LP_ENABLE_HG" == 1 ]] || return
+    [[ "$LP_ENABLE_HG" != 1 ]] && return
+
     local branch
     local ret
     branch=$(_lp_hg_branch)
@@ -656,7 +656,8 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    [[ "$LP_ENABLE_SVN" == 1 ]] || return
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+
     local infos
     local ret
     infos=$(svn info --xml 2>/dev/null)
@@ -683,7 +684,8 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    [[ "$LP_ENABLE_SVN" == 1 ]] || return
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+
     local branch
     branch=$(_lp_svn_branch)
     if [[ ! -z "$branch" ]] ; then
@@ -712,7 +714,7 @@ _lp_svn_branch_color()
 # returns 4 if no battery support
 _lp_battery()
 {
-    [[ "$LP_ENABLE_BATT" == 1 ]] || return
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
     local bat
@@ -756,10 +758,8 @@ _lp_battery()
 # a    red ⌁ if the battery is discharging and above threshold
 _lp_battery_color()
 {
-    if [[ $LP_ENABLE_BATT == 0 ]] ; then
-        echo -n ''
-        return
-    fi
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return
+
     local mark=$LP_BATTERY_MARK
     local chargingmark=$LP_ADAPTER_MARK
     local bat
@@ -836,10 +836,8 @@ _lp_load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    if [[ $LP_ENABLE_LOAD == 0 ]] ; then
-        echo -n ''
-        return
-    fi
+    [[ "$LP_ENABLE_LOAD" != 1 ]] && return
+
     local load
     load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
     let "load=${load:-0}/$_lp_CPUNUM"

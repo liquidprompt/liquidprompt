@@ -526,7 +526,7 @@ _lp_return_value()
 _lp_git_branch()
 {
     if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return ""
+        return
     fi
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
@@ -542,7 +542,7 @@ _lp_git_branch()
 _lp_git_branch_color()
 {
     if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return ""
+        return
     fi
     command -v git >/dev/null 2>&1 || return 1;
     local branch
@@ -598,7 +598,7 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return ""
+        return
     fi
     local branch
     branch="$(hg branch 2>/dev/null)"
@@ -614,7 +614,7 @@ _lp_hg_branch()
 _lp_hg_branch_color()
 {
     if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return ""
+        return
     fi
     command -v hg >/dev/null 2>&1 || return 1;
     local branch
@@ -637,7 +637,7 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return ""
+        return
     fi
     local infos
     local ret
@@ -666,7 +666,7 @@ _lp_svn_branch()
 _lp_svn_branch_color()
 {
     if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return ""
+        return
     fi
     command -v svn >/dev/null 2>&1 || return 1;
     local branch

@@ -937,7 +937,7 @@ _lp_sb()
 # Construct the prompt #
 ########################
 
-_lp_set_bash_prompt()
+_lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
     LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
@@ -1015,10 +1015,10 @@ prompt_on()
         fi
     fi
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=_lp_set_bash_prompt
+        PROMPT_COMMAND=_lp_set_prompt
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         function precmd {
-            _lp_set_bash_prompt
+            _lp_set_prompt
         }
     fi
 

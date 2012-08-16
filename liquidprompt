@@ -870,7 +870,7 @@ _lp_smart_mark()
     fi
 
     local mark
-    mark="\$"
+    mark="\\\$"
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         mark="%(!.#.$)"
     fi

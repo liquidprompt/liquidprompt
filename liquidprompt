@@ -192,9 +192,10 @@ LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
 LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
 LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
 LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
-LP_GIT_MARK=${LP_GIT_MARK:-"±"}
 LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
 LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+LP_GIT_MARK=${LP_GIT_MARK:-"±"}
+LP_UNTRACKED=${LP_UNTRACKED:-"*"}
 
 LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
 LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
@@ -561,7 +562,7 @@ _lp_git_branch_color()
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
-            has_untracked="*"
+            has_untracked="$LP_UNTRACKED"
         fi
 
         local has_commit
@@ -574,14 +575,14 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${has_untracked}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${has_untracked}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${has_untracked}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_untracked}${NO_COL}"
             else
                 ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
             fi

@@ -27,7 +27,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)* 125 ± `
 
 It displays:
 
@@ -57,6 +57,7 @@ preserving the first two directories;
 there is changes, in yellow if there is pending commits to push;
 * the number of added/deleted lines, if changes have been made and the number
 of pending commits, if any;
+* a star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
 user, a red # for root.

@@ -131,13 +131,6 @@ Available features:
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 
-Some indicators are not colored by default (mainly those that are _static_), to
-put colors on theme you should not forget to add themed colors variable around
-them:
-
-    LP_PS1="${LP_ERR}" # no color
-    LP_PS1="${LP_COLOR_ERR}${LP_ERR}${NO_COL}" # colored
-
 For example, if you just want to have a liquidprompt displaying the user and the
 host, with a normal full path in blue and only the git support:
 
@@ -205,8 +198,6 @@ Set to a null string "" if you do not want color.
 Liquid prompt is distributed under the GNU Affero General Public License
 version 3.
 
-* Cannot easily change the colors of features having different state colors
-(like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down

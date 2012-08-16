@@ -195,6 +195,7 @@ LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
 LP_GIT_MARK=${LP_GIT_MARK:-"±"}
 LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
 LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+
 LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
 LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
 LP_ENABLE_HG=${LP_ENABLE_HG:-1}
@@ -909,7 +910,7 @@ _lp_sb()
 _lp_set_bash_prompt()
 {
     # as this get the last returned code, it should be called first
-    LP_ERR=$(_lp_sl "$(_lp_return_value $?)")
+    LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
 
     # execute the old prompt
     $LP_OLD_PROMPT_COMMAND
@@ -924,7 +925,7 @@ _lp_set_bash_prompt()
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
      LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
-    LP_PROXY=$(_lp_proxy)
+    LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
      LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
@@ -933,6 +934,13 @@ _lp_set_bash_prompt()
 
     # end of the prompt line: double spaces
     LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
+
+    # Different path color if root
+    if [[ "$EUID" -ne "0" ]] ; then
+        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
+    else
+        LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+    fi
 
     if [[ -z $LP_PS1 ]] ; then
         # add jobs, load and battery
@@ -944,16 +952,16 @@ _lp_set_bash_prompt()
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_COLOR_PATH}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
             # do not add VCS infos
         fi
         # add return code and prompt mark
-        PS1="${PS1}${LP_COLOR_ERR}${LP_ERR}${NO_COL}${LP_MARK}"
+        PS1="${PS1}${LP_ERR}${LP_MARK}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C

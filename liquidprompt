@@ -121,6 +121,9 @@ _terminfo_compiler='
     1 while $v =~ s/^\033\[([0-9;]*)m\033\[([0-9;]*)m/\033[\1;\2m/g;
     # Print output
     print qq<$k="\${_LP_OPEN_ESC}"\047$v\047"\${_LP_CLOSE_ESC}" >;
+
+    push @vars, $k;
+    END { printf qq<_LP_TI_ALL="%s">, join(" ", @vars) }
 '
 
 eval $( perl -ne "$_terminfo_compiler" <<'EOF'
@@ -295,7 +298,8 @@ _lp_source_config()
 # do source config files
 _lp_source_config
 
-# TODO unset colors variables (BLACK, WHITE, BLUE...)
+# Unset colors variables (BLACK, WHITE, BLUE...)
+unset ${_LP_TI_ALL} _LP_TI_ALL
 
 ###############
 # Who are we? #

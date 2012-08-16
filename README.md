@@ -27,7 +27,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)* 125 ± `
 
 It displays:
 
@@ -57,6 +57,7 @@ preserving the first two directories;
 there is changes, in yellow if there is pending commits to push;
 * the number of added/deleted lines, if changes have been made and the number
 of pending commits, if any;
+* a star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
 user, a red # for root.
@@ -131,13 +132,6 @@ Available features:
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 
-Some indicators are not colored by default (mainly those that are _static_), to
-put colors on theme you should not forget to add themed colors variable around
-them:
-
-    LP_PS1="${LP_ERR}" # no color
-    LP_PS1="${LP_COLOR_ERR}${LP_ERR}${NO_COL}" # colored
-
 For example, if you just want to have a liquidprompt displaying the user and the
 host, with a normal full path in blue and only the git support:
 
@@ -154,7 +148,7 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 ## COLOR THEMES
 
 You can change the colors of some part of the liquid prompt by sourcing your
-favorite theme file (`*.theme`), before or after having sourced the liquid prompt.
+favorite theme file (`*.theme`), before having sourced the liquid prompt.
 
 Available colors are:
 BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
@@ -205,8 +199,6 @@ Set to a null string "" if you do not want color.
 Liquid prompt is distributed under the GNU Affero General Public License
 version 3.
 
-* Cannot easily change the colors of features having different state colors
-(like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down

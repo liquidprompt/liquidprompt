@@ -316,7 +316,7 @@ _lp_connection()
 # build this just once
 case "$(_lp_connection)" in
 lcl)
-    if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+    if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
         LP_HOST="${NO_COL}" # no hostname if local
     else
         LP_HOST="${NO_COL}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
@@ -525,9 +525,7 @@ _lp_return_value()
 # Get the branch name of the current directory
 _lp_git_branch()
 {
-    if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_GIT" == 1 ]] || return
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
@@ -541,9 +539,7 @@ _lp_git_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_git_branch_color()
 {
-    if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_GIT" == 1 ]] || return
     command -v git >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_git_branch)
@@ -597,9 +593,7 @@ _lp_git_branch_color()
 # Get the branch name of the current directory
 _lp_hg_branch()
 {
-    if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_HG" == 1 ]] || return
     local branch
     branch="$(hg branch 2>/dev/null)"
     if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
@@ -613,9 +607,7 @@ _lp_hg_branch()
 # - TODO: yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
-    if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_HG" == 1 ]] || return
     command -v hg >/dev/null 2>&1 || return 1;
     local branch
     local ret
@@ -636,9 +628,7 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_SVN" == 1 ]] || return
     local infos
     local ret
     infos=$(svn info --xml 2>/dev/null)
@@ -665,9 +655,7 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return
-    fi
+    [[ "$LP_ENABLE_SVN" == 1 ]] || return
     command -v svn >/dev/null 2>&1 || return 1;
     local branch
     branch=$(_lp_svn_branch)

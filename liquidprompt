@@ -206,7 +206,7 @@ LP_MARK_PROXY=${LP_MARK_PROXY:-"↥"}
 LP_MARK_HG=${LP_MARK_HG:-"☿"}
 LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
 LP_MARK_GIT=${LP_MARK_GIT:-"±"}
-LP_UNTRACKED=${LP_UNTRACKED:-"*"}
+LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
 
 LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
 LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -587,7 +587,7 @@ _lp_git_branch_color()
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
-            has_untracked="$LP_UNTRACKED"
+            has_untracked="$LP_MARK_UNTRACKED"
         fi
 
         local has_commit

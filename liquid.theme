@@ -17,7 +17,7 @@ if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]
     LP_MARK_HG="☿"   # prompt mark in hg repositories
     LP_MARK_SVN="‡"  # prompt mark in svn repositories
     LP_MARK_GIT="±"         # prompt mark in git repositories
-    LP_UNTRACKED="*"        # if git has untracked files
+    LP_MARK_UNTRACKED="*"        # if git has untracked files
 else
     # If charset is anything else, fallback to ASCII chars
     LP_MARK_BATTERY="b"

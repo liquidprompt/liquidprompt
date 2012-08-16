@@ -218,6 +218,12 @@ LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
 LP_GIT_MARK=${LP_GIT_MARK:-"±"}
 LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
 LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
+LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
+LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
+LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
+LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
 LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
 LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
 LP_ENABLE_HG=${LP_ENABLE_HG:-1}
@@ -361,6 +367,10 @@ unset _lp_connection
 # put an arrow if an http proxy is set
 _lp_proxy()
 {
+    if [[ $LP_ENABLE_PROXY == 0 ]] ; then
+        echo -n ''
+        return
+    fi
     if [[ ! -z "$http_proxy" ]] ; then
         echo -ne $LP_PROXY_MARK
     fi
@@ -380,6 +390,10 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
+    if [[ $LP_ENABLE_SHORTEN_PATH == 0 ]] ; then
+        echo $(echo "$1" | sed -e "s|$HOME|~|")
+        return
+    fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
@@ -471,7 +485,7 @@ _lp_shorten_path()
 # colored in red if it have not.
 _lp_permissions_color()
 {
-    if [[ -w "${PWD}" ]]; then
+    if [[ -w "${PWD}" || $LP_ENABLE_PERM == 0 ]]; then
         echo "${LP_COLOR_WRITE}:${NO_COL}"
     else
         echo "${LP_COLOR_NOWRITE}:${NO_COL}"
@@ -488,6 +502,10 @@ _lp_permissions_color()
 # or detached screens sessions running on the host
 _lp_jobcount_color()
 {
+    if [[ $LP_ENABLE_JOBS == 0 ]] ; then
+        echo -n ''
+        return
+    fi
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
@@ -547,7 +565,8 @@ _lp_return_value()
 _lp_git_branch()
 {
     if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
@@ -563,7 +582,8 @@ _lp_git_branch()
 _lp_git_branch_color()
 {
     if [[ $LP_ENABLE_GIT == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     command -v git >/dev/null 2>&1 || return 1;
     local branch
@@ -611,7 +631,8 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     local branch
     branch="$(hg branch 2>/dev/null)"
@@ -627,7 +648,8 @@ _lp_hg_branch()
 _lp_hg_branch_color()
 {
     if [[ $LP_ENABLE_HG == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     command -v hg >/dev/null 2>&1 || return 1;
     local branch
@@ -650,7 +672,8 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     local infos
     local ret
@@ -679,7 +702,8 @@ _lp_svn_branch()
 _lp_svn_branch_color()
 {
     if [[ $LP_ENABLE_SVN == 0 ]] ; then
-        return ""
+        echo -n ''
+        return
     fi
     command -v svn >/dev/null 2>&1 || return 1;
     local branch
@@ -754,6 +778,10 @@ _lp_battery()
 # a    red ⌁ if the battery is discharging and above threshold
 _lp_battery_color()
 {
+    if [[ $LP_ENABLE_BATT == 0 ]] ; then
+        echo -n ''
+        return
+    fi
     local mark=$LP_BATTERY_MARK
     local chargingmark=$LP_ADAPTER_MARK
     local bat
@@ -830,6 +858,10 @@ _lp_load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
+    if [[ $LP_ENABLE_LOAD == 0 ]] ; then
+        echo -n ''
+        return
+    fi
     local loadval
     local load
     loadval=$(_lp_load_$LP_OS)

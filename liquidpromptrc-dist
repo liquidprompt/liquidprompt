@@ -28,6 +28,30 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
+# Do you want to use the permissions feature ?
+# Recommended value is 1
+LP_ENABLE_PERM=1
+
+# Do you want to use the shorten path feature ?
+# Recommended value is 1
+LP_ENABLE_SHORTEN_PATH=1
+
+# Do you want to use the proxy detection feature ?
+# Recommended value is 1
+LP_ENABLE_PROXY=1
+
+# Do you want to use the jobs feature ?
+# Recommended value is 1
+LP_ENABLE_JOBS=1
+
+# Do you want to use the load feature ?
+# Recommended value is 1
+LP_ENABLE_LOAD=1
+
+# Do you want to use the batt feature ?
+# Recommended value is 1
+LP_ENABLE_BATT=1
+
 # Do you want to use the git special features ?
 # Recommended value is 1
 LP_ENABLE_GIT=1

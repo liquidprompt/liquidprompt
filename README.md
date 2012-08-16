@@ -106,6 +106,20 @@ the path
 path
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
+* `LP_ENABLE_PERM`, if you want to detect if the directory is writable
+* `LP_ENABLE_SHORTEN_PATH`, if you to shorten the path display
+* `LP_ENABLE_PROXY`, if you want to detect if a proxy is used
+* `LP_ENABLE_JOBS`, if you want to have jobs informations
+* `LP_ENABLE_LOAD`, if you want to have load informations
+* `LP_ENABLE_BATT`, if you want to have battery informations
+* `LP_ENABLE_GIT`, if you want to have git informations
+* `LP_ENABLE_SVN`, if you want to have subversion informations
+* `LP_ENABLE_HG`, if you want to have mercurial informations
+
+Please note that all the `LP_ENABLE_…` variables override the templates, ie if you use `$LP_BATT` in your template and
+you set `LP_ENABLE_BATT=0` in your config file, you will not have the battery informations.
+
+# vim: set et sts=4 sw=4 tw=120 ft=sh:
 
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER

@@ -273,9 +273,10 @@ _lp_source_config()
 _lp_source_config
 
 # Disable features if the tool is not installed
-[[ "$LP_ENABLE_GIT" = 1 ]] && { command -v git >/dev/null || LP_ENABLE_GIT=0 ; }
-[[ "$LP_ENABLE_SVN" = 1 ]] && { command -v svn >/dev/null || LP_ENABLE_SVN=0 ; }
-[[ "$LP_ENABLE_HG"  = 1 ]] && { command -v hg  >/dev/null || LP_ENABLE_HG=0  ; }
+[[ "$LP_ENABLE_GIT"  = 1 ]] && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
+[[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
+[[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
+[[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
 
 
@@ -711,7 +712,7 @@ _lp_svn_branch_color()
 # returns 4 if no battery support
 _lp_battery()
 {
-    command -v acpi >/dev/null 2>&1 || return 4; # or no battery support
+    [[ "$LP_ENABLE_BATT" == 1 ]] || return
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
     local bat

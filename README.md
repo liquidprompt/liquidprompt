@@ -107,6 +107,9 @@ the path
 path
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
+
+You can also force some features to be disabled, to save some time in the prompt
+building:
 * `LP_ENABLE_PERM`, if you want to detect if the directory is writable
 * `LP_ENABLE_SHORTEN_PATH`, if you to shorten the path display
 * `LP_ENABLE_PROXY`, if you want to detect if a proxy is used
@@ -117,10 +120,11 @@ it only when connected with a remote shell
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
 
-Please note that all the `LP_ENABLE_…` variables override the templates, ie if you use `$LP_BATT` in your template and
-you set `LP_ENABLE_BATT=0` in your config file, you will not have the battery informations.
-
-# vim: set et sts=4 sw=4 tw=120 ft=sh:
+Note that if required commands are not installed, enabling the
+corresponding feature will have no effect.
+Note also that all the `LP_ENABLE_…` variables override the templates,
+i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
+in your config file, you will not have the battery informations.
 
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER

@@ -145,10 +145,14 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
      export LP_PS1=""
 
 
-## COLOR THEMES
+## THEMES
 
-You can change the colors of some part of the liquid prompt by sourcing your
-favorite theme file (`*.theme`), before having sourced the liquid prompt.
+You can change the colors and special characters of some part of the liquid
+prompt by sourcing your favorite theme file (`*.theme`), before having sourced
+the liquid prompt.
+
+
+### COLORS
 
 Available colors are:
 BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
@@ -192,6 +196,19 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_CHARGING_UNDER` charging but under threshold
     * `LP_COLOR_DISCHARGING_ABOVE` discharging but above threshold
     * `LP_COLOR_DISCHARGING_UNDER` discharging and under threshold
+
+
+### CHARACTERS
+
+Special characters:
+* `LP_MARK_BATTERY` (default: "⌁") in front of the battery charge
+* `LP_MARK_ADAPTER` (default: "⏚") displayed when plugged
+* `LP_MARK_LOAD` (default: "⌂") in front of the load
+* `LP_MARK_PROXY` (default: "↥") indicate a proxy in use
+* `LP_MARK_HG` (default: "☿") prompt mark in hg repositories
+* `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
+* `LP_MARK_GIT` (default: "±") prompt mark in git repositories
+* `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 
 
 ## KNOWN LIMITATIONS AND BUGS

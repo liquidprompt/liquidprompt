@@ -10,24 +10,24 @@
 # Defaults to UTF-8 characters.
 if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]] ; then
     # If charset is UTF-8.
-    LP_BATTERY_MARK="⌁"     # in front of the battery charge
-    LP_ADAPTER_MARK="⏚"     # displayed when plugged
-    LP_LOAD_MARK="⌂"        # in front of the load
-    LP_PROXY_MARK="↥"       # indicate a proxy in use
-    LP_MERCURIAL_MARK="☿"   # prompt mark in hg repositories
-    LP_SUBVERSION_MARK="‡"  # prompt mark in svn repositories
-    LP_GIT_MARK="±"         # prompt mark in git repositories
-    LP_UNTRACKED="*"         # if git has untracked files
+    LP_MARK_BATTERY="⌁"     # in front of the battery charge
+    LP_MARK_ADAPTER="⏚"     # displayed when plugged
+    LP_MARK_LOAD="⌂"        # in front of the load
+    LP_MARK_PROXY="↥"       # indicate a proxy in use
+    LP_MARK_HG="☿"   # prompt mark in hg repositories
+    LP_MARK_SVN="‡"  # prompt mark in svn repositories
+    LP_MARK_GIT="±"         # prompt mark in git repositories
+    LP_UNTRACKED="*"        # if git has untracked files
 else
     # If charset is anything else, fallback to ASCII chars
-    LP_BATTERY_MARK="b"
-    LP_ADAPTER_MARK="p"
-    LP_LOAD_MARK="c"
-    LP_PROXY_MARK="^"
-    LP_MERCURIAL_MARK="m"
-    LP_SUBVERSION_MARK="="
-    LP_GIT_MARK="+"
-    LP_UNTRACKED="*"
+    LP_MARK_BATTERY="b"
+    LP_MARK_ADAPTER="p"
+    LP_MARK_LOAD="c"
+    LP_MARK_PROXY="^"
+    LP_MARK_HG="m"
+    LP_MARK_SVN="="
+    LP_MARK_GIT="+"
+    LP_MARK_UNTRACKED="*"
 fi
 
 # Colors

@@ -188,13 +188,13 @@ LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 LP_PS1=${LP_PS1:-""}
-LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
-LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
-LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
-LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
-LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
-LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
-LP_GIT_MARK=${LP_GIT_MARK:-"±"}
+LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
+LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
+LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
+LP_MARK_PROXY=${LP_MARK_PROXY:-"↥"}
+LP_MARK_HG=${LP_MARK_HG:-"☿"}
+LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
+LP_MARK_GIT=${LP_MARK_GIT:-"±"}
 LP_UNTRACKED=${LP_UNTRACKED:-"*"}
 
 LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
@@ -824,7 +824,7 @@ _lp_load_color()
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_LOAD_MARK}${NO_COL}"
+        ret="${LP_MARK_LOAD}${NO_COL}"
         if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
             ret="${ret}${LP_COLORMAP_0}"
         elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
@@ -880,9 +880,9 @@ _lp_smart_mark()
     if   [[ ! -z $(_lp_git_branch) ]] ; then
         mark=$LP_GIT_MARK
     elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
-        mark=$LP_MERCURIAL_MARK
+        mark=$LP_HG_MARK
     elif [[ ! -z $(_lp_svn_branch) ]] ; then
-        mark=$LP_SUBVERSION_MARK
+        mark=$LP_SVN_MARK
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }

@@ -880,7 +880,7 @@ _lp_smart_mark()
     local mark
     mark="\$"
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        mark="%(!.#.$)"
+        mark="%(!.#.%%)"
     fi
     if   [[ ! -z $(_lp_git_branch) ]] ; then
         mark=$LP_GIT_MARK

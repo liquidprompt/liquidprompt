@@ -198,6 +198,7 @@ LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
 LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
 LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
 LP_ENABLE_HG=${LP_ENABLE_HG:-1}
+LP_ENABLE_TIME=${LP_ENABLE_TIME:-1}
 
 LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
 LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
@@ -233,6 +234,7 @@ LP_COLOR_CHARGING_ABOVE=${LP_COLOR_CHARGING_ABOVE:-$GREEN}
 LP_COLOR_CHARGING_UNDER=${LP_COLOR_CHARGING_UNDER:-$YELLOW}
 LP_COLOR_DISCHARGING_ABOVE=${LP_COLOR_DISCHARGING_ABOVE:-$YELLOW}
 LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
+LP_COLOR_TIME=${LP_COLOR_TIME:-$RED}
 
 LP_COLORMAP_0=${LP_COLORMAP_0:-""}
 LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
@@ -760,8 +762,8 @@ _lp_battery_color()
 {
     [[ "$LP_ENABLE_BATT" != 1 ]] && return
 
-    local mark=$LP_MARK_BATTERY
-    local chargingmark=$LP_MARK_ADAPTER
+    local mark=$LP_BATTERY_MARK
+    local chargingmark=$LP_ADAPTER_MARK
     local bat
     local ret
     bat=$(_lp_battery)
@@ -930,7 +932,18 @@ _lp_sb()
     if [[ ! -z "$1" ]] ; then
         echo -n " $1 "
     fi
+
 }
+
+###################
+# CURRENT TIME    #
+###################
+_lp_time()
+{
+    [[ "$LP_ENABLE_TIME" != 1 ]] && return
+    echo -ne " (${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}) "
+}
+
 
 
 ########################
@@ -949,6 +962,7 @@ _lp_set_prompt()
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
     LP_LOAD=$(_lp_sr "$(_lp_load_color)")
     LP_BATT=$(_lp_sr "$(_lp_battery_color)")
+    LP_TIME=$(_lp_time)
 
     # in main prompt: no space
     LP_USER=$(_lp_user)
@@ -973,8 +987,8 @@ _lp_set_prompt()
     fi
 
     if [[ -z $LP_PS1 ]] ; then
-        # add jobs, load and battery
-        PS1="${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        # add time, jobs, load and battery
+        PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 

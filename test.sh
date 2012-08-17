@@ -13,12 +13,13 @@ assert()
     local OK="\\033[1;32m"
     local NOK="\\033[1;31m"
     local RAZ="\\033[0;39m"
+    cols=15
 
     if [[ "$PS1" == *$sub* ]]
     then
-        echo -e "${OK}$name\tOK${RAZ}"
+        printf "\e${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
     else
-        echo -e "${NOK}$name\tNO${RAZ}\t$sub"
+        printf "\e${NOK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "$sub"
     fi
 }
 
@@ -41,7 +42,7 @@ uname()
 
 nproc()
 {
-    echo "fake uname $@" 1>&2
+    echo "fake nproc $@" 1>&2
     echo 2
 }
 
@@ -100,7 +101,7 @@ source ./liquidprompt
 _lp_cpu_load()
 {
     echo "fake _lp_cpu_load $@" 1>&2
-    echo "64"
+    echo "0.64"
 }
 
 # Force erroneous command
@@ -116,16 +117,17 @@ _lp_set_prompt
 
 echo -e "$PS1"
 
-assert BattMark BATT
-assert BattLevel 55%
-assert Load LOAD32%
+assert "Battery Mark" BATT
+assert "Battery Level" 55%
+assert "Load Mark" LOAD
+assert "Load Level" 32%
 assert User "[\\\u"
 assert Perms :
 assert Path $(pwd | sed -e "s|$HOME|~|")
 assert Proxy proxy
 assert Error 127
-echo GIT
-assert Branch fake_test
-assert Commits 111
-assert Untrack untracked
-assert Mark gitmark
+# echo GIT
+assert "GIT Branch" fake_test
+assert "GIT Commits" 111
+assert "GIT Untrack" untracked
+assert "GIT Mark" gitmark

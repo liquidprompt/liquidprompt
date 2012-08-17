@@ -75,19 +75,6 @@ git()
 export http_proxy="fake"
 
 
-################
-# ADHOC CONFIG #
-################
-
-export LP_BATTERY_THRESHOLD=60
-export LP_LOAD_THRESHOLD=1
-export LP_MARK_PROXY="proxy"
-export LP_MARK_BATTERY="BATT"
-export LP_MARK_LOAD="LOAD"
-export LP_MARK_UNTRACKED="untracked"
-export LP_MARK_GIT="gitmark"
-
-
 ##########################
 # Call the liquid prompt #
 ##########################
@@ -103,6 +90,20 @@ _lp_cpu_load()
     echo "fake _lp_cpu_load $@" 1>&2
     echo "0.64"
 }
+
+
+################
+# ADHOC CONFIG #
+################
+
+export LP_BATTERY_THRESHOLD=60
+export LP_LOAD_THRESHOLD=1
+export LP_MARK_PROXY="proxy"
+export LP_MARK_BATTERY="BATT"
+export LP_MARK_LOAD="LOAD"
+export LP_MARK_UNTRACKED="untracked"
+export LP_MARK_GIT="gitmark"
+
 
 # Force erroneous command
 fake_error

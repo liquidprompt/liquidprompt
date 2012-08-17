@@ -63,11 +63,12 @@ git()
         "branch" )
             echo "* fake_test";;
         "diff" )
-            echo "";;
+            echo "2       1       fake_file"
+            return 1;;
         "status" )
             echo "# Untracked";;
         "rev-list" )
-            echo "111";;
+            echo 111;;
     esac
 }
 
@@ -129,6 +130,7 @@ assert Proxy proxy
 assert Error 127
 # echo GIT
 assert "GIT Branch" fake_test
+assert "GIT Changes" "+2/-1"
 assert "GIT Commits" 111
 assert "GIT Untrack" untracked
 assert "GIT Mark" gitmark

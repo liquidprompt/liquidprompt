@@ -1,28 +1,84 @@
 #!/bin/sh
 
+
+print_ok()
+{
+    local OK="\\033[1;32m"
+    local RAZ="\\033[0;39m"
+    local cols=$1
+    local name=$2
+    printf "\e${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
+}
+
+print_no()
+{
+    local NOK="\\033[1;31m"
+    local RAZ="\\033[0;39m"
+    local cols=$1
+    local name=$2
+    local sub=$3
+    local line=$4
+    printf "\e${NOK}%-${cols}s %-${cols}s #%-5s\n${RAZ}" "$name" "$sub" "$line"
+}
+
 assert()
 {
-    local name=$1
-    local sub=$2
+    local has=$1
+    local name=$2
+    local sub=$3
+    local line=$4
 
     if [[ -z "$sub" ]]
     then
         return 1
     fi
 
-    local OK="\\033[1;32m"
-    local NOK="\\033[1;31m"
-    local RAZ="\\033[0;39m"
-    cols=15
+    cols=20
 
-    if [[ "$PS1" == *$sub* ]]
-    then
-        printf "\e${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
+    if [[ $has == 1 ]] ; then
+        if [[ "$PS1" == *$sub* ]]
+        then
+            print_ok $cols "has $name"
+        else
+            print_no $cols "has $name" $sub $line
+        fi
+    elif [[ $has == 0 ]] ; then
+        if [[ "$PS1" != *$sub* ]]
+        then
+            print_ok $cols " no $name"
+        else
+            print_no $cols " no $name" $sub $line
+        fi
     else
-        printf "\e${NOK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "$sub"
+        if [[ "$PS1" == $sub ]]
+        then
+            print_ok $cols " is $name"
+        else
+            print_no $cols " is $name" $sub $line
+        fi
     fi
 }
 
+assert_has()
+{
+
+    assert 1 "$@"
+}
+
+assert_not()
+{
+    assert 0 "$@"
+}
+
+assert_is()
+{
+    assert 2 "$@"
+}
+
+log_prompt()
+{
+    echo -e "$PS1" 1>&2
+}
 
 #####################
 # REDEFINE COMMANDS #
@@ -117,20 +173,79 @@ _lp_set_prompt
 # TESTS #
 #########
 
-echo -e "$PS1"
+echo "FULL PROMPT"
+log_prompt
 
-assert "Battery Mark" BATT
-assert "Battery Level" 55%
-assert "Load Mark" LOAD
-assert "Load Level" 32%
-assert User "[\\\u"
-assert Perms :
-assert Path $(pwd | sed -e "s|$HOME|~|")
-assert Proxy proxy
-assert Error 127
-# echo GIT
-assert "GIT Branch" fake_test
-assert "GIT Changes" "+2/-1"
-assert "GIT Commits" 111
-assert "GIT Untrack" untracked
-assert "GIT Mark" gitmark
+assert_has Battery_Mark     BATT    $LINENO
+assert_has Battery_Level    55%    $LINENO
+assert_has Load_Mark        LOAD    $LINENO
+assert_has Load_Level       32%    $LINENO
+assert_has User             "[\\\u"    $LINENO
+assert_has Perms            :    $LINENO
+assert_has Path             $(pwd | sed -e "s|$HOME|~|")    $LINENO
+assert_has Proxy            proxy    $LINENO
+assert_has Error            127    $LINENO
+assert_has GIT_Branch       fake_test    $LINENO
+assert_has GIT_Changes      "+2/-1"    $LINENO
+assert_has GIT_Commits      111    $LINENO
+assert_has GIT_Untrack      untracked    $LINENO
+assert_has GIT_Mark         gitmark    $LINENO
+
+# start hiding features
+echo "HIDE BATTERY LEVEL"
+export LP_BATTERY_THRESHOLD=50
+_lp_set_prompt
+log_prompt
+assert_has Battery_Mark     BATT    $LINENO
+assert_not Battery_level    55%    $LINENO
+assert_not Error            127    $LINENO
+
+alias acpi="echo 'Battery 0: Full, 100%'"
+_lp_set_prompt
+log_prompt
+assert_not Battery_Mark     BATT    $LINENO
+
+echo "HIDE LOAD"
+export LP_LOAD_THRESHOLD=40
+_lp_set_prompt
+log_prompt
+assert_not Load_Mark        LOAD    $LINENO
+assert_not Load_Level       32%    $LINENO
+
+echo "NO PROXY"
+export http_proxy=""
+_lp_set_prompt
+log_prompt
+assert_not Proxy_Mark        proxy    $LINENO
+
+echo "HIDE GIT"
+alias git="echo"
+_lp_set_prompt
+log_prompt
+assert_not GIT_Branch       fake_test    $LINENO
+assert_not GIT_Changes      "+2/-1"    $LINENO
+assert_not GIT_Commits      111    $LINENO
+assert_not GIT_Untrack      untracked    $LINENO
+assert_not GIT_Mark         gitmark    $LINENO
+assert_has User_Mark        $    $LINENO
+
+echo "SHORTEN PATH"
+for d in $(seq 20) ; do
+    dirname=""
+    for i in $(seq 5); do
+         dirname="$dirname$d"
+    done
+    mkdir -p $dirname
+    cd $dirname
+done
+export LP_PATH_LENGTH=35
+export LP_PATH_KEEP=1
+_lp_set_prompt
+log_prompt
+assert_has Short_Path " … "    $LINENO
+
+echo "prompt_OFF"
+prompt_OFF
+log_prompt
+assert_is Prompt "$ "    $LINENO
+

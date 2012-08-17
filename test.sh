@@ -116,7 +116,8 @@ _lp_set_prompt
 
 echo -e "$PS1"
 
-assert Battery BATT55%
+assert BattMark BATT
+assert BattLevel 55%
 assert Load LOAD32%
 assert User "[\\\u"
 assert Perms :

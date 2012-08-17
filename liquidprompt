@@ -762,8 +762,8 @@ _lp_battery_color()
 {
     [[ "$LP_ENABLE_BATT" != 1 ]] && return
 
-    local mark=$LP_BATTERY_MARK
-    local chargingmark=$LP_ADAPTER_MARK
+    local mark=$LP_MARK_BATTERY
+    local chargingmark=$LP_MARK_ADAPTER
     local bat
     local ret
     bat=$(_lp_battery)

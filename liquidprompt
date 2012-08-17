@@ -658,24 +658,16 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    [[ "$LP_ENABLE_SVN" != 1 ]] && return
-
-    local infos
-    local ret
-    infos=$(svn info --xml 2>/dev/null)
-    ret=$?
-    if [[ $ret -eq 0 ]] ; then
-        local root
-        root=$(echo "$infos" | awk -v FS=">|</" '/^<root>/ { print $2 }')
-        local subrep
-        subrep=$(echo "$infos" |  awk -v FS=">|</" '/^<url>/ { print $2 }')
-        if [[ "$subrep" == *"url>"* ]] ; then
-            echo -n $root
-        else
-            local branch
-            branch=$(basename $subrep)
-            echo -n $branch
-        fi
+    [[ "$LP_ENABLE_SVN" != 1 || ! -d '.svn' ]] && return
+    local root
+    local url
+    eval $(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )
+    # Make url relative to root
+    url="${url:${#root}}"
+    if [[ "$url" == */trunk* ]] ; then
+        echo trunk
+    else
+        expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root"
     fi
 }
 

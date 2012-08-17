@@ -192,7 +192,16 @@ assert_has GIT_Untrack      untracked    $LINENO
 assert_has GIT_Mark         gitmark    $LINENO
 
 # start hiding features
+echo "DISABLE BATTERY"
+export LP_ENABLE_BATT=0
+_lp_set_prompt
+log_prompt
+assert_not Battery_Mark     BATT    $LINENO
+assert_not Battery_level    55%    $LINENO
+assert_not Error            127    $LINENO
+
 echo "HIDE BATTERY LEVEL"
+export LP_ENABLE_BATT=1
 export LP_BATTERY_THRESHOLD=50
 _lp_set_prompt
 log_prompt
@@ -205,20 +214,47 @@ _lp_set_prompt
 log_prompt
 assert_not Battery_Mark     BATT    $LINENO
 
+echo "DISABLE LOAD"
+export LP_ENABLE_LOAD=0
+_lp_set_prompt
+log_prompt
+assert_not Load_Mark        LOAD    $LINENO
+assert_not Load_Level       32%    $LINENO
+
 echo "HIDE LOAD"
+export LP_ENABLE_LOAD=1
 export LP_LOAD_THRESHOLD=40
 _lp_set_prompt
 log_prompt
 assert_not Load_Mark        LOAD    $LINENO
 assert_not Load_Level       32%    $LINENO
 
+echo "DISABLE PROXY"
+export LP_ENABLE_PROXY=0
+_lp_set_prompt
+log_prompt
+assert_not Proxy_Mark        proxy    $LINENO
+
 echo "NO PROXY"
+export LP_ENABLE_PROXY=1
 export http_proxy=""
 _lp_set_prompt
 log_prompt
 assert_not Proxy_Mark        proxy    $LINENO
 
-echo "HIDE GIT"
+echo "DISABLE GIT"
+export LP_ENABLE_GIT=0
+_lp_set_prompt
+log_prompt
+assert_not GIT_Branch       fake_test    $LINENO
+assert_not GIT_Changes      "+2/-1"    $LINENO
+assert_not GIT_Commits      111    $LINENO
+assert_not GIT_Untrack      untracked    $LINENO
+assert_not GIT_Mark         gitmark    $LINENO
+assert_has User_Mark        $    $LINENO
+
+echo "NO GIT"
+export LP_ENABLE_GIT=1
 alias git="echo"
 _lp_set_prompt
 log_prompt
@@ -229,7 +265,8 @@ assert_not GIT_Untrack      untracked    $LINENO
 assert_not GIT_Mark         gitmark    $LINENO
 assert_has User_Mark        $    $LINENO
 
-echo "SHORTEN PATH"
+# create a deep dir tree
+current=$PWD
 for d in $(seq 20) ; do
     dirname=""
     for i in $(seq 5); do
@@ -238,14 +275,40 @@ for d in $(seq 20) ; do
     mkdir -p $dirname
     cd $dirname
 done
+
+echo "DISABLE SHORTEN PATH"
+export LP_ENABLE_SHORTEN_PATH=0
+_lp_set_prompt
+log_prompt
+assert_has Path       "$(pwd | sed -e "s|$HOME|~|")"    $LINENO
+
+echo "NO SHORTEN PATH"
+export LP_ENABLE_SHORTEN_PATH=1
 export LP_PATH_LENGTH=35
 export LP_PATH_KEEP=1
 _lp_set_prompt
 log_prompt
-assert_has Short_Path " … "    $LINENO
+assert_has Short_Path       " … "    $LINENO
+
+# get back out of the deep tree
+cd $current
+
+echo "LOCAL HOST NAME"
+export LP_HOSTNAME_ALWAYS=1
+_lp_set_prompt
+log_prompt
+assert_has Hostname $(hostname)    $LINENO
 
 echo "prompt_OFF"
 prompt_OFF
 log_prompt
-assert_is Prompt "$ "    $LINENO
+assert_is Prompt            "$ "    $LINENO
+
+echo "prompt_on"
+prompt_on
+log_prompt
+assert_has User             "[\\\u"    $LINENO
+assert_has Perms            :    $LINENO
+assert_has Path             $(pwd | sed -e "s|$HOME|~|")    $LINENO
+assert_has Prompt           "$ "    $LINENO
 

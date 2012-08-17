@@ -627,9 +627,7 @@ _lp_hg_branch()
 
     local branch
     branch="$(hg branch 2>/dev/null)"
-    if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
-        echo -n "$(hg branch)"
-    fi
+    [[ $? -eq 0 ]] && echo "$branch"
 }
 
 # Set a color depending on the branch state:

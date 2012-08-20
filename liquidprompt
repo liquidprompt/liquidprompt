@@ -555,7 +555,8 @@ _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
-    if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
+    topdir="$(git rev-parse --git-dir 2>/dev/null)"
+    if [[ -n "$topdir" ]] && [[ "$(basename $topdir)" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }
@@ -597,7 +598,7 @@ _lp_git_branch_color()
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
             local has_line
-            has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
+            has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"

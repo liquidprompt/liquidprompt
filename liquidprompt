@@ -112,7 +112,11 @@ esac
 #################
 # CONFIGURATION #
 #################
-
+#
+# The following code is run just once. But it is encapsulated in a function
+# to benefit of 'local' variables.
+#
+# What we do here:
 # 1. Setup variables that can be used by the user: the "API" of liquidprompt
 #    for config/theme. Those variables are local to the function.
 #    In practice, this is only color variables.

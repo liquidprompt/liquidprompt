@@ -111,7 +111,7 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
     NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_CLOSE_ESC}"
 
 else
-    # default to Linux
+    # default for Linux, SunOS and Darwin
     BOLD="${_LP_OPEN_ESC}$(tput bold)${_LP_CLOSE_ESC}"
 
     BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"

@@ -232,10 +232,11 @@ LP_COLORMAP_8=${LP_COLORMAP_8:-$CRIT_RED}
 LP_COLORMAP_9=${LP_COLORMAP_9:-$DANGER_RED}
 
 
-# Default config file may be the XDG standard ~/.config/liquidpromptrc,
-# but heirloom dotfile has priority.
 _lp_source_config()
 {
+    # Default config file may be the XDG standard ~/.config/liquidpromptrc,
+    # but heirloom dotfile has priority.
+
     local configfile
     if [[ -f "/etc/liquidpromptrc" ]]
     then

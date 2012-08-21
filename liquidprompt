@@ -33,6 +33,7 @@
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
+# Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
 
 
 # See the README.md file for a summary of features.
@@ -46,20 +47,20 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     fi
     unset bash bmajor bminor
 
-	_LP_WORKING_SHELL=bash
+    _LP_WORKING_SHELL=bash
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
 elif test -n "$ZSH_VERSION" ; then
-	_LP_WORKING_SHELL=zsh
+    _LP_WORKING_SHELL=zsh
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
 else
-	echo "liquidprompt: shell not supported" >&2
-	return
+    echo "liquidprompt: shell not supported" >&2
+    return
 fi
 
 
@@ -68,13 +69,12 @@ fi
 ###############
 
 # LP_OS detection, default to Linux
-LP_OS="Linux"
 case $(uname) in
-    "Linux"  ) LP_OS="Linux"   ;;
-    "FreeBSD") LP_OS="FreeBSD" ;;
-    "Darwin") LP_OS="Darwin" ;;
-    "DragonFly") LP_OS="FreeBSD" ;;
-    "SunOS") LP_OS="SunOS" ;;
+    FreeBSD)   LP_OS=FreeBSD ;;
+    DragonFly) LP_OS=FreeBSD ;;
+    Darwin)    LP_OS=FreeBSD ;;
+    SunOS)     LP_OS=SunOS   ;;
+    *)         LP_OS=Linux   ;;
 esac
 
 # Colors declarations
@@ -91,6 +91,7 @@ if [[ "$LP_OS" == "FreeBSD" ]] ; then
     BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
     WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
     CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    DANGER_RED="${_LP_OPEN_ESC}$(tput md; tput AF 3 ; tput setab 1)${_LP_CLOSE_ESC}"
 
     GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_CLOSE_ESC}"
     BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_CLOSE_ESC}"
@@ -122,6 +123,7 @@ else
     BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
     WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
     CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    DANGER_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
 
     GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_CLOSE_ESC}"
     BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_CLOSE_ESC}"
@@ -142,57 +144,35 @@ else
 
 fi
 
-# get cpu number
-_lp_cpunum_Linux()
-{
-    grep -c '^[Pp]rocessor' /proc/cpuinfo
-}
-
-_lp_cpunum_FreeBSD()
-{
-    sysctl -n hw.ncpu
-}
-
-_lp_cpunum_Darwin()
-{
-       _lp_cpunum_FreeBSD
-}
-
-_lp_cpunum_SunOS()
-{
-    kstat -m cpu_info | grep -c "module: cpu_info"
-}
-
-_lp_CPUNUM=$(_lp_cpunum_$LP_OS)
+# Get cpu count
+case "$LP_OS" in
+    Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
+    FreeBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
+    SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
+esac
 
 
 # get current load
-
-_lp_load_Linux()
-{
-    local load
-    load=$(awk '{print $1}' /proc/loadavg)
-    echo -n "$load"
-}
-
-_lp_load_FreeBSD()
-{
-    local load
-    load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
-    echo -n "$load"
-}
-
-_lp_load_Darwin()
-{
-    _lp_load_FreeBSD
-}
-
-_lp_load_SunOS()
-{
-    local load
-    load=$(LANG=C uptime | awk '{print substr($10,0,length($10))}')
-    echo -n "$load"
-}
+case "$LP_OS" in
+    Linux)
+        _lp_cpu_load () {
+            local load eol
+            read load eol < /proc/loadavg
+            echo "$load"
+        }
+        ;;
+    FreeBSD)
+        _lp_cpu_load () {
+            local bol load eol
+            read bol load eol < $<( LANG=C sysctl -n vm.loadavg )
+            echo "$load"
+        }
+        ;;
+    SunOS)
+        _lp_cpu_load () {
+            LANG=C uptime | awk '{print substr($10,0,length($10))}'
+        }
+esac
 
 
 #################
@@ -208,13 +188,26 @@ LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 LP_PS1=${LP_PS1:-""}
-LP_BATTERY_MARK=${LP_BATTERY_MARK:-"⌁"}
-LP_ADAPTER_MARK=${LP_ADAPTER_MARK:-"⏚"}
-LP_LOAD_MARK=${LP_LOAD_MARK:-"⌂"}
-LP_PROXY_MARK=${LP_PROXY_MARK:-"↥"}
-LP_GIT_MARK=${LP_GIT_MARK:-"±"}
-LP_MERCURIAL_MARK=${LP_MERCURIAL_MARK:-"☿"}
-LP_SUBVERSION_MARK=${LP_SUBVERSION_MARK:-"‡"}
+
+LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
+LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
+LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
+LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
+LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
+LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
+LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
+LP_ENABLE_HG=${LP_ENABLE_HG:-1}
+LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
+
+LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
+LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
+LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
+LP_MARK_PROXY=${LP_MARK_PROXY:-"↥"}
+LP_MARK_HG=${LP_MARK_HG:-"☿"}
+LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
+LP_MARK_GIT=${LP_MARK_GIT:-"±"}
+LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
 
 LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
 LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -225,14 +218,34 @@ LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
 LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
 LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD}
 LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
-LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-}
+LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-""}
 LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
 LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
-LP_COLOR_HOST=${LP_COLOR_HOST:-}
+LP_COLOR_HOST=${LP_COLOR_HOST:-""}
 LP_COLOR_SSH=${LP_COLOR_SSH:-$BOLD_CYAN}
 LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
 LP_COLOR_WRITE=${LP_COLOR_WRITE:-$GREEN}
 LP_COLOR_NOWRITE=${LP_COLOR_NOWRITE:-$RED}
+LP_COLOR_UP=${LP_COLOR_UP:-$GREEN}
+LP_COLOR_COMMITS=${LP_COLOR_COMMITS:-$YELLOW}
+LP_COLOR_CHANGES=${LP_COLOR_CHANGES:-$RED}
+LP_COLOR_DIFF=${LP_COLOR_DIFF:-$PURPLE}
+LP_COLOR_CHARGING_ABOVE=${LP_COLOR_CHARGING_ABOVE:-$GREEN}
+LP_COLOR_CHARGING_UNDER=${LP_COLOR_CHARGING_UNDER:-$YELLOW}
+LP_COLOR_DISCHARGING_ABOVE=${LP_COLOR_DISCHARGING_ABOVE:-$YELLOW}
+LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
+LP_COLOR_TIME=${LP_COLOR_TIME:-$BLUE}
+
+LP_COLORMAP_0=${LP_COLORMAP_0:-""}
+LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
+LP_COLORMAP_2=${LP_COLORMAP_2:-$BOLD_GREEN}
+LP_COLORMAP_3=${LP_COLORMAP_3:-$YELLOW}
+LP_COLORMAP_4=${LP_COLORMAP_4:-$BOLD_YELLOW}
+LP_COLORMAP_5=${LP_COLORMAP_5:-$RED}
+LP_COLORMAP_6=${LP_COLORMAP_6:-$BOLD_RED}
+LP_COLORMAP_7=${LP_COLORMAP_7:-$WARN_RED}
+LP_COLORMAP_8=${LP_COLORMAP_8:-$CRIT_RED}
+LP_COLORMAP_9=${LP_COLORMAP_9:-$DANGER_RED}
 
 
 # Default config file may be the XDG standard ~/.config/liquidpromptrc,
@@ -260,6 +273,13 @@ _lp_source_config()
 }
 # do source config files
 _lp_source_config
+
+# Disable features if the tool is not installed
+[[ "$LP_ENABLE_GIT"  = 1 ]] && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
+[[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
+[[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
+[[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
+
 
 
 ###############
@@ -292,71 +312,54 @@ _lp_user()
 
 _lp_connection()
 {
-    local THIS_TTY
-    THIS_TTY=$(awk -v pid=$$ -v wkshell=${_LP_WORKING_SHELL} '$0 ~ pid && $0 ~ wkshell { print $7 }' < <(ps aux) )
-    local SESS_SRC
-    SESS_SRC=$(who | awk -v thistty="$THIS_TTY" '$0 ~ thistty { print $6 }')
-
-    # Are we in an SSH connexion?
-    local SSH_FLAG
-    SSH_FLAG=0
-    local SSH_IP
-    SSH_IP=${SSH_CLIENT%% *}
-    if [[ ! -z $SSH_IP ]] ; then
-      SSH_FLAG=1
-    fi
-    local SSH2_IP
-    SSH2_IP=$(echo $SSH2_CLIENT | awk '{ print $1 }')
-    if [[ ! -z $SSH2_IP ]] ; then
-      SSH_FLAG=1
-    fi
-
-    local CONN
-    if [[ $SSH_FLAG -eq 1 ]] ; then
-      CONN="ssh"
-    elif [[ -z $SESS_SRC ]] ; then
-      CONN="lcl"
-    elif [[ $SESS_SRC = "(:0.0)" || $SESS_SRC = "" ]] ; then
-      CONN="lcl"
+    if [[ -n "$SSH_CLIENT$SSH2_CLIENT" ]] ; then
+        echo ssh
     else
-      CONN="tel"
+        # TODO check on *BSD
+        local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
+        if [[ -z "$sess_src" || "$sess_src" = :0.0 || "$sess_src" == :0 ]] ; then
+            echo lcl  # Local
+        else
+            echo tel  # Telnet
+        fi
     fi
-
-    echo -ne $CONN
 }
 
 # Put the hostname if not locally connected
 # color it in cyan within SSH, and a warning red if within telnet
 # else diplay the host without color
-_lp_host_color()
-{
-    local conn
-    conn=$(_lp_connection)
-
-    local ret
-    ret="${NO_COL}"
-    if [[ "$conn" == "lcl" ]] ; then
-        if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
-            ret="${ret}" # no hostname if local
-        else
-            ret="${ret}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}"
-        fi
-    elif [[ "$conn" == "ssh" ]] ; then
-        ret="${ret}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}"
-    elif [[ "$conn" == "tel" ]] ; then
-        ret="${ret}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}"
+# The connection is not expected to change from inside the shell, so we
+# build this just once
+case "$(_lp_connection)" in
+lcl)
+    if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
+        LP_HOST="${NO_COL}" # no hostname if local
     else
-        ret="${ret}@${_LP_HOST_SYMBOL}" # defaults to no color
+        LP_HOST="${NO_COL}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
+    ;;
+ssh)
+    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    ;;
+tel)
+    LP_HOST="${NO_COL}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+    ;;
+*)
+    LP_HOST="${NO_COL}@${_LP_HOST_SYMBOL}" # defaults to no color
+    ;;
+esac
 
-    echo -ne "${ret}${NO_COL}"
-}
+# Useless now, so undefine
+unset _lp_connection
+
 
 # put an arrow if an http proxy is set
 _lp_proxy()
 {
+    [[ "$LP_ENABLE_PROXY" != 1 ]] && return
+
     if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne $LP_PROXY_MARK
+        echo -ne $LP_MARK_PROXY
     fi
 }
 
@@ -374,6 +377,10 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
+    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
+        echo $(echo "$1" | sed -e "s|$HOME|~|")
+        return
+    fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
@@ -465,10 +472,14 @@ _lp_shorten_path()
 # colored in red if it have not.
 _lp_permissions_color()
 {
-    if [[ -w "${PWD}" ]]; then
-        echo "${LP_COLOR_WRITE}:${NO_COL}"
+    if [[ "$LP_ENABLE_PERM" != 1 ]]; then
+        echo : # without color
     else
-        echo "${LP_COLOR_NOWRITE}:${NO_COL}"
+        if [[ -w "${PWD}" ]]; then
+            echo "${LP_COLOR_WRITE}:${NO_COL}"
+        else
+            echo "${LP_COLOR_NOWRITE}:${NO_COL}"
+        fi
     fi
 }
 
@@ -482,6 +493,8 @@ _lp_permissions_color()
 # or detached screens sessions running on the host
 _lp_jobcount_color()
 {
+    [[ "$LP_ENABLE_JOBS" != 1 ]] && return
+
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
     local screens=$(screen -ls 2> /dev/null | grep -c Detach )
@@ -540,6 +553,8 @@ _lp_return_value()
 # Get the branch name of the current directory
 _lp_git_branch()
 {
+    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+
     if git rev-parse --git-dir >/dev/null 2>&1 && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
@@ -553,7 +568,8 @@ _lp_git_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_git_branch_color()
 {
-    command -v git >/dev/null 2>&1 || return 1;
+    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+
     local branch
     branch=$(_lp_git_branch)
     if [[ ! -z "$branch" ]] ; then
@@ -566,6 +582,14 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
+        local has_untracked
+        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
+        if [[ -z "$has_untracked" ]] ; then
+            has_untracked=""
+        else
+            has_untracked="$LP_MARK_UNTRACKED"
+        fi
+
         local has_commit
         has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
         if [[ -z "$has_commit" ]] ; then
@@ -576,16 +600,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL},${YELLOW}$has_commit${NO_COL})"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
             else
-                ret="${RED}${branch}${NO_COL}(${PURPLE}$has_lines${NO_COL})" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${YELLOW}${branch}${NO_COL}(${YELLOW}$has_commit${NO_COL})"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_untracked}${NO_COL}"
             else
-                ret="${GREEN}${branch}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -598,6 +622,8 @@ _lp_git_branch_color()
 # Get the branch name of the current directory
 _lp_hg_branch()
 {
+    [[ "$LP_ENABLE_HG" != 1 ]] && return
+
     local branch
     branch="$(hg branch 2>/dev/null)"
     if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
@@ -611,15 +637,16 @@ _lp_hg_branch()
 # - TODO: yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
-    command -v hg >/dev/null 2>&1 || return 1;
+    [[ "$LP_ENABLE_HG" != 1 ]] && return
+
     local branch
     local ret
     branch=$(_lp_hg_branch)
     if [[ ! -z "$branch" ]] ; then
         if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
-            ret="${GREEN}${branch}${NO_COL}"
+            ret="${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            ret="${RED}${branch}${NO_COL}" # changes to commit
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -631,6 +658,8 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+
     local infos
     local ret
     infos=$(svn info --xml 2>/dev/null)
@@ -657,7 +686,8 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    command -v svn >/dev/null 2>&1 || return 1;
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+
     local branch
     branch=$(_lp_svn_branch)
     if [[ ! -z "$branch" ]] ; then
@@ -665,9 +695,9 @@ _lp_svn_branch_color()
         commits=$(( $(svn status | grep -v "?" -c) ))
         if [[ $commits = 0 ]] ; then
             local ret
-            ret="${GREEN}${branch}${NO_COL}"
+            ret="${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            ret="${RED}${branch}${NO_COL}(${YELLOW}$commits${NO_COL})" # changes to commit
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
         fi
         echo -ne "$ret"
     fi
@@ -686,7 +716,7 @@ _lp_svn_branch_color()
 # returns 4 if no battery support
 _lp_battery()
 {
-    command -v acpi >/dev/null 2>&1 || return 4; # or no battery support
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
     local bat
@@ -730,6 +760,8 @@ _lp_battery()
 # a    red ⌁ if the battery is discharging and above threshold
 _lp_battery_color()
 {
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return
+
     local mark=$LP_BATTERY_MARK
     local chargingmark=$LP_ADAPTER_MARK
     local bat
@@ -743,35 +775,44 @@ _lp_battery_color()
     elif [[ $ret == 3 && $bat != 100 ]] ; then
         # charging and above threshold and not 100%
         # green ⏚
-        echo -ne "${GREEN}$chargingmark${NO_COL}"
+        echo -ne "${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 2 ]] ; then
         # charging but under threshold
         # yellow ⏚
-        echo -ne "${YELLOW}$chargingmark${NO_COL}"
+        echo -ne "${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
         return
     elif [[ $ret == 1 ]] ; then
         # discharging but above threshold
         # yellow ⌁
-        echo -ne "${YELLOW}$mark${NO_COL}"
+        echo -ne "${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
         return
 
     # discharging and under threshold
     elif [[ "$bat" != "" ]] ; then
         local ret
-        ret="${mark}${NO_COL}"
-        if [[ ${bat} -le 100 ]] && [[ ${bat} -gt 75 ]] ; then
-            ret="${ret}${GREEN}"
-        elif [[ ${bat} -le 75 ]] && [[ ${bat} -gt 50 ]] ; then
-            ret="${ret}${BOLD_GREEN}"
-        elif [[ ${bat} -le 50 ]] && [[ ${bat} -gt 20 ]] ; then
-            ret="${ret}${BOLD_YELLOW}"
-        elif [[ ${bat} -le 20 ]] && [[ ${bat} -gt 10 ]] ; then
-            ret="${ret}${BOLD_RED}"
-        elif [[ ${bat} -le 10 ]] && [[ ${bat} -gt 5 ]] ; then
-            ret="${ret}${WARN_RED}"
+        ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
+        if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
+            ret="${ret}${LP_COLORMAP_1}"
+        elif [[ ${bat} -le 80  ]] && [[ ${bat} -gt 65 ]] ; then # -15
+            ret="${ret}${LP_COLORMAP_2}"
+        elif [[ ${bat} -le 65  ]] && [[ ${bat} -gt 50 ]] ; then # -15
+            ret="${ret}${LP_COLORMAP_3}"
+        elif [[ ${bat} -le 50  ]] && [[ ${bat} -gt 40 ]] ; then # -10
+            ret="${ret}${LP_COLORMAP_4}"
+        elif [[ ${bat} -le 40  ]] && [[ ${bat} -gt 30 ]] ; then # …
+            ret="${ret}${LP_COLORMAP_5}"
+        elif [[ ${bat} -le 30  ]] && [[ ${bat} -gt 20 ]] ; then
+            ret="${ret}${LP_COLORMAP_6}"
+        elif [[ ${bat} -le 20  ]] && [[ ${bat} -gt 10 ]] ; then
+            ret="${ret}${LP_COLORMAP_7}"
+        elif [[ ${bat} -le 10  ]] && [[ ${bat} -gt 5  ]] ; then
+            ret="${ret}${LP_COLORMAP_8}"
+        elif [[ ${bat} -le 5   ]] && [[ ${bat} -gt 0  ]] ; then
+            ret="${ret}${LP_COLORMAP_9}"
         else
-            ret="${ret}${CRIT_RED}"
+            # for debugging purpose
+            ret="${ret}${LP_COLORMAP_0}"
         fi
 
         if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
@@ -797,31 +838,38 @@ _lp_load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    local loadval
+    [[ "$LP_ENABLE_LOAD" != 1 ]] && return
+
     local load
-    loadval=$(_lp_load_$LP_OS)
-    load=$(echo $loadval | sed 's/\.//g;s/^0*//g' )
-    if [[ -z "$load" ]] ; then
-        load=0
-    fi
-    let "load=$load/$_lp_CPUNUM"
+    load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
+    let "load=${load:-0}/$_lp_CPUNUM"
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_LOAD_MARK}${NO_COL}"
-        if [[ $load -lt 70 ]] ; then
-            ret="${ret}"
-        elif [[ $load -ge 1 ]] && [[ $load -lt 80 ]] ; then
-            ret="${ret}${BOLD_GREEN}"
-        elif [[ $load -ge 80 ]] && [[ $load -lt 95 ]] ; then
-            ret="${ret}${BOLD_YELLOW}"
-        elif [[ $load -ge 95 ]] && [[ $load -lt 150 ]] ; then
-            ret="${ret}${BOLD_RED}"
-        elif [[ $load -ge 150 ]] && [[ $load -lt 200 ]] ; then
-            ret="${ret}${WARN_RED}"
+        ret="${LP_MARK_LOAD}${NO_COL}"
+        if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
+            ret="${ret}${LP_COLORMAP_0}"
+        elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
+            ret="${ret}${LP_COLORMAP_1}"
+        elif [[ $load -ge 40  ]] && [[ $load -lt 60  ]] ; then
+            ret="${ret}${LP_COLORMAP_2}"
+        elif [[ $load -ge 60  ]] && [[ $load -lt 80  ]] ; then
+            ret="${ret}${LP_COLORMAP_3}"
+        elif [[ $load -ge 80  ]] && [[ $load -lt 100 ]] ; then
+            ret="${ret}${LP_COLORMAP_4}"
+        elif [[ $load -ge 100 ]] && [[ $load -lt 120 ]] ; then
+            ret="${ret}${LP_COLORMAP_5}"
+        elif [[ $load -ge 120 ]] && [[ $load -lt 140 ]] ; then
+            ret="${ret}${LP_COLORMAP_6}"
+        elif [[ $load -ge 140 ]] && [[ $load -lt 160 ]] ; then
+            ret="${ret}${LP_COLORMAP_7}"
+        elif [[ $load -ge 160 ]] && [[ $load -lt 180 ]] ; then
+            ret="${ret}${LP_COLORMAP_8}"
+        elif [[ $load -ge 180 ]] ; then
+            ret="${ret}${LP_COLORMAP_9}"
         else
-            ret="${ret}${CRIT_RED}"
+            ret="${ret}${LP_COLORMAP_0}"
         fi
         if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
             ret="${ret}$load%${NO_COL}"
@@ -848,16 +896,16 @@ _lp_smart_mark()
     fi
 
     local mark
-    mark="\$"
+    mark="\\\$"
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        mark="%(!.#.$)"
+        mark="%(!.#.%%)"
     fi
     if   [[ ! -z $(_lp_git_branch) ]] ; then
-        mark=$LP_GIT_MARK
+        mark=$LP_MARK_GIT
     elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
-        mark=$LP_MERCURIAL_MARK
+        mark=$LP_MARK_HG
     elif [[ ! -z $(_lp_svn_branch) ]] ; then
-        mark=$LP_SUBVERSION_MARK
+        mark=$LP_MARK_SVN
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
@@ -884,17 +932,28 @@ _lp_sb()
     if [[ ! -z "$1" ]] ; then
         echo -n " $1 "
     fi
+
 }
+
+###################
+# CURRENT TIME    #
+###################
+_lp_time()
+{
+    [[ "$LP_ENABLE_TIME" != 1 ]] && return
+    echo -ne "${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}"
+}
+
 
 
 ########################
 # Construct the prompt #
 ########################
 
-_lp_set_bash_prompt()
+_lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
-    LP_RET=$(_lp_sl "$(_lp_return_value $?)")
+    LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
 
     # execute the old prompt
     $LP_OLD_PROMPT_COMMAND
@@ -903,13 +962,14 @@ _lp_set_bash_prompt()
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
     LP_LOAD=$(_lp_sr "$(_lp_load_color)")
     LP_BATT=$(_lp_sr "$(_lp_battery_color)")
+    LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
     LP_USER=$(_lp_user)
-    LP_HOST=$(_lp_host_color)
+    # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
      LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
-    LP_PROXY=$(_lp_proxy)
+    LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
      LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
@@ -919,9 +979,16 @@ _lp_set_bash_prompt()
     # end of the prompt line: double spaces
     LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
 
+    # Different path color if root
+    if [[ "$EUID" -ne "0" ]] ; then
+        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
+    else
+        LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+    fi
+
     if [[ -z $LP_PS1 ]] ; then
-        # add jobs, load and battery
-        PS1="${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        # add time, jobs, load and battery
+        PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 
@@ -929,16 +996,16 @@ _lp_set_bash_prompt()
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_COLOR_PATH}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PATH_ROOT}${LP_PWD}${NO_COL}]${LP_COLOR_PROXY}${LP_PROXY}${NO_COL}"
+            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
             # do not add VCS infos
         fi
         # add return code and prompt mark
-        PS1="${PS1}${LP_COLOR_ERR}${LP_RET}${NO_COL}${LP_MARK}"
+        PS1="${PS1}${LP_ERR}${LP_MARK}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
@@ -962,10 +1029,10 @@ prompt_on()
         fi
     fi
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=_lp_set_bash_prompt
+        PROMPT_COMMAND=_lp_set_prompt
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         function precmd {
-            _lp_set_bash_prompt
+            _lp_set_prompt
         }
     fi
 
@@ -999,4 +1066,7 @@ prompt_OFF()
 # By default, sourcing liquidprompt.bash will activate the liquid prompt
 prompt_on
 
-# vim: set ts=4 sw=4 tw=120 ft=sh:
+# Cleaning of variable that are not needed at runtime
+unset LP_OS
+
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

@@ -1,5 +1,5 @@
-Liquid prompt -- A useful adaptive Bash prompt
-==============================================
+Liquid prompt -- A useful adaptive prompt for Bash & Zsh
+========================================================
 
 Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
 Zsh.
@@ -12,6 +12,7 @@ informations that are always displayed in the same way.
 
 You can use it with either bash and zsh.
 
+![Screenshot](https://raw.github.com/nojhan/liquidprompt/master/demo.png)
 
 ## FEATURES
 
@@ -27,7 +28,7 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything may look like this:
 
-`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3) 125 ± `
+`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)* 125 ± `
 
 It displays:
 
@@ -47,7 +48,7 @@ any;
 the same as the login user;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
-* a green colon if the user has write permissions on the current directory, 
+* a green colon if the user has write permissions on the current directory,
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
@@ -57,6 +58,7 @@ preserving the first two directories;
 there is changes, in yellow if there is pending commits to push;
 * the number of added/deleted lines, if changes have been made and the number
 of pending commits, if any;
+* a star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
 user, a red # for root.
@@ -92,7 +94,7 @@ For other features, the script uses commands that should be available on a large
 variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
 
 
-## PUT THE PROMPT IN A DIFFERENT ORDER
+## FEATURES CONFIGURATION
 
 You can configure some variables in the `~/.liquidpromptrc` file:
 
@@ -104,16 +106,53 @@ displayed
 the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened
 path
-* `LP_REVERSE`, choose between reverse colors (black on white) or normal theme
-(white on black)
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
 
-You can sort what you want to see by exporting the `LP_PS1` variable, using the
-variables you will found in the `_lp_set_bash_prompt` function.
+You can also force some features to be disabled, to save some time in the prompt
+building:
+* `LP_ENABLE_PERM`, if you want to detect if the directory is writable
+* `LP_ENABLE_SHORTEN_PATH`, if you to shorten the path display
+* `LP_ENABLE_PROXY`, if you want to detect if a proxy is used
+* `LP_ENABLE_JOBS`, if you want to have jobs informations
+* `LP_ENABLE_LOAD`, if you want to have load informations
+* `LP_ENABLE_BATT`, if you want to have battery informations
+* `LP_ENABLE_GIT`, if you want to have git informations
+* `LP_ENABLE_SVN`, if you want to have subversion informations
+* `LP_ENABLE_HG`, if you want to have mercurial informations
+
+Note that if required commands are not installed, enabling the
+corresponding feature will have no effect.
+Note also that all the `LP_ENABLE_…` variables override the templates,
+i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
+in your config file, you will not have the battery informations.
+
+
+## PUT THE PROMPT IN A DIFFERENT ORDER
+
+You can sort what you want to see by sourcing your favorite template file
+(`*.ps1`), after having sourced the liquid prompt.
+
+Those scripts basically export the `LP_PS1` variable, by appending features and
+theme colors.
+
+Available features:
+* `LP_BATT` battery
+* `LP_LOAD` load
+* `LP_JOBS` screen sessions/running jobs/suspended jobs
+* `LP_USER` user
+* `LP_HOST` hostname
+* `LP_PERM` a colon ":"
+* `LP_PWD` current working directory
+* `LP_PROXY` HTTP proxy
+* `LP_GIT` git
+* `LP_HG` mercurial
+* `LP_SVN` subversion
+* `LP_ERR` last error code
+* `LP_MARK` prompt mark
 
 For example, if you just want to have a liquidprompt displaying the user and the
-host, with a normal path in blue and only the git support:
+host, with a normal full path in blue and only the git support:
 
     export LP_PS1=`echo -ne "[\${LP_USER}\${LP_HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${LP_GIT} \\\$ "`
 
@@ -125,14 +164,20 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
      export LP_PS1=""
 
 
-## COLOR THEMES
+## THEMES
 
-You can change the colors of some part of the liquid prompt by changing the
-following parameters in the config file.
+You can change the colors and special characters of some part of the liquid
+prompt by sourcing your favorite theme file (`*.theme`), before having sourced
+the liquid prompt.
+
+
+### COLORS
 
 Available colors are:
-BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE, RED, BOLD_RED, WARN_RED, CRIT_RED,
-GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN.
+BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
+GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
+RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
+NO_COL.
 Set to a null string "" if you do not want color.
 
 * Current working directory
@@ -160,6 +205,29 @@ Set to a null string "" if you do not want color.
 * Separation mark (aka permiison in the working dir)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission
+* VCS
+    * `LP_COLOR_UP` repository is up to date / a push have been made
+    * `LP_COLOR_COMMITS` some commits have not been pushed
+    * `LP_COLOR_CHANGES` there is some changes to commit
+    * `LP_COLOR_DIFF` number of lines impacted by current changes
+* Battery
+    * `LP_COLOR_CHARGING_ABOVE` charging and above threshold
+    * `LP_COLOR_CHARGING_UNDER` charging but under threshold
+    * `LP_COLOR_DISCHARGING_ABOVE` discharging but above threshold
+    * `LP_COLOR_DISCHARGING_UNDER` discharging and under threshold
+
+
+### CHARACTERS
+
+Special characters:
+* `LP_MARK_BATTERY` (default: "⌁") in front of the battery charge
+* `LP_MARK_ADAPTER` (default: "⏚") displayed when plugged
+* `LP_MARK_LOAD` (default: "⌂") in front of the load
+* `LP_MARK_PROXY` (default: "↥") indicate a proxy in use
+* `LP_MARK_HG` (default: "☿") prompt mark in hg repositories
+* `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
+* `LP_MARK_GIT` (default: "±") prompt mark in git repositories
+* `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 
 
 ## KNOWN LIMITATIONS AND BUGS
@@ -167,8 +235,6 @@ Set to a null string "" if you do not want color.
 Liquid prompt is distributed under the GNU Affero General Public License
 version 3.
 
-* Cannot easily change the colors of features having different state colors
-(like the colormap of the load or the colors of the branch name).
 * detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down

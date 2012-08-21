@@ -123,20 +123,20 @@ _lp_source_config()
           GREEN BOLD_GREEN YELLOW BOLD_YELLOW \
           BLUE BOLD_BLUE PURPLE PINK CYAN BOLD_CYAN
 
-# TermInfo feature detection
-_lp_ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
-_lp_ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
-if tput setaf >/dev/null 2>&1 ; then
-    _lp_ti_setaf () { tput setaf "$1" ; }
-elif tput AF >/dev/null 2>&1 ; then
-    # *BSD
-    _lp_ti_setaf () { tput AF "$1" ; }
-else
-    echo "liquidprompt: terminal $TERM not supported" >&2
-    _lp_ti_setaf () { : ; }
-fi
+    # TermInfo feature detection
+    _lp_ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
+    _lp_ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
+    if tput setaf >/dev/null 2>&1 ; then
+        _lp_ti_setaf () { tput setaf "$1" ; }
+    elif tput AF >/dev/null 2>&1 ; then
+        # *BSD
+        _lp_ti_setaf () { tput AF "$1" ; }
+    else
+        echo "liquidprompt: terminal $TERM not supported" >&2
+        _lp_ti_setaf () { : ; }
+    fi
 
-# Colors
+    # Colors
     BOLD="${_LP_OPEN_ESC}${_lp_ti_bold}${_LP_CLOSE_ESC}"
 
     BLACK="${_LP_OPEN_ESC}$(_lp_ti_setaf 0)${_LP_CLOSE_ESC}"

@@ -163,6 +163,10 @@ esac
 # CONFIGURATION #
 #################
 
+
+_lp_source_config()
+{
+
 # Note: configuration is called _after_ colors declarations, because of themes.
 
 # Default values
@@ -232,8 +236,6 @@ LP_COLORMAP_8=${LP_COLORMAP_8:-$CRIT_RED}
 LP_COLORMAP_9=${LP_COLORMAP_9:-$DANGER_RED}
 
 
-_lp_source_config()
-{
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
 

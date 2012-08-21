@@ -78,71 +78,55 @@ case $(uname) in
 esac
 
 # Colors declarations
-if [[ "$LP_OS" == "FreeBSD" ]] ; then
 
-    BOLD="${_LP_OPEN_ESC}$(tput md)${_LP_CLOSE_ESC}"
-
-    BLACK="${_LP_OPEN_ESC}$(tput AF 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput md ; tput AF 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput AF 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput md ; tput AF 7)${_LP_CLOSE_ESC}"
-
-    RED="${_LP_OPEN_ESC}$(tput AF 1)${_LP_CLOSE_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput md ; tput AF 1)${_LP_CLOSE_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput AF 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput md; tput AF 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    DANGER_RED="${_LP_OPEN_ESC}$(tput md; tput AF 3 ; tput setab 1)${_LP_CLOSE_ESC}"
-
-    GREEN="${_LP_OPEN_ESC}$(tput AF 2)${_LP_CLOSE_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput md ; tput AF 2)${_LP_CLOSE_ESC}"
-
-    YELLOW="${_LP_OPEN_ESC}$(tput AF 3)${_LP_CLOSE_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput md ; tput AF 3)${_LP_CLOSE_ESC}"
-
-    BLUE="${_LP_OPEN_ESC}$(tput AF 4)${_LP_CLOSE_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput md ; tput AF 4)${_LP_CLOSE_ESC}"
-
-    PURPLE="${_LP_OPEN_ESC}$(tput AF 5)${_LP_CLOSE_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput md ; tput AF 5)${_LP_CLOSE_ESC}"
-
-    CYAN="${_LP_OPEN_ESC}$(tput AF 6)${_LP_CLOSE_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput md ; tput AF 6)${_LP_CLOSE_ESC}"
-
-    NO_COL="${_LP_OPEN_ESC}$(tput me)${_LP_CLOSE_ESC}"
-
+# TermInfo feature detection
+_lp_ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
+_lp_ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
+if tput setaf >/dev/null 2>&1 ; then
+    _lp_ti_setaf () { tput setaf "$1" ; }
+elif tput AF >/dev/null 2>&1 ; then
+    # *BSD
+    _lp_ti_setaf () { tput AF "$1" ; }
 else
-    # default to Linux
-    BOLD="${_LP_OPEN_ESC}$(tput bold)${_LP_CLOSE_ESC}"
-
-    BLACK="${_LP_OPEN_ESC}$(tput setaf 0)${_LP_CLOSE_ESC}"
-    BOLD_GRAY="${_LP_OPEN_ESC}$(tput bold ; tput setaf 0)${_LP_CLOSE_ESC}"
-    WHITE="${_LP_OPEN_ESC}$(tput setaf 7)${_LP_CLOSE_ESC}"
-    BOLD_WHITE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 7)${_LP_CLOSE_ESC}"
-
-    RED="${_LP_OPEN_ESC}$(tput setaf 1)${_LP_CLOSE_ESC}"
-    BOLD_RED="${_LP_OPEN_ESC}$(tput bold ; tput setaf 1)${_LP_CLOSE_ESC}"
-    WARN_RED="${_LP_OPEN_ESC}$(tput setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    CRIT_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    DANGER_RED="${_LP_OPEN_ESC}$(tput bold; tput setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
-
-    GREEN="${_LP_OPEN_ESC}$(tput setaf 2)${_LP_CLOSE_ESC}"
-    BOLD_GREEN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 2)${_LP_CLOSE_ESC}"
-
-    YELLOW="${_LP_OPEN_ESC}$(tput setaf 3)${_LP_CLOSE_ESC}"
-    BOLD_YELLOW="${_LP_OPEN_ESC}$(tput bold ; tput setaf 3)${_LP_CLOSE_ESC}"
-
-    BLUE="${_LP_OPEN_ESC}$(tput setaf 4)${_LP_CLOSE_ESC}"
-    BOLD_BLUE="${_LP_OPEN_ESC}$(tput bold ; tput setaf 4)${_LP_CLOSE_ESC}"
-
-    PURPLE="${_LP_OPEN_ESC}$(tput setaf 5)${_LP_CLOSE_ESC}"
-    PINK="${_LP_OPEN_ESC}$(tput bold ; tput setaf 5)${_LP_CLOSE_ESC}"
-
-    CYAN="${_LP_OPEN_ESC}$(tput setaf 6)${_LP_CLOSE_ESC}"
-    BOLD_CYAN="${_LP_OPEN_ESC}$(tput bold ; tput setaf 6)${_LP_CLOSE_ESC}"
-
-    NO_COL="${_LP_OPEN_ESC}$(tput sgr0)${_LP_CLOSE_ESC}"
-
+    echo "liquidprompt: terminal $TERM not supported" >&2
+    _lp_ti_setaf () { : ; }
 fi
+
+# Colors
+{
+    BOLD="${_LP_OPEN_ESC}${_lp_ti_bold}${_LP_CLOSE_ESC}"
+
+    BLACK="${_LP_OPEN_ESC}$(_lp_ti_setaf 0)${_LP_CLOSE_ESC}"
+    BOLD_GRAY="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 0)${_LP_CLOSE_ESC}"
+    WHITE="${_LP_OPEN_ESC}$(_lp_ti_setaf 7)${_LP_CLOSE_ESC}"
+    BOLD_WHITE="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 7)${_LP_CLOSE_ESC}"
+
+    RED="${_LP_OPEN_ESC}$(_lp_ti_setaf 1)${_LP_CLOSE_ESC}"
+    BOLD_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 1)${_LP_CLOSE_ESC}"
+    WARN_RED="${_LP_OPEN_ESC}$(_lp_ti_setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
+    CRIT_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    DANGER_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
+
+    GREEN="${_LP_OPEN_ESC}$(_lp_ti_setaf 2)${_LP_CLOSE_ESC}"
+    BOLD_GREEN="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 2)${_LP_CLOSE_ESC}"
+
+    YELLOW="${_LP_OPEN_ESC}$(_lp_ti_setaf 3)${_LP_CLOSE_ESC}"
+    BOLD_YELLOW="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 3)${_LP_CLOSE_ESC}"
+
+    BLUE="${_LP_OPEN_ESC}$(_lp_ti_setaf 4)${_LP_CLOSE_ESC}"
+    BOLD_BLUE="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 4)${_LP_CLOSE_ESC}"
+
+    PURPLE="${_LP_OPEN_ESC}$(_lp_ti_setaf 5)${_LP_CLOSE_ESC}"
+    PINK="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 5)${_LP_CLOSE_ESC}"
+
+    CYAN="${_LP_OPEN_ESC}$(_lp_ti_setaf 6)${_LP_CLOSE_ESC}"
+    BOLD_CYAN="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 6)${_LP_CLOSE_ESC}"
+
+    NO_COL="${_LP_OPEN_ESC}${_lp_ti_sgr0}${_LP_CLOSE_ESC}"
+
+    unset _lp_ti_sgr0 _lp_ti_bold _lp_ti_setaf
+}
+
 
 # Get cpu count
 case "$LP_OS" in
@@ -281,6 +265,11 @@ _lp_source_config
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
+# Unset colors
+unset BOLD BLACK BOLD_GRAY WHITE BOLD_WHITE \
+      RED BOLD_RED WARN_RED CRIT_RED DANGER_RED \
+      GREEN BOLD_GREEN YELLOW BOLD_YELLOW \
+      BLUE BOLD_BLUE PURPLE PINK CYAN BOLD_CYAN
 
 
 ###############

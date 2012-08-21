@@ -188,6 +188,7 @@ LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
 LP_PATH_KEEP=${LP_PATH_KEEP:-2}
 LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
 LP_PS1=${LP_PS1:-""}
+LP_SVN_STATUS_OPTS=${LP_SVN_STATUS_OPTS:---depth=immediates}
 
 LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
 LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -626,9 +627,7 @@ _lp_hg_branch()
 
     local branch
     branch="$(hg branch 2>/dev/null)"
-    if [[ $? -eq 0 ]] && [[ ! -z "$(hg branch)" ]] ; then
-        echo -n "$(hg branch)"
-    fi
+    [[ $? -eq 0 ]] && echo "$branch"
 }
 
 # Set a color depending on the branch state:
@@ -658,48 +657,40 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    [[ "$LP_ENABLE_SVN" != 1 ]] && return
-
-    local infos
-    local ret
-    infos=$(svn info --xml 2>/dev/null)
-    ret=$?
-    if [[ $ret -eq 0 ]] ; then
-        local root
-        root=$(echo "$infos" | awk -v FS=">|</" '/^<root>/ { print $2 }')
-        local subrep
-        subrep=$(echo "$infos" |  awk -v FS=">|</" '/^<url>/ { print $2 }')
-        if [[ "$subrep" == *"url>"* ]] ; then
-            echo -n $root
-        else
-            local branch
-            branch=$(basename $subrep)
-            echo -n $branch
-        fi
+    [[ "$LP_ENABLE_SVN" != 1 || ! -d '.svn' ]] && return
+    local root
+    local url
+    eval $(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )
+    # Make url relative to root
+    url="${url:${#root}}"
+    if [[ "$url" == */trunk* ]] ; then
+        echo trunk
+    else
+        expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root"
     fi
 }
 
 # Set a color depending on the branch state:
-# - green if the repository is up to date
+# - green if the repository is clean
+#   (use $LP_SVN_STATUS_OPTS to define what that means with
+#    the --depth option of 'svn status')
 # - red if there is changes to commit
 # Note that, due to subversion way of managing changes,
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+    [[ "$LP_ENABLE_SVN" != 1 || ! -d .svn ]] && return
 
     local branch
-    branch=$(_lp_svn_branch)
-    if [[ ! -z "$branch" ]] ; then
+    branch="$(_lp_svn_branch)"
+    if [[ -n "$branch" ]] ; then
         local commits
-        commits=$(( $(svn status | grep -v "?" -c) ))
-        if [[ $commits = 0 ]] ; then
-            local ret
-            ret="${LP_COLOR_UP}${branch}${NO_COL}"
+        commits=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
+        if [[ $commits -eq 0 ]] ; then
+            echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
+            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
         fi
-        echo -ne "$ret"
     fi
 }
 

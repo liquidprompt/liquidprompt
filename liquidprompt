@@ -657,7 +657,7 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    [[ "$LP_ENABLE_SVN" != 1 || ! -d '.svn' ]] && return
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
     local root
     local url
     eval $(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )
@@ -679,7 +679,7 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    [[ "$LP_ENABLE_SVN" != 1 || ! -d .svn ]] && return
+    [[ "$LP_ENABLE_SVN" != 1 ]] && return
 
     local branch
     branch="$(_lp_svn_branch)"

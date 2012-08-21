@@ -263,6 +263,7 @@ _lp_source_config()
 }
 # do source config files
 _lp_source_config
+unset _lp_source_config
 
 # Disable features if the tool is not installed
 [[ "$LP_ENABLE_GIT"  = 1 ]] && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }

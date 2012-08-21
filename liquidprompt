@@ -113,7 +113,11 @@ esac
 # CONFIGURATION #
 #################
 
-
+# 1. Setup variables that can be used by the user: the "API" of liquidprompt
+#    for config/theme. Those variables are local to the function.
+#    In practice, this is only color variables.
+# 2. Setup default values
+# 3. Load the configuration
 _lp_source_config()
 {
 
@@ -167,9 +171,8 @@ _lp_source_config()
 
     unset _lp_ti_sgr0 _lp_ti_bold _lp_ti_setaf
 
-    # Note: configuration is called _after_ colors declarations, because of themes.
 
-    # Default values
+    # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}

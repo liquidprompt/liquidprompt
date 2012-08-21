@@ -378,8 +378,9 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
+    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
-        echo $(echo "$1" | sed -e "s|$HOME|~|")
+        echo "$p"
         return
     fi
     # the character that will replace the part of the path that is masked
@@ -392,7 +393,6 @@ _lp_shorten_path()
 
     local len_percent=$2
 
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))

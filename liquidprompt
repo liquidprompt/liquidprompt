@@ -122,54 +122,54 @@ _lp_source_config()
 {
 
     # TermInfo feature detection
-    local _lp_ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
-    local _lp_ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
-    local _lp_ti_setaf
+    local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
+    local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
+    local ti_setaf
     if tput setaf >/dev/null 2>&1 ; then
-        _lp_ti_setaf () { tput setaf "$1" ; }
+        ti_setaf () { tput setaf "$1" ; }
     elif tput AF >/dev/null 2>&1 ; then
         # *BSD
-        _lp_ti_setaf () { tput AF "$1" ; }
+        ti_setaf () { tput AF "$1" ; }
     else
         echo "liquidprompt: terminal $TERM not supported" >&2
-        _lp_ti_setaf () { : ; }
+        ti_setaf () { : ; }
     fi
 
     # Colors: variables are local so they will have a value only
     # during config loading and will not conflict with other values
     # with the same names defined by the user outside the config.
-    local BOLD="${_LP_OPEN_ESC}${_lp_ti_bold}${_LP_CLOSE_ESC}"
+    local BOLD="${_LP_OPEN_ESC}${ti_bold}${_LP_CLOSE_ESC}"
 
-    local BLACK="${_LP_OPEN_ESC}$(_lp_ti_setaf 0)${_LP_CLOSE_ESC}"
-    local BOLD_GRAY="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 0)${_LP_CLOSE_ESC}"
-    local WHITE="${_LP_OPEN_ESC}$(_lp_ti_setaf 7)${_LP_CLOSE_ESC}"
-    local BOLD_WHITE="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 7)${_LP_CLOSE_ESC}"
+    local BLACK="${_LP_OPEN_ESC}$(ti_setaf 0)${_LP_CLOSE_ESC}"
+    local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 0)${_LP_CLOSE_ESC}"
+    local WHITE="${_LP_OPEN_ESC}$(ti_setaf 7)${_LP_CLOSE_ESC}"
+    local BOLD_WHITE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7)${_LP_CLOSE_ESC}"
 
-    local RED="${_LP_OPEN_ESC}$(_lp_ti_setaf 1)${_LP_CLOSE_ESC}"
-    local BOLD_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 1)${_LP_CLOSE_ESC}"
-    local WARN_RED="${_LP_OPEN_ESC}$(_lp_ti_setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    local CRIT_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    local DANGER_RED="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
+    local RED="${_LP_OPEN_ESC}$(ti_setaf 1)${_LP_CLOSE_ESC}"
+    local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 1)${_LP_CLOSE_ESC}"
+    local WARN_RED="${_LP_OPEN_ESC}$(ti_setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
+    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
+    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
 
-    local GREEN="${_LP_OPEN_ESC}$(_lp_ti_setaf 2)${_LP_CLOSE_ESC}"
-    local BOLD_GREEN="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 2)${_LP_CLOSE_ESC}"
+    local GREEN="${_LP_OPEN_ESC}$(ti_setaf 2)${_LP_CLOSE_ESC}"
+    local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 2)${_LP_CLOSE_ESC}"
 
-    local YELLOW="${_LP_OPEN_ESC}$(_lp_ti_setaf 3)${_LP_CLOSE_ESC}"
-    local BOLD_YELLOW="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 3)${_LP_CLOSE_ESC}"
+    local YELLOW="${_LP_OPEN_ESC}$(ti_setaf 3)${_LP_CLOSE_ESC}"
+    local BOLD_YELLOW="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3)${_LP_CLOSE_ESC}"
 
-    local BLUE="${_LP_OPEN_ESC}$(_lp_ti_setaf 4)${_LP_CLOSE_ESC}"
-    local BOLD_BLUE="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 4)${_LP_CLOSE_ESC}"
+    local BLUE="${_LP_OPEN_ESC}$(ti_setaf 4)${_LP_CLOSE_ESC}"
+    local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 4)${_LP_CLOSE_ESC}"
 
-    local PURPLE="${_LP_OPEN_ESC}$(_lp_ti_setaf 5)${_LP_CLOSE_ESC}"
-    local PINK="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 5)${_LP_CLOSE_ESC}"
+    local PURPLE="${_LP_OPEN_ESC}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    local PINK="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 5)${_LP_CLOSE_ESC}"
 
-    local CYAN="${_LP_OPEN_ESC}$(_lp_ti_setaf 6)${_LP_CLOSE_ESC}"
-    local BOLD_CYAN="${_LP_OPEN_ESC}${_lp_ti_bold}$(_lp_ti_setaf 6)${_LP_CLOSE_ESC}"
+    local CYAN="${_LP_OPEN_ESC}$(ti_setaf 6)${_LP_CLOSE_ESC}"
+    local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 6)${_LP_CLOSE_ESC}"
 
     # NO_COL is special: it will be used at runtime, not just during config loading
-    NO_COL="${_LP_OPEN_ESC}${_lp_ti_sgr0}${_LP_CLOSE_ESC}"
+    NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
 
-    unset _lp_ti_sgr0 _lp_ti_bold _lp_ti_setaf
+    unset ti_sgr0 ti_bold ti_setaf
 
 
     # Default values (globals)

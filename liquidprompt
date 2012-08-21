@@ -161,10 +161,17 @@ case "$LP_OS" in
             echo "$load"
         }
         ;;
-    FreeBSD|Darwin)
+    FreeBSD)
         _lp_cpu_load () {
             local bol load eol
             read bol load eol < $<( LANG=C sysctl -n vm.loadavg )
+            echo "$load"
+        }
+        ;;
+    Darwin)
+        _lp_cpu_load () {
+            local load
+            load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
             echo "$load"
         }
         ;;

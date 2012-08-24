@@ -386,7 +386,7 @@ _lp_proxy()
 _lp_shorten_path()
 {
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
-        echo "$p"
+        echo "$1"
         return
     fi
     # the character that will replace the part of the path that is masked

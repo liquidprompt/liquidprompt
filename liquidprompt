@@ -347,7 +347,11 @@ lcl)
     fi
     ;;
 ssh)
-    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+	if [ -r /etc/debian_chroot ] ; then
+		_LP_HOST_CHROOT=$(cat /etc/debian_chroot)
+		_LP_HOST_CHROOT="($_LP_HOST_CHROOT)"
+	fi
+    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_CHROOT}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 tel)
     LP_HOST="${NO_COL}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"

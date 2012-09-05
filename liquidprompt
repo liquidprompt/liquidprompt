@@ -312,7 +312,7 @@ _lp_connection()
     else
         # TODO check on *BSD
         local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
-        if [[ -z "$sess_src" || "$sess_src" = :0.0 || "$sess_src" == :0 ]] ; then
+        if [[ -z "$sess_src" || "$sess_src" = ":"* ]] ; then
             echo lcl  # Local
         else
             echo tel  # Telnet
@@ -345,7 +345,7 @@ tel)
 esac
 
 # Useless now, so undefine
-unset _lp_connection
+# unset _lp_connection
 
 
 # put an arrow if an http proxy is set

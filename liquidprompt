@@ -331,26 +331,30 @@ _lp_connection()
 # else diplay the host without color
 # The connection is not expected to change from inside the shell, so we
 # build this just once
+LP_HOST="${NO_COL}@"
+if [[ -r /etc/debian_chroot ]] ; then
+    local debchroot
+    debchroot=$(cat /etc/debian_chroot)
+    LP_HOST="${LP_HOST}(${debchroot})"
+fi
+
 case "$(_lp_connection)" in
 lcl)
     if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
+        # FIXME do we want to display the chroot if local?
         LP_HOST="${NO_COL}" # no hostname if local
     else
-        LP_HOST="${NO_COL}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
     ;;
 ssh)
-	if [ -r /etc/debian_chroot ] ; then
-		_LP_HOST_CHROOT=$(cat /etc/debian_chroot)
-		_LP_HOST_CHROOT="($_LP_HOST_CHROOT)"
-	fi
-    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_CHROOT}${_LP_HOST_SYMBOL}${NO_COL}"
+    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 tel)
-    LP_HOST="${NO_COL}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+    LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 *)
-    LP_HOST="${NO_COL}@${_LP_HOST_SYMBOL}" # defaults to no color
+    LP_HOST="${LP_HOST}${_LP_HOST_SYMBOL}" # defaults to no color
     ;;
 esac
 

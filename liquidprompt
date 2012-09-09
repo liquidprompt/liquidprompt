@@ -77,7 +77,6 @@ case $(uname) in
     *)         LP_OS=Linux   ;;
 esac
 
-
 # Get cpu count
 case "$LP_OS" in
     Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
@@ -95,10 +94,17 @@ case "$LP_OS" in
             echo "$load"
         }
         ;;
-    FreeBSD|Darwin)
+    FreeBSD)
         _lp_cpu_load () {
             local bol load eol
             read bol load eol < $<( LANG=C sysctl -n vm.loadavg )
+            echo "$load"
+        }
+        ;;
+    Darwin)
+        _lp_cpu_load () {
+            local load
+            load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
             echo "$load"
         }
         ;;
@@ -372,9 +378,8 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    local p=$(echo "$1" | sed -e "s|$HOME|~|")
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
-        echo "$p"
+        echo "$1"
         return
     fi
     # the character that will replace the part of the path that is masked
@@ -387,6 +392,12 @@ _lp_shorten_path()
 
     local len_percent=$2
 
+    local p
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        p=$(echo "$1" | sed -e "s|$HOME|~|")
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+        p=$1
+    fi
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
@@ -954,7 +965,11 @@ _lp_set_prompt()
     LP_USER=$(_lp_user)
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
-     LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+        LP_PWD=$(_lp_shorten_path "$(print -P "%~")" $LP_PATH_LENGTH)
+    fi
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left

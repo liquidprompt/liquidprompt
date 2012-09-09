@@ -131,7 +131,7 @@ in your config file, you will not have the battery informations.
 ## PUT THE PROMPT IN A DIFFERENT ORDER
 
 You can sort what you want to see by sourcing your favorite template file
-(`*.ps1`), after having sourced the liquid prompt.
+(`*.ps1`) in the configuration file.
 
 Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
@@ -167,9 +167,7 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 ## THEMES
 
 You can change the colors and special characters of some part of the liquid
-prompt by sourcing your favorite theme file (`*.theme`), before having sourced
-the liquid prompt.
-
+prompt by sourcing your favorite theme file (`*.theme`) in the configuration file.
 
 ### COLORS
 

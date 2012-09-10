@@ -29,7 +29,7 @@
 # Joris Dedieu <joris@pontiac3.nfrance.com>     # Portability framework, FreeBSD support, bugfixes.
 # Ludovic Rousseau <ludovic.rousseau@gmail.com> # Lot of bugfixes.
 # Yann 'Ze' Richard <ze@nbox.org>               # Do not fail on missing commands.
-# François Schmidts <fschmidts@olfeo.com>       # Simpler SSH_IP acquiring method.
+# François Schmidts <francois.schmidts@gmail.com> # _lp_shorten_path refactoring, miscellaneous bugfix
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
@@ -386,7 +386,11 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]] && echo "\\w" && return
+    if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]
+        then
+        echo "\\w"
+        return
+    fi
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
         [[ "$_LP_WORKING_SHELL" == "bash" ]] && echo "\\w" || "$(print -P "%~")"
         return
@@ -405,28 +409,32 @@ _lp_shorten_path()
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        local path_start=""
-        local start_iter=0
-        local end_iter=0
-        local path_end=""
+        local istart=0; local iend=0
+        local pstart=""; local pend=""; local real_mask=""
         local path_len="$(echo $p | sed -e "s|\/|\n|g" | wc -l)"
-        local real_mask=""
+        # Processing the first part of the part which we'll keep
+        # according to LP_PATH_KEEP
         for i in $(echo $p | sed -e "s|\/|\n|g"); do
-            [[ "$path_start" == "" ]] && path_start="$i" || path_start="$path_start/$i"
-            start_iter=$((start_iter+1))
-            [[ "$((start_iter))" -ge "$((LP_PATH_KEEP))" ]] && break
+            [[ "$pstart" == "" ]] && pstart="$i" || pstart="$pstart/$i"
+            istart=$((istart+1))
+            [[ "$((istart))" -ge "$((LP_PATH_KEEP))" ]] && break
         done
-        [[ "$(echo "$path_start" | wc -c)" -ge "$((len))" ]] && echo $path_start && return
-        for i in $(echo $p |rev| sed -e "s|\/|\n|g"|rev); do
-            if [[ "$(echo "$i/$path_end" | wc -c)" -ge "$((max_len-${#path_start}))" ]]; then
-                [[ "$path_end" == "" ]] && path_end="$i" && end_iter=$((end_iter+1))
-                [[ "$((path_len-start_iter-end_iter))" -gt 0 ]] && real_mask="$mask/"
+        # If already processed the path entierly no need to go further
+        [[ "$((istart))" -ge "$((path_len))" ]] && echo $pstart && return
+        # Calculating the rest of the path from the end
+        for i in $(echo $p | rev | sed -e "s|\/|\n|g"| rev); do
+            if [[ "$(echo "$pstart/$i/$pend" | wc -c)" -ge "$((max_len))" ]];
+                then
+                # The path can't be empty when we leave
+                [[ "$pend" == "" ]] && pend="$i" && iend=$((iend+1))
+                # We check we actually shortend anything to activate the mark
+                [[ "$((path_len-istart-iend))" -gt 0 ]] && real_mask="$mask/"
                 break
             fi
-            [[ "$path_end" == "" ]] && path_end="$i" || path_end="$i/$path_end"
-            end_iter=$((end_iter+1))
+            [[ "$pend" == "" ]] && pend="$i" || pend="$i/$pend"
+            iend=$((iend+1))
         done
-        echo "$path_start/$real_mask$path_end"
+        echo "$pstart/$real_mask$pend"
     else
         if [[ "$len" -gt "$max_len" ]]; then
             echo "%-${LP_PATH_KEEP}~%${max_len}<${mask}<%~%<<"
@@ -437,23 +445,18 @@ _lp_shorten_path()
 }
 
 _lp_get_trimdir() {
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
-        echo 0
-        return
-    fi
+    [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo 0 && return
+
     local p="$(echo $PWD | sed -e "s|$HOME|~|g")"
     local len_percent=$1
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local PROMPT_DIRTRIM=0
-    if [[ "$len" -gt "$max_len" ]]
-    then
+    if [[ "$len" -gt "$max_len" ]]; then
         for i in $(echo -e $p | sed -e "s/\(.\)/\1\n/g" | grep "/" -n | sed "s/:.*//g" | sort -rh)
         do
-            if [[ "$((len-i))" -gt "$((max_len))" ]]; then
-                break
-            fi
+            [[ "$((len-i))" -gt "$((max_len))" ]] && break
             PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
         done
     fi
@@ -955,8 +958,9 @@ _lp_set_prompt()
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
      LP_PWD=$(_lp_shorten_path $LP_PATH_LENGTH)
-    if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]; then
-        export PROMPT_DIRTRIM=$(_lp_get_trimdir $LP_PATH_LENGTH)
+    if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]
+        then
+        PROMPT_DIRTRIM=$(_lp_get_trimdir $LP_PATH_LENGTH)
     fi
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 

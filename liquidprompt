@@ -419,20 +419,16 @@ _lp_get_trimdir() {
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
-    local surplus_slashes=0
-    local total_slashes=0
-    PROMPT_DIRTRIM=0
+    local PROMPT_DIRTRIM=0
     if [[ "$len" -gt "$max_len" ]]
     then
-        for i in $(echo -e $p| sed -e "s/\(.\)/\1\n/g" | grep "/" -n | sed "s/:.*//g")
+        for i in $(echo -e $p| sed -e "s/\(.\)/\1\n/g" | grep "/" -n | sed "s/:.*//g" | sort -rh)
         do
-            total_slashes=$((total_slashes+1))
-            if [[ "$((len-i))" -gt "$((max_len))" ]]
-            then
-                surplus_slashes=$((surplus_slashes+1))
+            if [[ "$((len-i))" -gt "$((max_len))" ]]; then
+                break
             fi
+            PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
         done
-        PROMPT_DIRTRIM=$((total_slashes-surplus_slashes))
     fi
     echo $PROMPT_DIRTRIM
 }

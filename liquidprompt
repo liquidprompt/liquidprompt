@@ -400,13 +400,7 @@ _lp_shorten_path()
 
     local len_percent=$2
 
-    local p
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        p=$(echo "$1" | sed -e "s|$HOME|~|")
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        p=$1
-    fi
-    local len="${#p}"
+    local len="${#1}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
@@ -422,7 +416,7 @@ _lp_shorten_path()
             local pos=()
             for ((i=0;i<len;i++))
             do
-                if [[ "${p:i:1}" == "/" ]]
+                if [[ "${1:i:1}" == "/" ]]
                 then
                     pos=(${pos[@]} $i)
                     slashes=$((${slashes}+1))
@@ -452,7 +446,7 @@ _lp_shorten_path()
                 # the maximum allowed length,
                 # so no need for ...
                 #
-                echo "$p"
+                echo "$1"
 
             elif [[ "${pos[i]}" = "$len" ]]
             then
@@ -461,16 +455,16 @@ _lp_shorten_path()
                 # than the last part of the path, plus
                 # ' … '
                 #
-                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
+                echo "${1:0:((${pos[${keep}]}+1))}${mask}${1:((len-max_len+mask_len))}"
             else
                 # constraints are satisfied, at least
                 # some parts of the path, plus ' … ', are
                 # shorter than the maximum allowed size
                 #
-                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
+                echo "${1:0:((${pos[${keep}]}+1))}${mask}${1:pos[i]}"
             fi
         else
-            echo "$p"
+            echo "$1"
         fi
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         if [[ "$len" -gt "$max_len" ]]; then
@@ -976,7 +970,7 @@ _lp_set_prompt()
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
+        LP_PWD=$(_lp_shorten_path "\\w" $LP_PATH_LENGTH)
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         LP_PWD=$(_lp_shorten_path "$(print -P "%~")" $LP_PATH_LENGTH)
     fi

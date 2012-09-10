@@ -416,12 +416,11 @@ _lp_shorten_path()
             start_iter=$((start_iter+1))
             [[ "$((start_iter))" -ge "$((LP_PATH_KEEP))" ]] && break
         done
-        path_len=$((path_len-start_iter))
         [[ "$(echo "$path_start" | wc -c)" -ge "$((len))" ]] && echo $path_start && return
         for i in $(echo $p |rev| sed -e "s|\/|\n|g"|rev); do
             if [[ "$(echo "$i/$path_end" | wc -c)" -ge "$((max_len-${#path_start}))" ]]; then
                 [[ "$path_end" == "" ]] && path_end="$i" && end_iter=$((end_iter+1))
-                real_mask="$mask/"
+                [[ "$((path_len-start_iter-end_iter))" -gt 0 ]] && real_mask="$mask/"
                 break
             fi
             [[ "$path_end" == "" ]] && path_end="$i" || path_end="$i/$path_end"

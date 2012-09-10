@@ -386,93 +386,71 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
-        echo "$1"
+    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        echo "\\w"
+        return
+    elif [[ "$LP_ENABLE_SHORTEN_PATH" != 1 && "$_LP_WORKING_SHELL" == "zsh" ]]
+        then
+        echo "$(print -P "%~")"
         return
     fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
-    local keep=$((LP_PATH_KEEP-1))
-    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-       keep=$LP_PATH_KEEP
-    fi
+    keep=$LP_PATH_KEEP
 
-    local len_percent=$2
-
-    local len="${#1}"
+    local len_percent=$1
+    local p="$(print -P "%~")"
+    local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
-    local slashes=0
-
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        if [[ "$len" -gt "$max_len" ]]
-        then
-            # finds all the '/' in
-            # the path and stores their
-            # positions
-            #
-            local pos=()
-            for ((i=0;i<len;i++))
-            do
-                if [[ "${1:i:1}" == "/" ]]
-                then
-                    pos=(${pos[@]} $i)
-                    slashes=$((${slashes}+1))
-                fi
-            done
-            pos=(${pos[@]} $len)
-
-            # we have the '/'s, let's find the
-            # left-most that doesn't break the
-            # length limit
-            #
-            local i=$keep
-            if [[ $keep > $slashes ]] ; then
-                i=$slashes
-            fi
-            while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
-            do
-                i=$((i+1))
-            done
-
-            # let us check if it's OK to
-            # print the whole thing
-            #
-            if [[ "${pos[i]}" -eq "0" ]]
-            then
-                # the path is shorter than
-                # the maximum allowed length,
-                # so no need for ...
-                #
-                echo "$1"
-
-            elif [[ "${pos[i]}" = "$len" ]]
-            then
-                # constraints are broken because
-                # the maximum allowed size is smaller
-                # than the last part of the path, plus
-                # ' … '
-                #
-                echo "${1:0:((${pos[${keep}]}+1))}${mask}${1:((len-max_len+mask_len))}"
-            else
-                # constraints are satisfied, at least
-                # some parts of the path, plus ' … ', are
-                # shorter than the maximum allowed size
-                #
-                echo "${1:0:((${pos[${keep}]}+1))}${mask}${1:pos[i]}"
-            fi
-        else
-            echo "$1"
-        fi
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        if [[ "$len" -gt "$max_len" ]]; then
-            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
-        else
-            echo "%~"
-        fi
+    if [[ "$len" -gt "$max_len" ]]; then
+        echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+    else
+        echo "%~"
     fi
+}
+
+_lp_get_trimdir() {
+    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
+        echo 0
+    fi
+    local p="$(echo $PWD | sed -e "s|$HOME|~|g")"
+    local len_percent=$1
+    local len="${#p}"
+
+    local max_len=$((${COLUMNS:-80}*$len_percent/100))
+    local slashes=0
+    PROMPT_DIRTRIM=0
+    if [[ "$len" -gt "$max_len" ]]
+    then
+        # finds all the '/' in
+        # the path and stores their
+        # positions
+        #
+        local pos=()
+        for ((i=0;i<len;i++))
+        do
+            if [[ "${p:i:1}" == "/" ]]
+            then
+                pos=(${pos[@]} $i)
+                slashes=$((${slashes}+1))
+            fi
+        done
+        pos=(${pos[@]} $len)
+
+        # we have the '/'s, let's find the
+        # left-most that doesn't break the
+        # length limit
+        #
+        while [[ "$((len-pos[PROMPT_DIRTRIM]))" -gt "$((max_len))" ]]
+        do
+            PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
+        done
+        PROMPT_DIRTRIM=$((slashes-PROMPT_DIRTRIM))
+    fi
+    echo $PROMPT_DIRTRIM
 }
 
 # Display a ":"
@@ -969,10 +947,9 @@ _lp_set_prompt()
     LP_USER=$(_lp_user)
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
+     LP_PWD=$(_lp_shorten_path $LP_PATH_LENGTH)
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        LP_PWD=$(_lp_shorten_path "\\w" $LP_PATH_LENGTH)
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        LP_PWD=$(_lp_shorten_path "$(print -P "%~")" $LP_PATH_LENGTH)
+        export PROMPT_DIRTRIM=$(_lp_get_trimdir $LP_PATH_LENGTH)
     fi
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 

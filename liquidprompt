@@ -385,33 +385,38 @@ _lp_shorten_path()
     fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
+    local mask_len="${#mask}"
 
     local len_percent=$1
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        local p="$(echo $PWD | sed -e "s|$HOME|~|g")"
-    else
-        local p="$(print -P "%~")"
-    fi
-    local len="${#p}"
-
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
-    local mask_len="${#mask}"
+
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        local istart=0; local iend=0
-        local pstart=""; local pend=""; local real_mask=""
+        local pstart=""; local pend=""; local real_mask=""; local p="$PWD"
+        local istart=0; local iend=0; local phome=0
+        if $(echo "$PWD" | grep -q "$HOME"); then
+            pstart="~"; phome=1; local p="$(echo $PWD | sed -e "s|$HOME/||g")"
+        fi
+
         local path_len="$(echo $p | sed -e "s|\/|\n|g" | wc -l)"
+
         # Processing the first part of the part which we'll keep
         # according to LP_PATH_KEEP
         for i in $(echo $p | sed -e "s|\/|\n|g"); do
-            [[ "$pstart" == "" ]] && pstart="$i" || pstart="$pstart/$i"
+            pstart="$pstart/$i"
             istart=$((istart+1))
-            [[ "$((istart))" -ge "$((LP_PATH_KEEP))" ]] && break
+            [[ "$((istart+phome))" -ge "$((LP_PATH_KEEP))" ]] && break
         done
+
         # If already processed the path entierly no need to go further
-        [[ "$((istart))" -ge "$((path_len))" ]] && echo $pstart && return
+        if [[ "$((istart-phome))" -ge "$((path_len))" ]]; then
+            echo "$pstart"
+            return
+        fi
+
         # Calculating the rest of the path from the end
         for i in $(echo $p | rev | sed -e "s|\/|\n|g"| rev); do
-            if [[ "$(echo "$pstart/$i/$pend" | wc -c)" -ge "$((max_len))" ]];
+            if [[ "$(echo "$pstart/$i/$pend" | wc -c)" -ge "$((max_len))"
+                    || "$((istart+iend))" -ge "$((path_len))" ]];
                 then
                 # The path can't be empty when we leave
                 [[ "$pend" == "" ]] && pend="$i" && iend=$((iend+1))
@@ -423,8 +428,10 @@ _lp_shorten_path()
             iend=$((iend+1))
         done
         echo "$pstart/$real_mask$pend"
+
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        if [[ "$len" -gt "$max_len" ]]; then
+        local p="$(print -P "%~")"
+        if [[ "${#p}" -gt "$max_len" ]]; then
             echo "%-${LP_PATH_KEEP}~%${max_len}<${mask}<%~%<<"
         else
             echo "%~"

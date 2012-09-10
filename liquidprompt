@@ -252,24 +252,12 @@ _lp_source_config()
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
 
-    local configfile
-    if [[ -f "/etc/liquidpromptrc" ]]
-    then
-        source "/etc/liquidpromptrc"
-    fi
-    if [[ -f "$HOME/.liquidpromptrc" ]]
-    then
-        configfile="$HOME/.liquidpromptrc"
-    elif [[ -z "$XDG_HOME_DIR" ]]
-    then
-        configfile="$HOME/.config/liquidpromptrc"
-    else
-        configfile="$XDG_HOME_DIR/liquidpromptrc"
-    fi
-    if [[ -f "$configfile" ]]
-    then
-        source "$configfile"
-    fi
+    for j in $(echo "liquidpromptrc liquid.theme"); do
+        for i in $(echo "$HOME/.$j /etc/$j $HOME/.config/$j $XDG_HOME_DIR/$j")
+        do
+            [[ -f "$i" ]] && source $i && break
+        done
+    done
 }
 # do source config files
 _lp_source_config
@@ -392,7 +380,7 @@ _lp_shorten_path()
         return
     fi
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
-        [[ "$_LP_WORKING_SHELL" == "bash" ]] && echo "\\w" || "$(print -P "%~")"
+        [[ "$_LP_WORKING_SHELL" == "bash" ]] && echo "\\w" || echo "$(print -P "%~")"
         return
     fi
     # the character that will replace the part of the path that is masked
@@ -435,7 +423,7 @@ _lp_shorten_path()
             iend=$((iend+1))
         done
         echo "$pstart/$real_mask$pend"
-    else
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         if [[ "$len" -gt "$max_len" ]]; then
             echo "%-${LP_PATH_KEEP}~%${max_len}<${mask}<%~%<<"
         else

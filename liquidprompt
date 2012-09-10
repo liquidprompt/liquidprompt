@@ -396,8 +396,6 @@ _lp_shorten_path()
     fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
-    # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
-    keep=$LP_PATH_KEEP
 
     local len_percent=$1
     local p="$(print -P "%~")"
@@ -406,7 +404,7 @@ _lp_shorten_path()
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
     local mask_len="${#mask}"
     if [[ "$len" -gt "$max_len" ]]; then
-        echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+        echo "%-${LP_PATH_KEEP}~%${max_len}<${mask}<%~%<<"
     else
         echo "%~"
     fi
@@ -421,34 +419,20 @@ _lp_get_trimdir() {
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
-    local slashes=0
+    local surplus_slashes=0
+    local total_slashes=0
     PROMPT_DIRTRIM=0
     if [[ "$len" -gt "$max_len" ]]
     then
-        # finds all the '/' in
-        # the path and stores their
-        # positions
-        #
-        local pos=()
-        for ((i=0;i<len;i++))
+        for i in $(echo -e $p| sed -e "s/\(.\)/\1\n/g" | grep "/" -n | sed "s/:.*//g")
         do
-            if [[ "${p:i:1}" == "/" ]]
+            total_slashes=$((total_slashes+1))
+            if [[ "$((len-i))" -gt "$((max_len))" ]]
             then
-                pos=(${pos[@]} $i)
-                slashes=$((${slashes}+1))
+                surplus_slashes=$((surplus_slashes+1))
             fi
         done
-        pos=(${pos[@]} $len)
-
-        # we have the '/'s, let's find the
-        # left-most that doesn't break the
-        # length limit
-        #
-        while [[ "$((len-pos[PROMPT_DIRTRIM]))" -gt "$((max_len))" ]]
-        do
-            PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
-        done
-        PROMPT_DIRTRIM=$((slashes-PROMPT_DIRTRIM))
+        PROMPT_DIRTRIM=$((total_slashes-surplus_slashes))
     fi
     echo $PROMPT_DIRTRIM
 }

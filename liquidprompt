@@ -439,21 +439,23 @@ _lp_shorten_path()
     fi
 }
 
-_lp_get_trimdir() {
+_lp_get_dirtrim() {
     [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo 0 && return
 
-    local p="$(echo $PWD | sed -e "s|$HOME|~|g")"
     local len_percent=$1
-    local len="${#p}"
-
+    local p="$(echo $PWD | sed -e "s|$HOME|~|g")"
     local max_len=$((${COLUMNS:-80}*$len_percent/100))
+    local len=0
     local PROMPT_DIRTRIM=0
-    if [[ "$len" -gt "$max_len" ]]; then
-        for i in $(echo -e $p | sed -e "s/\(.\)/\1\n/g" | grep "/" -n | sed "s/:.*//g" | sort -rh)
+
+    if [[ "${#p}" -gt "$max_len" ]]; then
+        for i in $(echo -e $p | rev | tr -t "/" " ")
         do
-            [[ "$((len-i))" -gt "$((max_len))" ]] && break
+            len="$((len+${#i}))"
+            [[ "$((len))" -ge "$((max_len))" ]] && break
             PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
         done
+        [[ "$((PROMPT_DIRTRIM))" -eq 0 ]] && PROMPT_DIRTRIM=1
     fi
     echo $PROMPT_DIRTRIM
 }
@@ -955,7 +957,7 @@ _lp_set_prompt()
      LP_PWD=$(_lp_shorten_path $LP_PATH_LENGTH)
     if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]
         then
-        PROMPT_DIRTRIM=$(_lp_get_trimdir $LP_PATH_LENGTH)
+        PROMPT_DIRTRIM=$(_lp_get_dirtrim $LP_PATH_LENGTH)
     fi
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 

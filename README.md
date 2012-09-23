@@ -46,6 +46,7 @@ and bring it back with `fg`), if there is any;
 any;
 * the current user, in bold yellow if it is root, in light white if it is not
 the same as the login user;
+* a blue @ if the connection has X11 support;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
 * a green colon if the user has write permissions on the current directory,
@@ -200,6 +201,7 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_HOST` local host
     * `LP_COLOR_SSH` connected via SSH
     * `LP_COLOR_TELNET` connected via telnet
+    * `LP_COLOR_X11` connected with X11 support
 * Separation mark (aka permiison in the working dir)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission

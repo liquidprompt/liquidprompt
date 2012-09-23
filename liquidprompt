@@ -225,6 +225,7 @@ _lp_source_config()
     LP_COLOR_HOST=${LP_COLOR_HOST:-""}
     LP_COLOR_SSH=${LP_COLOR_SSH:-$BOLD_CYAN}
     LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
+    LP_COLOR_X11=${LP_COLOR_X11:-$BLUE}
     LP_COLOR_WRITE=${LP_COLOR_WRITE:-$GREEN}
     LP_COLOR_NOWRITE=${LP_COLOR_NOWRITE:-$RED}
     LP_COLOR_UP=${LP_COLOR_UP:-$GREEN}
@@ -331,11 +332,18 @@ _lp_connection()
 # else diplay the host without color
 # The connection is not expected to change from inside the shell, so we
 # build this just once
-LP_HOST="${NO_COL}@"
+LP_HOST=""
 if [[ -r /etc/debian_chroot ]] ; then
     local debchroot
     debchroot=$(cat /etc/debian_chroot)
     LP_HOST="${LP_HOST}(${debchroot})"
+fi
+
+# If we are connected with a X11 support
+if [[ -n "$DISPLAY" ]] ; then
+    LP_HOST="${LP_COLOR_X11}${LP_HOST}@${NO_COL}"
+else
+    LP_HOST="${LP_HOST}@"
 fi
 
 case "$(_lp_connection)" in

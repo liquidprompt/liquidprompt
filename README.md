@@ -201,7 +201,8 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_HOST` local host
     * `LP_COLOR_SSH` connected via SSH
     * `LP_COLOR_TELNET` connected via telnet
-    * `LP_COLOR_X11` connected with X11 support
+    * `LP_COLOR_X11_ON` connected with X11 support
+    * `LP_COLOR_X11_OFF` connected without X11 support
 * Separation mark (aka permiison in the working dir)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission

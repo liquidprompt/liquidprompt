@@ -1039,7 +1039,7 @@ prompt_on()
 
     #If bash completion is installed, use it
     if [ -f /etc/bash_completion ];
-	then source /etc/bash_completion
+        then source /etc/bash_completion
     fi
 
     # Keep in mind that LP has been sourced

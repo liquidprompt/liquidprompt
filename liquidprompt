@@ -579,7 +579,8 @@ _lp_git_branch()
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
     topdir="$(git rev-parse --git-dir 2>/dev/null)"
-    if [[ -n "$topdir" ]] && [[ "$(basename $topdir)" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
+    topdirname=$(basename "$topdir")
+    if [[ -n "$topdir" ]] && [[ "$topdirname" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }

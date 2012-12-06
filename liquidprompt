@@ -200,6 +200,7 @@ _lp_source_config()
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
+    LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
@@ -974,9 +975,11 @@ _lp_set_prompt()
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
-     LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
-      LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
-     LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
+    if [[ "$EUID" -ne "0" ]] || [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] ; then
+        LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
+         LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
+        LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
+    fi
 
     # end of the prompt line: double spaces
     LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
@@ -1004,7 +1007,9 @@ _lp_set_prompt()
         else
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_PROXY}"
-            # do not add VCS infos
+            # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
+            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
+                PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         fi
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"

@@ -711,29 +711,72 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
 
-    local branch
-    branch="$(fossil status 2>/dev/null | grep tags: | cut -c17-)"
-    [[ $? -eq 0 ]] && echo "$branch"
+    # first, are we in an open fossil repository?
+    if [[ -e _FOSSIL_  || -e .fslckout ]] ; then
+	local branch
+	branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
+	if [[ -n "$branch" ]] ; then
+	    echo "$branch"
+	else
+	    echo "no-tag"
+	fi
+    fi
 }
 
 # Set a color depending on the branch state:
 # - green if the repository is clean
 # - red if there is changes to commit
-# - TODO: yellow if there is some commits not pushed
+#
+# Add the number of impacted files with a
+# + when files are ADDED or EDITED
+# - when files are DELETED
+# ? when files are not part of the current checkout
 _lp_fossil_branch_color()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
 
     local branch
-    local ret
     branch=$(_lp_fossil_branch)
+
     if [[ ! -z "$branch" ]] ; then
-	local lines
-	lines=$(fossil changes | wc -l)
-        if [[ "$lines" -eq 0 ]] ; then
-            ret="${LP_COLOR_UP}${branch}${NO_COL}"
+	local C2E # Modified files (added or edited)
+	local C2D # Deleted files
+	local C2A # Extras files
+	local ret
+	C2E=$(fossil changes | wc -l)
+	C2D=$(fossil changes | grep DELETED | wc -l)
+	let "C2E = $C2E - $C2D"
+	C2A=$(fossil extras | wc -l)
+	ret=""
+
+	if [[ "$C2E" -gt 0 ]] ; then
+	    ret+="+$C2E"
+	fi
+
+	if [[ "$C2D" -gt 0 ]] ; then
+	    if [[ "$ret" = "" ]] ; then
+		ret+="-$C2D"
+	    else
+		ret+="/-$C2D"
+	    fi
+	fi
+
+	if [[ "$C2A" -gt 0 ]] ; then
+	    if [[ "$ret" = "" ]] ; then
+		ret+="?$C2A"
+	    else
+		ret+="/?$C2A"
+	    fi
+	fi
+
+	if [[ "$ret" != "" ]] ; then
+	    ret="${NO_COL}(${LP_COLOR_DIFF}$ret${NO_COL})"
+	fi
+
+        if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
+            ret="${LP_COLOR_UP}${branch}$ret${NO_COL}"
         else
-            ret="${LP_COLOR_CHANGES}${branch}($lines)${NO_COL}" # changes to commit
+            ret="${LP_COLOR_CHANGES}${branch}$ret${NO_COL}" # changes to commit
         fi
         echo -ne "$ret"
     fi

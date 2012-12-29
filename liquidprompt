@@ -1037,7 +1037,7 @@ _lp_set_prompt()
     LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
 
     # execute the old prompt
-    # commented to avoid issue #25 (Quotes in front of the prompt)
+    # commented to avoid issue #24 (Quotes in front of the prompt)
     #$LP_OLD_PROMPT_COMMAND
 
     # left of main prompt: space at right

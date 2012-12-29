@@ -33,7 +33,7 @@ then
     # path in foreground color
     LP_PS1="${LP_PS1}${LP_PWD}]${LP_PROXY}"
     # add VCS infos
-    LP_PS1="${LP_PS1}${LP_GIT}${LP_HG}${LP_SVN}"
+    LP_PS1="${LP_PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
 else
     # path in yellow
     LP_PS1="${LP_PS1}${LP_PWD}]${LP_PROXY}"

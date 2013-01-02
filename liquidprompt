@@ -770,15 +770,20 @@ _lp_fossil_branch_color()
 	fi
 
 	if [[ "$ret" != "" ]] ; then
-	    ret="${NO_COL}(${LP_COLOR_DIFF}$ret${NO_COL})"
+	    ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
 	fi
 
-        if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
-            ret="${LP_COLOR_UP}${branch}$ret${NO_COL}"
-        else
-            ret="${LP_COLOR_CHANGES}${branch}$ret${NO_COL}" # changes to commit
-        fi
-        echo -ne "$ret"
+
+	if [[ "$branch" = "no-tag" ]] ; then
+	    branch="${LP_COLOR_COMMITS}$branch${NO_COL}"
+	else
+            if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
+		branch="${LP_COLOR_UP}$branch${NO_COL}"
+            else
+		branch="${LP_COLOR_CHANGES}$branch${NO_COL}" # changes to commit
+            fi
+	fi
+        echo -ne "$branch$ret${NO_COL}"
     fi
 }
 

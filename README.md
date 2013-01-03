@@ -53,6 +53,7 @@ different colors for each case;
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
+* the current Python virtual environment, if any;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if

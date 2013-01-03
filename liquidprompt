@@ -34,7 +34,7 @@
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
 # Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
-
+# Frédéric Lepied                               # Python virtual env
 
 # See the README.md file for a summary of features.
 
@@ -507,6 +507,13 @@ _lp_permissions_color()
     fi
 }
 
+# Display the current Python virtual environnement, if available.
+_lp_virtualenv()
+{
+    [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
+    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename \"$VIRTUAL_ENV\")]"
+}
+
 
 ################
 # Related jobs #
@@ -961,12 +968,6 @@ _lp_time()
     echo -ne "${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}"
 }
 
-_lp_virtualenv()
-{
-    [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
-    [[ -n "$VIRTUAL_ENV" ]] && echo "(`basename \"$VIRTUAL_ENV\"`)"
-}
-
 ########################
 # Construct the prompt #
 ########################
@@ -980,7 +981,6 @@ _lp_set_prompt()
     $LP_OLD_PROMPT_COMMAND
 
     # left of main prompt: space at right
-    LP_VENV=$(_lp_sr "$(_lp_virtualenv)")
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
     LP_LOAD=$(_lp_sr "$(_lp_load_color)")
     LP_BATT=$(_lp_sr "$(_lp_battery_color)")
@@ -998,6 +998,7 @@ _lp_set_prompt()
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
+    LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
      LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
       LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
      LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
@@ -1014,7 +1015,7 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add time, jobs, load and battery
-        PS1="${LP_VENV}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 
@@ -1022,12 +1023,12 @@ _lp_set_prompt()
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos
         fi
         # add return code and prompt mark

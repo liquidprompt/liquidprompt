@@ -189,6 +189,7 @@ _lp_source_config()
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_PS1=${LP_PS1:-""}
+    LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -1016,7 +1017,7 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add time, jobs, load and battery
-        PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 

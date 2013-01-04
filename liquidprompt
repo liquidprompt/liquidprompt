@@ -386,7 +386,7 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]
+    if [[ "$_LP_WORKING_SHELL" == "bash" && -n "$PROMPT_DIRTRIM" ]]
         then
         echo "\\w"
         return
@@ -463,7 +463,6 @@ _lp_get_dirtrim() {
     if [[ "$((tot))" -gt "$((max_len))" ]]; then
         local i
         local len=0;
-        local old_ifs=$IFS
         local p="$(echo $PWD | rev)"
 
         local IFS="/"
@@ -473,7 +472,6 @@ _lp_get_dirtrim() {
             [[ "$((len))" -gt "$((max_len))" ]] && break
             PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
         done
-        IFS=$old_ifs
         [[ "$((PROMPT_DIRTRIM))" -eq 0 ]] && PROMPT_DIRTRIM=1
     fi
     echo "$PROMPT_DIRTRIM"
@@ -974,7 +972,7 @@ _lp_set_prompt()
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
      LP_PWD=$(_lp_shorten_path)
-    if [[ "$_LP_WORKING_SHELL" == "bash" && "${BASH_VERSION%.*.*}" -ge 4 ]]
+    if [[ "$_LP_WORKING_SHELL" == "bash" && -n "$PROMPT_DIRTRIM" ]]
         then
         PROMPT_DIRTRIM="$(_lp_get_dirtrim)"
     fi

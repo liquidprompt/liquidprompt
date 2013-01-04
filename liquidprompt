@@ -34,7 +34,7 @@
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
 # Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
-
+# Frédéric Lepied                               # Python virtual env
 
 # See the README.md file for a summary of features.
 
@@ -189,6 +189,7 @@ _lp_source_config()
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_PS1=${LP_PS1:-""}
+    LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -200,7 +201,8 @@ _lp_source_config()
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
-
+    LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
+    
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
     LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
@@ -223,8 +225,10 @@ _lp_source_config()
     LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
     LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
     LP_COLOR_HOST=${LP_COLOR_HOST:-""}
-    LP_COLOR_SSH=${LP_COLOR_SSH:-$BOLD_CYAN}
+    LP_COLOR_SSH=${LP_COLOR_SSH:-$BLUE}
     LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
+    LP_COLOR_X11_ON=${LP_COLOR_X11:-$GREEN}
+    LP_COLOR_X11_OFF=${LP_COLOR_X11:-$YELLOW}
     LP_COLOR_WRITE=${LP_COLOR_WRITE:-$GREEN}
     LP_COLOR_NOWRITE=${LP_COLOR_NOWRITE:-$RED}
     LP_COLOR_UP=${LP_COLOR_UP:-$GREEN}
@@ -331,22 +335,37 @@ _lp_connection()
 # else diplay the host without color
 # The connection is not expected to change from inside the shell, so we
 # build this just once
+LP_HOST=""
+if [[ -r /etc/debian_chroot ]] ; then
+    local debchroot
+    debchroot=$(cat /etc/debian_chroot)
+    LP_HOST="${LP_HOST}(${debchroot})"
+fi
+
+# If we are connected with a X11 support
+if [[ -n "$DISPLAY" ]] ; then
+    LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+else
+    LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+fi
+
 case "$(_lp_connection)" in
 lcl)
     if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
+        # FIXME do we want to display the chroot if local?
         LP_HOST="${NO_COL}" # no hostname if local
     else
-        LP_HOST="${NO_COL}@${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
     ;;
 ssh)
-    LP_HOST="${NO_COL}@${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 tel)
-    LP_HOST="${NO_COL}@${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+    LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 *)
-    LP_HOST="${NO_COL}@${_LP_HOST_SYMBOL}" # defaults to no color
+    LP_HOST="${LP_HOST}${_LP_HOST_SYMBOL}" # defaults to no color
     ;;
 esac
 
@@ -489,6 +508,13 @@ _lp_permissions_color()
     fi
 }
 
+# Display the current Python virtual environnement, if available.
+_lp_virtualenv()
+{
+    [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
+    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename \"$VIRTUAL_ENV\")]"
+}
+
 
 ################
 # Related jobs #
@@ -562,7 +588,8 @@ _lp_git_branch()
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
     topdir="$(git rev-parse --git-dir 2>/dev/null)"
-    if [[ -n "$topdir" ]] && [[ "$(basename $topdir)" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
+    topdirname=$(basename "$topdir")
+    if [[ -n "$topdir" ]] && [[ "$topdirname" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
         echo -n "$(git branch --no-color 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
     fi
 }
@@ -666,13 +693,15 @@ _lp_svn_branch()
     [[ "$LP_ENABLE_SVN" != 1 ]] && return
     local root
     local url
+    local result
     eval $(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )
     # Make url relative to root
     url="${url:${#root}}"
     if [[ "$url" == */trunk* ]] ; then
         echo trunk
     else
-        expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root"
+        result=$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")
+        echo $result
     fi
 }
 
@@ -941,8 +970,6 @@ _lp_time()
     echo -ne "${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}"
 }
 
-
-
 ########################
 # Construct the prompt #
 ########################
@@ -973,6 +1000,7 @@ _lp_set_prompt()
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
+    LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
      LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
       LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
      LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
@@ -989,7 +1017,7 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add time, jobs, load and battery
-        PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 
@@ -997,12 +1025,12 @@ _lp_set_prompt()
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PWD}]${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos
         fi
         # add return code and prompt mark

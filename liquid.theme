@@ -63,8 +63,10 @@ LP_COLOR_USER_ROOT="$BOLD_YELLOW" # root
 
 # Hostname
 LP_COLOR_HOST=""             # local host
-LP_COLOR_SSH="$BOLD_CYAN"    # connected via SSH
+LP_COLOR_SSH="$BLUE"    # connected via SSH
 LP_COLOR_TELNET="$WARN_RED"  # connected via telnet
+LP_COLOR_X11_ON="$GREEN"         # connected with X11 support
+LP_COLOR_X11_OFF="$YELLOW"       # connected without X11 support
 
 # Separation mark (aka permiison in the working dir)
 LP_COLOR_WRITE="$GREEN"  # have write permission

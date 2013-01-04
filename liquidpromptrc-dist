@@ -3,6 +3,11 @@
 # LIQUID PROMPT CONFIGURATION FILE #
 ####################################
 
+# If you want to use different themes and features,
+# you can load the corresponding files here:
+#source ~/code/liquidprompt/nojhan.theme
+#source ~/code/liquidprompt/nojhan.ps1
+
 #############
 # BEHAVIOUR #
 #############

@@ -30,6 +30,9 @@ else
     LP_MARK_UNTRACKED="*"
 fi
 
+# Use the prefix to change the title of the terminal window
+LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
+
 # Colors
 # Available colors are:
 # BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,

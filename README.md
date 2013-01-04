@@ -138,7 +138,7 @@ You can prefix the `LP_PS1` variable with anything you want using the
 `LP_PS1_PREFIX`. The following example activate title change on xterm-like
 windows:
 
-    export LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
+    LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
 
 ### PUT THE PROMPT IN A DIFFERENT ORDER
 

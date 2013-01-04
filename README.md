@@ -122,6 +122,7 @@ building:
 * `LP_ENABLE_GIT`, if you want to have git informations
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
+* `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.

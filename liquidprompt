@@ -1000,9 +1000,11 @@ _lp_set_prompt()
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
-     LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
-      LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
-     LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
+    if [[ "$EUID" -ne "0" ]] ; then
+        LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
+         LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
+        LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
+    fi
 
     # end of the prompt line: double spaces
     LP_MARK=$(_lp_sb "$(_lp_smart_mark)")

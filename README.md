@@ -129,7 +129,9 @@ Note also that all the `LP_ENABLE_…` variables override the templates,
 i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
 in your config file, you will not have the battery informations.
 
-## ADD A PS1 PREFIX
+## CUSTOMIZING THE PROMPT
+
+### ADD A PS1 PREFIX
 
 You can prefix the `LP_PS1` variable with anything you want using the
 `LP_PS1_PREFIX`. The following example activate title change on xterm-like
@@ -137,7 +139,7 @@ windows:
 
     export LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
 
-## PUT THE PROMPT IN A DIFFERENT ORDER
+### PUT THE PROMPT IN A DIFFERENT ORDER
 
 You can sort what you want to see by sourcing your favorite template file
 (`*.ps1`) in the configuration file.

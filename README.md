@@ -127,6 +127,12 @@ Note also that all the `LP_ENABLE_…` variables override the templates,
 i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
 in your config file, you will not have the battery informations.
 
+If you are using bash and want to use the `PROMPT_DIRTRIM` built-in
+functionality to shorten but still have liquidprompt calculating the number of
+directories to keep in the path, precise a value for `PROMPT_DIRTRIM` before
+sourcing liquidprompt and liquidprompt will override this value with one
+fitting the width of your terminal.
+
 
 ## PUT THE PROMPT IN A DIFFERENT ORDER
 

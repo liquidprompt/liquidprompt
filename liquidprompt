@@ -742,7 +742,7 @@ _lp_fossil_branch()
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
 
     # first, are we in an open fossil repository?
-    if [[ -e _FOSSIL_  || -e .fslckout ]] ; then
+    if fossil info &>/dev/null ; then
 	local branch
 	branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
 	if [[ -n "$branch" ]] ; then
@@ -756,11 +756,11 @@ _lp_fossil_branch()
 # Set a color depending on the branch state:
 # - green if the repository is clean
 # - red if there is changes to commit
+# - yellow if the branch has no tag name
 #
 # Add the number of impacted files with a
 # + when files are ADDED or EDITED
 # - when files are DELETED
-# ? when files are not part of the current checkout
 _lp_fossil_branch_color()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
@@ -792,11 +792,9 @@ _lp_fossil_branch_color()
 	fi
 
 	if [[ "$C2A" -gt 0 ]] ; then
-	    if [[ "$ret" = "" ]] ; then
-		ret+="?$C2A"
-	    else
-		ret+="/?$C2A"
-	    fi
+	    C2A="$LP_MARK_UNTRACKED"
+	else
+	    C2A=""
 	fi
 
 	if [[ "$ret" != "" ]] ; then
@@ -805,15 +803,18 @@ _lp_fossil_branch_color()
 
 
 	if [[ "$branch" = "no-tag" ]] ; then
-	    branch="${LP_COLOR_COMMITS}$branch${NO_COL}"
+            # Warning, your branch has no tag name !
+	    branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
 	else
             if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
-		branch="${LP_COLOR_UP}$branch${NO_COL}"
+                # All is up-to-date
+		branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
             else
-		branch="${LP_COLOR_CHANGES}$branch${NO_COL}" # changes to commit
+                # There're some changes to commit
+		branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
 	fi
-        echo -ne "$branch$ret${NO_COL}"
+        echo -ne "$branch"
     fi
 }
 

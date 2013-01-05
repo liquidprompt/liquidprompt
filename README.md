@@ -58,12 +58,12 @@ preserving the first two directories;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if
 there is changes, in yellow if there is pending commits to push;
-* the number of added/deleted lines, if changes have been made and the number
-of pending commits, if any;
+* the number of added/deleted lines (git) or files (fossil), if
+changes have been made and the number of pending commits, if any;
 * a star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
-* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
-user, a red # for root.
+* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
+for fossil, $ for simple user, a red # for root.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
@@ -122,6 +122,7 @@ building:
 * `LP_ENABLE_GIT`, if you want to have git informations
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
+* `LP_ENABLE_FOSSIL`, if you want to have fossil informations
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 
 Note that if required commands are not installed, enabling the
@@ -160,6 +161,7 @@ Available features:
 * `LP_GIT` git
 * `LP_HG` mercurial
 * `LP_SVN` subversion
+* `LP_FOSSIL` fossil
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 
@@ -221,7 +223,7 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_UP` repository is up to date / a push have been made
     * `LP_COLOR_COMMITS` some commits have not been pushed
     * `LP_COLOR_CHANGES` there is some changes to commit
-    * `LP_COLOR_DIFF` number of lines impacted by current changes
+    * `LP_COLOR_DIFF` number of lines or files impacted by current changes
 * Battery
     * `LP_COLOR_CHARGING_ABOVE` charging and above threshold
     * `LP_COLOR_CHARGING_UNDER` charging but under threshold
@@ -239,6 +241,7 @@ Special characters:
 * `LP_MARK_HG` (default: "☿") prompt mark in hg repositories
 * `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
+* `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 
 
@@ -254,4 +257,3 @@ the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
-

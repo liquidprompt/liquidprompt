@@ -746,8 +746,10 @@ _lp_battery()
     [[ "$LP_ENABLE_BATT" != 1 ]] && return
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
-    local bat
-    bat=$( echo $acpi | sed "s/^Battery .*, \([0-9]*\)%.*$/\1/")
+    # Extract the battery load value in percent
+    # First, remove the beginning of the line...
+    local bat="${acpi#Battery *, }"
+    bat="${bat%%%*}" # remove everything starting at '%'
 
     if [[ -z "${bat}" ]] ; then
         # not battery level found

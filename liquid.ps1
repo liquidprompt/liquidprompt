@@ -18,12 +18,13 @@
 # LP_ERR last error code
 # LP_MARK prompt mark
 # LP_TIME current time
+# LP_PS1_PREFIX user-defined general-purpose prefix
 
 # Remember that most features come with their corresponding colors,
 # see the README.
 
-# add jobs, load and battery
-LP_PS1="${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+# add time, jobs, load and battery
+LP_PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
 # add user, host and permissions colon
 LP_PS1="${LP_PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 
@@ -31,13 +32,15 @@ LP_PS1="${LP_PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
 if [[ "$EUID" -ne "0" ]]
 then
     # path in foreground color
-    LP_PS1="${LP_PS1}${LP_PWD}]${LP_PROXY}"
+    LP_PS1="${LP_PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
     # add VCS infos
     LP_PS1="${LP_PS1}${LP_GIT}${LP_HG}${LP_SVN}"
 else
     # path in yellow
-    LP_PS1="${LP_PS1}${LP_PWD}]${LP_PROXY}"
-    # do not add VCS infos
+    LP_PS1="${LP_PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
+    # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
+    [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
+        LP_PS1="${LP_PS1}${LP_GIT}${LP_HG}${LP_SVN}"
 fi
 # add return code and prompt mark
 LP_PS1="${LP_PS1}${LP_ERR}${LP_MARK}"

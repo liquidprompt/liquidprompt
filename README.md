@@ -46,12 +46,14 @@ and bring it back with `fg`), if there is any;
 any;
 * the current user, in bold yellow if it is root, in light white if it is not
 the same as the login user;
+* a blue @ if the connection has X11 support;
 * the current host, if you are connected via an SSH or telnet connection, with
 different colors for each case;
 * a green colon if the user has write permissions on the current directory,
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
 preserving the first two directories;
+* the current Python virtual environment, if any;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
 (git, mercurial or subversion), in green if everything is up to date, in red if
@@ -120,6 +122,7 @@ building:
 * `LP_ENABLE_GIT`, if you want to have git informations
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
+* `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.
@@ -127,11 +130,20 @@ Note also that all the `LP_ENABLE_…` variables override the templates,
 i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
 in your config file, you will not have the battery informations.
 
+## CUSTOMIZING THE PROMPT
 
-## PUT THE PROMPT IN A DIFFERENT ORDER
+### ADD A PS1 PREFIX
+
+You can prefix the `LP_PS1` variable with anything you want using the
+`LP_PS1_PREFIX`. The following example activate title change on xterm-like
+windows:
+
+    LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
+
+### PUT THE PROMPT IN A DIFFERENT ORDER
 
 You can sort what you want to see by sourcing your favorite template file
-(`*.ps1`), after having sourced the liquid prompt.
+(`*.ps1`) in the configuration file.
 
 Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
@@ -167,9 +179,7 @@ To erase your new formatting, just bring the `LP_PS1` to a null string:
 ## THEMES
 
 You can change the colors and special characters of some part of the liquid
-prompt by sourcing your favorite theme file (`*.theme`), before having sourced
-the liquid prompt.
-
+prompt by sourcing your favorite theme file (`*.theme`) in the configuration file.
 
 ### COLORS
 
@@ -202,6 +212,8 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_HOST` local host
     * `LP_COLOR_SSH` connected via SSH
     * `LP_COLOR_TELNET` connected via telnet
+    * `LP_COLOR_X11_ON` connected with X11 support
+    * `LP_COLOR_X11_OFF` connected without X11 support
 * Separation mark (aka permiison in the working dir)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission

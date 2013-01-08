@@ -3,6 +3,11 @@
 # LIQUID PROMPT CONFIGURATION FILE #
 ####################################
 
+# If you want to use different themes and features,
+# you can load the corresponding files here:
+#source ~/code/liquidprompt/nojhan.theme
+#source ~/code/liquidprompt/nojhan.ps1
+
 #############
 # BEHAVIOUR #
 #############
@@ -51,6 +56,10 @@ LP_ENABLE_LOAD=1
 # Do you want to use the batt feature ?
 # Recommended value is 1
 LP_ENABLE_BATT=1
+
+# Do you want to use vcs features with root account
+# Recommended value is 0
+LP_ENABLE_VCS_ROOT=0
 
 # Do you want to use the git special features ?
 # Recommended value is 1

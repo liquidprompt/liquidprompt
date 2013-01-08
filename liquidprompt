@@ -401,14 +401,13 @@ _lp_shorten_path()
     fi
     # the character that will replace the part of the path that is masked
     local mask=" … "
-    local mask_len="${#mask}"
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
 
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        local istart=0; local iend=0; local phome=0; local i
-        local pstart=""; local pend=""; local real_mask=""
         local p="${PWD/${HOME}\//}"
-        [[ "$((${#p}))" -le "$((${#max_len}))" ]] && echo "$p" && return
+        [[ "$((${#p}))" -le "$(($max_len))" ]] && echo "$p" && return
+        local istart=0; local iend=0; local phome=0; local i
+        local pstart=""; local pend=""
         [[ "$PWD" == *$HOME* ]] && pstart="~" && phome=1
 
         local path_len="$(echo $p | sed -e "s|\/|\n|g" | wc -l)"
@@ -434,14 +433,12 @@ _lp_shorten_path()
                 then
                 # The path can't be empty when we leave
                 [[ "$pend" == "" ]] && pend="$i" && iend=$((iend+1))
-                # We check we actually shortend anything to activate the mark
-                [[ "$((path_len-istart-iend))" -gt 0 ]] && real_mask="$mask/"
                 break
             fi
             [[ "$pend" == "" ]] && pend="$i" || pend="$i/$pend"
             iend=$((iend+1))
         done
-        echo "$pstart/$real_mask$pend"
+        echo "$pstart/$mask/$pend"
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         local p="$(print -P "%~")"
         if [[ "${#p}" -gt "$max_len" ]]; then

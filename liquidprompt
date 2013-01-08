@@ -404,13 +404,12 @@ _lp_shorten_path()
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
 
     if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        local p="${PWD/${HOME}\//}"
-        [[ "$((${#p}))" -le "$(($max_len))" ]] && echo "$p" && return
+        local p="${PWD/${HOME}/}"
+        local path_len="$((${#p}))"
         local istart=0; local iend=0; local phome=0; local i
         local pstart=""; local pend=""
         [[ "$PWD" == *$HOME* ]] && pstart="~" && phome=1
-
-        local path_len="$(echo $p | sed -e "s|\/|\n|g" | wc -l)"
+        [[ $path_len -le $max_len ]] && echo "$pstart$p" && return
 
         # Processing the first part of the part which we'll keep
         # according to LP_PATH_KEEP

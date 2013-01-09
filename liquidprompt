@@ -399,7 +399,11 @@ _lp_proxy()
 _lp_shorten_path()
 {
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
-        echo "$1"
+        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+            echo "\\w"
+        else
+            echo "$(print -P "%~")"
+        fi
         return
     fi
     # the character that will replace the part of the path that is masked
@@ -410,17 +414,10 @@ _lp_shorten_path()
        keep=$LP_PATH_KEEP
     fi
 
-    local len_percent=$2
-
-    local p
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        p=$(echo "$1" | sed -e "s|$HOME|~|")
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        p=$1
-    fi
+    local p="${PWD/$HOME/~}"
     local len="${#p}"
 
-    local max_len=$((${COLUMNS:-80}*$len_percent/100))
+    local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
     local mask_len="${#mask}"
     local slashes=0
 
@@ -993,11 +990,7 @@ _lp_set_prompt()
     LP_USER=$(_lp_user)
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        LP_PWD=$(_lp_shorten_path "$PWD" $LP_PATH_LENGTH)
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        LP_PWD=$(_lp_shorten_path "$(print -P "%~")" $LP_PATH_LENGTH)
-    fi
+    LP_PWD=$(_lp_shorten_path)
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left

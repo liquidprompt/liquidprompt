@@ -497,22 +497,18 @@ _lp_shorten_path()
 _lp_get_dirtrim() {
     [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo 0 && return
 
-    local tot
-    [[ "$PWD" == *$HOME* ]] && tot="$((${#PWD}-${#HOME}+1))" || tot="${#PWD}"
+    local p="${PWD/$HOME/~}"
+    local len=${#p}
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
     local PROMPT_DIRTRIM=0
 
-    if [[ "$((tot))" -gt "$((max_len))" ]]; then
+    if [[ "$((len))" -gt "$((max_len))" ]]; then
         local i
-        local len=0
-        local p="$(echo $PWD | rev)"
 
-        local IFS="/"
-        for i in $p
+        for ((i=$len;i>=0;i--))
         do
-            len="$((len+${#i}))"
-            [[ "$((len))" -gt "$((max_len))" ]] && break
-            PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
+            [[ $(($len-$i)) -gt $max_len ]] && break
+            [[ "${p:i:1}" == "/" ]] && PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
         done
         [[ "$((PROMPT_DIRTRIM))" -eq 0 ]] && PROMPT_DIRTRIM=1
     fi

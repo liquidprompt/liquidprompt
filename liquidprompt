@@ -588,11 +588,11 @@ _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
-    topdir="$(git rev-parse --git-dir 2>/dev/null)"
-    topdirname=$(basename "$topdir")
-    if [[ -n "$topdir" ]] && [[ "$topdirname" == '.git' ]]  && [[ ! -z "$(git branch)" ]] ; then
-        echo -n "$(git branch --no-color 2>/dev/null | sed -n '/^\*/s/^\* //p;')"
-    fi
+    local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
+    local branch="$(git symbolic-ref HEAD 2>/dev/null)"
+    [[ $? -ne 0 || -z "$branch" ]] && return
+    echo "${branch#refs/heads/}"
 }
 
 # Set a color depending on the branch state:

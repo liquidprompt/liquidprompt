@@ -492,10 +492,7 @@ _lp_shorten_path()
 
 
 _lp_get_dirtrim() {
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
-        [[ -n "$PROMPT_DIRTRIM" ]] && echo "$PROMPT_DIRTRIM"
-        return
-    fi
+    [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo 0 && return
 
     local tot
     [[ "$PWD" == *$HOME* ]] && tot="$((${#PWD}-${#HOME}+1))" || tot="${#PWD}"
@@ -1020,7 +1017,7 @@ _lp_set_prompt()
     # LP_HOST is a global set at load time
     LP_PERM=$(_lp_permissions_color)
     LP_PWD=$(_lp_shorten_path)
-    PROMPT_DIRTRIM=$(_lp_get_dirtrim)
+    [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left

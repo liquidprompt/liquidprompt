@@ -64,6 +64,8 @@ of pending commits, if any;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
 user, a red # for root.
+* if you ask for, the liquidprompt will be replicated in your terminal window's
+title (without the colors)
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
@@ -123,6 +125,7 @@ building:
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
+* `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.
@@ -135,8 +138,7 @@ in your config file, you will not have the battery informations.
 ### ADD A PS1 PREFIX
 
 You can prefix the `LP_PS1` variable with anything you want using the
-`LP_PS1_PREFIX`. The following example activate title change on xterm-like
-windows:
+`LP_PS1_PREFIX`. The following example activate a custom window's title:
 
     LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
 
@@ -162,6 +164,7 @@ Available features:
 * `LP_SVN` subversion
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
+* `LP_TITLE` the prompt as a window's title escaped sequence
 
 For example, if you just want to have a liquidprompt displaying the user and the
 host, with a normal full path in blue and only the git support:
@@ -240,6 +243,8 @@ Special characters:
 * `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
+* `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
+* `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 
 
 ## KNOWN LIMITATIONS AND BUGS
@@ -254,4 +259,6 @@ the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
+* The window's title escape sequence may not work properly on some terminals
+(like xterm-256)
 

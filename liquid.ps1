@@ -18,7 +18,7 @@
 # LP_ERR last error code
 # LP_MARK prompt mark
 # LP_TIME current time
-# LP_PS1_PREFIX user-defined general-purpose prefix
+# LP_PS1_PREFIX user-defined general-purpose prefix (default set a generic prompt as the window title)
 
 # Remember that most features come with their corresponding colors,
 # see the README.
@@ -44,5 +44,12 @@ else
 fi
 # add return code and prompt mark
 LP_PS1="${LP_PS1}${LP_ERR}${LP_MARK}"
+
+# "invisible" parts
+# Get the current prompt on the fly and make it a title
+LP_TITLE=$(_lp_title $PS1)
+
+# Insert it in the prompt
+PS1="${LP_TITLE}${PS1}"
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

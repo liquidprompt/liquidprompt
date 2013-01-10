@@ -189,7 +189,9 @@ _lp_source_config()
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_PS1=${LP_PS1:-""}
-    LP_PS1_PREFIX=${LP_PS1_PREFIX:-"\[\e]0;\u@\h: \w\a\]"}
+    LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
+    LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
+    LP_TITLE_CLOSE=${LP_TITLE_CLOSE:-"\a"}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -203,6 +205,7 @@ _lp_source_config()
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
+    LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
@@ -914,6 +917,36 @@ _lp_load_color()
 # DESIGN #
 ##########
 
+# Remove all colors and escape characters of the given string and return a pure text
+_lp_as_text()
+{
+    # Remove colors from the computed prompt
+    local pst
+    pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+
+    # Remove escape sequences
+    pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
+
+    echo -n "$pst"
+}
+
+_lp_title()
+{
+    [[ "$LP_ENABLE_TITLE" != 1 ]] && return
+
+    # Get the current computed prompt as pure text
+    local txt
+    txt=$(_lp_as_text "$1")
+
+    # Use it in the window's title
+    # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
+    # Otherwise line editing commands will mess the cursor positionning
+    local title
+    title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+
+    echo -n "${title}"
+}
+
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
 # to # if root and else $
 _lp_smart_mark()
@@ -977,6 +1010,7 @@ _lp_time()
 # Construct the prompt #
 ########################
 
+
 _lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
@@ -1021,7 +1055,7 @@ _lp_set_prompt()
     fi
 
     if [[ -z $LP_PS1 ]] ; then
-        # add time, jobs, load and battery
+        # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
@@ -1043,6 +1077,14 @@ _lp_set_prompt()
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"
 
+        # "invisible" parts
+
+        # Get the current prompt on the fly and make it a title
+        LP_TITLE=$(_lp_title $PS1)
+
+        # Insert it in the prompt
+        PS1="${LP_TITLE}${PS1}"
+
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
         # Does not seem to be necessary anymore?
@@ -1050,6 +1092,8 @@ _lp_set_prompt()
     else
         PS1=$LP_PS1
     fi
+
+
 }
 
 # Activate the liquid prompt

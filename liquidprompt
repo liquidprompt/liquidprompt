@@ -29,7 +29,7 @@
 # Joris Dedieu <joris@pontiac3.nfrance.com>     # Portability framework, FreeBSD support, bugfixes.
 # Ludovic Rousseau <ludovic.rousseau@gmail.com> # Lot of bugfixes.
 # Yann 'Ze' Richard <ze@nbox.org>               # Do not fail on missing commands.
-# François Schmidts <fschmidts@olfeo.com>       # Simpler SSH_IP acquiring method.
+# François Schmidts <francois.schmidts@gmail.com> # small code fix, _lp_get_dirtrim
 # Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
 # Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port

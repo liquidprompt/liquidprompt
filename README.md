@@ -110,6 +110,8 @@ the path
 path
 * `LP_HOSTNAME_ALWAYS`, choose between always displaying the hostname or showing
 it only when connected with a remote shell
+* `LP_USER_ALWAYS`, choose between always displaying the user or showing
+it only when he is different from the logged one
 
 You can also force some features to be disabled, to save some time in the prompt
 building:

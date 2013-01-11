@@ -33,6 +33,11 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
+# Do you want to display the user, even if he is the same than the logged one?
+# Defaults to 1 (always display the user)
+# set to 0 if you want to hide the logged user (it will always display different users)
+LP_USER_ALWAYS=1
+
 # Do you want to use the permissions feature ?
 # Recommended value is 1
 LP_ENABLE_PERM=1

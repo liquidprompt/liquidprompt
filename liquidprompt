@@ -188,6 +188,7 @@ _lp_source_config()
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
+    LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-"\[\e]0;\u@\h: \w\a\]"}
 
@@ -302,7 +303,11 @@ _lp_user()
         if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
             user="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
         else
-            user="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+            if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
+                user="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+            else
+                user=""
+            fi
         fi
     else
         user="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"

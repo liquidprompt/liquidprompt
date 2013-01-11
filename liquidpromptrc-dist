@@ -82,4 +82,11 @@ LP_ENABLE_HG=1
 # Recommended value is 0
 LP_ENABLE_TIME=0
 
+# Use the liquid prompt as the title of the terminal window
+# This may not work properly on exotic terminals, thus the
+# recommended value is 0
+# See LP_TITLE_OPEN and LP_TITLE_CLOSE to change escape characters to adapt this
+# feature to your specific terminal.
+LP_ENABLE_TITLE=0
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

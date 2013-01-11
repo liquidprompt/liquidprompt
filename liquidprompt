@@ -926,28 +926,29 @@ _lp_load_color()
 _lp_as_text()
 {
     # Remove colors from the computed prompt
-    local pst
-    pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+    local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 
     # Remove escape sequences
-    pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
+    # FIXME check the zsh compatibility
+    # pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
+    local op=$(printf "%q" "$_LP_OPEN_ESC")
+    local cl=$(printf "%q" "$_LP_CLOSE_ESC")
+    pst=$(echo $pst | sed "s,$op\|$cl,,g") # replace all open _or_ close tags with nothing
 
     echo -n "$pst"
 }
 
 _lp_title()
 {
-    [[ "$LP_ENABLE_TITLE" != 1 ]] && return
+    [[ "$LP_ENABLE_TITLE" != "1" ]] && return
 
     # Get the current computed prompt as pure text
-    local txt
-    txt=$(_lp_as_text "$1")
+    local txt=$(_lp_as_text "$1")
 
     # Use it in the window's title
     # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
     # Otherwise line editing commands will mess the cursor positionning
-    local title
-    title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 
     echo -n "${title}"
 }
@@ -1085,7 +1086,7 @@ _lp_set_prompt()
         # "invisible" parts
 
         # Get the current prompt on the fly and make it a title
-        LP_TITLE=$(_lp_title $PS1)
+        LP_TITLE=$(_lp_title "$PS1")
 
         # Insert it in the prompt
         PS1="${LP_TITLE}${PS1}"

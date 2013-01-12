@@ -342,11 +342,16 @@ _lp_connection()
 # The connection is not expected to change from inside the shell, so we
 # build this just once
 LP_HOST=""
-if [[ -r /etc/debian_chroot ]] ; then
-    local debchroot
-    debchroot=$(cat /etc/debian_chroot)
-    LP_HOST="${LP_HOST}(${debchroot})"
-fi
+_chroot()
+{
+    if [[ -r /etc/debian_chroot ]] ; then
+        local debchroot
+        debchroot=$(cat /etc/debian_chroot)
+        echo "(${debchroot})"
+    fi
+}
+LP_HOST="$(_chroot)"
+unset _chroot
 
 # If we are connected with a X11 support
 if [[ -n "$DISPLAY" ]] ; then

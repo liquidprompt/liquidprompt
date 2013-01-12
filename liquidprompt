@@ -200,6 +200,7 @@ _lp_source_config()
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
+    LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
@@ -212,6 +213,7 @@ _lp_source_config()
     LP_MARK_HG=${LP_MARK_HG:-"☿"}
     LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
     LP_MARK_GIT=${LP_MARK_GIT:-"±"}
+    LP_MARK_FOSSIL=${LP_MARK_FOSSIL:-"⌘"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
@@ -284,6 +286,7 @@ unset _lp_source_config
 # Disable features if the tool is not installed
 [[ "$LP_ENABLE_GIT"  = 1 ]] && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
 [[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
+[[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
@@ -741,6 +744,90 @@ _lp_svn_branch_color()
 }
 
 
+# FOSSIL #
+
+# Get the tag name of the current directory
+_lp_fossil_branch()
+{
+    [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
+
+    local branch
+    branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
+    if [[ -n "$branch" ]] ; then
+	echo "$branch"
+    else
+	if fossil info &>/dev/null ; then
+	    echo "no-tag"
+	fi
+    fi
+}
+
+# Set a color depending on the branch state:
+# - green if the repository is clean
+# - red if there is changes to commit
+# - yellow if the branch has no tag name
+#
+# Add the number of impacted files with a
+# + when files are ADDED or EDITED
+# - when files are DELETED
+_lp_fossil_branch_color()
+{
+    [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
+
+    local branch
+    branch=$(_lp_fossil_branch)
+
+    if [[ ! -z "$branch" ]] ; then
+	local C2E # Modified files (added or edited)
+	local C2D # Deleted files
+	local C2A # Extras files
+	local ret
+	C2E=$(fossil changes | wc -l)
+	C2D=$(fossil changes | grep DELETED | wc -l)
+	let "C2E = $C2E - $C2D"
+	C2A=$(fossil extras | wc -l)
+	ret=""
+
+	if [[ "$C2E" -gt 0 ]] ; then
+	    ret+="+$C2E"
+	fi
+
+	if [[ "$C2D" -gt 0 ]] ; then
+	    if [[ "$ret" = "" ]] ; then
+		ret+="-$C2D"
+	    else
+		ret+="/-$C2D"
+	    fi
+	fi
+
+	if [[ "$C2A" -gt 0 ]] ; then
+	    C2A="$LP_MARK_UNTRACKED"
+	else
+	    C2A=""
+	fi
+
+	if [[ "$ret" != "" ]] ; then
+	    ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
+	fi
+
+
+	if [[ "$branch" = "no-tag" ]] ; then
+            # Warning, your branch has no tag name !
+	    branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
+	else
+            if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
+                # All is up-to-date
+		branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
+            else
+                # There're some changes to commit
+		branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
+            fi
+	fi
+        echo -ne "$branch"
+    fi
+}
+
+
 ##################
 # Battery status #
 ##################
@@ -945,6 +1032,8 @@ _lp_smart_mark()
         mark=$LP_MARK_HG
     elif [[ ! -z $(_lp_svn_branch) ]] ; then
         mark=$LP_MARK_SVN
+    elif [[ ! -z $(_lp_fossil_branch) ]] ; then
+        mark=$LP_MARK_FOSSIL
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
@@ -1018,6 +1107,7 @@ _lp_set_prompt()
         LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
          LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
         LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
+     LP_FOSSIL=$(_lp_sl "$(_lp_fossil_branch_color)")
     fi
 
     # end of the prompt line: double spaces
@@ -1042,13 +1132,13 @@ _lp_set_prompt()
             # path in foreground color
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
-            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
+            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
         else
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
-                PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}"
+                PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
         fi
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"

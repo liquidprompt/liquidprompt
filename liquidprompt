@@ -741,13 +741,12 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
 
-    # first, are we in an open fossil repository?
-    if fossil info &>/dev/null ; then
-	local branch
-	branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
-	if [[ -n "$branch" ]] ; then
-	    echo "$branch"
-	else
+    local branch
+    branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
+    if [[ -n "$branch" ]] ; then
+	echo "$branch"
+    else
+	if fossil info &>/dev/null ; then
 	    echo "no-tag"
 	fi
     fi

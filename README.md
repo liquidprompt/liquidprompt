@@ -56,8 +56,9 @@ preserving the first two directories;
 * the current Python virtual environment, if any;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
-(git, mercurial or subversion), in green if everything is up to date, in red if
-there is changes, in yellow if there is pending commits to push;
+(git, mercurial, subversion or fossil), in green if everything is up
+to date, in red if there is changes, in yellow if there is pending
+commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
 changes have been made and the number of pending commits, if any;
 * a star if there is some untracked files in the repository;

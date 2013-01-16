@@ -56,14 +56,15 @@ preserving the first two directories;
 * the current Python virtual environment, if any;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
-(git, mercurial or subversion), in green if everything is up to date, in red if
-there is changes, in yellow if there is pending commits to push;
-* the number of added/deleted lines, if changes have been made and the number
-of pending commits, if any;
+(git, mercurial, subversion or fossil), in green if everything is up
+to date, in red if there is changes, in yellow if there is pending
+commits to push;
+* the number of added/deleted lines (git) or files (fossil), if
+changes have been made and the number of pending commits, if any;
 * a star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
-* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, $ for simple
-user, a red # for root.
+* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
+for fossil, $ for simple user, a red # for root.
 * if you ask for, the liquidprompt will be replicated in your terminal window's
 title (without the colors)
 
@@ -126,6 +127,7 @@ building:
 * `LP_ENABLE_GIT`, if you want to have git informations
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
+* `LP_ENABLE_FOSSIL`, if you want to have fossil informations
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
 
@@ -134,6 +136,13 @@ corresponding feature will have no effect.
 Note also that all the `LP_ENABLE_…` variables override the templates,
 i.e. if you use `$LP_BATT` in your template and you set `LP_ENABLE_BATT=0`
 in your config file, you will not have the battery informations.
+
+If you are using bash and want to use the `PROMPT_DIRTRIM` built-in
+functionality to shorten but still have liquidprompt calculating the number of
+directories to keep in the path, precise a value for `PROMPT_DIRTRIM` before
+sourcing liquidprompt and liquidprompt will override this value with one
+fitting the width of your terminal.
+
 
 ## CUSTOMIZING THE PROMPT
 
@@ -164,6 +173,7 @@ Available features:
 * `LP_GIT` git
 * `LP_HG` mercurial
 * `LP_SVN` subversion
+* `LP_FOSSIL` fossil
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequence
@@ -226,7 +236,7 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_UP` repository is up to date / a push have been made
     * `LP_COLOR_COMMITS` some commits have not been pushed
     * `LP_COLOR_CHANGES` there is some changes to commit
-    * `LP_COLOR_DIFF` number of lines impacted by current changes
+    * `LP_COLOR_DIFF` number of lines or files impacted by current changes
 * Battery
     * `LP_COLOR_CHARGING_ABOVE` charging and above threshold
     * `LP_COLOR_CHARGING_UNDER` charging but under threshold
@@ -244,6 +254,7 @@ Special characters:
 * `LP_MARK_HG` (default: "☿") prompt mark in hg repositories
 * `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
+* `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
@@ -261,6 +272,9 @@ the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
+<<<<<<< HEAD
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256)
 
+=======
+>>>>>>> 3aedf713f42fcfa91a1eba5cd4b4dbc36a59ee58

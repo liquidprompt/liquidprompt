@@ -218,6 +218,7 @@ _lp_source_config()
     LP_MARK_GIT=${LP_MARK_GIT:-"±"}
     LP_MARK_FOSSIL=${LP_MARK_FOSSIL:-"⌘"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
+    LP_MARK_STASH=${LP_MARK_STASH:-"+"}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -655,12 +656,18 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
-        local has_untracked
-        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
+        local has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
             has_untracked="$LP_MARK_UNTRACKED"
+        fi
+
+        local has_stash=$(git stash list 2>/dev/null)
+        if [[ -z "$has_stash" ]] ; then
+            has_stash=""
+        else
+            has_stash="$LP_MARK_STASH"
         fi
 
         local has_commit
@@ -673,16 +680,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"

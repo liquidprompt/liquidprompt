@@ -61,7 +61,8 @@ to date, in red if there is changes, in yellow if there is pending
 commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
 changes have been made and the number of pending commits, if any;
-* a star if there is some untracked files in the repository;
+* a yellow plus if there is stashed modifications;
+* a red star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
 for fossil, $ for simple user, a red # for root.
@@ -259,6 +260,7 @@ Special characters:
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
+* `LP_MARK_STASH` (default: "+") if git has stashed modifications
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 

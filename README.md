@@ -272,9 +272,6 @@ the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
-<<<<<<< HEAD
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256)
 
-=======
->>>>>>> 3aedf713f42fcfa91a1eba5cd4b4dbc36a59ee58

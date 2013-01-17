@@ -84,6 +84,9 @@ Copy the `liquidpromptrc-dist` file in your home directory as
 `~/.config/liquidpromptrc` or `~/.liquidpromptrc` and edit it according to your
 preferences. If you skip this step, the default behaviour will be used.
 
+Note that you should not overwrite the `PROMPT_COMMAND` variable, or else the
+prompt will not be available.
+
 
 ## DEPENDENCIES
 

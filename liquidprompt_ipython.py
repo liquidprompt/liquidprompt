@@ -5,7 +5,6 @@ import getpass
 
 class _lp_(object):
 
-
     styles = {"normal":0, "bold":1, "faint":2, "italic":3, "underline":4, "blink":5, "rapid_blink":6,
     "reverse":7, "conceal":8 }
     colors_mode8 = {"black":0, "red":1, "green":2, "yellow":3, "blue":4, "magenta":5, "cyan":6, "white":7}
@@ -54,20 +53,27 @@ class _lp_(object):
 
 
 class _lp_smart_mark(_lp_):
-    mark=">>>"
+    mark='$'
+    mark_root='#'
+    mark_py=">>>"
+    COLOR = ("white","bold")
+    COLOR_ROOT = ("red", "bold")
 
     def __str__(self):
-        return self.sb( self.color( self.mark, "green", "bold" ) )
+        if getpass.getuser() == 'root':
+            return self.sb( self.color( self.mark_root + self.mark_py, *self.COLOR_ROOT ) )
+        else:
+            return self.sb( self.color( self.mark + self.mark_py, *self.COLOR ) )
 
     def __call__(self,mark):
-        self.mark=mark
+        self.mark_py=mark
 
 
 class _lp_user(_lp_):
     ALWAYS=1
-    COLOR_ROOT="yellow"
-    COLOR_LOGGED="white"
-    COLOR_ALT="white"
+    COLOR_ROOT=("yellow","normal")
+    COLOR_LOGGED=("white","normal")
+    COLOR_ALT=("white","normal")
 
     def __str__(self):
         # current user
@@ -79,18 +85,30 @@ class _lp_user(_lp_):
 
         if cur != 'root':
             if cur != log:
-                return self.color( cur, self.COLOR_ALT )
+                return self.color( cur, *self.COLOR_ALT )
             else:
                 if self.ALWAYS:
-                    return self.color( cur, self.COLOR_LOGGED )
+                    return self.color( cur, *self.COLOR_LOGGED )
                 else:
                     return ""
         else:
-            return self.color( cur, self.COLOR_ROOT )
+            return self.color( cur, *self.COLOR_ROOT )
 
 
-LP_USER = _lp_user();      del _lp_user
-LP_MARK = _lp_smart_mark();del _lp_smart_mark
+class _lp_shorten_path(_lp_):
+    ENABLE=1
+    COLOR_PATH=("white","bold")
+
+    def __str__(self):
+        if not self.ENABLE:
+            return ""
+        else:
+            return self.color( os.getcwd(), *self.COLOR_PATH )
+
+
+LP_USER = _lp_user()       ;del _lp_user
+LP_MARK = _lp_smart_mark() ;del _lp_smart_mark
+LP_PWD = _lp_shorten_path();del _lp_shorten_path
 
 del _lp_
 

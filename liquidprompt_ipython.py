@@ -80,8 +80,14 @@ class _lp_user(_lp_):
         cur = getpass.getuser()
 
         # logged user
-        # WARNING: Unix only
-        log = os.getlogin()
+        try:
+            # WARNING: Unix only
+            log = os.getlogin()
+        except:
+            # if the os does not support logged user
+            # use the current one
+            # thus, the ALWAYS option just show/hide the user
+            log = cur
 
         if cur != 'root':
             if cur != log:

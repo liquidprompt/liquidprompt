@@ -35,6 +35,7 @@
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
 # Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
 # Frédéric Lepied                               # Python virtual env
+# Clément MATHIEU                               # Bazaar support
 
 # See the README.md file for a summary of features.
 
@@ -204,6 +205,7 @@ _lp_source_config()
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
+    LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -217,6 +219,7 @@ _lp_source_config()
     LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
     LP_MARK_GIT=${LP_MARK_GIT:-"±"}
     LP_MARK_FOSSIL=${LP_MARK_FOSSIL:-"⌘"}
+    LP_MARK_BZR=${LP_MARK_BZR:-"⚯"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
@@ -291,6 +294,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
 [[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
+[[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
 
@@ -852,6 +856,44 @@ _lp_fossil_branch_color()
     fi
 }
 
+# Bazaar #
+
+# Get the branch name of the current directory
+_lp_bzr_branch()
+{
+    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    local output=$(bzr nick 2> /dev/null)
+    [[ $? -ne 0 ]] && return
+    echo "$output"
+}
+
+
+# Set a color depending on the branch state:
+# - green if the repository is up to date
+# - red if there is changes to commit
+# - TODO: yellow if there is some commits not pushed
+#
+# Add the number of pending commits and the impacted lines.
+_lp_bzr_branch_color()
+{
+    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    local output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    local tuple=($output)
+    local branch=${tuple[0]}
+    local revno=${tuple[1]}
+    local clean=${tuple[2]}
+
+    if [[ ! -z "$branch" ]] ; then
+        if [[ "$clean" -eq 0 ]] ; then
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+        else
+	    ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+        fi
+
+    fi
+    echo -ne "$ret"
+}
+
 
 ##################
 # Battery status #
@@ -1090,6 +1132,8 @@ _lp_smart_mark()
         mark=$LP_MARK_SVN
     elif [[ ! -z $(_lp_fossil_branch) ]] ; then
         mark=$LP_MARK_FOSSIL
+    elif [[ ! -z $(_lp_bzr_branch) ]] ; then
+        mark=$LP_MARK_BZR
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
@@ -1162,6 +1206,7 @@ _lp_set_prompt()
          LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
         LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
      LP_FOSSIL=$(_lp_sl "$(_lp_fossil_branch_color)")
+        LP_BZR=$(_lp_sl "$(_lp_bzr_branch_color)")
     fi
 
     # end of the prompt line: double spaces
@@ -1186,7 +1231,7 @@ _lp_set_prompt()
             # path in foreground color
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
-            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
+            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}${LP_BZR}"
         else
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"

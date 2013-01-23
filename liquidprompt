@@ -1145,8 +1145,16 @@ _lp_set_prompt()
     # as this get the last returned code, it should be called first
     LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
 
-    # execute the old prompt
-    $LP_OLD_PROMPT_COMMAND
+    # execute the old prompt if not on Mac OS X (Mountain) Lion
+    case "$LP_OS" in
+        Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
+        Darwin)
+            LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
+	        case "$(LP_DWIN_KERNEL_REL_VER)" in
+                11|12) update_terminal_cwd ;;
+                *) $LP_OLD_PROMPT_COMMAND ;;
+            esac ;;
+    esac
 
     # left of main prompt: space at right
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")

@@ -626,15 +626,16 @@ _lp_return_value()
 
 _lp_are_vcs_disabled()
 {
-    [[ -z "$LP_DISABLED_VCS_PATH" ]] && return 0
+    [[ -z "$LP_DISABLED_VCS_PATH" ]] && echo 0 && return
     local path
     local IFS=:
     for path in $LP_DISABLED_VCS_PATH; do
         if [[ "$PWD" == *"$path"* ]]; then
-            return 1
+            echo 1
+            return
         fi
     done
-    return 0
+    echo 0
 }
 
 # GIT #
@@ -643,9 +644,6 @@ _lp_are_vcs_disabled()
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
-    _lp_are_vcs_disabled
-    [[ $? -eq 1 ]] && return
-
     local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
@@ -716,9 +714,6 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
-    _lp_are_vcs_disabled
-    [[ $? -eq 1 ]] && return
-
     local branch
     branch="$(hg branch 2>/dev/null)"
     [[ $? -eq 0 ]] && echo "$branch"
@@ -752,8 +747,6 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     [[ "$LP_ENABLE_SVN" != 1 ]] && return
-    _lp_are_vcs_disabled
-    [[ $? -eq 1 ]] && return
     local root
     local url
     local result
@@ -799,9 +792,6 @@ _lp_svn_branch_color()
 _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
-    _lp_are_vcs_disabled
-    [[ $? -eq 1 ]] && return
-
     local branch
     branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
     if [[ -n "$branch" ]] ; then
@@ -884,8 +874,6 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    _lp_are_vcs_disabled
-    [[ $? -eq 1 ]] && return
     local output=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
     echo "$output"
@@ -1226,7 +1214,9 @@ _lp_set_prompt()
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
     local vcs
-    if [[ "$EUID" -ne "0" ]] || [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] ; then
+    local LP_VCS
+    if [[ ( "$EUID" -ne "0" || "$LP_ENABLE_VCS_ROOT" = "1" )
+            && "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
         LP_VCS="$(_lp_git_branch_color)"
         vcs="git"
         if [[ -z "$LP_VCS" ]]; then
@@ -1245,7 +1235,7 @@ _lp_set_prompt()
                 fi
             fi
         fi
-        if [[ -z "${LP_VCS}" ]] ; then
+        if [[ -z "$LP_VCS" ]] ; then
             vcs=""
         else
             LP_VCS=$(_lp_sl "${LP_VCS}")

@@ -82,6 +82,10 @@ LP_ENABLE_HG=1
 # Recommended value is 1
 LP_ENABLE_FOSSIL=1
 
+# Do you want to use the bzr special features ?
+# Recommanded value is 1
+LP_ENABLE_BZR=1
+
 # Show time of the last prompt display
 # Recommended value is 0
 LP_ENABLE_TIME=0

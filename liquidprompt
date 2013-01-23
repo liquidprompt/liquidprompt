@@ -210,6 +210,7 @@ _lp_source_config()
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
+    LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
@@ -623,12 +624,27 @@ _lp_return_value()
 # VCS branch display #
 ######################
 
+_lp_are_vcs_disabled()
+{
+    [[ -z "$LP_DISABLED_VCS_PATH" ]] && return 0
+    local path
+    local IFS=:
+    for path in $LP_DISABLED_VCS_PATH; do
+        if [[ "$PWD" == *"$path"* ]]; then
+            return 1
+        fi
+    done
+    return 0
+}
+
 # GIT #
 
 # Get the branch name of the current directory
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
+    _lp_are_vcs_disabled
+    [[ $? -eq 1 ]] && return
 
     local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
@@ -700,6 +716,8 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
+    _lp_are_vcs_disabled
+    [[ $? -eq 1 ]] && return
 
     local branch
     branch="$(hg branch 2>/dev/null)"
@@ -734,6 +752,8 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     [[ "$LP_ENABLE_SVN" != 1 ]] && return
+    _lp_are_vcs_disabled
+    [[ $? -eq 1 ]] && return
     local root
     local url
     local result
@@ -779,6 +799,8 @@ _lp_svn_branch_color()
 _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
+    _lp_are_vcs_disabled
+    [[ $? -eq 1 ]] && return
 
     local branch
     branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
@@ -862,6 +884,8 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    _lp_are_vcs_disabled
+    [[ $? -eq 1 ]] && return
     local output=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
     echo "$output"

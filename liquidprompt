@@ -1205,51 +1205,63 @@ _lp_set_prompt()
 
     # in main prompt: no space
     LP_USER=$(_lp_user)
-    # LP_HOST is a global set at load time
-    LP_PERM=$(_lp_permissions_color)
-    LP_PWD=$(_lp_shorten_path)
-    [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
     LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
-    local vcs
-    local LP_VCS
-    if [[ ( "$EUID" -ne "0" || "$LP_ENABLE_VCS_ROOT" = "1" )
-            && "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
-        LP_VCS="$(_lp_git_branch_color)"
-        vcs="git"
-        if [[ -z "$LP_VCS" ]]; then
-            LP_VCS="$(_lp_hg_branch_color)"
-            vcs="hg"
+    LP_VCS=""
+    if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
+        # LP_HOST is a global set at load time
+        LP_PERM=$(_lp_permissions_color)
+        LP_PWD=$(_lp_shorten_path)
+        [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
+
+        if [[ ( "$EUID" -ne "0" || "$LP_ENABLE_VCS_ROOT" = "1" )
+                && "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
+            LP_VCS="$(_lp_git_branch_color)"
+            LP_VCS_TYPES="git"
             if [[ -z "$LP_VCS" ]]; then
-                LP_VCS="$(_lp_svn_branch_color)"
-                vcs="svn"
+                LP_VCS="$(_lp_hg_branch_color)"
+                LP_VCS_TYPES="hg"
                 if [[ -z "$LP_VCS" ]]; then
-                    LP_VCS="$(_lp_fossil_branch_color)"
-                    vcs="fossil"
+                    LP_VCS="$(_lp_svn_branch_color)"
+                    LP_VCS_TYPES="svn"
                     if [[ -z "$LP_VCS" ]]; then
-                        LP_VCS="$(_lp_bzr_branch_color)"
-                        vcs="bzr"
+                        LP_VCS="$(_lp_fossil_branch_color)"
+                        LP_VCS_TYPES="fossil"
+                        if [[ -z "$LP_VCS" ]]; then
+                            LP_VCS="$(_lp_bzr_branch_color)"
+                            LP_VCS_TYPES="bzr"
+                        fi
                     fi
                 fi
             fi
         fi
         if [[ -z "$LP_VCS" ]] ; then
-            vcs=""
+            LP_VCS_TYPES=""
         else
             LP_VCS=$(_lp_sl "${LP_VCS}")
         fi
-    fi
 
-    # end of the prompt line: double spaces
-    LP_MARK=$(_lp_sb "$(_lp_smart_mark $vcs)")
+        # end of the prompt line: double spaces
+        LP_MARK=$(_lp_sb "$(_lp_smart_mark $vcs)")
 
-    # Different path color if root
-    if [[ "$EUID" -ne "0" ]] ; then
-        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
-    else
-        LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+        # Different path color if root
+        if [[ "$EUID" -ne "0" ]] ; then
+            LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
+        else
+            LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+        fi
+        LP_OLD_PWD="$PWD"
+
+    elif [[ -n "$LP_VCS_TYPES" ]]; then
+        case "$LP_VCS_TYPES" in
+            git)    LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
+            hg)     LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
+            svn)    LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
+            fossil) LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;
+            bzr)    LP_VCS=$(_lp_sl "$(_lp_bzr_branch_color)");;
+        esac
     fi
 
     if [[ -z $LP_PS1 ]] ; then
@@ -1269,8 +1281,7 @@ _lp_set_prompt()
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
-            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
-                PS1="${PS1}${LP_VCS}"
+            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"

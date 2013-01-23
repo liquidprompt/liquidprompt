@@ -1148,15 +1148,15 @@ _lp_smart_mark()
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         mark="%(!.#.%%)"
     fi
-    if   [[ ! -z $(_lp_git_branch) ]] ; then
+    if [[ "$1" == "git" ]]; then
         mark=$LP_MARK_GIT
-    elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
+    elif [[ "$1" == "hg" ]]; then
         mark=$LP_MARK_HG
-    elif [[ ! -z $(_lp_svn_branch) ]] ; then
+    elif [[ "$1" == "svn" ]]; then
         mark=$LP_MARK_SVN
-    elif [[ ! -z $(_lp_fossil_branch) ]] ; then
+    elif [[ "$1" == "fossil" ]]; then
         mark=$LP_MARK_FOSSIL
-    elif [[ ! -z $(_lp_bzr_branch) ]] ; then
+    elif [[ "$1" == "bzr" ]]; then
         mark=$LP_MARK_BZR
     fi
     echo -ne "${COL}${mark}${NO_COL}"
@@ -1225,16 +1225,35 @@ _lp_set_prompt()
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
+    local vcs
     if [[ "$EUID" -ne "0" ]] || [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] ; then
-        LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
-         LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
-        LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
-     LP_FOSSIL=$(_lp_sl "$(_lp_fossil_branch_color)")
-        LP_BZR=$(_lp_sl "$(_lp_bzr_branch_color)")
+        LP_VCS="$(_lp_git_branch_color)"
+        vcs="git"
+        if [[ -z "$LP_VCS" ]]; then
+            LP_VCS="$(_lp_hg_branch_color)"
+            vcs="hg"
+            if [[ -z "$LP_VCS" ]]; then
+                LP_VCS="$(_lp_svn_branch_color)"
+                vcs="svn"
+                if [[ -z "$LP_VCS" ]]; then
+                    LP_VCS="$(_lp_fossil_branch_color)"
+                    vcs="fossil"
+                    if [[ -z "$LP_VCS" ]]; then
+                        LP_VCS="$(_lp_bzr_branch_color)"
+                        vcs="bzr"
+                    fi
+                fi
+            fi
+        fi
+        if [[ -z "${LP_VCS}" ]] ; then
+            vcs=""
+        else
+            LP_VCS=$(_lp_sl "${LP_VCS}")
+        fi
     fi
 
     # end of the prompt line: double spaces
-    LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
+    LP_MARK=$(_lp_sb "$(_lp_smart_mark $vcs)")
 
     # Different path color if root
     if [[ "$EUID" -ne "0" ]] ; then
@@ -1255,13 +1274,13 @@ _lp_set_prompt()
             # path in foreground color
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
-            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}${LP_BZR}"
+            PS1="${PS1}${LP_VCS}"
         else
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
-                PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
+                PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"
@@ -1281,8 +1300,6 @@ _lp_set_prompt()
     else
         PS1=$LP_PS1
     fi
-
-
 }
 
 # Activate the liquid prompt

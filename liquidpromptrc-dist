@@ -97,4 +97,8 @@ LP_ENABLE_TIME=0
 # feature to your specific terminal.
 LP_ENABLE_TITLE=0
 
+# Specify a list of complete and colon (":") separated paths in which, all vcs
+# will be disabled
+LP_DISABLED_VCS_PATH=""
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

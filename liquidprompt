@@ -1216,8 +1216,7 @@ _lp_set_prompt()
         LP_PWD=$(_lp_shorten_path)
         [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
 
-        if [[ ( "$EUID" -ne "0" || "$LP_ENABLE_VCS_ROOT" = "1" )
-                && "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
+        if [[ "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPES="git"
             if [[ -z "$LP_VCS" ]]; then
@@ -1244,7 +1243,7 @@ _lp_set_prompt()
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK=$(_lp_sb "$(_lp_smart_mark $vcs)")
+        LP_MARK=$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPES)")
 
         # Different path color if root
         if [[ "$EUID" -ne "0" ]] ; then

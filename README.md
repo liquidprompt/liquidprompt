@@ -174,10 +174,7 @@ Available features:
 * `LP_PERM` a colon ":"
 * `LP_PWD` current working directory
 * `LP_PROXY` HTTP proxy
-* `LP_GIT` git
-* `LP_HG` mercurial
-* `LP_SVN` subversion
-* `LP_FOSSIL` fossil
+* `LP_VCS` informations concerning the current working repository
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequence
@@ -193,6 +190,7 @@ interpreted by bash at each prompt.
 To erase your new formatting, just bring the `LP_PS1` to a null string:
 
      export LP_PS1=""
+
 
 
 ## THEMES

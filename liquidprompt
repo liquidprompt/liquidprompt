@@ -307,27 +307,20 @@ unset _lp_source_config
 ###############
 
 # Yellow for root, bold if the user is not the login one, else no color.
-_lp_user()
-{
-    local user
-    # if user is not root
-    if [[ "$EUID" -ne "0" ]] ; then
-        # if user is not login user
-        if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-        else
-            if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
-                user="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-            else
-                user=""
-            fi
-        fi
+if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
+    # if user is not login user
+    if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
+        LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
     else
-        user="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+        if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
+            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+        else
+            LP_USER=""
+        fi
     fi
-
-    echo -ne $user
-}
+else
+    LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+fi
 
 
 #################
@@ -1219,7 +1212,6 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    LP_USER=$(_lp_user)
     LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left

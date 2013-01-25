@@ -108,6 +108,7 @@ case "$LP_OS" in
             load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
             echo "$load"
         }
+        LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
         ;;
     SunOS)
         _lp_cpu_load () {
@@ -1205,7 +1206,6 @@ _lp_set_prompt()
     case "$LP_OS" in
         Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
-            LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
 	        case "$(LP_DWIN_KERNEL_REL_VER)" in
                 11|12) update_terminal_cwd ;;
                 *) $LP_OLD_PROMPT_COMMAND ;;

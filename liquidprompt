@@ -557,7 +557,7 @@ _lp_permissions_color()
 _lp_virtualenv()
 {
     [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
-    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename \"$VIRTUAL_ENV\")]"
+    [[ -n "$VIRTUAL_ENV" ]] && echo "[\"$(basename \"$VIRTUAL_ENV)\"]"
 }
 
 

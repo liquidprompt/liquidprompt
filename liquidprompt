@@ -1055,7 +1055,7 @@ _lp_load_color()
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_MARK_LOAD}${NO_COL}"
+        ret="${LP_MARK_LOAD}"
         if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
             ret="${ret}${LP_COLORMAP_0}"
         elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then

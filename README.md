@@ -61,7 +61,8 @@ to date, in red if there is changes, in yellow if there is pending
 commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
 changes have been made and the number of pending commits, if any;
-* a star if there is some untracked files in the repository;
+* a yellow plus if there is stashed modifications;
+* a red star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
 for fossil, $ for simple user, a red # for root.
@@ -83,6 +84,9 @@ Include the file in your bash configuration, for example in your `.bashrc`:
 Copy the `liquidpromptrc-dist` file in your home directory as
 `~/.config/liquidpromptrc` or `~/.liquidpromptrc` and edit it according to your
 preferences. If you skip this step, the default behaviour will be used.
+
+Note that you should not overwrite the `PROMPT_COMMAND` variable, or else the
+prompt will not be available.
 
 
 ## DEPENDENCIES
@@ -170,10 +174,7 @@ Available features:
 * `LP_PERM` a colon ":"
 * `LP_PWD` current working directory
 * `LP_PROXY` HTTP proxy
-* `LP_GIT` git
-* `LP_HG` mercurial
-* `LP_SVN` subversion
-* `LP_FOSSIL` fossil
+* `LP_VCS` informations concerning the current working repository
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequence
@@ -189,6 +190,7 @@ interpreted by bash at each prompt.
 To erase your new formatting, just bring the `LP_PS1` to a null string:
 
      export LP_PS1=""
+
 
 
 ## THEMES
@@ -256,6 +258,7 @@ Special characters:
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
+* `LP_MARK_STASH` (default: "+") if git has stashed modifications
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 
@@ -272,9 +275,6 @@ the display of the liquid prompt.
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
-<<<<<<< HEAD
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256)
 
-=======
->>>>>>> 3aedf713f42fcfa91a1eba5cd4b4dbc36a59ee58

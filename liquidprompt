@@ -759,11 +759,11 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]] ; then
         local commits
-        commits=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
-        if [[ $commits -eq 0 ]] ; then
+        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
+        if [[ $changes -eq 0 ]] ; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
+            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
         fi
     fi
 }

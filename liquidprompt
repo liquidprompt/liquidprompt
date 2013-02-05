@@ -53,12 +53,14 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
+    _LP_TIME_SYMBOL="\\\\t"
 elif test -n "$ZSH_VERSION" ; then
     _LP_WORKING_SHELL=zsh
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
+    _LP_TIME_SYMBOL="%*"
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -108,6 +110,7 @@ case "$LP_OS" in
             load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
             echo "$load"
         }
+        LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
         ;;
     SunOS)
         _lp_cpu_load () {
@@ -306,27 +309,20 @@ unset _lp_source_config
 ###############
 
 # Yellow for root, bold if the user is not the login one, else no color.
-_lp_user()
-{
-    local user
-    # if user is not root
-    if [[ "$EUID" -ne "0" ]] ; then
-        # if user is not login user
-        if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-        else
-            if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
-                user="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-            else
-                user=""
-            fi
-        fi
+if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
+    # if user is not login user
+    if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
+        LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
     else
-        user="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+        if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
+            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+        else
+            LP_USER=""
+        fi
     fi
-
-    echo -ne $user
-}
+else
+    LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+fi
 
 
 #################
@@ -376,7 +372,7 @@ case "$(_lp_connection)" in
 lcl)
     if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
         # FIXME do we want to display the chroot if local?
-        LP_HOST="${NO_COL}" # no hostname if local
+        LP_HOST="" # no hostname if local
     else
         LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
@@ -402,7 +398,7 @@ _lp_proxy()
     [[ "$LP_ENABLE_PROXY" != 1 ]] && return
 
     if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne $LP_MARK_PROXY
+        echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
     fi
 }
 
@@ -582,31 +578,31 @@ _lp_jobcount_color()
 
     # d/&/z
     if   [[ $screens != "0" && $running != "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # _/&/_
     elif [[ $screens == "0" && $running != "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        rep="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
 
     # _/_/z
     elif [[ $screens == "0" && $running == "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # d/_/_
     elif [[ $screens != "0" && $running == "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}"
 
     # d/&/_
     elif [[ $screens != "0" && $running != "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
 
     # d/_/z
     elif [[ $screens != "0" && $running == "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # _/&/z
     elif [[ $screens == "0" && $running != "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
     fi
     echo -ne "$rep"
 }
@@ -616,7 +612,7 @@ _lp_return_value()
 {
     if [[ "$1" -ne "0" ]]
     then
-        echo -ne "$1"
+        echo -ne "$LP_COLOR_ERR$1$NO_COL"
     fi
 }
 
@@ -678,14 +674,14 @@ _lp_git_branch_color()
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
-            has_untracked="$LP_MARK_UNTRACKED"
+            has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
         local has_stash=$(git stash list 2>/dev/null)
         if [[ -z "$has_stash" ]] ; then
             has_stash=""
         else
-            has_stash="$LP_MARK_STASH"
+            has_stash="$LP_COLOR_COMMITS$LP_MARK_STASH"
         fi
 
         local has_commit
@@ -698,16 +694,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_stash}${has_untracked}${NO_COL}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_stash}${has_untracked}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -1059,7 +1055,7 @@ _lp_load_color()
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_MARK_LOAD}${NO_COL}"
+        ret="${LP_MARK_LOAD}"
         if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
             ret="${ret}${LP_COLORMAP_0}"
         elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
@@ -1188,7 +1184,7 @@ _lp_sb()
 _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
-    echo -ne "${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}"
+    echo -ne "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
 }
 
 ########################
@@ -1199,13 +1195,12 @@ _lp_time()
 _lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
-    LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
+    LP_ERR="$(_lp_sl $(_lp_return_value $?))"
 
     # execute the old prompt if not on Mac OS X (Mountain) Lion
     case "$LP_OS" in
         Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
-            LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
 	        case "$(LP_DWIN_KERNEL_REL_VER)" in
                 11|12) update_terminal_cwd ;;
                 *) $LP_OLD_PROMPT_COMMAND ;;
@@ -1219,8 +1214,7 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    LP_USER=$(_lp_user)
-    LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
+    LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")

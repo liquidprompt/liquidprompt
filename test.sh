@@ -7,7 +7,8 @@ print_ok()
     local RAZ="\\033[0;39m"
     local cols=$1
     local name=$2
-    printf "\e${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
+    # printf "\e${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
+    printf "${OK}%-${cols}s %-${cols}s\n${RAZ}" "$name" "OK"
 }
 
 print_no()
@@ -18,7 +19,8 @@ print_no()
     local name=$2
     local sub=$3
     local line=$4
-    printf "\e${NOK}%-${cols}s %-${cols}s #%-5s\n${RAZ}" "$name" "$sub" "$line"
+    # printf "\e${NOK}%-${cols}s %-${cols}s #%-5s\n${RAZ}" "$name" "$sub" "$line"
+    printf "${NOK}%-${cols}s %-${cols}s #%-5s\n${RAZ}" "$name" "$sub" "$line"
 }
 
 assert()

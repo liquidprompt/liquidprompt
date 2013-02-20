@@ -162,6 +162,7 @@ export LP_MARK_BATTERY="BATT"
 export LP_MARK_LOAD="LOAD"
 export LP_MARK_UNTRACKED="untracked"
 export LP_MARK_GIT="gitmark"
+export LP_USER_ALWAYS=1
 
 
 # Force erroneous command
@@ -183,6 +184,11 @@ assert_has Battery_Level    55%    $LINENO
 assert_has Load_Mark        LOAD    $LINENO
 assert_has Load_Level       32%    $LINENO
 assert_has User             "[\\\u"    $LINENO
+if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+    assert_not Hostname     $LINENO
+else
+    assert_has Hostname     "\\\h"    $LINENO
+fi
 assert_has Perms            :    $LINENO
 assert_has Path             $(pwd | sed -e "s|$HOME|~|")    $LINENO
 assert_has Proxy            proxy    $LINENO
@@ -296,10 +302,17 @@ assert_has Short_Path       " … "    $LINENO
 cd $current
 
 echo "LOCAL HOST NAME"
-export LP_HOSTNAME_ALWAYS=1
 _lp_set_prompt
 log_prompt
-assert_has Hostname $(hostname)    $LINENO
+# As the hostname is set once at the script start,
+# and not re-interpret at each prompt,
+# we cannot export the option in the test script.
+# We thus rely on the existing config.
+if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
+    assert_not Hostname     $LINENO
+else
+    assert_has Hostname     "\\\h"    $LINENO
+fi
 
 echo "prompt_OFF"
 prompt_OFF

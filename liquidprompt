@@ -369,7 +369,7 @@ fi
 
 case "$(_lp_connection)" in
 lcl)
-    if [[ "$LP_HOSTNAME_ALWAYS" != 1 ]] ; then
+    if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]] ; then
         # FIXME do we want to display the chroot if local?
         LP_HOST="${NO_COL}" # no hostname if local
     else

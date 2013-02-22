@@ -185,7 +185,7 @@ assert_has Load_Mark        LOAD    $LINENO
 assert_has Load_Level       32%    $LINENO
 assert_has User             "[\\\u"    $LINENO
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
-    assert_not Hostname     $LINENO
+    assert_not Hostname     "\\\h"    $LINENO
 else
     assert_has Hostname     "\\\h"    $LINENO
 fi
@@ -290,7 +290,7 @@ _lp_set_prompt
 log_prompt
 assert_has Path       "$(pwd | sed -e "s|$HOME|~|")"    $LINENO
 
-echo "NO SHORTEN PATH"
+echo "ENABLE SHORTEN PATH"
 export LP_ENABLE_SHORTEN_PATH=1
 export LP_PATH_LENGTH=35
 export LP_PATH_KEEP=1
@@ -309,7 +309,7 @@ log_prompt
 # we cannot export the option in the test script.
 # We thus rely on the existing config.
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
-    assert_not Hostname     $LINENO
+    assert_not Hostname     "\\\h"    $LINENO
 else
     assert_has Hostname     "\\\h"    $LINENO
 fi
@@ -321,9 +321,11 @@ assert_is Prompt            "$ "    $LINENO
 
 echo "prompt_on"
 prompt_on
+export LP_USER_ALWAYS=1
 log_prompt
-assert_has User             "[\\\u"    $LINENO
+assert_has User             "\\\u"    $LINENO
 assert_has Perms            :    $LINENO
 assert_has Path             $(pwd | sed -e "s|$HOME|~|")    $LINENO
+# assert_has Path             "\\\w"    $LINENO
 assert_has Prompt           "$ "    $LINENO
 

@@ -226,6 +226,8 @@ _lp_source_config()
     LP_MARK_BZR=${LP_MARK_BZR:-"⚯"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
     LP_MARK_STASH=${LP_MARK_STASH:-"+"}
+    LP_MARK_BRACKET_OPEN=${LP_MARK_BRACKET_OPEN:-"["}
+    LP_MARK_BRACKET_CLOSE=${LP_MARK_BRACKET_CLOSE:-"]"}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -255,6 +257,7 @@ _lp_source_config()
     LP_COLOR_DISCHARGING_ABOVE=${LP_COLOR_DISCHARGING_ABOVE:-$YELLOW}
     LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
     LP_COLOR_TIME=${LP_COLOR_TIME:-$BLUE}
+    LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
 
     LP_COLORMAP_0=${LP_COLORMAP_0:-""}
     LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
@@ -570,7 +573,7 @@ _lp_jobcount_color()
 
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
-    local screens=$(screen -ls 2> /dev/null | grep -c Detach )
+    local screens=$(screen -ls 2> /dev/null | grep -c Detach ) # FIXME add tmux support
     local m_detached="d"
     local m_stop="z"
     local m_run="&"
@@ -606,6 +609,16 @@ _lp_jobcount_color()
     fi
     echo -ne "$rep"
 }
+
+
+# Tells if we are running in a terminal multiplexer
+_lp_in_multiplexer()
+{
+    if [[ "$TERM" == "screen" ]] ; then
+        echo -ne "in_multiplexer"
+    fi
+}
+
 
 # Display the return value of the last command, if different from zero
 _lp_return_value()
@@ -1214,6 +1227,10 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
+    if [[ $(_lp_in_multiplexer) ]] ; then
+        LP_MARK_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+        LP_MARK_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+    fi
     LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left
@@ -1276,18 +1293,18 @@ _lp_set_prompt()
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
         # add user, host and permissions colon
-        PS1="${PS1}[${LP_USER}${LP_HOST}${LP_PERM}"
+        PS1="${PS1}${LP_MARK_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
         # if not root
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}${LP_MARK_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_VCS}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}${LP_MARK_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi

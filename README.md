@@ -44,6 +44,8 @@ colormap that became more and more noticeable with increasing load;
 and bring it back with `fg`), if there is any;
 * the number of attached running jobs (commands started with a `&`), if there is
 any;
+* a pair of square brackets, in blue if your current shell is running in a
+terminal multiplexer (screen or tmux);
 * the current user, in bold yellow if it is root, in light white if it is not
 the same as the login user;
 * a blue @ if the connection has X11 support;
@@ -224,6 +226,7 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_JOB_D` Detached (aka screen sessions)
     * `LP_COLOR_JOB_R` Running (xterm &)
     * `LP_COLOR_JOB_Z` Sleeping (Ctrl-Z)
+    * `LP_COLOR_IN_MULTIPLEXER` currently running in a terminal multiplexer
 * Last error code
     * `LP_COLOR_ERR`
 * Prompt mark
@@ -267,6 +270,8 @@ Special characters:
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 * `LP_MARK_STASH` (default: "+") if git has stashed modifications
+* `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt
+* `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 

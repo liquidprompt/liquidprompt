@@ -65,9 +65,10 @@ changes have been made and the number of pending commits, if any;
 * a red star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
-for fossil, $ for simple user, a red # for root.
+for fossil, $ for simple user, a red # for root;
 * if you ask for, the liquidprompt will be replicated in your terminal window's
-title (without the colors)
+title (without the colors);
+* you can easily add a prefix tag to your prompt, by invoking `lptag MYTAG`.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
@@ -156,6 +157,13 @@ You can prefix the `LP_PS1` variable with anything you want using the
 `LP_PS1_PREFIX`. The following example activate a custom window's title:
 
     LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
+
+Note: the `lptag` function is  convenient way to add a prefix. You can thus add
+a keyword to your different terminals:
+
+    [:~/code/liquidprompt] develop ± lptag mycode
+    mycode [:~/code/liquidprompt] develop ±
+
 
 ### PUT THE PROMPT IN A DIFFERENT ORDER
 

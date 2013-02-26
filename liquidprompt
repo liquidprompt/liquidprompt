@@ -1311,6 +1311,11 @@ _lp_set_prompt()
     fi
 }
 
+lptag()
+{
+    export LP_PS1_PREFIX=$(_lp_sr "$1")
+}
+
 # Activate the liquid prompt
 prompt_on()
 {

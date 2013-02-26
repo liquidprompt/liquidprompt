@@ -35,6 +35,7 @@
 # Luc Didry <luc@fiat-tux.fr>                   # Zsh port
 # Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
 # Frédéric Lepied                               # Python virtual env
+# Clément MATHIEU                               # Bazaar support
 
 # See the README.md file for a summary of features.
 
@@ -52,12 +53,14 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
+    _LP_TIME_SYMBOL="\\\\t"
 elif test -n "$ZSH_VERSION" ; then
     _LP_WORKING_SHELL=zsh
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
+    _LP_TIME_SYMBOL="%*"
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -107,6 +110,7 @@ case "$LP_OS" in
             load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
             echo "$load"
         }
+        LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
         ;;
     SunOS)
         _lp_cpu_load () {
@@ -204,10 +208,12 @@ _lp_source_config()
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
+    LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
+    LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
@@ -217,6 +223,7 @@ _lp_source_config()
     LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
     LP_MARK_GIT=${LP_MARK_GIT:-"±"}
     LP_MARK_FOSSIL=${LP_MARK_FOSSIL:-"⌘"}
+    LP_MARK_BZR=${LP_MARK_BZR:-"⚯"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
     LP_MARK_STASH=${LP_MARK_STASH:-"+"}
 
@@ -292,6 +299,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
 [[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
+[[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
 
@@ -301,27 +309,20 @@ unset _lp_source_config
 ###############
 
 # Yellow for root, bold if the user is not the login one, else no color.
-_lp_user()
-{
-    local user
-    # if user is not root
-    if [[ "$EUID" -ne "0" ]] ; then
-        # if user is not login user
-        if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
-            user="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-        else
-            if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
-                user="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-            else
-                user=""
-            fi
-        fi
+if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
+    # if user is not login user
+    if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
+        LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
     else
-        user="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+        if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
+            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+        else
+            LP_USER=""
+        fi
     fi
-
-    echo -ne $user
-}
+else
+    LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+fi
 
 
 #################
@@ -371,7 +372,7 @@ case "$(_lp_connection)" in
 lcl)
     if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]] ; then
         # FIXME do we want to display the chroot if local?
-        LP_HOST="${NO_COL}" # no hostname if local
+        LP_HOST="" # no hostname if local
     else
         LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
@@ -397,7 +398,7 @@ _lp_proxy()
     [[ "$LP_ENABLE_PROXY" != 1 ]] && return
 
     if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne $LP_MARK_PROXY
+        echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
     fi
 }
 
@@ -552,7 +553,7 @@ _lp_permissions_color()
 _lp_virtualenv()
 {
     [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
-    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename \"$VIRTUAL_ENV\")]"
+    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename $VIRTUAL_ENV)]"
 }
 
 
@@ -577,31 +578,31 @@ _lp_jobcount_color()
 
     # d/&/z
     if   [[ $screens != "0" && $running != "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # _/&/_
     elif [[ $screens == "0" && $running != "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        rep="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
 
     # _/_/z
     elif [[ $screens == "0" && $running == "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # d/_/_
     elif [[ $screens != "0" && $running == "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}"
 
     # d/&/_
     elif [[ $screens != "0" && $running != "0" && $stopped == "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
 
     # d/_/z
     elif [[ $screens != "0" && $running == "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_D}${screens}${m_detached}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
 
     # _/&/z
     elif [[ $screens == "0" && $running != "0" && $stopped != "0" ]] ; then
-        rep="${NO_COL}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        rep="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}/${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
     fi
     echo -ne "$rep"
 }
@@ -611,7 +612,7 @@ _lp_return_value()
 {
     if [[ "$1" -ne "0" ]]
     then
-        echo -ne "$1"
+        echo -ne "$LP_COLOR_ERR$1$NO_COL"
     fi
 }
 
@@ -620,13 +621,26 @@ _lp_return_value()
 # VCS branch display #
 ######################
 
+_lp_are_vcs_disabled()
+{
+    [[ -z "$LP_DISABLED_VCS_PATH" ]] && echo 0 && return
+    local path
+    local IFS=:
+    for path in $LP_DISABLED_VCS_PATH; do
+        if [[ "$PWD" == *"$path"* ]]; then
+            echo 1
+            return
+        fi
+    done
+    echo 0
+}
+
 # GIT #
 
 # Get the branch name of the current directory
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
-
     local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
@@ -660,14 +674,14 @@ _lp_git_branch_color()
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
-            has_untracked="$LP_MARK_UNTRACKED"
+            has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
         local has_stash=$(git stash list 2>/dev/null)
         if [[ -z "$has_stash" ]] ; then
             has_stash=""
         else
-            has_stash="$LP_MARK_STASH"
+            has_stash="$LP_COLOR_COMMITS$LP_MARK_STASH"
         fi
 
         local has_commit
@@ -680,16 +694,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_stash}${has_untracked}${NO_COL}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${LP_COLOR_COMMITS}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${LP_COLOR_COMMITS}${has_stash}${LP_COLOR_CHANGES}${has_untracked}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_stash}${has_untracked}${NO_COL}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -703,7 +717,6 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
-
     local branch
     branch="$(hg branch 2>/dev/null)"
     [[ $? -eq 0 ]] && echo "$branch"
@@ -766,11 +779,11 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]] ; then
         local commits
-        commits=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
-        if [[ $commits -eq 0 ]] ; then
+        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
+        if [[ $changes -eq 0 ]] ; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})" # changes to commit
+            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
         fi
     fi
 }
@@ -782,7 +795,6 @@ _lp_svn_branch_color()
 _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
-
     local branch
     branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
     if [[ -n "$branch" ]] ; then
@@ -857,6 +869,44 @@ _lp_fossil_branch_color()
 	fi
         echo -ne "$branch"
     fi
+}
+
+# Bazaar #
+
+# Get the branch name of the current directory
+_lp_bzr_branch()
+{
+    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    local output=$(bzr nick 2> /dev/null)
+    [[ $? -ne 0 ]] && return
+    echo "$output"
+}
+
+
+# Set a color depending on the branch state:
+# - green if the repository is up to date
+# - red if there is changes to commit
+# - TODO: yellow if there is some commits not pushed
+#
+# Add the number of pending commits and the impacted lines.
+_lp_bzr_branch_color()
+{
+    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    local output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    local tuple=($output)
+    local branch=${tuple[0]}
+    local revno=${tuple[1]}
+    local clean=${tuple[2]}
+
+    if [[ ! -z "$branch" ]] ; then
+        if [[ "$clean" -eq 0 ]] ; then
+            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+        else
+	    ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+        fi
+
+    fi
+    echo -ne "$ret"
 }
 
 
@@ -1005,7 +1055,7 @@ _lp_load_color()
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_MARK_LOAD}${NO_COL}"
+        ret="${LP_MARK_LOAD}"
         if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
             ret="${ret}${LP_COLORMAP_0}"
         elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
@@ -1089,14 +1139,16 @@ _lp_smart_mark()
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         mark="%(!.#.%%)"
     fi
-    if   [[ ! -z $(_lp_git_branch) ]] ; then
+    if [[ "$1" == "git" ]]; then
         mark=$LP_MARK_GIT
-    elif [[ ! -z $(_lp_hg_branch)  ]]  ; then
+    elif [[ "$1" == "hg" ]]; then
         mark=$LP_MARK_HG
-    elif [[ ! -z $(_lp_svn_branch) ]] ; then
+    elif [[ "$1" == "svn" ]]; then
         mark=$LP_MARK_SVN
-    elif [[ ! -z $(_lp_fossil_branch) ]] ; then
+    elif [[ "$1" == "fossil" ]]; then
         mark=$LP_MARK_FOSSIL
+    elif [[ "$1" == "bzr" ]]; then
+        mark=$LP_MARK_BZR
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
@@ -1132,7 +1184,7 @@ _lp_sb()
 _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
-    echo -ne "${LP_COLOR_TIME}$(date +%H:%M:%S)${NO_COL}"
+    echo -ne "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
 }
 
 ########################
@@ -1143,10 +1195,17 @@ _lp_time()
 _lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
-    LP_ERR="${LP_COLOR_ERR}$(_lp_sl $(_lp_return_value $?))${NO_COL}"
+    LP_ERR="$(_lp_sl $(_lp_return_value $?))"
 
-    # execute the old prompt
-    $LP_OLD_PROMPT_COMMAND
+    # execute the old prompt if not on Mac OS X (Mountain) Lion
+    case "$LP_OS" in
+        Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
+        Darwin)
+	        case "$(LP_DWIN_KERNEL_REL_VER)" in
+                11|12) update_terminal_cwd ;;
+                *) $LP_OLD_PROMPT_COMMAND ;;
+            esac ;;
+    esac
 
     # left of main prompt: space at right
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
@@ -1155,30 +1214,62 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    LP_USER=$(_lp_user)
-    # LP_HOST is a global set at load time
-    LP_PERM=$(_lp_permissions_color)
-    LP_PWD=$(_lp_shorten_path)
-    [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
-    LP_PROXY="${LP_COLOR_PROXY}$(_lp_proxy)${NO_COL}"
+    LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
-    if [[ "$EUID" -ne "0" ]] || [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] ; then
-        LP_GIT=$(_lp_sl "$(_lp_git_branch_color)")
-         LP_HG=$(_lp_sl "$(_lp_hg_branch_color)")
-        LP_SVN=$(_lp_sl "$(_lp_svn_branch_color)")
-     LP_FOSSIL=$(_lp_sl "$(_lp_fossil_branch_color)")
-    fi
+    LP_VCS=""
+    if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
+        # LP_HOST is a global set at load time
+        LP_PERM=$(_lp_permissions_color)
+        LP_PWD=$(_lp_shorten_path)
+        [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
 
-    # end of the prompt line: double spaces
-    LP_MARK=$(_lp_sb "$(_lp_smart_mark)")
+        if [[ "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
+            LP_VCS="$(_lp_git_branch_color)"
+            LP_VCS_TYPES="git"
+            if [[ -z "$LP_VCS" ]]; then
+                LP_VCS="$(_lp_hg_branch_color)"
+                LP_VCS_TYPES="hg"
+                if [[ -z "$LP_VCS" ]]; then
+                    LP_VCS="$(_lp_svn_branch_color)"
+                    LP_VCS_TYPES="svn"
+                    if [[ -z "$LP_VCS" ]]; then
+                        LP_VCS="$(_lp_fossil_branch_color)"
+                        LP_VCS_TYPES="fossil"
+                        if [[ -z "$LP_VCS" ]]; then
+                            LP_VCS="$(_lp_bzr_branch_color)"
+                            LP_VCS_TYPES="bzr"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+        if [[ -z "$LP_VCS" ]] ; then
+            LP_VCS_TYPES=""
+        else
+            LP_VCS=$(_lp_sl "${LP_VCS}")
+        fi
 
-    # Different path color if root
-    if [[ "$EUID" -ne "0" ]] ; then
-        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
-    else
-        LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+        # end of the prompt line: double spaces
+        LP_MARK=$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPES)")
+
+        # Different path color if root
+        if [[ "$EUID" -ne "0" ]] ; then
+            LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
+        else
+            LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
+        fi
+        LP_OLD_PWD="$PWD"
+
+    elif [[ -n "$LP_VCS_TYPES" ]]; then
+        case "$LP_VCS_TYPES" in
+            git)    LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
+            hg)     LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
+            svn)    LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
+            fossil) LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;
+            bzr)    LP_VCS=$(_lp_sl "$(_lp_bzr_branch_color)");;
+        esac
     fi
 
     if [[ -z $LP_PS1 ]] ; then
@@ -1193,13 +1284,12 @@ _lp_set_prompt()
             # path in foreground color
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # add VCS infos
-            PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
+            PS1="${PS1}${LP_VCS}"
         else
             # path in yellow
             PS1="${PS1}${LP_PWD}]${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
-            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && \
-                PS1="${PS1}${LP_GIT}${LP_HG}${LP_SVN}${LP_FOSSIL}"
+            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}"
@@ -1219,8 +1309,11 @@ _lp_set_prompt()
     else
         PS1=$LP_PS1
     fi
+}
 
-
+lptag()
+{
+    export LP_PS1_PREFIX=$(_lp_sr "$1")
 }
 
 # Activate the liquid prompt

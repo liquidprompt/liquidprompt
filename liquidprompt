@@ -435,7 +435,9 @@ _lp_shorten_path()
        keep=$LP_PATH_KEEP
     fi
 
-    local p="${PWD/$HOME/~}"
+    # Replace the "/home/user/" string in the path by "~/"
+    # Escaped backslashes are here to avoid replacing "/home/user-alt" by "~-alt"
+    local p="${PWD/$HOME\//\~/}"
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))

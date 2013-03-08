@@ -97,6 +97,9 @@ LP_ENABLE_TIME=0
 # feature to your specific terminal.
 LP_ENABLE_TITLE=0
 
+# Enable Title for screen and byobu
+LP_ENABLE_SCREEN_TITLE=0
+
 # Specify a list of complete and colon (":") separated paths in which, all vcs
 # will be disabled
 LP_DISABLED_VCS_PATH=""

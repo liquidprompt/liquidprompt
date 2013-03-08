@@ -197,6 +197,8 @@ _lp_source_config()
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
     LP_TITLE_CLOSE=${LP_TITLE_CLOSE:-"\a"}
+    LP_SCREEN_TITLE_OPEN=${LP_SCREEN_TITLE_OPEN:-"\033k"}
+    LP_SCREEN_TITLE_CLOSE=${LP_SCREEN_TITLE_CLOSE:-"\033\134"}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -213,6 +215,7 @@ _lp_source_config()
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
+    LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
@@ -616,7 +619,7 @@ _lp_jobcount_color()
 # Tells if we are running in a terminal multiplexer
 _lp_in_multiplexer()
 {
-    if [[ "$TERM" == "screen" ]] ; then
+    if [[ "$TERM" == screen* ]] ; then
         echo -ne "in_multiplexer"
     fi
 }
@@ -1134,8 +1137,15 @@ _lp_title()
     # Use it in the window's title
     # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
     # Otherwise line editing commands will mess the cursor positionning
-    local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
-
+    case "$TERM" in
+      screen*)
+        [[ "$LP_ENABLE_SCREEN_TITLE" != "1" ]] && return
+        local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
+      ;;
+      *)
+        local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+      ;;
+    esac
     echo -n "${title}"
 }
 
@@ -1314,7 +1324,6 @@ _lp_set_prompt()
         PS1="${PS1}${LP_ERR}${LP_MARK}"
 
         # "invisible" parts
-
         # Get the current prompt on the fly and make it a title
         LP_TITLE=$(_lp_title "$PS1")
 

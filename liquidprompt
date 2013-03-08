@@ -1141,7 +1141,7 @@ _lp_title()
         local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
       ;;
       screen*)
-        local title="${_LP_OPEN_ESC}${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+        local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
       ;;
     esac
     echo -n "${title}"

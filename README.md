@@ -137,6 +137,7 @@ building:
 * `LP_ENABLE_FOSSIL`, if you want to have fossil informations
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
+* `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.

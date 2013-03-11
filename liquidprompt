@@ -216,6 +216,7 @@ _lp_source_config()
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
+    LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
@@ -384,7 +385,20 @@ lcl)
     fi
     ;;
 ssh)
-    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    # If we want a different color for each host
+    if [[ "$LP_ENABLE_SSH_COLORS" ]]; then
+        # compute the hash of the hostname
+        # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
+        # FIXME check portability of cksum and add more formats (bold? 256 colors?)
+        hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
+        color=${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}
+        LP_HOST="${LP_HOST}${color}${_LP_HOST_SYMBOL}${NO_COL}"
+        unset hash
+        unset color
+    else
+        # the same color for all hosts
+        LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    fi
     ;;
 tel)
     LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"

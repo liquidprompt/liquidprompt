@@ -26,9 +26,9 @@ in a git repository on a server, at branch "myb":
 
 `1r [user@server:~/liquidprompt] myb ± `
 
-A liquid prompt displaying everything may look like this:
+A liquid prompt displaying everything (a rare event!) may look like this:
 
-`⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)* 125 ± `
+`code ⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)*+ 125 ± `
 
 It displays:
 
@@ -48,9 +48,9 @@ any;
 terminal multiplexer (screen or tmux);
 * the current user, in bold yellow if it is root, in light white if it is not
 the same as the login user;
-* a blue @ if the connection has X11 support;
-* the current host, if you are connected via an SSH or telnet connection, with
-different colors for each case;
+* a green @ if the connection has X11 support, a yellow one if not;
+* the current host, if you are connected via a telnet connection (in bold red)
+or SSH (either a blue hostname or differents colors for different hosts);
 * a green colon if the user has write permissions on the current directory,
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
@@ -58,7 +58,7 @@ preserving the first two directories;
 * the current Python virtual environment, if any;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
-(git, mercurial, subversion or fossil), in green if everything is up
+(git, mercurial, subversion, bazaar or fossil), in green if everything is up
 to date, in red if there is changes, in yellow if there is pending
 commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
@@ -138,6 +138,7 @@ building:
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
+* `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH in
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.

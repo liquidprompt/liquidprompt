@@ -1337,7 +1337,7 @@ _lp_set_prompt()
     fi
 }
 
-lptag()
+prompt_tag()
 {
     export LP_PS1_PREFIX=$(_lp_sr "$1")
 }

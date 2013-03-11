@@ -70,7 +70,7 @@ changes have been made and the number of pending commits, if any;
 for fossil, $ for simple user, a red # for root;
 * if you ask for, the liquidprompt will be replicated in your terminal window's
 title (without the colors);
-* you can easily add a prefix tag to your prompt, by invoking `lptag MYTAG`.
+* you can easily add a prefix tag to your prompt, by invoking `prompt_tag MYTAG`.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
@@ -161,10 +161,10 @@ You can prefix the `LP_PS1` variable with anything you want using the
 
     LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
 
-Note: the `lptag` function is  convenient way to add a prefix. You can thus add
+Note: the `prompt_tag` function is  convenient way to add a prefix. You can thus add
 a keyword to your different terminals:
 
-    [:~/code/liquidprompt] develop ± lptag mycode
+    [:~/code/liquidprompt] develop ± prompt_tag mycode
     mycode [:~/code/liquidprompt] develop ±
 
 

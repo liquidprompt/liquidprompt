@@ -1330,7 +1330,9 @@ _lp_set_prompt()
         esac
     fi
 
-    source $LP_PS1_FILE
+    if [[ -f "$LP_PS1_FILE" ]]; then
+        source "$LP_PS1_FILE"
+    fi
 
     if [[ -z $LP_PS1 ]] ; then
         # add title escape time, jobs, load and battery

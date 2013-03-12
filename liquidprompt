@@ -216,6 +216,7 @@ _lp_source_config()
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
+    LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
@@ -384,7 +385,20 @@ lcl)
     fi
     ;;
 ssh)
-    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    # If we want a different color for each host
+    if [[ "$LP_ENABLE_SSH_COLORS" ]]; then
+        # compute the hash of the hostname
+        # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
+        # FIXME check portability of cksum and add more formats (bold? 256 colors?)
+        hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
+        color=${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}
+        LP_HOST="${LP_HOST}${color}${_LP_HOST_SYMBOL}${NO_COL}"
+        unset hash
+        unset color
+    else
+        # the same color for all hosts
+        LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+    fi
     ;;
 tel)
     LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
@@ -657,9 +671,11 @@ _lp_are_vcs_disabled()
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
-    local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    local gitdir
+    gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
-    local branch="$(git symbolic-ref HEAD 2>/dev/null)"
+    local branch
+    branch="$(git symbolic-ref HEAD 2>/dev/null)"
     [[ $? -ne 0 || -z "$branch" ]] && return
     echo "${branch#refs/heads/}"
 }
@@ -686,14 +702,16 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
-        local has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
+        local has_untracked
+        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
-        local has_stash=$(git stash list 2>/dev/null)
+        local has_stash
+        has_stash=$(git stash list 2>/dev/null)
         if [[ -z "$has_stash" ]] ; then
             has_stash=""
         else
@@ -893,7 +911,8 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    local output=$(bzr nick 2> /dev/null)
+    local output
+    output=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
     echo "$output"
 }
@@ -908,7 +927,8 @@ _lp_bzr_branch()
 _lp_bzr_branch_color()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    local output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    local output
+    output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
     local tuple=($output)
     local branch=${tuple[0]}
     local revno=${tuple[1]}

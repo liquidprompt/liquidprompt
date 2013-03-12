@@ -671,9 +671,11 @@ _lp_are_vcs_disabled()
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
-    local gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    local gitdir
+    gitdir="$(git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
-    local branch="$(git symbolic-ref HEAD 2>/dev/null)"
+    local branch
+    branch="$(git symbolic-ref HEAD 2>/dev/null)"
     [[ $? -ne 0 || -z "$branch" ]] && return
     echo "${branch#refs/heads/}"
 }
@@ -700,14 +702,16 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
-        local has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
+        local has_untracked
+        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
-        local has_stash=$(git stash list 2>/dev/null)
+        local has_stash
+        has_stash=$(git stash list 2>/dev/null)
         if [[ -z "$has_stash" ]] ; then
             has_stash=""
         else
@@ -907,7 +911,8 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    local output=$(bzr nick 2> /dev/null)
+    local output
+    output=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
     echo "$output"
 }
@@ -922,7 +927,8 @@ _lp_bzr_branch()
 _lp_bzr_branch_color()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    local output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    local output
+    output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
     local tuple=($output)
     local branch=${tuple[0]}
     local revno=${tuple[1]}

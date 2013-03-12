@@ -704,10 +704,18 @@ _lp_git_branch_color()
             has_stash="$LP_COLOR_COMMITS$LP_MARK_STASH"
         fi
 
+        local remote
+        remote="$(git config --get branch.${branch}.remote 2>/dev/null)"
+        local remote_branch
+        remote_branch="$(git config --get branch.${branch}.merge 2>/dev/null)"
+
         local has_commit
-        has_commit=$(git rev-list --no-merges --count origin/${branch}..${branch} 2>/dev/null)
-        if [[ -z "$has_commit" ]] ; then
-            has_commit=0
+        has_commit=0
+        if [[ -n "$remote" && -n "$remote_branch" ]] ; then
+            has_commit=$(git rev-list --no-merges --count $remote/${remote_branch}..${branch} 2>/dev/null)
+            if [[ -z "$has_commit" ]] ; then
+                has_commit=0
+            fi
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
             local has_line

@@ -1299,6 +1299,8 @@ _lp_set_prompt()
         esac
     fi
 
+    source $LP_PS1_FILE
+
     if [[ -z $LP_PS1 ]] ; then
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"

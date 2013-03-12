@@ -386,7 +386,7 @@ lcl)
     ;;
 ssh)
     # If we want a different color for each host
-    if [[ "$LP_ENABLE_SSH_COLORS" ]]; then
+    if [[ "$LP_ENABLE_SSH_COLORS" -eq "1" ]]; then
         # compute the hash of the hostname
         # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
         # FIXME check portability of cksum and add more formats (bold? 256 colors?)

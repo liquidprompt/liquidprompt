@@ -739,8 +739,16 @@ _lp_git_branch_color()
 
         local remote
         remote="$(git config --get branch.${branch}.remote 2>/dev/null)"
+        # if git has no upstream, use origin
+        if [[ -z "$remote" ]]; then
+            remote="origin"
+        fi
         local remote_branch
         remote_branch="$(git config --get branch.${branch}.merge 2>/dev/null)"
+        # without any remote branch, use the same name
+        if [[ -z "$remote_branch" ]]; then
+            remote_branch="$branch"
+        fi
 
         local has_commit
         has_commit=0

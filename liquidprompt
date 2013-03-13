@@ -200,6 +200,7 @@ _lp_source_config()
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
+    LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
@@ -1054,35 +1055,39 @@ _lp_battery_color()
     elif [[ "$bat" != "" ]] ; then
         local ret
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
-        if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
-            ret="${ret}${LP_COLORMAP_1}"
-        elif [[ ${bat} -le 80  ]] && [[ ${bat} -gt 65 ]] ; then # -15
-            ret="${ret}${LP_COLORMAP_2}"
-        elif [[ ${bat} -le 65  ]] && [[ ${bat} -gt 50 ]] ; then # -15
-            ret="${ret}${LP_COLORMAP_3}"
-        elif [[ ${bat} -le 50  ]] && [[ ${bat} -gt 40 ]] ; then # -10
-            ret="${ret}${LP_COLORMAP_4}"
-        elif [[ ${bat} -le 40  ]] && [[ ${bat} -gt 30 ]] ; then # …
-            ret="${ret}${LP_COLORMAP_5}"
-        elif [[ ${bat} -le 30  ]] && [[ ${bat} -gt 20 ]] ; then
-            ret="${ret}${LP_COLORMAP_6}"
-        elif [[ ${bat} -le 20  ]] && [[ ${bat} -gt 10 ]] ; then
-            ret="${ret}${LP_COLORMAP_7}"
-        elif [[ ${bat} -le 10  ]] && [[ ${bat} -gt 5  ]] ; then
-            ret="${ret}${LP_COLORMAP_8}"
-        elif [[ ${bat} -le 5   ]] && [[ ${bat} -gt 0  ]] ; then
-            ret="${ret}${LP_COLORMAP_9}"
-        else
-            # for debugging purpose
-            ret="${ret}${LP_COLORMAP_0}"
-        fi
 
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-            echo -ne "${ret}${bat}%${NO_COL}"
-        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-            echo -ne "${ret}${bat}%%${NO_COL}"
-        fi
-    fi
+        if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
+            if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
+                ret="${ret}${LP_COLORMAP_1}"
+            elif [[ ${bat} -le 80  ]] && [[ ${bat} -gt 65 ]] ; then # -15
+                ret="${ret}${LP_COLORMAP_2}"
+            elif [[ ${bat} -le 65  ]] && [[ ${bat} -gt 50 ]] ; then # -15
+                ret="${ret}${LP_COLORMAP_3}"
+            elif [[ ${bat} -le 50  ]] && [[ ${bat} -gt 40 ]] ; then # -10
+                ret="${ret}${LP_COLORMAP_4}"
+            elif [[ ${bat} -le 40  ]] && [[ ${bat} -gt 30 ]] ; then # …
+                ret="${ret}${LP_COLORMAP_5}"
+            elif [[ ${bat} -le 30  ]] && [[ ${bat} -gt 20 ]] ; then
+                ret="${ret}${LP_COLORMAP_6}"
+            elif [[ ${bat} -le 20  ]] && [[ ${bat} -gt 10 ]] ; then
+                ret="${ret}${LP_COLORMAP_7}"
+            elif [[ ${bat} -le 10  ]] && [[ ${bat} -gt 5  ]] ; then
+                ret="${ret}${LP_COLORMAP_8}"
+            elif [[ ${bat} -le 5   ]] && [[ ${bat} -gt 0  ]] ; then
+                ret="${ret}${LP_COLORMAP_9}"
+            else
+                # for debugging purpose
+                ret="${ret}${LP_COLORMAP_0}"
+            fi
+
+            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+                ret="${ret}${bat}%"
+            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+                ret="${ret}${bat}%%"
+            fi
+        fi # LP_PERCENTS_ALWAYS
+        echo -ne "${ret}${NO_COL}"
+    fi # ret
 }
 
 
@@ -1109,7 +1114,7 @@ _lp_load_color()
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
         local ret
-        ret="${LP_MARK_LOAD}"
+        ret=""
         if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
             ret="${ret}${LP_COLORMAP_0}"
         elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
@@ -1133,12 +1138,16 @@ _lp_load_color()
         else
             ret="${ret}${LP_COLORMAP_0}"
         fi
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-            ret="${ret}$load%${NO_COL}"
-        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-            ret="${ret}$load%%${NO_COL}"
+        ret="$ret${LP_MARK_LOAD}"
+
+        if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
+            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+                ret="${ret}$load%"
+            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+                ret="${ret}$load%%"
+            fi
         fi
-        echo -ne "${ret}"
+        echo -ne "${ret}${NO_COL}"
     fi
 }
 

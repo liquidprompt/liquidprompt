@@ -126,7 +126,7 @@ it only when he is different from the logged one
 You can also force some features to be disabled, to save some time in the prompt
 building:
 * `LP_ENABLE_PERM`, if you want to detect if the directory is writable
-* `LP_ENABLE_SHORTEN_PATH`, if you to shorten the path display
+* `LP_ENABLE_SHORTEN_PATH`, if you want to shorten the path display
 * `LP_ENABLE_PROXY`, if you want to detect if a proxy is used
 * `LP_ENABLE_JOBS`, if you want to have jobs informations
 * `LP_ENABLE_LOAD`, if you want to have load informations
@@ -134,6 +134,7 @@ building:
 * `LP_ENABLE_GIT`, if you want to have git informations
 * `LP_ENABLE_SVN`, if you want to have subversion informations
 * `LP_ENABLE_HG`, if you want to have mercurial informations
+* `LP_ENABLE_BZR`, if you want to have bazaar informations
 * `LP_ENABLE_FOSSIL`, if you want to have fossil informations
 * `LP_ENABLE_VCS_ROOT`, if you want to show VCS informations with root account
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
@@ -173,6 +174,10 @@ a keyword to your different terminals:
 
 You can sort what you want to see by sourcing your favorite template file
 (`*.ps1`) in the configuration file.
+
+You can start from the `liquid.ps1` file, which show the default settings.
+To use your own configuration, just set `LP_PS1_FILE` to your own file path in
+your `~/.liquipromptrc` and you're done.
 
 Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
@@ -244,7 +249,7 @@ Set to a null string "" if you do not want color.
     * `LP_COLOR_TELNET` connected via telnet
     * `LP_COLOR_X11_ON` connected with X11 support
     * `LP_COLOR_X11_OFF` connected without X11 support
-* Separation mark (aka permiison in the working dir)
+* Separation mark (by default, the colon before the path)
     * `LP_COLOR_WRITE` have write permission
     * `LP_COLOR_NOWRITE` do not have write permission
 * VCS
@@ -270,6 +275,7 @@ Special characters:
 * `LP_MARK_SVN` (default: "‡") prompt mark in svn repositories
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
+* `LP_MARK_BZR` (default: "⚯") prompt mark in bazaar repositories
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 * `LP_MARK_STASH` (default: "+") if git has stashed modifications
 * `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt

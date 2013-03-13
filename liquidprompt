@@ -317,6 +317,13 @@ unset _lp_source_config
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
+# Escape the given strings
+# Must be used for all strings that may comes from remote sources, 
+# like VCS branch names
+_lp_escape()
+{
+    printf "%q" "$*"
+}
 
 
 ###############
@@ -688,7 +695,8 @@ _lp_git_branch()
         branch="$(git rev-parse --short HEAD 2>/dev/null)"
     fi
     [[ $? -ne 0 || -z "$branch" ]] && return
-    echo "${branch#refs/heads/}"
+    branch="${branch#refs/heads/}"
+    echo $(_lp_escape "$branch")
 }
 
 # Set a color depending on the branch state:
@@ -772,7 +780,8 @@ _lp_hg_branch()
     [[ "$LP_ENABLE_HG" != 1 ]] && return
     local branch
     branch="$(hg branch 2>/dev/null)"
-    [[ $? -eq 0 ]] && echo "$branch"
+    [[ $? -eq 0 ]] && echo $(_lp_escape "$branch")
+
 }
 
 # Set a color depending on the branch state:
@@ -813,7 +822,7 @@ _lp_svn_branch()
         echo trunk
     else
         result=$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")
-        echo $result
+        echo $(_lp_escape "$result")
     fi
 }
 
@@ -851,11 +860,11 @@ _lp_fossil_branch()
     local branch
     branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
     if [[ -n "$branch" ]] ; then
-	echo "$branch"
+        echo $(_lp_escape "$branch")
     else
-	if fossil info &>/dev/null ; then
-	    echo "no-tag"
-	fi
+        if fossil info &>/dev/null ; then
+            echo "no-tag"
+        fi
     fi
 }
 
@@ -875,52 +884,52 @@ _lp_fossil_branch_color()
     branch=$(_lp_fossil_branch)
 
     if [[ ! -z "$branch" ]] ; then
-	local C2E # Modified files (added or edited)
-	local C2D # Deleted files
-	local C2A # Extras files
-	local ret
-	C2E=$(fossil changes | wc -l)
-	C2D=$(fossil changes | grep DELETED | wc -l)
-	let "C2E = $C2E - $C2D"
-	C2A=$(fossil extras | wc -l)
-	ret=""
+        local C2E # Modified files (added or edited)
+        local C2D # Deleted files
+        local C2A # Extras files
+        local ret
+        C2E=$(fossil changes | wc -l)
+        C2D=$(fossil changes | grep DELETED | wc -l)
+        let "C2E = $C2E - $C2D"
+        C2A=$(fossil extras | wc -l)
+        ret=""
 
-	if [[ "$C2E" -gt 0 ]] ; then
-	    ret+="+$C2E"
-	fi
+        if [[ "$C2E" -gt 0 ]] ; then
+            ret+="+$C2E"
+        fi
 
-	if [[ "$C2D" -gt 0 ]] ; then
-	    if [[ "$ret" = "" ]] ; then
-		ret+="-$C2D"
-	    else
-		ret+="/-$C2D"
-	    fi
-	fi
+        if [[ "$C2D" -gt 0 ]] ; then
+            if [[ "$ret" = "" ]] ; then
+                ret+="-$C2D"
+            else
+                ret+="/-$C2D"
+            fi
+        fi
 
-	if [[ "$C2A" -gt 0 ]] ; then
-	    C2A="$LP_MARK_UNTRACKED"
-	else
-	    C2A=""
-	fi
+        if [[ "$C2A" -gt 0 ]] ; then
+            C2A="$LP_MARK_UNTRACKED"
+        else
+            C2A=""
+        fi
 
-	if [[ "$ret" != "" ]] ; then
-	    ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
-	fi
+        if [[ "$ret" != "" ]] ; then
+            ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
+        fi
 
 
-	if [[ "$branch" = "no-tag" ]] ; then
+        if [[ "$branch" = "no-tag" ]] ; then
             # Warning, your branch has no tag name !
-	    branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
-	else
+            branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
+        else
             if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
                 # All is up-to-date
-		branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
+                branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
             else
                 # There're some changes to commit
-		branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
+                branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
-	fi
-        echo -ne "$branch"
+        fi
+        echo $(_lp_escape "$branch")
     fi
 }
 
@@ -930,10 +939,10 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
-    local output
-    output=$(bzr nick 2> /dev/null)
+    local branch
+    branch=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
-    echo "$output"
+    echo $(_lp_escape "$branch")
 }
 
 
@@ -957,7 +966,7 @@ _lp_bzr_branch_color()
         if [[ "$clean" -eq 0 ]] ; then
             ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else
-	    ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+            ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         fi
 
     fi
@@ -1271,7 +1280,7 @@ _lp_set_prompt()
     case "$LP_OS" in
         Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
-	        case "$(LP_DWIN_KERNEL_REL_VER)" in
+            case "$(LP_DWIN_KERNEL_REL_VER)" in
                 11|12) update_terminal_cwd ;;
                 *) $LP_OLD_PROMPT_COMMAND ;;
             esac ;;

@@ -24,18 +24,25 @@
 # AUTHORS #
 ###########
 
-# nojhan <nojhan@gmail.com>                     # Main author.
-# Aurelien Requiem <aurelien@requiem.fr>        # Major clean refactoring, variable path length, error codes, several bugfixes.
-# Joris Dedieu <joris@pontiac3.nfrance.com>     # Portability framework, FreeBSD support, bugfixes.
-# Ludovic Rousseau <ludovic.rousseau@gmail.com> # Lot of bugfixes.
-# Yann 'Ze' Richard <ze@nbox.org>               # Do not fail on missing commands.
+# Alex Prengère     <alex.prengere@amadeus.com>   # untracked git files
+# Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
+# Clément Mathieu   <clement@unportant.info>      # Bazaar support
+# David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
+# Étienne Deparis   <etienne.deparis@umaneti.net> # Fossil support
+# Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
 # François Schmidts <francois.schmidts@gmail.com> # small code fix, _lp_get_dirtrim
-# Thomas Debesse <thomas.debesse@gmail.com>     # Fix columns use.
-# Florian Le Frioux <florian@lefrioux.fr>       # Use ± mark when root in VCS dir.
-# Luc Didry <luc@fiat-tux.fr>                   # Zsh port
-# Olivier Mengué <dolmen@cpan.org>              # Major optimizations on host parsing
-# Frédéric Lepied                               # Python virtual env
-# Clément MATHIEU                               # Bazaar support
+# Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
+# Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
+# Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
+# Joris Vaillant    <joris.vaillant@gmail.com>    # small git fix
+# Luc Didry         <luc@fiat-tux.fr>             # Zsh port, several fix
+# Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
+# Nicolas Lacourte  <nicolas@dotinfra.fr>         # screen title
+# nojhan            <nojhan@gmail.com>            # Main author.
+# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations on host parsing
+# Poil              <poil@quake.fr>               # speed improvements
+# Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
+# Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
 
 # See the README.md file for a summary of features.
 

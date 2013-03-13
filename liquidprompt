@@ -688,7 +688,7 @@ _lp_git_branch()
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
     local gitdir
     gitdir="$(git rev-parse --git-dir 2>/dev/null)"
-    [[ $? -ne 0 || "${gitdir##*/}" != .git ]] && return
+    [[ $? -ne 0 || $gitdir =~ '*/.git*' ]] && return
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
     if [[ $? -ne 0 || -z "$branch" ]] ; then
         # In detached head state, use commit instead
@@ -1233,6 +1233,9 @@ _lp_title()
       screen*)
         [[ "$LP_ENABLE_SCREEN_TITLE" != "1" ]] && return
         local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
+      ;;
+      linux*)
+        local title=""
       ;;
       *)
         local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"

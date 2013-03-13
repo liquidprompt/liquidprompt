@@ -824,13 +824,16 @@ _lp_svn_branch()
     local url
     local result
     eval $(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )
+    if [[ "$root" == "" ]]; then
+        return
+    fi
     # Make url relative to root
     url="${url:${#root}}"
     if [[ "$url" == */trunk* ]] ; then
-        echo trunk
+        echo -n trunk
     else
         result=$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")
-        echo $(_lp_escape "$result")
+        echo -n $result # FIXME should be: echo -n $(_lp_escape "${result}")
     fi
 }
 

@@ -1234,6 +1234,9 @@ _lp_title()
         [[ "$LP_ENABLE_SCREEN_TITLE" != "1" ]] && return
         local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
       ;;
+      linux*)
+        local title=""
+      ;;
       *)
         local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
       ;;

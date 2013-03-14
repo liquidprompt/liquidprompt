@@ -255,6 +255,7 @@ _lp_source_config()
     LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
     LP_COLOR_HOST=${LP_COLOR_HOST:-""}
     LP_COLOR_SSH=${LP_COLOR_SSH:-$BLUE}
+    LP_COLOR_SU=${LP_COLOR_SU:-$BOLD_YELLOW}
     LP_COLOR_TELNET=${LP_COLOR_TELNET:-$WARN_RED}
     LP_COLOR_X11_ON=${LP_COLOR_X11:-$GREEN}
     LP_COLOR_X11_OFF=${LP_COLOR_X11:-$YELLOW}
@@ -353,13 +354,16 @@ fi
 
 _lp_connection()
 {
-    if [[ -n "$SSH_CLIENT$SSH2_CLIENT" ]] ; then
+    if [[ -n "$SSH_CLIENT$SSH2_CLIENT$SSH_TTY" ]] ; then
         echo ssh
     else
         # TODO check on *BSD
         local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
+        local sess_parent=$(ps -o comm= -p $PPID)
         if [[ -z "$sess_src" || "$sess_src" = ":"* ]] ; then
             echo lcl  # Local
+        elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]] ; then
+            echo su   # Remote su/sudo
         else
             echo tel  # Telnet
         fi
@@ -414,6 +418,9 @@ ssh)
         # the same color for all hosts
         LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
     fi
+    ;;
+su)
+    LP_HOST="${LP_HOST}${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 tel)
     LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"

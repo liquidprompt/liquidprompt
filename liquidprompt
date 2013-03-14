@@ -1014,7 +1014,6 @@ _lp_battery_color()
 
     # discharging and under threshold
     elif [[ "$bat" != "" ]] ; then
-        local ret
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
         if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
             ret="${ret}${LP_COLORMAP_1}"

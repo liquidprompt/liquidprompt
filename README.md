@@ -39,13 +39,13 @@ a red ⌁ if the battery is discharging but above threshold;
 threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
 colormap that became more and more noticeable with increasing load;
-* the number of detached sessions (`screen`), if there is any;
+* the number of detached sessions (`screen` or `tmux`), if there are any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
-and bring it back with `fg`), if there is any;
-* the number of attached running jobs (commands started with a `&`), if there is
+and bring it back with `fg`), if there are any;
+* the number of attached running jobs (commands started with a `&`), if there are
 any;
 * a pair of square brackets, in blue if your current shell is running in a
-terminal multiplexer (screen or tmux);
+terminal multiplexer (`screen` or `tmux`);
 * the current user, in bold yellow if it is root, in light white if it is not
 the same as the login user;
 * a green @ if the connection has X11 support, a yellow one if not;
@@ -98,8 +98,8 @@ Apart from obvious ones, some features depends on specific commands. If you do
 not install them, the corresponding feature will not be available, but you will
 see no error.
 
-* battery status need `acpi`,
-* detached sessions is looking for `screen`.
+* battery status needs `acpi`.
+* detached sessions is looking for `screen` and/or `tmux`.
 * VCS support features needs… `git`, `hg` or `svn`, but you knew it.
 
 For other features, the script uses commands that should be available on a large
@@ -185,7 +185,7 @@ theme colors.
 Available features:
 * `LP_BATT` battery
 * `LP_LOAD` load
-* `LP_JOBS` screen sessions/running jobs/suspended jobs
+* `LP_JOBS` detached screen or tmux sessions/running jobs/suspended jobs
 * `LP_USER` user
 * `LP_HOST` hostname
 * `LP_PERM` a colon ":"
@@ -230,7 +230,7 @@ Set to a null string "" if you do not want color.
 * Color of the proxy mark
     * `LP_COLOR_PROXY`
 * Jobs count
-    * `LP_COLOR_JOB_D` Detached (aka screen sessions)
+    * `LP_COLOR_JOB_D` Detached (screen/tmux sessions without attached clients)
     * `LP_COLOR_JOB_R` Running (xterm &)
     * `LP_COLOR_JOB_Z` Sleeping (Ctrl-Z)
     * `LP_COLOR_IN_MULTIPLEXER` currently running in a terminal multiplexer
@@ -291,7 +291,6 @@ Special characters:
 Liquid prompt is distributed under the GNU Affero General Public License
 version 3.
 
-* detached sessions only looks for `screen`, a `tmux` support would be nice…
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down
 the display of the liquid prompt.

@@ -1100,7 +1100,6 @@ _lp_battery_color()
 
     # discharging and under threshold
     elif [[ "$bat" != "" ]] ; then
-        local ret
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then

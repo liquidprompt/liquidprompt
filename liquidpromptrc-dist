@@ -6,7 +6,7 @@
 # If you want to use different themes and features,
 # you can load the corresponding files here:
 #source ~/code/liquidprompt/nojhan.theme
-#source ~/code/liquidprompt/nojhan.ps1
+#LP_PS1_FILE="~/code/liquidprompt/nojhan.ps1"
 
 #############
 # BEHAVIOUR #
@@ -37,6 +37,11 @@ LP_HOSTNAME_ALWAYS=0
 # Defaults to 1 (always display the user)
 # set to 0 if you want to hide the logged user (it will always display different users)
 LP_USER_ALWAYS=1
+
+# Do you want to display the percentages of load/batteries along with their
+# corresponding marks? Set to 0 to only print the colored marks.
+# Defaults to 1 (display percentages)
+LP_PERCENTS_ALWAYS=1
 
 # Do you want to use the permissions feature ?
 # Recommended value is 1
@@ -99,6 +104,9 @@ LP_ENABLE_TITLE=0
 
 # Enable Title for screen and byobu
 LP_ENABLE_SCREEN_TITLE=0
+
+# Use differents colors for differents hosts you SSH in
+LP_ENABLE_SSH_COLORS=0
 
 # Specify a list of complete and colon (":") separated paths in which, all vcs
 # will be disabled

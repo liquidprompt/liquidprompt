@@ -1164,6 +1164,8 @@ _lp_smart_mark()
     fi
     if [[ "$1" == "git" ]]; then
         mark=$LP_MARK_GIT
+    elif [[ "$1" == "git-svn" ]]; then
+        mark="$LP_MARK_GIT$LP_MARK_SVN"
     elif [[ "$1" == "hg" ]]; then
         mark=$LP_MARK_HG
     elif [[ "$1" == "svn" ]]; then
@@ -1224,7 +1226,7 @@ _lp_set_prompt()
     case "$LP_OS" in
         Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
-	        case "$(LP_DWIN_KERNEL_REL_VER)" in
+            case "$(LP_DWIN_KERNEL_REL_VER)" in
                 11|12) update_terminal_cwd ;;
                 *) $LP_OLD_PROMPT_COMMAND ;;
             esac ;;
@@ -1255,6 +1257,12 @@ _lp_set_prompt()
         if [[ "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPES="git"
+            if [[ -n "$LP_VCS" ]]; then
+                # If this is a git-svn repository
+                if [[ -d "$(git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
+                    LP_VCS_TYPES="git-svn"
+                fi
+            fi # git-svn
             if [[ -z "$LP_VCS" ]]; then
                 LP_VCS="$(_lp_hg_branch_color)"
                 LP_VCS_TYPES="hg"
@@ -1267,11 +1275,11 @@ _lp_set_prompt()
                         if [[ -z "$LP_VCS" ]]; then
                             LP_VCS="$(_lp_bzr_branch_color)"
                             LP_VCS_TYPES="bzr"
-                        fi
-                    fi
-                fi
-            fi
-        fi
+                        fi # bzr
+                    fi # fossil
+                fi # svn
+            fi # hg
+        fi # disabled
         if [[ -z "$LP_VCS" ]] ; then
             LP_VCS_TYPES=""
         else

@@ -1392,6 +1392,7 @@ _lp_set_prompt()
     elif [[ -n "$LP_VCS_TYPES" ]]; then
         case "$LP_VCS_TYPES" in
             git)    LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
+            git-svn)LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
             hg)     LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
             svn)    LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
             fossil) LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;

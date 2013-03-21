@@ -231,6 +231,7 @@ _lp_source_config()
     LP_MARK_STASH=${LP_MARK_STASH:-"+"}
     LP_MARK_BRACKET_OPEN=${LP_MARK_BRACKET_OPEN:-"["}
     LP_MARK_BRACKET_CLOSE=${LP_MARK_BRACKET_CLOSE:-"]"}
+    LP_MARK_SHORTEN_PATH=${LP_MARK_SHORTEN_PATH:-" … "}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -431,7 +432,7 @@ _lp_shorten_path()
         return
     fi
     # the character that will replace the part of the path that is masked
-    local mask=" … "
+    local mask="$LP_MARK_SHORTEN_PATH"
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
     local keep=$((LP_PATH_KEEP-1))
     if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then

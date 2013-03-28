@@ -20,6 +20,7 @@ if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]
     LP_MARK_FOSSIL="⌘"         # prompt mark in fossil repositories
     LP_MARK_UNTRACKED="*"        # if git has untracked files
     LP_MARK_STASH="+"        # if git has stashs
+    LP_MARK_SHORTEN_PATH="…" # prompt mark in shortened paths
 else
     # If charset is anything else, fallback to ASCII chars
     LP_MARK_BATTERY="b"
@@ -32,6 +33,7 @@ else
     LP_MARK_FOSSIL="f"
     LP_MARK_UNTRACKED="*"
     LP_MARK_STASH="+"
+    LP_MARK_SHORTEN_PATH="..."
 fi
 
 # Do not prefix the prompt

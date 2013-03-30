@@ -1,0 +1,11 @@
+Package: liquidprompt
+Version: 1.3-0
+Section: base
+Priority: optional
+Architecture: all
+Depends: bash
+Recommends: acpi
+Suggests: git, screen, tmux
+Maintainer: Julien Pecqueur <jpec@julienpecqueur.net>
+Description: A slick adaptative prompt for Bash and Zsh.
+Homepage: http://github.com/nojhan/liquidprompt

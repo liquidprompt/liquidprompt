@@ -24,7 +24,7 @@
 # AUTHORS #
 ###########
 
-# Alex Prengère     <alex.prengere@amadeus.com>   # untracked git files
+# Alex Prengère     <alexprengere@gmail.com>      # untracked git files
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
 # David Loureiro    <david.loureiro@sysfera.com>  # small portability fix

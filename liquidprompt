@@ -320,7 +320,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
 # Escape the given strings
-# Must be used for all strings that may comes from remote sources, 
+# Must be used for all strings that may comes from remote sources,
 # like VCS branch names
 _lp_escape()
 {
@@ -830,7 +830,7 @@ _lp_hg_branch_color()
                 # Changes to commit and commits to push
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit   
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
             fi
         fi
         echo -ne "$ret"
@@ -964,7 +964,7 @@ _lp_fossil_branch_color()
                 branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
         fi
-        echo $(_lp_escape "$branch")
+        echo -ne $branch # $(_lp_escape "$branch")
     fi
 }
 

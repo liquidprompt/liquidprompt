@@ -153,6 +153,11 @@ directories to keep in the path, precise a value for `PROMPT_DIRTRIM` before
 sourcing liquidprompt and liquidprompt will override this value with one
 fitting the width of your terminal.
 
+You may face performances decrease when using VCS located in remote directories.
+To avoid that, you can set the `LP_DISABLED_VCS_PATH` variable to a list of
+absolute and colon (":") separated paths where VCS-related features will be
+disabled.
+
 
 ## CUSTOMIZING THE PROMPT
 

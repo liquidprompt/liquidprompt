@@ -1151,6 +1151,7 @@ _lp_load_color()
     [[ "$LP_ENABLE_LOAD" != 1 ]] && return
 
     local load
+    local IFS=" \t\n"
     load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
     let "load=${load:-0}/$_lp_CPUNUM"
 

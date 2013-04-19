@@ -227,6 +227,7 @@ _lp_source_config()
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
+    LP_MARK_DEFAULT=${LP_MARK_DEFAULT:-""}
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
     LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
@@ -1252,9 +1253,12 @@ _lp_smart_mark()
     fi
 
     local mark
-    mark="\\\$"
-    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    if [[ -n "$LP_MARK_DEFAULT" ]]; then
+        mark=$LP_MARK_DEFAULT
+    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         mark="%(!.#.%%)"
+    else
+        mark="\\\$"
     fi
     if [[ "$1" == "git" ]]; then
         mark=$LP_MARK_GIT

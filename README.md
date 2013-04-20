@@ -42,7 +42,7 @@ a  red ⌁ if the battery is discharging and under threshold;
 * the average of the batteries remaining power, if it is under the given
 threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
-colormap that became more and more noticeable with increasing load;
+colormap that becomes more and more noticeable with increasing load;
 * the number of detached sessions (`screen` or `tmux`), if there are any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
 and bring it back with `fg`), if there are any;
@@ -63,7 +63,7 @@ preserving the first two directories;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
 (git, mercurial, subversion, bazaar or fossil), in green if everything is up
-to date, in red if there is changes, in yellow if there is pending
+to date, in red if there are changes, in yellow if there are pending
 commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
 changes have been made and the number of pending commits, if any;

@@ -95,6 +95,13 @@ LP_ENABLE_BZR=1
 # Recommended value is 0
 LP_ENABLE_TIME=0
 
+# When showing time, use an analog clock instead of numeric values.
+# The analog clock is "accurate" to the nearest half hour.
+# You must have a unicode-capable terminal and a font with the "CLOCK"
+# characters.
+# Recommended value is 0
+LP_TIME_ANALOG=0
+
 # Use the liquid prompt as the title of the terminal window
 # This may not work properly on exotic terminals, thus the
 # recommended value is 0

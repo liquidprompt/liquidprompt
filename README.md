@@ -28,13 +28,17 @@ in a git repository on a server, at branch "myb":
 
 A liquid prompt displaying everything (a rare event!) may look like this:
 
-`code ⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt]↥ master(+10/-5,3)*+ 125 ± `
+`code 🕤  ⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt][pyenv]↥ master(+10/-5,3)*+ 125 ± `
 
-It displays:
+It (may) displays:
 
-* a green ⌁ if the battery is charging and above a given threshold,
-a yellow ⌁ if the battery is charging and under threshold,
-a red ⌁ if the battery is discharging but above threshold;
+* A tag associated to the current shell session (you can easily add any
+prefix tag to your prompt, by invoking `prompt_tag MYTAG`).
+* The current time, either as numerci values or an analog clock,
+* a green ⏚ if the battery is charging, above the given threshold, but not charged,
+a yellow ⏚ if the battery is charging and under threshold,
+a yellow ⌁ if the battery is discharging but above threshold,
+a  red ⌁ if the battery is discharging and under threshold;
 * the average of the batteries remaining power, if it is under the given
 threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
@@ -66,11 +70,10 @@ changes have been made and the number of pending commits, if any;
 * a yellow plus if there is stashed modifications;
 * a red star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
-* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn, ⌘
-for fossil, $ for simple user, a red # for root;
+* a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn,
+‡± for git-svn, ⌘ for fossil, $ or % for simple user, a red # for root;
 * if you ask for, the liquidprompt will be replicated in your terminal window's
 title (without the colors);
-* you can easily add a prefix tag to your prompt, by invoking `prompt_tag MYTAG`.
 
 You can temporarily deactivate the liquid prompt and come back to your previous
 one by typing `prompt_off`. Use `prompt_on` to bring it back. You can deactivate
@@ -140,6 +143,8 @@ building:
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH in
+* `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
+* `LP_TIME_ANALOG`, when showing time, use an analog clock instead of numeric values
 
 Note that if required commands are not installed, enabling the
 corresponding feature will have no effect.
@@ -298,10 +303,12 @@ version 3.
 
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down
-the display of the liquid prompt.
+the display of the liquid prompt (use `LP_DISABLED_VCS_PATH` to avoid that).
 * Subversion repository cannot display commits to be pushed, this is a
 limitation of the Subversion versionning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256)
+* The analog clock necessitate a unicode-aware terminal and a sufficiently
+complete font.
 

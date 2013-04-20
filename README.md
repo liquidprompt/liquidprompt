@@ -277,6 +277,7 @@ Set to a null string "" if you do not want color.
 ### CHARACTERS
 
 Special characters:
+* `LP_MARK_DEFAULT` (default: "") the mark you want at the end of your prompt (leave to empty for your shell default mark)
 * `LP_MARK_BATTERY` (default: "⌁") in front of the battery charge
 * `LP_MARK_ADAPTER` (default: "⏚") displayed when plugged
 * `LP_MARK_LOAD` (default: "⌂") in front of the load

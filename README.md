@@ -1,16 +1,10 @@
 Liquid prompt -- A useful adaptive prompt for Bash & Zsh
 ========================================================
 
-Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
-Zsh.
-
-The basic idea of the liquid prompt is to nicely display useful informations on
-the shell prompt, only when they are needed. It adds carefuly chosen colors to
-draw your attention on what differs from the normal context. Thus, you will
-notice what changes, when it changes, because you do not become accommodated to
-informations that are always displayed in the same way.
-
-You can use it with either bash and zsh.
+Liquid prompt gives you a nicely displayed prompt with useful information
+when you need it. It shows you what you need when you need it. 
+You will notice what changes, when it changes saving time and frustration. 
+And you can even use it with your favorite shell, Bash or Zsh.
 
 ![Screenshot](https://raw.github.com/nojhan/liquidprompt/master/demo.png)
 
@@ -81,17 +75,33 @@ any prompt and use a single mark sign (`$ ` for user and `# ` for root) with the
 `prompt_OFF` command.
 
 
-## INSTALL
+## TEST RIDE AND INSTALLATION
 
-Include the file in your bash configuration, for example in your `.bashrc`:
+Installation is simple. The basic dependencies are standard available on Unix.
+Please check if they are met if you experience some problems during the installation.
+See the DEPENDENCIES section for what you need.
 
-`source liquidprompt`
+Follow these steps:
 
-Copy the `liquidpromptrc-dist` file in your home directory as
-`~/.config/liquidpromptrc` or `~/.liquidpromptrc` and edit it according to your
-preferences. If you skip this step, the default behaviour will be used.
+`cd ~/`
+`git clone https://github.com/nojhan/liquidprompt.git`
+`source liquidprompt/liquidprompt`
 
-Note that you should not overwrite the `PROMPT_COMMAND` variable, or else the
+To use it everytime you start a shell add the following line to your `.bashrc`.
+
+`source ~/liquidprompt/liquidprompt`
+
+Next up is the configuration, you can skip this step if you already like the defaults:
+
+`cp ~/liquidpromp/liquidpromptrc-dist ~/.config/liquidpromptrc`
+
+You can also copy the file to `~/.liquidpromptrc`.
+Use your favorite text editor to change the defaults. 
+The `liquidpromptrc` file is richly commented and easy to set your own defaults.
+You can even theme liquidprompt and have a custom PS1. This is explained
+in the sections below.
+
+Please do not edit or set the `PROMPT_COMMAND` variable, or else the
 prompt will not be available.
 
 

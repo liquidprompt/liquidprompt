@@ -1318,32 +1318,21 @@ _lp_time_analog()
     #     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
     #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
     #
-    # Those codes may be output with unicode escapes or hexadecimal escapes,
-    # the later being the more portable.
-    #
-    # But we can iterate only over integers.
-    #
-    # We thus need the following conversion table:
-    #       utf   hex   int
-    # hours 50:5B 90:9b 144:155
-    # half  5C:67 9c:a7 156:167
 
-    # The characters being grouped bas plain/thirty, we must first now
-    # if we are close to the 0 or 30 minutes.
-    # Bash using integer arithmetic by default, we do not need rounding.
-    # We thus add 0 (plain hour) or 12 (half).
-    # Then we add 144, which is the first index (as an integer).
-    mi=$((144+12*($min/30)))
+    plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
+    half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
-    # Add the computed minutes index (144 or 156) minus 1 (because the first hour starts at 0).
-    hi=$(($mi+$hour-1))
+    # array index starts at 0
+    hi=$((hour-1))
 
-    # Get the hexadecimal representation of this integer
-    hex=$(printf "%x" $hi)
-
-    # Print the first three bytes (that are always the same) and the computed last one.
-    # Add a space for correct alignement
-    echo -ne "\xf0\x9f\x95\x$hex "
+    # add a space for correct alignment
+    if [[ $min -lt 15 ]] ; then
+        echo -n "${plain[$hi]} "
+    elif [[ $min -lt 45 ]] ; then
+        echo -n "${half[$hi]} "
+    else
+        echo -n "${plain[$((hi+1))]} "
+    fi
 }
 
 _lp_time()

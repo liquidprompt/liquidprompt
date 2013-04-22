@@ -688,7 +688,7 @@ _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
     local gitdir
-    gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    gitdir="$([ $(git ls-files . 2>/dev/null | wc -l) -gt 0 ] && git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || ! $gitdir =~ (.*\/)?\.git.* ]] && return
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
     if [[ $? -ne 0 || -z "$branch" ]] ; then

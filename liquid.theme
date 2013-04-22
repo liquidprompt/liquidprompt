@@ -13,6 +13,7 @@ if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]
     LP_MARK_BATTERY="⌁"     # in front of the battery charge
     LP_MARK_ADAPTER="⏚"     # displayed when plugged
     LP_MARK_LOAD="⌂"        # in front of the load
+    LP_MARK_TEMP="θ"        # in front of the temp
     LP_MARK_PROXY="↥"       # indicate a proxy in use
     LP_MARK_HG="☿"   # prompt mark in hg repositories
     LP_MARK_SVN="‡"  # prompt mark in svn repositories
@@ -26,6 +27,7 @@ else
     LP_MARK_BATTERY="b"
     LP_MARK_ADAPTER="p"
     LP_MARK_LOAD="c"
+    LP_MARK_TEMP="T"
     LP_MARK_PROXY="^"
     LP_MARK_HG="m"
     LP_MARK_SVN="="

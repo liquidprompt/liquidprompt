@@ -322,6 +322,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
+[[ "$LP_ENABLE_TEMP" = 1 ]] && { command -v sensors >/dev/null || LP_ENABLE_TEMP=0 ; }
 
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,

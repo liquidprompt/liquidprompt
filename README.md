@@ -5,7 +5,7 @@ Liquid prompt is a smart prompt for the "Bourne-Again" Unix shell (bash) and for
 Zsh.
 
 The basic idea of the liquid prompt is to nicely display useful informations on
-the shell prompt, only when they are needed. It adds carefuly chosen colors to
+the shell prompt, only when they are needed. It adds carefully chosen colors to
 draw your attention on what differs from the normal context. Thus, you will
 notice what changes, when it changes, because you do not become accommodated to
 informations that are always displayed in the same way.
@@ -21,8 +21,8 @@ to a default prompt:
 
 `[user:~] $ `
 
-If you have ran one command in background that is still running and that you are
-in a git repository on a server, at branch "myb":
+If you are running a command in the background that is still running and you are
+in a git repository on a server, on branch "myb":
 
 `1r [user@server:~/liquidprompt] myb ± `
 
@@ -34,7 +34,7 @@ It (may) displays:
 
 * A tag associated to the current shell session (you can easily add any
 prefix tag to your prompt, by invoking `prompt_tag MYTAG`).
-* The current time, either as numerci values or an analog clock,
+* The current time, either as numeric values or an analog clock,
 * a green ⏚ if the battery is charging, above the given threshold, but not charged,
 a yellow ⏚ if the battery is charging and under threshold,
 a yellow ⌁ if the battery is discharging but above threshold,
@@ -42,7 +42,7 @@ a  red ⌁ if the battery is discharging and under threshold;
 * the average of the batteries remaining power, if it is under the given
 threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
-colormap that became more and more noticeable with increasing load;
+colormap that becomes more and more noticeable with increasing load;
 * the number of detached sessions (`screen` or `tmux`), if there are any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
 and bring it back with `fg`), if there are any;
@@ -54,7 +54,7 @@ terminal multiplexer (`screen` or `tmux`);
 the same as the login user;
 * a green @ if the connection has X11 support, a yellow one if not;
 * the current host, if you are connected via a telnet connection (in bold red)
-or SSH (either a blue hostname or differents colors for different hosts);
+or SSH (either a blue hostname or different colors for different hosts);
 * a green colon if the user has write permissions on the current directory,
 a red one if he has not;
 * the current directory in bold, shortened if it takes too much space, while
@@ -63,7 +63,7 @@ preserving the first two directories;
 * an up arrow if an HTTP proxy is in use;
 * the name of the current branch if you are in a version control repository
 (git, mercurial, subversion, bazaar or fossil), in green if everything is up
-to date, in red if there is changes, in yellow if there is pending
+to date, in red if there are changes, in yellow if there are pending
 commits to push;
 * the number of added/deleted lines (git) or files (fossil), if
 changes have been made and the number of pending commits, if any;

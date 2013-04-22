@@ -297,6 +297,7 @@ Special characters:
 * `LP_MARK_GIT` (default: "±") prompt mark in git repositories
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_BZR` (default: "⚯") prompt mark in bazaar repositories
+* `LP_MARK_DISABLED` (default: "⌀") prompt mark in disabled repositories (see `LP_DISABLED_VCS_PATH`)
 * `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
 * `LP_MARK_STASH` (default: "+") if git has stashed modifications
 * `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt

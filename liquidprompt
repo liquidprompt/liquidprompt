@@ -322,7 +322,6 @@ unset _lp_source_config
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
-[[ "$LP_ENABLE_TEMP" = 1 ]] && { command -v sensors >/dev/null || LP_ENABLE_TEMP=0 ; }
 
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
@@ -1138,11 +1137,6 @@ _lp_battery_color()
     fi # ret
 }
 
-
-###############
-# System load #
-###############
-
 _lp_color_map() {
     if   [[ $1 -ge 0   ]] && [[ $1 -lt 20  ]] ; then
         echo -ne "${LP_COLORMAP_0}"
@@ -1168,6 +1162,10 @@ _lp_color_map() {
         echo -ne "${LP_COLORMAP_0}"
     fi
 }
+
+###############
+# System load #
+###############
 
 # Compute a gradient of background/forground colors depending on the battery status
 _lp_load_color()
@@ -1201,9 +1199,12 @@ _lp_load_color()
     fi
 }
 
-_lp_temperature() {
-    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
+######################
+# System temperature #
+######################
 
+_lp_temp_sensors() {
+    # Return the average system temperature we get through the sensors command
     local count=0
     local temperature=0
     for i in $(sensors | grep -E "^(Core|temp)" |
@@ -1211,12 +1212,31 @@ _lp_temperature() {
         temperature=$(($temperature+$i))
         count=$(($count+1))
     done
-    temperature=$(($temperature/$count))
+    echo -ne "$(($temperature/$count))"
+}
+
+# Will set _lp_temp_function so the temperature monitoring feature use an
+# available command. _lp_temp_function should return only a numeric value
+if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
+    if command -v sensors >/dev/null; then
+        _lp_temp_function=_lp_temp_sensors
+    # elif command -v the_command_you_want_to_use; then
+    #   _lp_temp_function=your_function
+    else
+        LP_ENABLE_TEMP=0
+    fi
+fi
+
+_lp_temperature() {
+    # Will display the numeric value as we got it through the _lp_temp_function
+    # and colorize it through _lp_color_map.
+    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
+
+    temperature=$($_lp_temp_function)
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
         echo -ne "$(_lp_color_map $temperature)${LP_MARK_TEMP}$temperature°${NO_COL}"
     fi
 }
-
 
 ##########
 # DESIGN #

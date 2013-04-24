@@ -722,41 +722,28 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
-        local has_untracked
-        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
-        if [[ -z "$has_untracked" ]] ; then
-            has_untracked=""
-        else
-            has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
+        local end="$NO_COL"
+        if git status 2>/dev/null | grep -q '\(# Untracked\)'; then
+            end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
-        local has_stash
-        has_stash=$(git stash list 2>/dev/null)
-        if [[ -z "$has_stash" ]] ; then
-            has_stash=""
-        else
-            has_stash="$LP_COLOR_COMMITS$LP_MARK_STASH"
+        if [[ -n "$(git stash list 2>/dev/null)" ]]; then
+            end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
         fi
 
         local remote
         remote="$(git config --get branch.${branch}.remote 2>/dev/null)"
-        # if git has no upstream, use origin
-        if [[ -z "$remote" ]]; then
-            remote="origin"
-        fi
-        local remote_branch
-        remote_branch="$(git config --get branch.${branch}.merge 2>/dev/null)"
-        # without any remote branch, use the same name
-        if [[ -z "$remote_branch" ]]; then
-            remote_branch="$branch"
-        fi
 
         local has_commit
         has_commit=0
-        if [[ -n "$remote" && -n "$remote_branch" ]] ; then
-            has_commit=$(git rev-list --no-merges --count $remote/${remote_branch}..${branch} 2>/dev/null)
-            if [[ -z "$has_commit" ]] ; then
-                has_commit=0
+        if [[ -n "$remote" ]] ; then
+            local remote_branch
+            remote_branch="$(git config --get branch.${branch}.merge)"
+            if [[ -n "$remote_branch" ]] ; then
+                has_commit=$(git rev-list --no-merges --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)
+                if [[ -z "$has_commit" ]] ; then
+                    has_commit=0
+                fi
             fi
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
@@ -764,16 +751,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${end}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_stash}${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${end}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${end}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_stash}${has_untracked}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${end}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"

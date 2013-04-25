@@ -460,14 +460,6 @@ _lp_proxy()
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 || -n "$PROMPT_DIRTRIM" ]] ; then
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-            echo "\\w"
-        else
-            echo "$(print -P "%~")"
-        fi
-        return
-    fi
     # the character that will replace the part of the path that is masked
     local mask="$LP_MARK_SHORTEN_PATH"
     # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
@@ -544,11 +536,7 @@ _lp_shorten_path()
             echo "$p"
         fi
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        if [[ "$len" -gt "$max_len" ]]; then
-            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
-        else
-            echo "%~"
-        fi
+        echo "${PWD/$HOME/~}"
     fi
 }
 

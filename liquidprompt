@@ -545,9 +545,9 @@ _lp_shorten_path()
         fi
     elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
         if [[ "$len" -gt "$max_len" ]]; then
-            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+            print -P "%-${keep}~%${max_len}<${mask}<%~%<<"
         else
-            echo "%~"
+            print -P "%~"
         fi
     fi
 }

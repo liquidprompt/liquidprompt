@@ -47,7 +47,7 @@ LP_PS1_PREFIX=""
 # Set to a null string "" if you do not want color.
 
 # Current working directory
-LP_COLOR_PATH="$BOLD_WHITE"         # as normal user
+LP_COLOR_PATH="$BOLD"         # as normal user
 LP_COLOR_PATH_ROOT="$BOLD_YELLOW"   # as root
 
 # Color of the proxy mark
@@ -62,7 +62,7 @@ LP_COLOR_JOB_Z="$BOLD_YELLOW"   # Sleeping (Ctrl-Z)
 LP_COLOR_ERR="$PURPLE"
 
 # Prompt mark
-LP_COLOR_MARK="$BOLD_WHITE"     # as user
+LP_COLOR_MARK="$BOLD"     # as user
 LP_COLOR_MARK_ROOT="$BOLD_RED"  # as root
 
 # Current user

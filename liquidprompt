@@ -203,6 +203,7 @@ _lp_source_config()
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
+    LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
     LP_TITLE_CLOSE=${LP_TITLE_CLOSE:-"\a"}
     LP_SCREEN_TITLE_OPEN=${LP_SCREEN_TITLE_OPEN:-"\033k"}
@@ -1483,7 +1484,7 @@ _lp_set_prompt()
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
-        PS1="${PS1}${LP_ERR}${LP_MARK}"
+        PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

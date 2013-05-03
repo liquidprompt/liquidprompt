@@ -176,12 +176,17 @@ disabled.
 
 ## CUSTOMIZING THE PROMPT
 
-### ADD A PS1 PREFIX
+### ADD A PREFIX/POSTFIX
 
 You can prefix the `LP_PS1` variable with anything you want using the
 `LP_PS1_PREFIX`. The following example activate a custom window's title:
 
     LP_PS1_PREFIX="\[\e]0;\u@\h: \w\a\]"
+
+To postfix the prompt, use the `LP_PS1_POSTFIX` variable. For example, to add a
+newline and a single character:
+
+    LP_PS1_POSTFIX="\n>"
 
 Note: the `prompt_tag` function is  convenient way to add a prefix. You can thus add
 a keyword to your different terminals:

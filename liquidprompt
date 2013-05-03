@@ -39,7 +39,7 @@
 # Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
 # Nicolas Lacourte  <nicolas@dotinfra.fr>         # screen title
 # nojhan            <nojhan@gmail.com>            # Main author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations on host parsing
+# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations and refactorings everywhere.
 # Poil              <poil@quake.fr>               # speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.

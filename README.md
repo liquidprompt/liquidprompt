@@ -224,7 +224,8 @@ Available features:
 * `LP_VCS` informations concerning the current working repository
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
-* `LP_TITLE` the prompt as a window's title escaped sequence
+* `LP_TITLE` the prompt as a window's title escaped sequences
+* `LP_BRACKET_OPEN` and `LP_BRACKET_CLOSE`, brackets enclosing the user+path part
 
 For example, if you just want to have a liquidprompt displaying the user and the
 host, with a normal full path in blue and only the git support:

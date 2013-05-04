@@ -711,7 +711,7 @@ _lp_git_branch_color()
 
     local branch
     branch=$(_lp_git_branch)
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
 
         local GD
         git diff --quiet >/dev/null 2>&1
@@ -803,7 +803,7 @@ _lp_hg_branch_color()
     local branch
     local ret
     branch=$(_lp_hg_branch)
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
 
         local has_untracked
         has_untracked=$(hg status 2>/dev/null | grep '\(^\?\)' | wc -l)
@@ -921,7 +921,7 @@ _lp_fossil_branch_color()
     local branch
     branch=$(_lp_fossil_branch)
 
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
         local C2E # Modified files (added or edited)
         local C2D # Deleted files
         local C2A # Extras files
@@ -1000,7 +1000,7 @@ _lp_bzr_branch_color()
     local revno=${tuple[1]}
     local clean=${tuple[2]}
 
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
         if [[ "$clean" -eq 0 ]] ; then
             ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else

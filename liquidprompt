@@ -647,9 +647,7 @@ _lp_jobcount_color()
 # Tells if we are running in a terminal multiplexer
 _lp_in_multiplexer()
 {
-    if [[ "$TERM" == screen* ]] ; then
-        echo -ne "in_multiplexer"
-    fi
+    [[ "$TERM" == screen* ]]
 }
 
 
@@ -1377,7 +1375,7 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    if [[ ! -z "$(_lp_in_multiplexer)" ]] ; then
+    if _lp_in_multiplexer ; then
         LP_MARK_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
         LP_MARK_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     fi

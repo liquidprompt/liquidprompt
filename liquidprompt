@@ -1354,10 +1354,10 @@ _lp_time_analog()
 {
     # get the date as "hours(12) minutes" in a single call
     # make a bash array with it
-    d=( $(date "+%I %M") )
+    local d=( $(date "+%I %M") )
     # separate hours and minutes
-    hour=${d[0]#0} # no leading 0
-    min=${d[1]#0}
+    local -i hour=${d[0]#0} # no leading 0
+    local -i min=${d[1]#0}
 
     # The targeted unicode characters are the "CLOCK FACE" ones
     # They are located in the codepages between:
@@ -1365,19 +1365,19 @@ _lp_time_analog()
     #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
     #
 
-    plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
-    half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
+    local plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
+    local half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
     # array index starts at 0
-    hi=$((hour-1))
+    local -i hi=hour-1
 
     # add a space for correct alignment
-    if [[ $min -lt 15 ]] ; then
-        echo -n "${plain[$hi]} "
-    elif [[ $min -lt 45 ]] ; then
-        echo -n "${half[$hi]} "
+    if (( min < 15 )) ; then
+        echo -n "${plain[hi]} "
+    elif (( min < 45 )) ; then
+        echo -n "${half[hi]} "
     else
-        echo -n "${plain[$((hi+1))]} "
+        echo -n "${plain[hi+1]} "
     fi
 }
 
@@ -1387,7 +1387,9 @@ _lp_time()
     if [[ "$LP_TIME_ANALOG" != 1 ]]; then
         echo -ne "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
-        echo -ne "${LP_COLOR_TIME}$(_lp_time_analog)${NO_COL}"
+        echo -ne "${LP_COLOR_TIME}"
+        _lp_time_analog
+        echo -ne "${NO_COL}"
     fi
 }
 

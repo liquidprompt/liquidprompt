@@ -326,6 +326,15 @@ unset _lp_source_config
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
+# If we are running in a terminal multiplexer, brackets are colored
+if [[ "$TERM" == screen* ]]; then
+    LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+    LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+else
+    LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
+    LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
+fi
+
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
 # like VCS branch names
@@ -640,15 +649,6 @@ _lp_jobcount_color()
     fi
 
     echo -ne "$ret"
-}
-
-
-# Tells if we are running in a terminal multiplexer
-_lp_in_multiplexer()
-{
-    if [[ "$TERM" == screen* ]] ; then
-        echo -ne "in_multiplexer"
-    fi
 }
 
 
@@ -1419,13 +1419,6 @@ _lp_set_prompt()
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    if [[ ! -z "$(_lp_in_multiplexer)" ]] ; then
-        LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
-        LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
-    else
-        LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
-        LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
-    fi
     LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left

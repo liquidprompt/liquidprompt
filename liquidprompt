@@ -1247,7 +1247,11 @@ _lp_temperature() {
 _lp_as_text()
 {
     # Remove colors from the computed prompt
-    local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+    case "$LP_OS" in
+        Linux|FreeBSD|SunOS)  local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+        Darwin) local pst=$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+    esac
+
 
     # Remove escape sequences
     # FIXME check the zsh compatibility

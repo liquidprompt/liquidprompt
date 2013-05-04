@@ -40,7 +40,7 @@
 # Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
 # Nicolas Lacourte  <nicolas@dotinfra.fr>         # screen title
 # nojhan            <nojhan@gmail.com>            # Main author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations on host parsing
+# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations and refactorings everywhere.
 # Poil              <poil@quake.fr>               # speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
@@ -442,11 +442,7 @@ esac
 # put an arrow if an http proxy is set
 _lp_proxy()
 {
-    [[ "$LP_ENABLE_PROXY" != 1 ]] && return
-
-    if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
-    fi
+    [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]] && echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
 }
 
 # BASH/ZSH function that shortens

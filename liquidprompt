@@ -1508,7 +1508,7 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}${LP_TEMP}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host and permissions colon
         PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 

@@ -1235,7 +1235,7 @@ _lp_temperature() {
 
     temperature=$($_lp_temp_function)
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
-        echo -ne "$(_lp_color_map $temperature)${LP_MARK_TEMP}$temperature°${NO_COL}"
+        echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature)$temperature°${NO_COL}"
     fi
 }
 

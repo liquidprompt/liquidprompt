@@ -61,7 +61,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
-    _LP_TIME_SYMBOL="\\\\t"
+    _LP_TIME_SYMBOL="\t"
 elif test -n "$ZSH_VERSION" ; then
     _LP_WORKING_SHELL=zsh
     _LP_OPEN_ESC="%{"
@@ -1385,11 +1385,11 @@ _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
     if [[ "$LP_TIME_ANALOG" != 1 ]]; then
-        echo -ne "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
-        echo -ne "${LP_COLOR_TIME}"
+        echo -n "${LP_COLOR_TIME}"
         _lp_time_analog
-        echo -ne "${NO_COL}"
+        echo -n "${NO_COL}"
     fi
 }
 

@@ -37,6 +37,8 @@ a  red ⌁ if the battery is discharging and under threshold;
 threshold, with a colormap, going more and more red with decreasing power;
 * the average of the processors load, if it is over a given limit, with a
 colormap that becomes more and more noticeable with increasing load;
+* the average temperature of the available sensors in the system (generally CPU
+and MB);
 * the number of detached sessions (`screen` or `tmux`), if there are any;
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
 and bring it back with `fg`), if there are any;
@@ -112,8 +114,9 @@ not install them, the corresponding feature will not be available, but you will
 see no error.
 
 * battery status needs `acpi`.
+* temperature status needs `lm-sensors`.
 * detached sessions is looking for `screen` and/or `tmux`.
-* VCS support features needs… `git`, `hg` or `svn`, but you knew it.
+* VCS support features needs… `git`, `hg`, `svn` or `fossil`, but you knew it.
 
 For other features, the script uses commands that should be available on a large
 variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
@@ -126,6 +129,7 @@ You can configure some variables in the `~/.liquidpromptrc` file:
 * `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is
 displayed
 * `LP_LOAD_THRESHOLD`, the minimal value after which the load average is
+* `LP_TEMP_THRESHOLD`, the minimal value after which the temperature average is
 displayed
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display
 the path
@@ -210,6 +214,7 @@ theme colors.
 Available features:
 * `LP_BATT` battery
 * `LP_LOAD` load
+* `LP_TEMP` temperature
 * `LP_JOBS` detached screen or tmux sessions/running jobs/suspended jobs
 * `LP_USER` user
 * `LP_HOST` hostname

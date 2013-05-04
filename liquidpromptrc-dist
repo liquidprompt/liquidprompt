@@ -20,6 +20,10 @@ LP_BATTERY_THRESHOLD=75
 # Recommended value is 60
 LP_LOAD_THRESHOLD=60
 
+# Minimal value after which the temperature is displayed (in celsius degrees)
+# Recommended value is 60
+LP_TEMP_THRESHOLD=60
+
 # The maximum percentage of the screen width used to display the path
 # Recommended value is 35
 LP_PATH_LENGTH=35
@@ -98,6 +102,9 @@ LP_ENABLE_TIME=0
 # Display the virtualenv that is currently activated, if any
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
+
+# Show average system temperature
+LP_ENABLE_TEMP=1
 
 # When showing time, use an analog clock instead of numeric values.
 # The analog clock is "accurate" to the nearest half hour.

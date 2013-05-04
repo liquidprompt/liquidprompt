@@ -197,6 +197,7 @@ _lp_source_config()
     # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
+    LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
@@ -213,6 +214,7 @@ _lp_source_config()
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+    LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
@@ -233,6 +235,7 @@ _lp_source_config()
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
     LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
+    LP_MARK_TEMP=${LP_MARK_TEMP:-"θ"}
     LP_MARK_PROXY=${LP_MARK_PROXY:-"↥"}
     LP_MARK_HG=${LP_MARK_HG:-"☿"}
     LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
@@ -1135,6 +1138,31 @@ _lp_battery_color()
     fi # ret
 }
 
+_lp_color_map() {
+    if   [[ $1 -ge 0   ]] && [[ $1 -lt 20  ]] ; then
+        echo -ne "${LP_COLORMAP_0}"
+    elif [[ $1 -ge 20  ]] && [[ $1 -lt 40  ]] ; then
+        echo -ne "${LP_COLORMAP_1}"
+    elif [[ $1 -ge 40  ]] && [[ $1 -lt 60  ]] ; then
+        echo -ne "${LP_COLORMAP_2}"
+    elif [[ $1 -ge 60  ]] && [[ $1 -lt 80  ]] ; then
+        echo -ne "${LP_COLORMAP_3}"
+    elif [[ $1 -ge 80  ]] && [[ $1 -lt 100 ]] ; then
+        echo -ne "${LP_COLORMAP_4}"
+    elif [[ $1 -ge 100 ]] && [[ $1 -lt 120 ]] ; then
+        echo -ne "${LP_COLORMAP_5}"
+    elif [[ $1 -ge 120 ]] && [[ $1 -lt 140 ]] ; then
+        echo -ne "${LP_COLORMAP_6}"
+    elif [[ $1 -ge 140 ]] && [[ $1 -lt 160 ]] ; then
+        echo -ne "${LP_COLORMAP_7}"
+    elif [[ $1 -ge 160 ]] && [[ $1 -lt 180 ]] ; then
+        echo -ne "${LP_COLORMAP_8}"
+    elif [[ $1 -ge 180 ]] ; then
+        echo -ne "${LP_COLORMAP_9}"
+    else
+        echo -ne "${LP_COLORMAP_0}"
+    fi
+}
 
 ###############
 # System load #
@@ -1159,32 +1187,7 @@ _lp_load_color()
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
-        local ret
-        ret=""
-        if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
-            ret="${ret}${LP_COLORMAP_0}"
-        elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
-            ret="${ret}${LP_COLORMAP_1}"
-        elif [[ $load -ge 40  ]] && [[ $load -lt 60  ]] ; then
-            ret="${ret}${LP_COLORMAP_2}"
-        elif [[ $load -ge 60  ]] && [[ $load -lt 80  ]] ; then
-            ret="${ret}${LP_COLORMAP_3}"
-        elif [[ $load -ge 80  ]] && [[ $load -lt 100 ]] ; then
-            ret="${ret}${LP_COLORMAP_4}"
-        elif [[ $load -ge 100 ]] && [[ $load -lt 120 ]] ; then
-            ret="${ret}${LP_COLORMAP_5}"
-        elif [[ $load -ge 120 ]] && [[ $load -lt 140 ]] ; then
-            ret="${ret}${LP_COLORMAP_6}"
-        elif [[ $load -ge 140 ]] && [[ $load -lt 160 ]] ; then
-            ret="${ret}${LP_COLORMAP_7}"
-        elif [[ $load -ge 160 ]] && [[ $load -lt 180 ]] ; then
-            ret="${ret}${LP_COLORMAP_8}"
-        elif [[ $load -ge 180 ]] ; then
-            ret="${ret}${LP_COLORMAP_9}"
-        else
-            ret="${ret}${LP_COLORMAP_0}"
-        fi
-        ret="$ret${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load) ${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
             if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
@@ -1197,6 +1200,44 @@ _lp_load_color()
     fi
 }
 
+######################
+# System temperature #
+######################
+
+_lp_temp_sensors() {
+    # Return the average system temperature we get through the sensors command
+    local count=0
+    local temperature=0
+    for i in $(sensors | grep -E "^(Core|temp)" |
+            sed -r "s/.*: *\+([0-9]*)\..°.*/\1/g"); do
+        temperature=$(($temperature+$i))
+        count=$(($count+1))
+    done
+    echo -ne "$(($temperature/$count))"
+}
+
+# Will set _lp_temp_function so the temperature monitoring feature use an
+# available command. _lp_temp_function should return only a numeric value
+if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
+    if command -v sensors >/dev/null; then
+        _lp_temp_function=_lp_temp_sensors
+    # elif command -v the_command_you_want_to_use; then
+    #   _lp_temp_function=your_function
+    else
+        LP_ENABLE_TEMP=0
+    fi
+fi
+
+_lp_temperature() {
+    # Will display the numeric value as we got it through the _lp_temp_function
+    # and colorize it through _lp_color_map.
+    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
+
+    temperature=$($_lp_temp_function)
+    if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
+        echo -ne "$(_lp_color_map $temperature)${LP_MARK_TEMP}$temperature°${NO_COL}"
+    fi
+}
 
 ##########
 # DESIGN #
@@ -1370,6 +1411,7 @@ _lp_set_prompt()
 
     # left of main prompt: space at right
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
+    LP_TEMP=$(_lp_sr "$(_lp_temperature)")
     LP_LOAD=$(_lp_sr "$(_lp_load_color)")
     LP_BATT=$(_lp_sr "$(_lp_battery_color)")
     LP_TIME=$(_lp_sr "$(_lp_time)")
@@ -1466,7 +1508,7 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}${LP_TEMP}"
         # add user, host and permissions colon
         PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 

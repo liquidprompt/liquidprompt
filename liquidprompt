@@ -56,14 +56,16 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     fi
     unset bash bmajor bminor
 
-    _LP_WORKING_SHELL=bash
+    _LP_SHELL_bash=true
+    _LP_SHELL_zsh=false
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
 elif test -n "$ZSH_VERSION" ; then
-    _LP_WORKING_SHELL=zsh
+    _LP_SHELL_bash=false
+    _LP_SHELL_zsh=true
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
@@ -472,7 +474,7 @@ _lp_proxy()
 _lp_shorten_path()
 {
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 || -n "$PROMPT_DIRTRIM" ]] ; then
-        if [[ "$_LP_WORKING_SHELL" == bash ]]; then
+        if $_LP_SHELL_bash; then
             echo "\\w"
         else
             print -P '%~'
@@ -484,7 +486,7 @@ _lp_shorten_path()
     local -i len=${#p}
     local -i max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
 
-    if [[ "$_LP_WORKING_SHELL" == bash ]]; then
+    if $_LP_SHELL_bash; then
         if (( len > max_len ))
         then
             # index of the directory to keep from the root
@@ -552,7 +554,7 @@ _lp_shorten_path()
         else
             echo "$p"
         fi
-    else # [[ "$_LP_WORKING_SHELL" == zsh ]]
+    else # zsh
         if (( len > max_len )); then
             print -P "%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
         else
@@ -1126,9 +1128,9 @@ _lp_battery_color()
                 ret="${ret}${LP_COLORMAP_0}"
             fi
 
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+            if $_LP_SHELL_bash; then
                 ret="${ret}${bat}%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+            else # zsh
                 ret="${ret}${bat}%%"
             fi
         fi # LP_PERCENTS_ALWAYS
@@ -1188,9 +1190,9 @@ _lp_load_color()
         local ret="$(_lp_color_map $load) ${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+            if $_LP_SHELL_bash; then
                 ret="${ret}$load%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+            else # zsh
                 ret="${ret}$load%%"
             fi
         fi
@@ -1299,7 +1301,7 @@ _lp_smart_mark()
     local mark
     if [[ -n "$LP_MARK_DEFAULT" ]]; then
         mark=$LP_MARK_DEFAULT
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    elif $_LP_SHELL_zsh; then
         mark="%(!.#.%%)"
     else
         mark="\\\$"
@@ -1545,15 +1547,15 @@ prompt_on()
     # if liquidprompt has not been already set
     if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
         LP_OLD_PS1="$PS1"
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
-        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+        else # zsh
             LP_OLD_PROMPT_COMMAND="$precmd"
         fi
     fi
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=_lp_set_prompt
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         function precmd {
             _lp_set_prompt
         }
@@ -1568,9 +1570,9 @@ prompt_on()
 prompt_off()
 {
     PS1=$LP_OLD_PS1
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }
@@ -1579,9 +1581,9 @@ prompt_off()
 prompt_OFF()
 {
     PS1="\$ "
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }

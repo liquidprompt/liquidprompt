@@ -476,7 +476,7 @@ _lp_shorten_path()
        keep=$LP_PATH_KEEP
     fi
 
-    local p="${PWD/$HOME/~}"
+    local p="${PWD/#$HOME/~}"
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))

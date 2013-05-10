@@ -996,6 +996,7 @@ _lp_bzr_branch_color()
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
     local output
     output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    [[ $? -ne 0 ]] && return
     local tuple=($output)
     local branch=${tuple[0]}
     local revno=${tuple[1]}

@@ -1014,7 +1014,7 @@ _lp_bzr_branch_color()
 # returns 4 if no battery support
 _lp_battery()
 {
-    [[ "$LP_ENABLE_BATT" != 1 ]] && return
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
     # Extract the battery load value in percent

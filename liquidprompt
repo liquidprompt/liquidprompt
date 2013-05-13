@@ -26,6 +26,7 @@
 
 # Alex Prengère     <alexprengere@gmail.com>      # untracked git files
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
+# Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
 # David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
 # Étienne Deparis   <etienne.deparis@umaneti.net> # Fossil support
@@ -39,7 +40,7 @@
 # Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
 # Nicolas Lacourte  <nicolas@dotinfra.fr>         # screen title
 # nojhan            <nojhan@gmail.com>            # Main author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations on host parsing
+# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations and refactorings everywhere.
 # Poil              <poil@quake.fr>               # speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
@@ -55,14 +56,16 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     fi
     unset bash bmajor bminor
 
-    _LP_WORKING_SHELL=bash
+    _LP_SHELL_bash=true
+    _LP_SHELL_zsh=false
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
-    _LP_TIME_SYMBOL="\\\\t"
+    _LP_TIME_SYMBOL="\t"
 elif test -n "$ZSH_VERSION" ; then
-    _LP_WORKING_SHELL=zsh
+    _LP_SHELL_bash=false
+    _LP_SHELL_zsh=true
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
@@ -196,6 +199,7 @@ _lp_source_config()
     # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
+    LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
@@ -203,6 +207,7 @@ _lp_source_config()
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
+    LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
     LP_TITLE_CLOSE=${LP_TITLE_CLOSE:-"\a"}
     LP_SCREEN_TITLE_OPEN=${LP_SCREEN_TITLE_OPEN:-"\033k"}
@@ -211,6 +216,7 @@ _lp_source_config()
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+    LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
@@ -231,26 +237,28 @@ _lp_source_config()
     LP_MARK_BATTERY=${LP_MARK_BATTERY:-"⌁"}
     LP_MARK_ADAPTER=${LP_MARK_ADAPTER:-"⏚"}
     LP_MARK_LOAD=${LP_MARK_LOAD:-"⌂"}
+    LP_MARK_TEMP=${LP_MARK_TEMP:-"θ"}
     LP_MARK_PROXY=${LP_MARK_PROXY:-"↥"}
     LP_MARK_HG=${LP_MARK_HG:-"☿"}
     LP_MARK_SVN=${LP_MARK_SVN:-"‡"}
     LP_MARK_GIT=${LP_MARK_GIT:-"±"}
     LP_MARK_FOSSIL=${LP_MARK_FOSSIL:-"⌘"}
     LP_MARK_BZR=${LP_MARK_BZR:-"⚯"}
+    LP_MARK_DISABLED=${LP_MARK_DISABLED:-"⌀"}
     LP_MARK_UNTRACKED=${LP_MARK_UNTRACKED:-"*"}
     LP_MARK_STASH=${LP_MARK_STASH:-"+"}
     LP_MARK_BRACKET_OPEN=${LP_MARK_BRACKET_OPEN:-"["}
     LP_MARK_BRACKET_CLOSE=${LP_MARK_BRACKET_CLOSE:-"]"}
     LP_MARK_SHORTEN_PATH=${LP_MARK_SHORTEN_PATH:-" … "}
 
-    LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD_WHITE}
+    LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
     LP_COLOR_PROXY=${LP_COLOR_PROXY:-$BOLD_BLUE}
     LP_COLOR_JOB_D=${LP_COLOR_JOB_D:-$YELLOW}
     LP_COLOR_JOB_R=${LP_COLOR_JOB_R:-$BOLD_YELLOW}
     LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
     LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
-    LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD_WHITE}
+    LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD}
     LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
     LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-""}
     LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
@@ -320,6 +328,15 @@ unset _lp_source_config
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
+# If we are running in a terminal multiplexer, brackets are colored
+if [[ "$TERM" == screen* ]]; then
+    LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+    LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+else
+    LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
+    LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
+fi
+
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
 # like VCS branch names
@@ -336,7 +353,7 @@ _lp_escape()
 # Yellow for root, bold if the user is not the login one, else no color.
 if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
     # if user is not login user
-    if [[ ${USER} != "$(logname 2>/dev/null)" ]]; then
+    if [[ ${USER} != "$(logname 2>/dev/null || echo $LOGNAME)" ]]; then
         LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
     else
         if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
@@ -361,7 +378,7 @@ _lp_connection()
     else
         # TODO check on *BSD
         local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
-        local sess_parent=$(ps -o comm= -p $PPID)
+        local sess_parent=$(ps -o comm= -p $PPID 2> /dev/null)
         if [[ -z "$sess_src" || "$sess_src" = ":"* ]] ; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]] ; then
@@ -439,11 +456,7 @@ esac
 # put an arrow if an http proxy is set
 _lp_proxy()
 {
-    [[ "$LP_ENABLE_PROXY" != 1 ]] && return
-
-    if [[ ! -z "$http_proxy" ]] ; then
-        echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
-    fi
+    [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]] && echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
 }
 
 # BASH/ZSH function that shortens
@@ -461,42 +474,40 @@ _lp_proxy()
 _lp_shorten_path()
 {
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 || -n "$PROMPT_DIRTRIM" ]] ; then
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        if $_LP_SHELL_bash; then
             echo "\\w"
         else
-            echo "$(print -P "%~")"
+            print -P '%~'
         fi
         return
     fi
-    # the character that will replace the part of the path that is masked
-    local mask="$LP_MARK_SHORTEN_PATH"
-    # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
-    local keep=$((LP_PATH_KEEP-1))
-    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-       keep=$LP_PATH_KEEP
-    fi
 
     local p="${PWD/$HOME/~}"
-    local len="${#p}"
+    local -i len=${#p}
+    local -i max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
 
-    local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
-    local mask_len="${#mask}"
-    local slashes=0
-
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        if [[ "$len" -gt "$max_len" ]]
+    if $_LP_SHELL_bash; then
+        if (( len > max_len ))
         then
+            # index of the directory to keep from the root
+            # (starts at 0 whith bash, 1 with zsh)
+            local -i keep=LP_PATH_KEEP-1
+            # the character that will replace the part of the path that is
+            # masked
+            local mask="$LP_MARK_SHORTEN_PATH"
+            local -i mask_len=${#mask}
             # finds all the '/' in
             # the path and stores their
             # positions
             #
             local pos=()
+            local -i slashes=0
             for ((i=0;i<len;i++))
             do
-                if [[ "${p:i:1}" == "/" ]]
+                if [[ "${p:i:1}" == / ]]
                 then
                     pos=(${pos[@]} $i)
-                    slashes=$((${slashes}+1))
+                    let slashes++
                 fi
             done
             pos=(${pos[@]} $len)
@@ -505,49 +516,49 @@ _lp_shorten_path()
             # left-most that doesn't break the
             # length limit
             #
-            local i=$keep
-            if [[ $keep > $slashes ]] ; then
-                i=$slashes
+            local -i i=keep
+            if (( keep > slashes )) ; then
+                i=slashes
             fi
-            while [[ "$((len-pos[i]))" -gt "$((max_len-mask_len))" ]]
+            while (( len-pos[i] > max_len-mask_len ))
             do
-                i=$((i+1))
+                let i++
             done
 
             # let us check if it's OK to
             # print the whole thing
             #
-            if [[ "${pos[i]}" -eq "0" ]]
+            if (( pos[i] == 0 ))
             then
                 # the path is shorter than
                 # the maximum allowed length,
-                # so no need for ...
+                # so no need for '…'
                 #
                 echo "$p"
 
-            elif [[ "${pos[i]}" = "$len" ]]
+            elif (( pos[i] == len ))
             then
                 # constraints are broken because
                 # the maximum allowed size is smaller
                 # than the last part of the path, plus
                 # ' … '
                 #
-                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:((len-max_len+mask_len))}"
+                echo "${p:0:pos[keep]+1}${mask}${p:len-max_len+mask_len}"
             else
                 # constraints are satisfied, at least
                 # some parts of the path, plus ' … ', are
                 # shorter than the maximum allowed size
                 #
-                echo "${p:0:((${pos[${keep}]}+1))}${mask}${p:pos[i]}"
+                echo "${p:0:pos[keep]+1}${mask}${p:pos[i]}"
             fi
         else
             echo "$p"
         fi
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        if [[ "$len" -gt "$max_len" ]]; then
-            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
+    else # zsh
+        if (( len > max_len )); then
+            print -P "%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
         else
-            echo "%~"
+            print -P '%~'
         fi
     fi
 }
@@ -597,7 +608,9 @@ _lp_permissions_color()
 _lp_virtualenv()
 {
     [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
-    [[ -n "$VIRTUAL_ENV" ]] && echo "[$(basename $VIRTUAL_ENV)]"
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "[${LP_COLOR_VIRTUALENV}$(basename $VIRTUAL_ENV)${NO_COL}]"
+    fi
 }
 
 
@@ -641,15 +654,6 @@ _lp_jobcount_color()
 }
 
 
-# Tells if we are running in a terminal multiplexer
-_lp_in_multiplexer()
-{
-    if [[ "$TERM" == screen* ]] ; then
-        echo -ne "in_multiplexer"
-    fi
-}
-
-
 # Display the return value of the last command, if different from zero
 _lp_return_value()
 {
@@ -685,7 +689,7 @@ _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
     local gitdir
-    gitdir="$(git rev-parse --git-dir 2>/dev/null)"
+    gitdir="$([ $(git ls-files . 2>/dev/null | wc -l) -gt 0 ] && git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || ! $gitdir =~ (.*\/)?\.git.* ]] && return
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
     if [[ $? -ne 0 || -z "$branch" ]] ; then
@@ -709,7 +713,7 @@ _lp_git_branch_color()
 
     local branch
     branch=$(_lp_git_branch)
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
 
         local GD
         git diff --quiet >/dev/null 2>&1
@@ -719,41 +723,28 @@ _lp_git_branch_color()
         git diff --cached --quiet >/dev/null 2>&1
         GDC=$?
 
-        local has_untracked
-        has_untracked=$(git status 2>/dev/null | grep '\(# Untracked\)')
-        if [[ -z "$has_untracked" ]] ; then
-            has_untracked=""
-        else
-            has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
+        local end="$NO_COL"
+        if git status 2>/dev/null | grep -q '\(# Untracked\)'; then
+            end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
-        local has_stash
-        has_stash=$(git stash list 2>/dev/null)
-        if [[ -z "$has_stash" ]] ; then
-            has_stash=""
-        else
-            has_stash="$LP_COLOR_COMMITS$LP_MARK_STASH"
+        if [[ -n "$(git stash list 2>/dev/null)" ]]; then
+            end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
         fi
 
         local remote
         remote="$(git config --get branch.${branch}.remote 2>/dev/null)"
-        # if git has no upstream, use origin
-        if [[ -z "$remote" ]]; then
-            remote="origin"
-        fi
-        local remote_branch
-        remote_branch="$(git config --get branch.${branch}.merge 2>/dev/null)"
-        # without any remote branch, use the same name
-        if [[ -z "$remote_branch" ]]; then
-            remote_branch="$branch"
-        fi
 
         local has_commit
         has_commit=0
-        if [[ -n "$remote" && -n "$remote_branch" ]] ; then
-            has_commit=$(git rev-list --no-merges --count $remote/${remote_branch}..${branch} 2>/dev/null)
-            if [[ -z "$has_commit" ]] ; then
-                has_commit=0
+        if [[ -n "$remote" ]] ; then
+            local remote_branch
+            remote_branch="$(git config --get branch.${branch}.merge)"
+            if [[ -n "$remote_branch" ]] ; then
+                has_commit=$(git rev-list --no-merges --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)
+                if [[ -z "$has_commit" ]] ; then
+                    has_commit=0
+                fi
             fi
         fi
         if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
@@ -761,16 +752,16 @@ _lp_git_branch_color()
             has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${end}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_stash}${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${end}" # changes to commit
             fi
         else
             if [[ "$has_commit" -gt "0" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_stash}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${end}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_stash}${has_untracked}${NO_COL}" # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${end}" # nothing to commit or push
             fi
         fi
         echo -ne "$ret"
@@ -801,7 +792,7 @@ _lp_hg_branch_color()
     local branch
     local ret
     branch=$(_lp_hg_branch)
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
 
         local has_untracked
         has_untracked=$(hg status 2>/dev/null | grep '\(^\?\)' | wc -l)
@@ -919,7 +910,7 @@ _lp_fossil_branch_color()
     local branch
     branch=$(_lp_fossil_branch)
 
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
         local C2E # Modified files (added or edited)
         local C2D # Deleted files
         local C2A # Extras files
@@ -998,7 +989,7 @@ _lp_bzr_branch_color()
     local revno=${tuple[1]}
     local clean=${tuple[2]}
 
-    if [[ ! -z "$branch" ]] ; then
+    if [[ -n "$branch" ]] ; then
         if [[ "$clean" -eq 0 ]] ; then
             ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else
@@ -1124,9 +1115,9 @@ _lp_battery_color()
                 ret="${ret}${LP_COLORMAP_0}"
             fi
 
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+            if $_LP_SHELL_bash; then
                 ret="${ret}${bat}%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+            else # zsh
                 ret="${ret}${bat}%%"
             fi
         fi # LP_PERCENTS_ALWAYS
@@ -1134,6 +1125,31 @@ _lp_battery_color()
     fi # ret
 }
 
+_lp_color_map() {
+    if   [[ $1 -ge 0   ]] && [[ $1 -lt 20  ]] ; then
+        echo -ne "${LP_COLORMAP_0}"
+    elif [[ $1 -ge 20  ]] && [[ $1 -lt 40  ]] ; then
+        echo -ne "${LP_COLORMAP_1}"
+    elif [[ $1 -ge 40  ]] && [[ $1 -lt 60  ]] ; then
+        echo -ne "${LP_COLORMAP_2}"
+    elif [[ $1 -ge 60  ]] && [[ $1 -lt 80  ]] ; then
+        echo -ne "${LP_COLORMAP_3}"
+    elif [[ $1 -ge 80  ]] && [[ $1 -lt 100 ]] ; then
+        echo -ne "${LP_COLORMAP_4}"
+    elif [[ $1 -ge 100 ]] && [[ $1 -lt 120 ]] ; then
+        echo -ne "${LP_COLORMAP_5}"
+    elif [[ $1 -ge 120 ]] && [[ $1 -lt 140 ]] ; then
+        echo -ne "${LP_COLORMAP_6}"
+    elif [[ $1 -ge 140 ]] && [[ $1 -lt 160 ]] ; then
+        echo -ne "${LP_COLORMAP_7}"
+    elif [[ $1 -ge 160 ]] && [[ $1 -lt 180 ]] ; then
+        echo -ne "${LP_COLORMAP_8}"
+    elif [[ $1 -ge 180 ]] ; then
+        echo -ne "${LP_COLORMAP_9}"
+    else
+        echo -ne "${LP_COLORMAP_0}"
+    fi
+}
 
 ###############
 # System load #
@@ -1152,43 +1168,17 @@ _lp_load_color()
     [[ "$LP_ENABLE_LOAD" != 1 ]] && return
 
     local load
-    local IFS=" \t\n"
     load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
     let "load=${load:-0}/$_lp_CPUNUM"
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
-        local ret
-        ret=""
-        if   [[ $load -ge 0   ]] && [[ $load -lt 20  ]] ; then
-            ret="${ret}${LP_COLORMAP_0}"
-        elif [[ $load -ge 20  ]] && [[ $load -lt 40  ]] ; then
-            ret="${ret}${LP_COLORMAP_1}"
-        elif [[ $load -ge 40  ]] && [[ $load -lt 60  ]] ; then
-            ret="${ret}${LP_COLORMAP_2}"
-        elif [[ $load -ge 60  ]] && [[ $load -lt 80  ]] ; then
-            ret="${ret}${LP_COLORMAP_3}"
-        elif [[ $load -ge 80  ]] && [[ $load -lt 100 ]] ; then
-            ret="${ret}${LP_COLORMAP_4}"
-        elif [[ $load -ge 100 ]] && [[ $load -lt 120 ]] ; then
-            ret="${ret}${LP_COLORMAP_5}"
-        elif [[ $load -ge 120 ]] && [[ $load -lt 140 ]] ; then
-            ret="${ret}${LP_COLORMAP_6}"
-        elif [[ $load -ge 140 ]] && [[ $load -lt 160 ]] ; then
-            ret="${ret}${LP_COLORMAP_7}"
-        elif [[ $load -ge 160 ]] && [[ $load -lt 180 ]] ; then
-            ret="${ret}${LP_COLORMAP_8}"
-        elif [[ $load -ge 180 ]] ; then
-            ret="${ret}${LP_COLORMAP_9}"
-        else
-            ret="${ret}${LP_COLORMAP_0}"
-        fi
-        ret="$ret${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load) ${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+            if $_LP_SHELL_bash; then
                 ret="${ret}$load%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+            else # zsh
                 ret="${ret}$load%%"
             fi
         fi
@@ -1196,6 +1186,44 @@ _lp_load_color()
     fi
 }
 
+######################
+# System temperature #
+######################
+
+_lp_temp_sensors() {
+    # Return the average system temperature we get through the sensors command
+    local count=0
+    local temperature=0
+    for i in $(sensors | grep -E "^(Core|temp)" |
+            sed -r "s/.*: *\+([0-9]*)\..°.*/\1/g"); do
+        temperature=$(($temperature+$i))
+        count=$(($count+1))
+    done
+    echo -ne "$(($temperature/$count))"
+}
+
+# Will set _lp_temp_function so the temperature monitoring feature use an
+# available command. _lp_temp_function should return only a numeric value
+if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
+    if command -v sensors >/dev/null; then
+        _lp_temp_function=_lp_temp_sensors
+    # elif command -v the_command_you_want_to_use; then
+    #   _lp_temp_function=your_function
+    else
+        LP_ENABLE_TEMP=0
+    fi
+fi
+
+_lp_temperature() {
+    # Will display the numeric value as we got it through the _lp_temp_function
+    # and colorize it through _lp_color_map.
+    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
+
+    temperature=$($_lp_temp_function)
+    if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
+        echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature)$temperature°${NO_COL}"
+    fi
+}
 
 ##########
 # DESIGN #
@@ -1205,7 +1233,11 @@ _lp_load_color()
 _lp_as_text()
 {
     # Remove colors from the computed prompt
-    local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+    case "$LP_OS" in
+        Linux|FreeBSD|SunOS)  local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+        Darwin) local pst=$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+    esac
+
 
     # Remove escape sequences
     # FIXME check the zsh compatibility
@@ -1255,7 +1287,7 @@ _lp_smart_mark()
     local mark
     if [[ -n "$LP_MARK_DEFAULT" ]]; then
         mark=$LP_MARK_DEFAULT
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    elif $_LP_SHELL_zsh; then
         mark="%(!.#.%%)"
     else
         mark="\\\$"
@@ -1272,6 +1304,8 @@ _lp_smart_mark()
         mark=$LP_MARK_FOSSIL
     elif [[ "$1" == "bzr" ]]; then
         mark=$LP_MARK_BZR
+    elif [[ "$1" == "disabled" ]]; then
+        mark=$LP_MARK_DISABLED
     fi
     echo -ne "${COL}${mark}${NO_COL}"
 }
@@ -1279,26 +1313,19 @@ _lp_smart_mark()
 # insert a space on the right
 _lp_sr()
 {
-    if [[ ! -z "$1" ]] ; then
-        echo -n "$1 "
-    fi
+    [[ -n "$1" ]] && echo -n "$1 "
 }
 
 # insert a space on the left
 _lp_sl()
 {
-    if [[ ! -z "$1" ]] ; then
-        echo -n " $1"
-    fi
+    [[ -n "$1" ]] && echo -n " $1"
 }
 
 # insert two space, before and after
 _lp_sb()
 {
-    if [[ ! -z "$1" ]] ; then
-        echo -n " $1 "
-    fi
-
+    [[ -n "$1" ]] && echo -n " $1 "
 }
 
 ###################
@@ -1308,51 +1335,42 @@ _lp_time_analog()
 {
     # get the date as "hours(12) minutes" in a single call
     # make a bash array with it
-    d=( $(date "+%I %M") )
+    local d=( $(date "+%I %M") )
     # separate hours and minutes
-    hour=${d[0]#0} # no leading 0
-    min=${d[1]#0}
+    local -i hour=${d[0]#0} # no leading 0
+    local -i min=${d[1]#0}
 
     # The targeted unicode characters are the "CLOCK FACE" ones
     # They are located in the codepages between:
     #     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
     #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
     #
-    # Those codes may be output with unicode escapes or hexadecimal escapes,
-    # the later being the more portable.
-    #
-    # But we can iterate only over integers.
-    #
-    # We thus need the following conversion table:
-    #       utf   hex   int
-    # hours 50:5B 90:9b 144:155
-    # half  5C:67 9c:a7 156:167
 
-    # The characters being grouped bas plain/thirty, we must first now
-    # if we are close to the 0 or 30 minutes.
-    # Bash using integer arithmetic by default, we do not need rounding.
-    # We thus add 0 (plain hour) or 12 (half).
-    # Then we add 144, which is the first index (as an integer).
-    mi=$((144+12*($min/30)))
+    local plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
+    local half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
-    # Add the computed minutes index (144 or 156) minus 1 (because the first hour starts at 0).
-    hi=$(($mi+$hour-1))
+    # array index starts at 0
+    local -i hi=hour-1
 
-    # Get the hexadecimal representation of this integer
-    hex=$(printf "%x" $hi)
-
-    # Print the first three bytes (that are always the same) and the computed last one.
-    # Add a space for correct alignement
-    echo -ne "\xf0\x9f\x95\x$hex "
+    # add a space for correct alignment
+    if (( min < 15 )) ; then
+        echo -n "${plain[hi]} "
+    elif (( min < 45 )) ; then
+        echo -n "${half[hi]} "
+    else
+        echo -n "${plain[hi+1]} "
+    fi
 }
 
 _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
     if [[ "$LP_TIME_ANALOG" != 1 ]]; then
-        echo -ne "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
-        echo -ne "${LP_COLOR_TIME}$(_lp_time_analog)${NO_COL}"
+        echo -n "${LP_COLOR_TIME}"
+        _lp_time_analog
+        echo -n "${NO_COL}"
     fi
 }
 
@@ -1363,6 +1381,11 @@ _lp_time()
 
 _lp_set_prompt()
 {
+    # Reset IFS to its default value to avoid strange behaviors
+    # (in case the user is playing with the value at the prompt)
+    local IFS="$(echo -e ' \t')
+"       # space, tab, LF
+
     # as this get the last returned code, it should be called first
     LP_ERR="$(_lp_sl $(_lp_return_value $?))"
 
@@ -1378,21 +1401,20 @@ _lp_set_prompt()
 
     # left of main prompt: space at right
     LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
+    LP_TEMP=$(_lp_sr "$(_lp_temperature)")
     LP_LOAD=$(_lp_sr "$(_lp_load_color)")
     LP_BATT=$(_lp_sr "$(_lp_battery_color)")
     LP_TIME=$(_lp_sr "$(_lp_time)")
 
     # in main prompt: no space
-    if [[ ! -z "$(_lp_in_multiplexer)" ]] ; then
-        LP_MARK_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
-        LP_MARK_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
-    fi
     LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left
     LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
-    LP_VCS=""
+    # if change of working directory
     if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
+        LP_VCS=""
+        LP_VCS_TYPE=""
         # LP_HOST is a global set at load time
         LP_PERM=$(_lp_permissions_color)
         LP_PWD=$(_lp_shorten_path)
@@ -1400,38 +1422,47 @@ _lp_set_prompt()
 
         if [[ "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
             LP_VCS="$(_lp_git_branch_color)"
-            LP_VCS_TYPES="git"
+            LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
                 # If this is a git-svn repository
                 if [[ -d "$(git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
-                    LP_VCS_TYPES="git-svn"
+                    LP_VCS_TYPE="git-svn"
                 fi
             fi # git-svn
             if [[ -z "$LP_VCS" ]]; then
                 LP_VCS="$(_lp_hg_branch_color)"
-                LP_VCS_TYPES="hg"
+                LP_VCS_TYPE="hg"
                 if [[ -z "$LP_VCS" ]]; then
                     LP_VCS="$(_lp_svn_branch_color)"
-                    LP_VCS_TYPES="svn"
+                    LP_VCS_TYPE="svn"
                     if [[ -z "$LP_VCS" ]]; then
                         LP_VCS="$(_lp_fossil_branch_color)"
-                        LP_VCS_TYPES="fossil"
+                        LP_VCS_TYPE="fossil"
                         if [[ -z "$LP_VCS" ]]; then
                             LP_VCS="$(_lp_bzr_branch_color)"
-                            LP_VCS_TYPES="bzr"
+                            LP_VCS_TYPE="bzr"
+                            if [[ -z "$LP_VCS" ]]; then
+                                LP_VCS=""
+                                LP_VCS_TYPE=""
+                            fi # nothing
                         fi # bzr
                     fi # fossil
                 fi # svn
             fi # hg
-        fi # disabled
-        if [[ -z "$LP_VCS" ]] ; then
-            LP_VCS_TYPES=""
+
+        else # if this vcs rep is disabled
+            LP_VCS="" # not necessary, but more readable
+            LP_VCS_TYPE="disabled"
+        fi
+
+        if [[ -z "$LP_VCS_TYPE" ]] ; then
+            LP_VCS=""
         else
             LP_VCS=$(_lp_sl "${LP_VCS}")
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK=$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPES)")
+        LP_MARK=$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPE)")
 
         # Different path color if root
         if [[ "$EUID" -ne "0" ]] ; then
@@ -1441,14 +1472,16 @@ _lp_set_prompt()
         fi
         LP_OLD_PWD="$PWD"
 
-    elif [[ -n "$LP_VCS_TYPES" ]]; then
-        case "$LP_VCS_TYPES" in
-            git)    LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
-            git-svn)LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
-            hg)     LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
-            svn)    LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
-            fossil) LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;
-            bzr)    LP_VCS=$(_lp_sl "$(_lp_bzr_branch_color)");;
+    # if do not change of working directory but...
+    elif [[ -n "$LP_VCS_TYPE" ]]; then # we are still in a VCS dir
+        case "$LP_VCS_TYPE" in
+            git)     LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
+            git-svn) LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
+            hg)      LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
+            svn)     LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
+            fossil)  LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;
+            bzr)     LP_VCS=$(_lp_sl "$(_lp_bzr_branch_color)");;
+            disabled)LP_VCS="";;
         esac
     fi
 
@@ -1458,25 +1491,25 @@ _lp_set_prompt()
 
     if [[ -z $LP_PS1 ]] ; then
         # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host and permissions colon
-        PS1="${PS1}${LP_MARK_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
+        PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
         # if not root
         if [[ "$EUID" -ne "0" ]]
         then
             # path in foreground color
-            PS1="${PS1}${LP_PWD}${LP_MARK_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_VCS}"
         else
             # path in yellow
-            PS1="${PS1}${LP_PWD}${LP_MARK_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
+            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
-        PS1="${PS1}${LP_ERR}${LP_MARK}"
+        PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title
@@ -1505,15 +1538,15 @@ prompt_on()
     # if liquidprompt has not been already set
     if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
         LP_OLD_PS1="$PS1"
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+        if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
-        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+        else # zsh
             LP_OLD_PROMPT_COMMAND="$precmd"
         fi
     fi
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=_lp_set_prompt
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         function precmd {
             _lp_set_prompt
         }
@@ -1528,9 +1561,9 @@ prompt_on()
 prompt_off()
 {
     PS1=$LP_OLD_PS1
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }
@@ -1539,9 +1572,9 @@ prompt_off()
 prompt_OFF()
 {
     PS1="\$ "
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
+    if $_LP_SHELL_bash; then
         PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
+    else # zsh
         precmd=$LP_OLD_PROMPT_COMMAND
     fi
 }

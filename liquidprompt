@@ -1127,33 +1127,33 @@ _lp_battery_color()
 }
 
 _lp_color_map() {
-    local -i load
-    load=$1
-    if (( load < 100 )); then
-        if (( load <  60 )); then
-            if   (( load <  20 )); then
+    local -i value
+    value=$1
+    if (( value < 100 )); then
+        if (( value <  60 )); then
+            if   (( value <  20 )); then
                 echo -ne "${LP_COLORMAP_0}"
-            elif (( load <  40 )); then
+            elif (( value <  40 )); then
                 echo -ne "${LP_COLORMAP_1}"
             else # 40..59
                 echo -ne "${LP_COLORMAP_2}"
             fi
-        elif (( load <  80 )); then
+        elif (( value <  80 )); then
             echo -ne "${LP_COLORMAP_3}"
         else # 80..99
             echo -ne "${LP_COLORMAP_4}"
         fi
-    elif (( load < 160 )); then
-        if (( load < 120 )); then
+    elif (( value < 160 )); then
+        if (( value < 120 )); then
             echo -ne "${LP_COLORMAP_5}"
-        elif (( load < 140 )); then
+        elif (( value < 140 )); then
             echo -ne "${LP_COLORMAP_6}"
         else
             echo -ne "${LP_COLORMAP_7}"
         fi
-    elif (( load < 180 )) ; then
+    elif (( value < 180 )) ; then
         echo -ne "${LP_COLORMAP_8}"
-    else # (( load >= 180 ))
+    else # (( value >= 180 ))
         echo -ne "${LP_COLORMAP_9}"
     fi
 }

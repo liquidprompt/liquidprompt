@@ -1014,7 +1014,7 @@ _lp_bzr_branch_color()
 # returns 4 if no battery support
 _lp_battery()
 {
-    [[ "$LP_ENABLE_BATT" != 1 ]] && return
+    [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
     local acpi
     acpi="$(acpi --battery 2>/dev/null)"
     # Extract the battery load value in percent
@@ -1127,28 +1127,34 @@ _lp_battery_color()
 }
 
 _lp_color_map() {
-    if   [[ $1 -ge 0   ]] && [[ $1 -lt 20  ]] ; then
-        echo -ne "${LP_COLORMAP_0}"
-    elif [[ $1 -ge 20  ]] && [[ $1 -lt 40  ]] ; then
-        echo -ne "${LP_COLORMAP_1}"
-    elif [[ $1 -ge 40  ]] && [[ $1 -lt 60  ]] ; then
-        echo -ne "${LP_COLORMAP_2}"
-    elif [[ $1 -ge 60  ]] && [[ $1 -lt 80  ]] ; then
-        echo -ne "${LP_COLORMAP_3}"
-    elif [[ $1 -ge 80  ]] && [[ $1 -lt 100 ]] ; then
-        echo -ne "${LP_COLORMAP_4}"
-    elif [[ $1 -ge 100 ]] && [[ $1 -lt 120 ]] ; then
-        echo -ne "${LP_COLORMAP_5}"
-    elif [[ $1 -ge 120 ]] && [[ $1 -lt 140 ]] ; then
-        echo -ne "${LP_COLORMAP_6}"
-    elif [[ $1 -ge 140 ]] && [[ $1 -lt 160 ]] ; then
-        echo -ne "${LP_COLORMAP_7}"
-    elif [[ $1 -ge 160 ]] && [[ $1 -lt 180 ]] ; then
+    local -i value
+    value=$1
+    if (( value < 100 )); then
+        if (( value <  60 )); then
+            if   (( value <  20 )); then
+                echo -ne "${LP_COLORMAP_0}"
+            elif (( value <  40 )); then
+                echo -ne "${LP_COLORMAP_1}"
+            else # 40..59
+                echo -ne "${LP_COLORMAP_2}"
+            fi
+        elif (( value <  80 )); then
+            echo -ne "${LP_COLORMAP_3}"
+        else # 80..99
+            echo -ne "${LP_COLORMAP_4}"
+        fi
+    elif (( value < 160 )); then
+        if (( value < 120 )); then
+            echo -ne "${LP_COLORMAP_5}"
+        elif (( value < 140 )); then
+            echo -ne "${LP_COLORMAP_6}"
+        else
+            echo -ne "${LP_COLORMAP_7}"
+        fi
+    elif (( value < 180 )) ; then
         echo -ne "${LP_COLORMAP_8}"
-    elif [[ $1 -ge 180 ]] ; then
+    else # (( value >= 180 ))
         echo -ne "${LP_COLORMAP_9}"
-    else
-        echo -ne "${LP_COLORMAP_0}"
     fi
 }
 
@@ -1168,22 +1174,23 @@ _lp_load_color()
 
     [[ "$LP_ENABLE_LOAD" != 1 ]] && return
 
-    local load
-    load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
-    let "load=${load:-0}/$_lp_CPUNUM"
+    local tmp=$(_lp_cpu_load)
+    tmp=${tmp/./}   # Remove '.'
+    tmp=${tmp#0}    # Remove leading '0'
+    tmp=${tmp#0}    # Remove leading '0', again (ex: 0.09)
+    local -i load=${tmp:-0}/$_lp_CPUNUM
 
-    if [[ $load -ge $LP_LOAD_THRESHOLD ]]
-    then
-        local ret="$(_lp_color_map $load) ${LP_MARK_LOAD}"
+    if (( load > $LP_LOAD_THRESHOLD )); then
+        local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
-        if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
+        if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
             if $_LP_SHELL_bash; then
                 ret="${ret}$load%"
             else # zsh
                 ret="${ret}$load%%"
             fi
         fi
-        echo -ne "${ret}${NO_COL}"
+        echo -nE "${ret}${NO_COL}"
     fi
 }
 

@@ -715,14 +715,6 @@ _lp_git_branch_color()
     branch=$(_lp_git_branch)
     if [[ -n "$branch" ]] ; then
 
-        local GD
-        git diff --quiet >/dev/null 2>&1
-        GD=$?
-
-        local GDC
-        git diff --cached --quiet >/dev/null 2>&1
-        GDC=$?
-
         local end="$NO_COL"
         if git status 2>/dev/null | grep -q '\(# Untracked\)'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
@@ -747,9 +739,14 @@ _lp_git_branch_color()
                 fi
             fi
         fi
-        if [[ "$GD" -eq 1 || "$GDC" -eq "1" ]] ; then
-            local has_line
-            has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
+
+        local shortstat=$(LANG=C git diff --shortstat 2>/dev/null)
+        if [[ -n "$shortstat" ]] ; then
+            #has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
+            local has_lines=${shortstat/*changed, /+}
+            has_lines=${has_lines/ insertions(+), /\/-}
+            has_lines=${has_lines/ del*/}
+
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})"

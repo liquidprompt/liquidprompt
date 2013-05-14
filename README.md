@@ -89,7 +89,8 @@ Follow these steps:
 `git clone https://github.com/nojhan/liquidprompt.git`
 `source liquidprompt/liquidprompt`
 
-To use it everytime you start a shell add the following line to your `.bashrc`.
+To use it everytime you start a shell add the following line to your
+`.bashrc` (if you use bash) or `.zshrc` (if you use zsh):
 
 `source ~/liquidprompt/liquidprompt`
 
@@ -98,7 +99,7 @@ Next up is the configuration, you can skip this step if you already like the def
 `cp ~/liquidpromp/liquidpromptrc-dist ~/.config/liquidpromptrc`
 
 You can also copy the file to `~/.liquidpromptrc`.
-Use your favorite text editor to change the defaults. 
+Use your favorite text editor to change the defaults.
 The `liquidpromptrc` file is richly commented and easy to set your own defaults.
 You can even theme liquidprompt and have a custom PS1. This is explained
 in the sections below.

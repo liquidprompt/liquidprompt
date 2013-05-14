@@ -356,7 +356,10 @@ unset _lp_source_config
 [[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
-[[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
+case "$LP_OS" in
+    Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v ioreg >/dev/null || LP_ENABLE_BATT=0 ; };;
+    *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
+esac
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
@@ -1106,45 +1109,89 @@ _lp_bzr_branch_color()
 # returns 2 (and battery level) if battery is charging but under threshold
 # returns 3 (and battery level) if battery is charging and above threshold
 # returns 4 if no battery support
-_lp_battery()
-{
-    [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
-    local acpi
-    acpi="$(acpi --battery 2>/dev/null)"
-    # Extract the battery load value in percent
-    # First, remove the beginning of the line...
-    local bat="${acpi#Battery *, }"
-    bat="${bat%%%*}" # remove everything starting at '%'
+case "$LP_OS" in
+    Linux)
+    _lp_battery()
+    {
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return
+        local acpi
+        acpi="$(acpi --battery 2>/dev/null)"
+        # Extract the battery load value in percent
+        # First, remove the beginning of the line...
+        local bat="${acpi#Battery *, }"
+        bat="${bat%%%*}" # remove everything starting at '%'
 
-    if [[ -z "${bat}" ]] ; then
-        # not battery level found
-        return 4
+        if [[ -z "${bat}" ]] ; then
+            # not battery level found
+            return 4
 
-    # discharging
-    elif [[ "$acpi" == *"Discharging"* ]] ; then
-        if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
-            # under threshold
-            echo -n "${bat}"
-            return 0
+        # discharging
+        elif [[ "$acpi" == *"Discharging"* ]] ; then
+            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                # under threshold
+                echo -n "${bat}"
+                return 0
+            else
+                # above threshold
+                echo -n "${bat}"
+                return 1
+            fi
+
+        # charging
         else
-            # above threshold
-            echo -n "${bat}"
-            return 1
+            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                # under threshold
+                echo -n "${bat}"
+                return 2
+            else
+                # above threshold
+                echo -n "${bat}"
+                return 3
+            fi
         fi
-
-    # charging
-    else
-        if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
-            # under threshold
-            echo -n "${bat}"
-            return 2
+    }
+    ;;
+    Darwin)
+    _lp_battery()
+    {
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return
+        local ioreg="$(ioreg -rn AppleSmartBattery | grep -v LegacyBatteryInfo)"
+        [[ -z "$ioreg" ]] && return 4
+        local ac=$(awk -F= '/ExternalConnected/ {print (tolower($2) ~ /yes/ ? 1 : 0)}' <<< "$ioreg")
+        local charge=$(awk -F= '/IsCharging/ {print (tolower($2) ~ /yes/ ? 1 : 0)}' <<< "$ioreg")
+        local max_charge=$(awk -F= '/MaxCapacity/ {print 0+$2}' <<< "$ioreg")
+        local current_charge=$(awk -F= '/CurrentCapacity/ {print 0+$2}' <<< "$ioreg")
+        local bat=$((100 * $current_charge / $max_charge))
+        if (($ac)) ; then
+            if (($charge)) ; then
+                # charging
+                echo -n "${bat}"
+                if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                    return 2
+                else
+                    return 3
+                fi
+            else
+                # fully charged
+                # This is tested as a separate case because the Mac battery
+                # charger acts as if the battery is charged even when it
+                # is only _almost_ charged when AC power is applied.
+                # I don't have exact numbers, but the threshold for this
+                # behavior appears to be around 95%.
+                return 4
+            fi
         else
-            # above threshold
+            # discharging
             echo -n "${bat}"
-            return 3
+            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                return 0
+            else
+                return 1
+            fi
         fi
-    fi
-}
+    }
+    ;;
+esac
 
 # Compute a gradient of background/foreground colors depending on the battery status
 # Display:

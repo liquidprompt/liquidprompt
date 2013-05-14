@@ -1168,7 +1168,6 @@ _lp_load_color()
     [[ "$LP_ENABLE_LOAD" != 1 ]] && return
 
     local load
-    local IFS=" \t\n"
     load="$(_lp_cpu_load | sed 's/\.//g;s/^0*//g' )"
     let "load=${load:-0}/$_lp_CPUNUM"
 
@@ -1384,6 +1383,11 @@ _lp_set_prompt()
 {
     # as this get the last returned code, it should be called first
     LP_ERR="$(_lp_sl $(_lp_return_value $?))"
+
+    # Reset IFS to its default value to avoid strange behaviors
+    # (in case the user is playing with the value at the prompt)
+    local IFS="$(echo -e ' \t')
+"       # space, tab, LF
 
     # execute the old prompt if not on Mac OS X (Mountain) Lion
     case "$LP_OS" in

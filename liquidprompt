@@ -1174,7 +1174,7 @@ _lp_load_color()
 
     if [[ $load -ge $LP_LOAD_THRESHOLD ]]
     then
-        local ret="$(_lp_color_map $load) ${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
             if $_LP_SHELL_bash; then

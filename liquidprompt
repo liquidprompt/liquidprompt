@@ -682,6 +682,11 @@ _lp_git_branch()
     local gitdir
     gitdir="$([ $(\git ls-files . 2>/dev/null | wc -l) -gt 0 ] && \git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || ! $gitdir =~ (.*\/)?\.git.* ]] && return
+
+    # If we are in an untracked dir, ignore git (idea by Joseph Bass)
+    # FIXME ls-files can be really slow if the repo is big
+    [[ "x$LP_GIT_HIDE_UNTRACKED_DIR" == x1 ]] && [[ -z "$(git ls-files . 2>/dev/null)" ]] && return
+
     local branch
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)

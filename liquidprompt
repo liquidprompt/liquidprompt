@@ -668,18 +668,15 @@ _lp_return_value()
 # VCS branch display #
 ######################
 
-_lp_are_vcs_disabled()
+_lp_are_vcs_enabled()
 {
-    [[ -z "$LP_DISABLED_VCS_PATH" ]] && echo 0 && return
+    [[ -z "$LP_DISABLED_VCS_PATH" ]] && return 0
     local path
     local IFS=:
     for path in $LP_DISABLED_VCS_PATH; do
-        if [[ "$PWD" == *"$path"* ]]; then
-            echo 1
-            return
-        fi
+        [[ "$PWD" == *"$path"* ]] && return 1
     done
-    echo 0
+    return 0
 }
 
 # GIT #
@@ -1421,16 +1418,15 @@ _lp_set_prompt()
         LP_PWD=$(_lp_shorten_path)
         [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
 
-        if [[ "$(_lp_are_vcs_disabled)" -eq "0" ]] ; then
+        if _lp_are_vcs_enabled; then
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
                 # If this is a git-svn repository
                 if [[ -d "$(git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
                     LP_VCS_TYPE="git-svn"
-                fi
-            fi # git-svn
-            if [[ -z "$LP_VCS" ]]; then
+                fi # git-svn
+            else
                 LP_VCS="$(_lp_hg_branch_color)"
                 LP_VCS_TYPE="hg"
                 if [[ -z "$LP_VCS" ]]; then

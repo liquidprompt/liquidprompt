@@ -694,11 +694,11 @@ _lp_git_branch()
     local branch="$(git symbolic-ref HEAD 2>/dev/null)"
     if [[ $? -ne 0 || -z "$branch" ]] ; then
         # In detached head state, use commit instead
-        branch="$(git rev-parse --short HEAD 2>/dev/null)"
+        # No escape needed
+        git rev-parse --short HEAD 2>/dev/null
+    else
+        _lp_escape "${branch#refs/heads/}"
     fi
-    [[ $? -ne 0 || -z "$branch" ]] && return
-    branch="${branch#refs/heads/}"
-    echo $(_lp_escape "$branch")
 }
 
 # Set a color depending on the branch state:

@@ -29,7 +29,7 @@
 # Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
 # David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
-# Étienne Deparis   <etienne.deparis@umaneti.net> # Fossil support
+# Étienne Deparis   <etienne@depar.is> # Fossil support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
 # François Schmidts <francois.schmidts@gmail.com> # small code fix, _lp_get_dirtrim
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
@@ -914,23 +914,54 @@ _lp_fossil_branch_color()
         local C2E # Modified files (added or edited)
         local C2D # Deleted files
         local C2A # Extras files
+	local C2AA # Added files
+	local PLUSLINE # Added lines
+	local MINUSLINE # Deleted lines
         local ret
         C2E=$(fossil changes | wc -l)
-        C2D=$(fossil changes | grep DELETED | wc -l)
-        let "C2E = $C2E - $C2D"
         C2A=$(fossil extras | wc -l)
+	PLUSLINE=$(fossil diff | egrep '^\+[^+].+$' | wc -l)
+	MINUSLINE=$(fossil diff | egrep '^-[^-].+$' | wc -l)
         ret=""
 
-        if [[ "$C2E" -gt 0 ]] ; then
-            ret+="+$C2E"
+	C2AA=`fossil changes | grep ADDED | wc -l`
+	if [[ $C2AA -gt 0 ]] ; then
+	    # We count the line "à la" git
+	    local ADDFILE
+	    local FILE
+	    ADDFILE=`fossil changes | grep ADDED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2`
+	    for FILE in $ADDFILE ; do
+		PLULI=$(wc -l $FILE | cut -d" " -f1)
+		let PLUSLINE=$PLUSLINE+$PLULI
+	    done
+	fi
+
+        if [[ $PLUSLINE -gt 0 ]] ; then
+	    ret+="+$PLUSLINE"
+	fi
+
+	C2D=`fossil changes | grep DELETED | wc -l`
+	if [[ $C2D -gt 0 ]] ; then
+	    # We count the line "à la" git
+	    local DELFILE
+	    local FILE
+	    DELFILE=`fossil changes | grep DELETED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2`
+	    for FILE in $DELFILE ; do
+		MINLI=$(wc -l $FILE | cut -d" " -f1)
+		let MINUSLINE=$MINUSLINE+$MINLI
+	    done
+	fi
+
+	if [[ $MINUSLINE -gt 0 ]] ; then
+            if [[ "$ret" = "" ]] ; then
+                ret+="-$MINUSLINE"
+            else
+                ret+="/-$MINUSLINE"
+            fi
         fi
 
-        if [[ "$C2D" -gt 0 ]] ; then
-            if [[ "$ret" = "" ]] ; then
-                ret+="-$C2D"
-            else
-                ret+="/-$C2D"
-            fi
+        if [[ "$C2E" -gt 0 ]] ; then
+            ret+=" in $C2E"
         fi
 
         if [[ "$C2A" -gt 0 ]] ; then

@@ -61,8 +61,8 @@ preserving the first two directories;
 (git, mercurial, subversion, bazaar or fossil), in green if everything is up
 to date, in red if there are changes, in yellow if there are pending
 commits to push;
-* the number of added/deleted lines (git) or files (fossil), if
-changes have been made and the number of pending commits, if any;
+* the number of added/deleted lines if changes have been made and the
+number of pending commits, if any;
 * a yellow plus if there is stashed modifications;
 * a red star if there is some untracked files in the repository;
 * the error code of the last command, if it has failed in some way;
@@ -335,4 +335,3 @@ limitation of the Subversion versionning model.
 (like xterm-256)
 * The analog clock necessitate a unicode-aware terminal and a sufficiently
 complete font.
-

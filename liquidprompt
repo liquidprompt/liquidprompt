@@ -29,7 +29,7 @@
 # Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
 # David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
-# Étienne Deparis   <etienne@depar.is> # Fossil support
+# Étienne Deparis   <etienne@depar.is>            # Fossil support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
 # François Schmidts <francois.schmidts@gmail.com> # small code fix, _lp_get_dirtrim
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env

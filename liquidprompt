@@ -654,15 +654,6 @@ _lp_jobcount_color()
 }
 
 
-# Display the return value of the last command, if different from zero
-_lp_return_value()
-{
-    if [[ "$1" -ne "0" ]]
-    then
-        echo -ne "$LP_COLOR_ERR$1$NO_COL"
-    fi
-}
-
 
 ######################
 # VCS branch display #
@@ -1411,8 +1402,14 @@ _lp_time()
 
 _lp_set_prompt()
 {
-    # as this get the last returned code, it should be called first
-    LP_ERR="$(_lp_sl $(_lp_return_value $?))"
+    # Display the return value of the last command, if different from zero
+    # As this get the last returned code, it should be called first
+    local -i err=$?
+    if (( err != 0 )); then
+        LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
+    else
+        LP_ERR=     # Hidden
+    fi
 
     # Reset IFS to its default value to avoid strange behaviors
     # (in case the user is playing with the value at the prompt)

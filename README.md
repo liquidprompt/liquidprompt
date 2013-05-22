@@ -85,9 +85,11 @@ See the DEPENDENCIES section for what you need.
 
 Follow these steps:
 
-`cd ~/`
-`git clone https://github.com/nojhan/liquidprompt.git`
-`source liquidprompt/liquidprompt`
+```
+cd
+git clone https://github.com/nojhan/liquidprompt.git
+source liquidprompt/liquidprompt
+```
 
 To use it everytime you start a shell add the following line to your
 `.bashrc` (if you use bash) or `.zshrc` (if you use zsh):
@@ -104,20 +106,21 @@ The `liquidpromptrc` file is richly commented and easy to set your own defaults.
 You can even theme liquidprompt and have a custom PS1. This is explained
 in the sections below.
 
-Please do not edit or set the `PROMPT_COMMAND` variable, or else the
-prompt will not be available.
+Check in your `.bashrc` that the `PROMPT_COMMAND` variable is not set, or else
+the prompt will not be available.
 
 
 ## DEPENDENCIES
 
-Apart from obvious ones, some features depends on specific commands. If you do
+Apart from obvious ones, some features depend on specific commands. If you do
 not install them, the corresponding feature will not be available, but you will
 see no error.
 
 * battery status needs `acpi`.
 * temperature status needs `lm-sensors`.
 * detached sessions is looking for `screen` and/or `tmux`.
-* VCS support features needs… `git`, `hg`, `svn` or `fossil`, but you knew it.
+* VCS support features needs… `git`, `hg`, `svn`, `bzr` or `fossil`, but you
+knew it.
 
 For other features, the script uses commands that should be available on a large
 variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
@@ -125,7 +128,7 @@ variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
 
 ## FEATURES CONFIGURATION
 
-You can configure some variables in the `~/.liquidpromptrc` file:
+You can configure some variables in the `~/.config/liquidpromptrc` file:
 
 * `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is
 displayed

@@ -1224,15 +1224,15 @@ _lp_load_color()
 ######################
 
 _lp_temp_sensors() {
-    # Return the average system temperature we get through the sensors command
-    local count=0
+    # Return the hottest system temperature we get through the sensors command
     local temperature=0
-    for i in $(sensors | grep -E "^(Core|temp)" |
+    for i in $(sensors | grep -E "^(CPU|SYS|MB|Core|temp).*°(C|F)" |
             sed -r "s/.*: *\+([0-9]*)\..°.*/\1/g"); do
-        temperature=$(($temperature+$i))
-        count=$(($count+1))
+        if [[ $i -gt $temperature ]]; then
+            temperature=$i
+        fi
     done
-    echo -ne "$(($temperature/$count))"
+    echo -ne "$temperature"
 }
 
 # Will set _lp_temp_function so the temperature monitoring feature use an

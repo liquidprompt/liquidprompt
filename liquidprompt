@@ -774,7 +774,7 @@ _lp_hg_branch()
     [[ "$LP_ENABLE_HG" != 1 ]] && return
     local branch
     branch="$(hg branch 2>/dev/null)"
-    [[ $? -eq 0 ]] && echo $(_lp_escape "$branch")
+    [[ $? -eq 0 ]] && _lp_escape "$branch"
 
 }
 
@@ -884,7 +884,7 @@ _lp_fossil_branch()
     local branch
     branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
     if [[ -n "$branch" ]] ; then
-        echo $(_lp_escape "$branch")
+        _lp_escape "$branch"
     else
         if fossil info &>/dev/null ; then
             echo "no-tag"
@@ -953,7 +953,7 @@ _lp_fossil_branch_color()
                 branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
         fi
-        echo -ne $branch # $(_lp_escape "$branch")
+        _lp_escape "$branch"
     fi
 }
 
@@ -966,7 +966,7 @@ _lp_bzr_branch()
     local branch
     branch=$(bzr nick 2> /dev/null)
     [[ $? -ne 0 ]] && return
-    echo $(_lp_escape "$branch")
+    _lp_escape "$branch"
 }
 
 

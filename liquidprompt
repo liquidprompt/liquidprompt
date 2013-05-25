@@ -732,7 +732,7 @@ _lp_git_branch_color()
         if [[ -n "$shortstat" ]] ; then
             #has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             local has_lines=${shortstat/*changed, /+}
-            has_lines=${has_lines/ insertions(+), /\/-}
+            has_lines=${has_lines/ inser*, /\/-}
             has_lines=${has_lines/ del*/}
 
             if [[ "$has_commit" -gt "0" ]] ; then

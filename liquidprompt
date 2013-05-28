@@ -731,9 +731,10 @@ _lp_git_branch_color()
         local shortstat=$(LANG=C git diff --shortstat 2>/dev/null)
         if [[ -n "$shortstat" ]] ; then
             #has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
-            local has_lines=${shortstat/*changed, /+}
-            has_lines=${has_lines/ insertions(+), /\/-}
+            local has_lines=${shortstat/*changed, /}
+            has_lines=${has_lines/ inser*, /\/-}
             has_lines=${has_lines/ del*/}
+            [[ "$shortstat" = *insertion* ]] && has_lines="+${has_lines/ inser*/}" || has_lines="-$has_lines"
 
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push

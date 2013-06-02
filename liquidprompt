@@ -63,6 +63,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
+    _LP_FIRST_INDEX=0
 elif test -n "$ZSH_VERSION" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
@@ -71,6 +72,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
     _LP_TIME_SYMBOL="%*"
+    _LP_FIRST_INDEX=1
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -1000,9 +1002,9 @@ _lp_bzr_branch_color()
     output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
     [[ $? -ne 0 ]] && return
     local tuple=($output)
-    local branch=${tuple[0]}
-    local revno=${tuple[1]}
-    local clean=${tuple[2]}
+    local branch=${tuple[_LP_FIRST_INDEX+0]}
+    local revno=${tuple[_LP_FIRST_INDEX+1]}
+    local clean=${tuple[_LP_FIRST_INDEX+2]}
 
     if [[ -n "$branch" ]] ; then
         if [[ "$clean" -eq 0 ]] ; then
@@ -1357,10 +1359,11 @@ _lp_time_analog()
 {
     # get the date as "hours(12) minutes" in a single call
     # make a bash array with it
-    local d=( $(date "+%I %M") )
+    local -a d
+    d=( $(date "+%I %M") )
     # separate hours and minutes
-    local -i hour=${d[0]#0} # no leading 0
-    local -i min=${d[1]#0}
+    local -i hour=${d[_LP_FIRST_INDEX+0]#0} # no leading 0
+    local -i min=${d[_LP_FIRST_INDEX+1]#0}
 
     # The targeted unicode characters are the "CLOCK FACE" ones
     # They are located in the codepages between:
@@ -1368,8 +1371,10 @@ _lp_time_analog()
     #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
     #
 
-    local plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
-    local half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
+    local -a plain
+    plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
+    local -a half
+    half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
     # array index starts at 0
     local -i hi=hour-1

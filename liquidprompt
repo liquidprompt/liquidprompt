@@ -379,8 +379,8 @@ _lp_connection()
         echo ssh
     else
         # TODO check on *BSD
-        local sess_src=$(who am i | sed -n 's/.*(\(.*\))/\1/p')
-        local sess_parent=$(ps -o comm= -p $PPID 2> /dev/null)
+        local sess_src="$(who am i | sed -n 's/.*(\(.*\))/\1/p')"
+        local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
         if [[ -z "$sess_src" || "$sess_src" = ":"* ]] ; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]] ; then
@@ -401,7 +401,7 @@ _chroot()
 {
     if [[ -r /etc/debian_chroot ]] ; then
         local debchroot
-        debchroot=$(cat /etc/debian_chroot)
+        debchroot="$(cat /etc/debian_chroot)"
         echo "(${debchroot})"
     fi
 }
@@ -702,7 +702,7 @@ _lp_git_branch_color()
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
     local branch
-    branch=$(_lp_git_branch)
+    branch="$(_lp_git_branch)"
     if [[ -n "$branch" ]] ; then
 
         local end="$NO_COL"
@@ -723,14 +723,14 @@ _lp_git_branch_color()
             local remote_branch
             remote_branch="$(git config --get branch.${branch}.merge)"
             if [[ -n "$remote_branch" ]] ; then
-                has_commit=$(git rev-list --no-merges --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)
+                has_commit="$(git rev-list --no-merges --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)"
                 if [[ -z "$has_commit" ]] ; then
                     has_commit=0
                 fi
             fi
         fi
 
-        local shortstat=$(LANG=C git diff --shortstat 2>/dev/null)
+        local shortstat="$(LANG=C git diff --shortstat 2>/dev/null)"
         if [[ -n "$shortstat" ]] ; then
             #has_lines=$(git diff --numstat 2>/dev/null | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("+%d/-%d\n", plus, minus)}')
             local has_lines=${shortstat/*changed, /}
@@ -779,7 +779,7 @@ _lp_hg_branch_color()
 
     local branch
     local ret
-    branch=$(_lp_hg_branch)
+    branch="$(_lp_hg_branch)"
     if [[ -n "$branch" ]] ; then
 
         local has_untracked
@@ -870,7 +870,7 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
     local branch
-    branch=$(fossil status 2>/dev/null | grep tags: | cut -c17-)
+    branch="$(fossil status 2>/dev/null | grep tags: | cut -c17-)"
     if [[ -n "$branch" ]] ; then
         _lp_escape "$branch"
     else
@@ -893,7 +893,7 @@ _lp_fossil_branch_color()
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
 
     local branch
-    branch=$(_lp_fossil_branch)
+    branch="$(_lp_fossil_branch)"
 
     if [[ -n "$branch" ]] ; then
         local C2E # Modified files (added or edited)
@@ -983,7 +983,7 @@ _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
     local branch
-    branch=$(bzr nick 2> /dev/null)
+    branch="$(bzr nick 2> /dev/null)"
     [[ $? -ne 0 ]] && return
     _lp_escape "$branch"
 }
@@ -999,7 +999,7 @@ _lp_bzr_branch_color()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
     local output
-    output=$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+    output="$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)"
     [[ $? -ne 0 ]] && return
     local tuple=($output)
     local branch=${tuple[_LP_FIRST_INDEX+0]}
@@ -1082,7 +1082,7 @@ _lp_battery_color()
     local chargingmark=$LP_MARK_ADAPTER
     local bat
     local ret
-    bat=$(_lp_battery)
+    bat="$(_lp_battery)"
     ret=$?
 
     if [[ $ret == 4 || $bat == 100 ]] ; then
@@ -1190,7 +1190,7 @@ _lp_load_color()
 
     [[ "$LP_ENABLE_LOAD" != 1 ]] && return
 
-    local tmp=$(_lp_cpu_load)
+    local tmp="$(_lp_cpu_load)"
     tmp=${tmp/./}   # Remove '.'
     tmp=${tmp#0}    # Remove leading '0'
     tmp=${tmp#0}    # Remove leading '0', again (ex: 0.09)
@@ -1243,7 +1243,7 @@ _lp_temperature() {
     # and colorize it through _lp_color_map.
     [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    temperature=$($_lp_temp_function)
+    temperature="$($_lp_temp_function)"
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature)$temperature°${NO_COL}"
     fi
@@ -1258,17 +1258,17 @@ _lp_as_text()
 {
     # Remove colors from the computed prompt
     case "$LP_OS" in
-        Linux|FreeBSD|SunOS)  local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
-        Darwin) local pst=$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+        Linux|FreeBSD|SunOS)  local pst="$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")" ;;
+        Darwin) local pst="$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")" ;;
     esac
 
 
     # Remove escape sequences
     # FIXME check the zsh compatibility
     # pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
-    local op=$(printf "%q" "$_LP_OPEN_ESC")
-    local cl=$(printf "%q" "$_LP_CLOSE_ESC")
-    pst=$(echo $pst | sed "s,$op\|$cl,,g") # replace all open _or_ close tags with nothing
+    local op="$(printf "%q" "$_LP_OPEN_ESC")"
+    local cl="$(printf "%q" "$_LP_CLOSE_ESC")"
+    pst="$(echo $pst | sed "s,$op\|$cl,,g")" # replace all open _or_ close tags with nothing
 
     echo -n "$pst"
 }
@@ -1278,7 +1278,7 @@ _lp_title()
     [[ "$LP_ENABLE_TITLE" != "1" ]] && return
 
     # Get the current computed prompt as pure text
-    local txt=$(_lp_as_text "$1")
+    local txt="$(_lp_as_text "$1")"
 
     # Use it in the window's title
     # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
@@ -1433,25 +1433,25 @@ _lp_set_prompt()
     esac
 
     # left of main prompt: space at right
-    LP_JOBS=$(_lp_sr "$(_lp_jobcount_color)")
-    LP_TEMP=$(_lp_sr "$(_lp_temperature)")
-    LP_LOAD=$(_lp_sr "$(_lp_load_color)")
-    LP_BATT=$(_lp_sr "$(_lp_battery_color)")
-    LP_TIME=$(_lp_sr "$(_lp_time)")
+    LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"
+    LP_TEMP="$(_lp_sr "$(_lp_temperature)")"
+    LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
+    LP_BATT="$(_lp_sr "$(_lp_battery_color)")"
+    LP_TIME="$(_lp_sr "$(_lp_time)")"
 
     # in main prompt: no space
     LP_PROXY="$(_lp_proxy)"
 
     # right of main prompt: space at left
-    LP_VENV=$(_lp_sl "$(_lp_virtualenv)")
+    LP_VENV="$(_lp_sl "$(_lp_virtualenv)")"
     # if change of working directory
     if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time
-        LP_PERM=$(_lp_permissions_color)
-        LP_PWD=$(_lp_shorten_path)
-        [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM=$(_lp_get_dirtrim)
+        LP_PERM="$(_lp_permissions_color)"
+        LP_PWD="$(_lp_shorten_path)"
+        [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM="$(_lp_get_dirtrim)"
 
         if _lp_are_vcs_enabled; then
             LP_VCS="$(_lp_git_branch_color)"
@@ -1490,11 +1490,11 @@ _lp_set_prompt()
         if [[ -z "$LP_VCS_TYPE" ]] ; then
             LP_VCS=""
         else
-            LP_VCS=$(_lp_sl "${LP_VCS}")
+            LP_VCS="$(_lp_sl "${LP_VCS}")"
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK=$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPE)")
+        LP_MARK="$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPE)")"
 
         # Different path color if root
         if [[ "$EUID" -ne "0" ]] ; then
@@ -1508,11 +1508,11 @@ _lp_set_prompt()
     elif [[ -n "$LP_VCS_TYPE" ]]; then # we are still in a VCS dir
         case "$LP_VCS_TYPE" in
             # git, git-svn
-            git*)    LP_VCS=$(_lp_sl "$(_lp_git_branch_color)");;
-            hg)      LP_VCS=$(_lp_sl "$(_lp_hg_branch_color)");;
-            svn)     LP_VCS=$(_lp_sl "$(_lp_svn_branch_color)");;
-            fossil)  LP_VCS=$(_lp_sl "$(_lp_fossil_branch_color)");;
-            bzr)     LP_VCS=$(_lp_sl "$(_lp_bzr_branch_color)");;
+            git*)    LP_VCS="$(_lp_sl "$(_lp_git_branch_color)")";;
+            hg)      LP_VCS="$(_lp_sl "$(_lp_hg_branch_color)")";;
+            svn)     LP_VCS="$(_lp_sl "$(_lp_svn_branch_color)")";;
+            fossil)  LP_VCS="$(_lp_sl "$(_lp_fossil_branch_color)")";;
+            bzr)     LP_VCS="$(_lp_sl "$(_lp_bzr_branch_color)")";;
             disabled)LP_VCS="";;
         esac
     fi
@@ -1545,7 +1545,7 @@ _lp_set_prompt()
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title
-        LP_TITLE=$(_lp_title "$PS1")
+        LP_TITLE="$(_lp_title "$PS1")"
 
         # Insert it in the prompt
         PS1="${LP_TITLE}${PS1}"
@@ -1561,7 +1561,7 @@ _lp_set_prompt()
 
 prompt_tag()
 {
-    export LP_PS1_PREFIX=$(_lp_sr "$1")
+    export LP_PS1_PREFIX="$(_lp_sr "$1")"
 }
 
 # Activate the liquid prompt

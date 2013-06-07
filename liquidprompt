@@ -1144,30 +1144,30 @@ _lp_battery_color()
 
 _lp_color_map() {
     local -i value=$1
-    local -i step=$2
-    if (( value < step * 5 )); then
-        if (( value <  step * 3 )); then
-            if   (( value <  step )); then
+    local -i scale=$2
+    if (( value < scale / 2 )); then
+        if (( value <  scale / 10 * 3 )); then
+            if   (( value <  scale / 10 )); then
                 echo -ne "${LP_COLORMAP_0}"
-            elif (( value <  step * 2 )); then
+            elif (( value <  scale / 10 * 2 )); then
                 echo -ne "${LP_COLORMAP_1}"
             else # 40..59
                 echo -ne "${LP_COLORMAP_2}"
             fi
-        elif (( value <  step * 4 )); then
+        elif (( value <  scale / 10 * 4 )); then
             echo -ne "${LP_COLORMAP_3}"
         else # 80..99
             echo -ne "${LP_COLORMAP_4}"
         fi
-    elif (( value < step * 8 )); then
-        if (( value < step * 6 )); then
+    elif (( value < scale / 10 * 8 )); then
+        if (( value < scale / 10 * 6 )); then
             echo -ne "${LP_COLORMAP_5}"
-        elif (( value < step * 7 )); then
+        elif (( value < scale / 10 * 7 )); then
             echo -ne "${LP_COLORMAP_6}"
         else
             echo -ne "${LP_COLORMAP_7}"
         fi
-    elif (( value < step * 9 )) ; then
+    elif (( value < scale / 10 * 9 )) ; then
         echo -ne "${LP_COLORMAP_8}"
     else # (( value >= 180 ))
         echo -ne "${LP_COLORMAP_9}"
@@ -1197,7 +1197,7 @@ _lp_load_color()
     local -i load=${tmp:-0}/$_lp_CPUNUM
 
     if (( load > $LP_LOAD_THRESHOLD )); then
-        local ret="$(_lp_color_map $load 20)${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load 200)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
             if $_LP_SHELL_bash; then
@@ -1245,7 +1245,7 @@ _lp_temperature() {
 
     temperature="$($_lp_temp_function)"
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
-        echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 10)$temperature°${NO_COL}"
+        echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
     fi
 }
 

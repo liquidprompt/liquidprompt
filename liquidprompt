@@ -1523,19 +1523,18 @@ _lp_set_prompt()
         # add user, host and permissions colon
         PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
+        PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
+
         # if not root
         if [[ "$EUID" -ne "0" ]]
         then
-            # path in foreground color
-            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # add VCS infos
             PS1="${PS1}${LP_VCS}"
         else
-            # path in yellow
-            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
             # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
+
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
 

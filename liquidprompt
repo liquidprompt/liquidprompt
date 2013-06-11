@@ -1305,10 +1305,9 @@ _lp_title()
 # to # if root and else $
 _lp_smart_mark()
 {
-    local COL
-    COL=${LP_COLOR_MARK}
+    local color=${LP_COLOR_MARK}
     if [[ "$EUID" -eq "0" ]] ; then
-        COL=${LP_COLOR_MARK_ROOT}
+        color=${LP_COLOR_MARK_ROOT}
     fi
 
     local mark
@@ -1334,7 +1333,7 @@ _lp_smart_mark()
     elif [[ "$1" == "disabled" ]]; then
         mark=$LP_MARK_DISABLED
     fi
-    echo -ne "${COL}${mark}${NO_COL}"
+    echo -ne "${color}${mark}${NO_COL}"
 }
 
 # insert a space on the right

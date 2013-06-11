@@ -364,8 +364,10 @@ if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
             LP_USER=""
         fi
     fi
-else
+else # root!
     LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+    LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
+    LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
 fi
 
 
@@ -1305,11 +1307,6 @@ _lp_title()
 # to # if root and else $
 _lp_smart_mark()
 {
-    local color=${LP_COLOR_MARK}
-    if [[ "$EUID" -eq "0" ]] ; then
-        color=${LP_COLOR_MARK_ROOT}
-    fi
-
     local mark
     if [[ -n "$LP_MARK_DEFAULT" ]]; then
         mark=$LP_MARK_DEFAULT
@@ -1333,7 +1330,7 @@ _lp_smart_mark()
     elif [[ "$1" == "disabled" ]]; then
         mark=$LP_MARK_DISABLED
     fi
-    echo -ne "${color}${mark}${NO_COL}"
+    echo -ne "${LP_COLOR_MARK}${mark}${NO_COL}"
 }
 
 # insert a space on the right
@@ -1498,12 +1495,9 @@ _lp_set_prompt()
         # end of the prompt line: double spaces
         LP_MARK="$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPE)")"
 
-        # Different path color if root
-        if [[ "$EUID" -ne "0" ]] ; then
-            LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
-        else
-            LP_PWD="${LP_COLOR_PATH_ROOT}${LP_PWD}${NO_COL}"
-        fi
+        # The color is different if user is root
+        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
+
         LP_OLD_PWD="$PWD"
 
     # if do not change of working directory but...

@@ -1246,7 +1246,7 @@ _lp_temperature() {
     # and colorize it through _lp_color_map.
     [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    temperature="$($_lp_temp_function)"
+    local temperature="$($_lp_temp_function)"
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
     fi

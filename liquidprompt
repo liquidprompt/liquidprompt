@@ -1229,24 +1229,24 @@ _lp_temp_sensors() {
     echo -ne "$temperature"
 }
 
-# Will set _lp_temp_function so the temperature monitoring feature use an
-# available command. _lp_temp_function should return only a numeric value
+# Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
+# available command. _LP_TEMP_FUNCTION should return only a numeric value
 if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
     if command -v sensors >/dev/null; then
-        _lp_temp_function=_lp_temp_sensors
+        _LP_TEMP_FUNCTION=_lp_temp_sensors
     # elif command -v the_command_you_want_to_use; then
-    #   _lp_temp_function=your_function
+    #   _LP_TEMP_FUNCTION=your_function
     else
         LP_ENABLE_TEMP=0
     fi
 fi
 
 _lp_temperature() {
-    # Will display the numeric value as we got it through the _lp_temp_function
+    # Will display the numeric value as we got it through the _LP_TEMP_FUNCTION
     # and colorize it through _lp_color_map.
     [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    local temperature="$($_lp_temp_function)"
+    local temperature="$($_LP_TEMP_FUNCTION)"
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
     fi

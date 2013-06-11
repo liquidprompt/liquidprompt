@@ -65,6 +65,7 @@ commits to push;
 number of pending commits, if any;
 * a yellow plus if there is stashed modifications;
 * a red star if there is some untracked files in the repository;
+* the runtime of the last command, if it has exceeded a certain threshold
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn,
 ‡± for git-svn, ⌘ for fossil, $ or % for simple user, a red # for root;
@@ -132,9 +133,10 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
 
 * `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is
 displayed
-* `LP_LOAD_THRESHOLD`, the minimal value after which the load average is
+* `LP_LOAD_THRESHOLD`, the minimal value after which the load average is displayed
 * `LP_TEMP_THRESHOLD`, the minimal value after which the temperature average is
 displayed
+* `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display
 the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened
@@ -161,6 +163,7 @@ building:
 * `LP_ENABLE_TITLE`, if you want to use the prompt as your terminal window's title
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH in
+* `LP_ENABLE_RUNTIME`, if you want to display the runtime of the last command
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
 * `LP_TIME_ANALOG`, when showing time, use an analog clock instead of numeric values
 
@@ -340,3 +343,4 @@ limitation of the Subversion versionning model.
 sufficiently complete font on your system.
 The [Symbola](http://users.teilar.gr/~g1951d/) font, designed by Georges Douros,
 is known to work well.
+* Displaying the runtime currently only works with bash

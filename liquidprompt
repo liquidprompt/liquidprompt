@@ -202,6 +202,7 @@ _lp_source_config()
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
+    LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
@@ -228,6 +229,13 @@ _lp_source_config()
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
+    if [[ "$_LP_SHELL_bash" == true ]]
+    then
+        LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
+    else
+        [[ "$LP_ENABLE_RUNTIME" == 1 ]] && echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.
+        LP_ENABLE_RUNTIME=0
+    fi
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
@@ -283,6 +291,7 @@ _lp_source_config()
     LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
     LP_COLOR_TIME=${LP_COLOR_TIME:-$BLUE}
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
+    LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
 
     LP_COLORMAP_0=${LP_COLORMAP_0:-""}
     LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
@@ -1181,6 +1190,36 @@ _lp_color_map() {
     fi
 }
 
+###########################
+# runtime of last command #
+###########################
+
+LP_RUNTIME_SHOW=1
+_lp_runtime()
+{
+    [[ "$LP_ENABLE_RUNTIME" != 1 ]] && return
+    if [[ $LP_RUNTIME_SECONDS -ge $LP_RUNTIME_THRESHOLD ]]
+    then
+        echo -ne "${LP_COLOR_RUNTIME}${LP_RUNTIME_SECONDS}s${NO_COL}"
+    fi
+}
+
+LP_RUNTIME_LAST_SECONDS=0
+_lp_reset_runtime()
+{
+    LP_RUNTIME_SECONDS=`expr $SECONDS - $LP_RUNTIME_LAST_SECONDS`
+
+    [ "$LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && LP_RUNTIME_LAST_SECONDS=$SECONDS && LP_RUNTIME_SECONDS=0
+    
+    [ "$BASH_COMMAND" = _lp_set_prompt ] && LP_RUNTIME_COMMAND_EXECUTED=0 && return
+    LP_RUNTIME_COMMAND_EXECUTED=1
+}
+
+if [ "$LP_ENABLE_RUNTIME" = 1 ]
+then
+    trap '_lp_reset_runtime' DEBUG
+fi
+
 ###############
 # System load #
 ###############
@@ -1446,6 +1485,9 @@ _lp_set_prompt()
     # right of main prompt: space at left
     LP_VENV="$(_lp_sl "$(_lp_virtualenv)")"
     # if change of working directory
+
+    LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
+
     if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
         LP_VCS=""
         LP_VCS_TYPE=""
@@ -1533,7 +1575,7 @@ _lp_set_prompt()
         PS1="${PS1}${LP_VCS}"
 
         # add return code and prompt mark
-        PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

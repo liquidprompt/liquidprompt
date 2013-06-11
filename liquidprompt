@@ -368,6 +368,8 @@ else # root!
     LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
     LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
     LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
+    # Disable VCS info for all paths
+    [[ "$LP_ENABLE_VCS_ROOT" != 1 ]] && LP_DISABLED_VCS_PATH=/
 fi
 
 
@@ -1525,15 +1527,10 @@ _lp_set_prompt()
 
         PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
 
-        # if not root
-        if [[ "$EUID" -ne "0" ]]
-        then
-            # add VCS infos
-            PS1="${PS1}${LP_VCS}"
-        else
-            # do not add VCS infos unless told otherwise (LP_ENABLE_VCS_ROOT)
-            [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
-        fi
+        # Add VCS infos
+        # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+        # is set.
+        PS1="${PS1}${LP_VCS}"
 
         # add return code and prompt mark
         PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"

@@ -108,6 +108,7 @@ LP_ENABLE_RUNTIME=0
 LP_RUNTIME_THRESHOLD=2
 
 # Display the virtualenv that is currently activated, if any
+# Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
 
 # Show average system temperature

@@ -461,12 +461,6 @@ esac
 # unset _lp_connection
 
 
-# put an arrow if an http proxy is set
-_lp_proxy()
-{
-    [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]] && echo -ne "$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
-}
-
 # BASH/ZSH function that shortens
 # a very long path for display by removing
 # the left most parts and replacing them
@@ -1444,7 +1438,11 @@ _lp_set_prompt()
     LP_TIME="$(_lp_sr "$(_lp_time)")"
 
     # in main prompt: no space
-    LP_PROXY="$(_lp_proxy)"
+    if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]] ; then
+        LP_PROXY="$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
+    else
+        LP_PROXY=
+    fi
 
     # right of main prompt: space at left
     LP_VENV="$(_lp_sl "$(_lp_virtualenv)")"

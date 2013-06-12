@@ -458,7 +458,7 @@ tel)
 esac
 
 # Useless now, so undefine
-# unset _lp_connection
+unset _lp_connection
 
 
 # BASH/ZSH function that shortens

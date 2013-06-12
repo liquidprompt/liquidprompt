@@ -1151,9 +1151,10 @@ _lp_battery_color()
 _lp_color_map() {
     # Default scale: 0..100
     # Custom scale: 0..$2
-    local -i scale=${2:-100}
+    local -i scale value
+    scale=${2:-100}
     # Transform the value to a 0..100 scale
-    local -i value=100*$1/scale
+    value=100*$1/scale
     if (( value < 50 )); then
         if (( value <  30 )); then
             if   (( value <  10 )); then

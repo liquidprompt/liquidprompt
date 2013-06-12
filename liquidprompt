@@ -327,7 +327,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 case "$LP_OS" in
-    Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v ioreg >/dev/null || LP_ENABLE_BATT=0 ; };;
+    Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
     *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
 esac
 
@@ -1061,40 +1061,36 @@ case "$LP_OS" in
     _lp_battery()
     {
         [[ "$LP_ENABLE_BATT" != 1 ]] && return
-        local ioreg="$(ioreg -rn AppleSmartBattery | grep -v LegacyBatteryInfo)"
-        [[ -z "$ioreg" ]] && return 4
-        local ac=$(awk -F= '/ExternalConnected/ {print (tolower($2) ~ /yes/ ? 1 : 0)}' <<< "$ioreg")
-        local charge=$(awk -F= '/IsCharging/ {print (tolower($2) ~ /yes/ ? 1 : 0)}' <<< "$ioreg")
-        local max_charge=$(awk -F= '/MaxCapacity/ {print 0+$2}' <<< "$ioreg")
-        local current_charge=$(awk -F= '/CurrentCapacity/ {print 0+$2}' <<< "$ioreg")
-        local bat=$((100 * $current_charge / $max_charge))
-        if (($ac)) ; then
-            if (($charge)) ; then
-                # charging
-                echo -n "${bat}"
-                if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
-                    return 2
-                else
-                    return 3
-                fi
-            else
-                # fully charged
-                # This is tested as a separate case because the Mac battery
-                # charger acts as if the battery is charged even when it
-                # is only _almost_ charged when AC power is applied.
-                # I don't have exact numbers, but the threshold for this
-                # behavior appears to be around 95%.
-                return 4
-            fi
-        else
-            # discharging
-            echo -n "${bat}"
+        local pmset="$(pmset -g batt | tail -n1)"
+        local bat="$(cut -f2 <<<$pmset)"
+        bat="${bat%%%*}"
+        case "$pmset" in
+            *charged*)
+            return 4
+            ;;
+            *discharging*)
             if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                # under threshold
+                echo -n "${bat}"
                 return 0
             else
+                # above threshold
+                echo -n "${bat}"
                 return 1
             fi
-        fi
+            ;;
+            *)
+            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+                # under threshold
+                echo -n "${bat}"
+                return 2
+            else
+                # above threshold
+                echo -n "${bat}"
+                return 3
+            fi
+            ;;
+        esac
     }
     ;;
 esac

@@ -63,6 +63,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
+    _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
 elif test -n "$ZSH_VERSION" ; then
     _LP_SHELL_bash=false
@@ -72,6 +73,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
     _LP_TIME_SYMBOL="%*"
+    _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
 else
     echo "liquidprompt: shell not supported" >&2
@@ -1309,10 +1311,8 @@ _lp_smart_mark()
     local mark
     if [[ -n "$LP_MARK_DEFAULT" ]]; then
         mark=$LP_MARK_DEFAULT
-    elif $_LP_SHELL_zsh; then
-        mark="%(!.#.%%)"
     else
-        mark="\\\$"
+        mark="$_LP_MARK_SYMBOL"
     fi
     if [[ "$1" == "git" ]]; then
         mark=$LP_MARK_GIT

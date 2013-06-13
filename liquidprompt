@@ -1309,26 +1309,22 @@ _lp_title()
 _lp_smart_mark()
 {
     local mark
-    if [[ -n "$LP_MARK_DEFAULT" ]]; then
-        mark=$LP_MARK_DEFAULT
-    else
-        mark="$_LP_MARK_SYMBOL"
-    fi
-    if [[ "$1" == "git" ]]; then
-        mark=$LP_MARK_GIT
-    elif [[ "$1" == "git-svn" ]]; then
-        mark="$LP_MARK_GIT$LP_MARK_SVN"
-    elif [[ "$1" == "hg" ]]; then
-        mark=$LP_MARK_HG
-    elif [[ "$1" == "svn" ]]; then
-        mark=$LP_MARK_SVN
-    elif [[ "$1" == "fossil" ]]; then
-        mark=$LP_MARK_FOSSIL
-    elif [[ "$1" == "bzr" ]]; then
-        mark=$LP_MARK_BZR
-    elif [[ "$1" == "disabled" ]]; then
-        mark=$LP_MARK_DISABLED
-    fi
+    case "$LP_VCS_TYPE" in
+    git)      mark="$LP_MARK_GIT"             ;;
+    git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
+    hg)       mark="$LP_MARK_HG"              ;;
+    svn)      mark="$LP_MARK_SVN"             ;;
+    fossil)   mark="$LP_MARK_FOSSIL"          ;;
+    bzr)      mark="$LP_MARK_BZR"             ;;
+    disabled) mark="$LP_MARK_DISABLED"        ;;
+    *)
+        if [[ -n "$LP_MARK_DEFAULT" ]]; then
+            mark=$LP_MARK_DEFAULT
+        else
+            mark="$_LP_MARK_SYMBOL"
+        fi
+        ;;
+    esac
     echo -ne "${LP_COLOR_MARK}${mark}${NO_COL}"
 }
 

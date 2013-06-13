@@ -373,7 +373,10 @@ else # root!
     LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
     LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
     # Disable VCS info for all paths
-    [[ "$LP_ENABLE_VCS_ROOT" != 1 ]] && LP_DISABLED_VCS_PATH=/
+    if [[ "$LP_ENABLE_VCS_ROOT" != 1 ]]; then
+        LP_DISABLED_VCS_PATH=/
+        LP_MARK_DISABLED="$_LP_MARK_SYMBOL"
+    fi
 fi
 
 

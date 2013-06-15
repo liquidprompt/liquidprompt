@@ -96,8 +96,8 @@ To use it everytime you start a shell add the following line to your
 
 Next up is the configuration, you can skip this step if you already like the defaults:
 
-`cp ~/liquidpromp/liquidpromptrc-dist ~/.config/liquidpromptrc`
-
+`cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc`
+wtf is up
 You can also copy the file to `~/.liquidpromptrc`.
 Use your favorite text editor to change the defaults.
 The `liquidpromptrc` file is richly commented and easy to set your own defaults.

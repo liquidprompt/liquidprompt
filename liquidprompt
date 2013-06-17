@@ -114,14 +114,17 @@ case "$LP_OS" in
     FreeBSD)
         _lp_cpu_load () {
             local bol load eol
-            read bol load eol < $<( LANG=C sysctl -n vm.loadavg )
+            # If you have problems with syntax coloring due to the following
+            # line, do this: ln -s liquidprompt liquidprompt.bash
+            # and edit liquidprompt.bash
+            read bol load eol <<<$( LANG=C sysctl -n vm.loadavg )
             echo "$load"
         }
         ;;
     Darwin)
         _lp_cpu_load () {
-            local load
-            load=$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')
+            local bol load eol
+            read bol load eol <<<$( LANG=C sysctl -n vm.loadavg )
             echo "$load"
         }
         LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)

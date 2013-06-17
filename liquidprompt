@@ -372,6 +372,18 @@ else
     LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
 fi
 
+# update_terminal_cwd is a shell function available on MacOS X Lion that
+# will update an icon of the directory displayed in the title of the terminal
+# window.
+# See http://hints.macworld.com/article.php?story=20110722211753852
+if [[ "$TERM_PROGRAM" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
+    _LP_TERM_UPDATE_DIR=update_terminal_cwd
+    [[ "$PROMPT_COMMAND" == update_terminal_cwd ]] && PROMPT_COMMAND=
+else
+    _LP_TERM_UPDATE_DIR=:
+fi
+
+
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
 # like VCS branch names
@@ -1602,15 +1614,8 @@ _lp_set_prompt()
     local IFS="$(echo -e ' \t')
 "       # space, tab, LF
 
-    # execute the old prompt if not on Mac OS X (Mountain) Lion
-    case "$LP_OS" in
-        Linux|FreeBSD|OpenBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
-        Darwin)
-            case "$(LP_DWIN_KERNEL_REL_VER)" in
-                11|12) update_terminal_cwd ;;
-                *) $LP_OLD_PROMPT_COMMAND ;;
-            esac ;;
-    esac
+    # execute the old prompt
+    $LP_OLD_PROMPT_COMMAND
 
     # left of main prompt: space at right
     LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"
@@ -1633,6 +1638,9 @@ _lp_set_prompt()
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
     if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
+        # Update directory icon for MacOS X
+        $_LP_TERM_UPDATE_DIR
+
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time

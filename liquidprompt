@@ -28,6 +28,7 @@
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
 # Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
+# Daniel Schep      <dschep@gmail.com>            # option to use \W for path
 # David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
 # Étienne Deparis   <etienne@depar.is>            # Fossil support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
@@ -219,6 +220,7 @@ _lp_source_config()
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
+    LP_SHORT_PATH=${LP_SHORT_PATH:-0}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
     LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
@@ -480,6 +482,11 @@ unset _lp_connection
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
+    if [[ "$LP_SHORT_PATH" -eq 1 ]] ; then
+        echo "\\W"
+        return
+    fi
+
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 || -n "$PROMPT_DIRTRIM" ]] ; then
         if $_LP_SHELL_bash; then
             echo "\\w"

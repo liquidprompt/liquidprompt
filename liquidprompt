@@ -1615,10 +1615,7 @@ prompt_OFF()
     fi
 }
 
-# By default, sourcing liquidprompt.bash will activate the liquid prompt
+# By default, sourcing liquidprompt will activate the liquid prompt
 prompt_on
-
-# Cleaning of variable that are not needed at runtime
-unset LP_OS
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

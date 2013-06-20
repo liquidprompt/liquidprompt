@@ -1426,7 +1426,7 @@ _lp_set_prompt()
     case "$LP_OS" in
         Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
-            case "$(LP_DWIN_KERNEL_REL_VER)" in
+            case "$LP_DWIN_KERNEL_REL_VER" in
                 11|12) update_terminal_cwd ;;
                 *) $LP_OLD_PROMPT_COMMAND ;;
             esac ;;

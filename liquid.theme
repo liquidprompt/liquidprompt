@@ -101,6 +101,9 @@ LP_COLOR_TIME="$BLUE"
 # Virtualenv
 LP_COLOR_VIRTUALENV="$CYAN"
 
+# Runtime
+LP_COLOR_RUNTIME="$YELLOW"
+
 # Color maps (battery and load levels)
 # Range from 0 (nothing special) to 9 (alert)
 LP_COLORMAP_0=""

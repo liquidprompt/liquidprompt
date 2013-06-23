@@ -363,7 +363,9 @@ fi
 # See http://hints.macworld.com/article.php?story=20110722211753852
 if [[ "$TERM_PROGRAM" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
     _LP_TERM_UPDATE_DIR=update_terminal_cwd
-    [[ "$PROMPT_COMMAND" == update_terminal_cwd ]] && PROMPT_COMMAND=
+    # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
+    # See issue #196
+    PROMPT_COMMAND="${PROMPT_COMMAND//update_terminal_cwd; /}"
 else
     _LP_TERM_UPDATE_DIR=:
 fi

@@ -1600,7 +1600,7 @@ _lp_set_prompt()
 "       # space, tab, LF
 
     # execute the old prompt
-    $LP_OLD_PROMPT_COMMAND
+    eval "$LP_OLD_PROMPT_COMMAND"
 
     # left of main prompt: space at right
     LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"

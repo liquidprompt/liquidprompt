@@ -1209,10 +1209,10 @@ _lp_runtime()
     then
         echo -ne "${LP_COLOR_RUNTIME}"
         # display runtime seconds as days, hours, minutes, and seconds
-        [[ "$_LP_RUNTIME_SECONDS" -ge 86400 ]] && echo -ne $(expr ${_LP_RUNTIME_SECONDS} / 86400)d
-        [[ "$_LP_RUNTIME_SECONDS" -ge 3600 ]] && echo -ne $(expr ${_LP_RUNTIME_SECONDS} % 86400 / 3600)h
-        [[ "$_LP_RUNTIME_SECONDS" -ge 60 ]] && echo -ne $(expr ${_LP_RUNTIME_SECONDS} % 3600 / 60)m
-        echo -ne $(expr ${_LP_RUNTIME_SECONDS} % 60)s
+        [[ "$_LP_RUNTIME_SECONDS" -ge 86400 ]] && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
+        [[ "$_LP_RUNTIME_SECONDS" -ge 3600 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
+        [[ "$_LP_RUNTIME_SECONDS" -ge 60 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
+        echo -ne $((_LP_RUNTIME_SECONDS % 60))s
         echo -ne "${NO_COL}"
     fi
 }
@@ -1220,7 +1220,7 @@ _lp_runtime()
 _lp_reset_runtime()
 {
     # Compute number of seconds since program was started
-    _LP_RUNTIME_SECONDS=$(expr $SECONDS - $_LP_RUNTIME_LAST_SECONDS)
+    _LP_RUNTIME_SECONDS=$((SECONDS - _LP_RUNTIME_LAST_SECONDS))
 
     # If no proper command was executed (i.e., someone pressed enter without entering a command),
     # reset the runtime counter

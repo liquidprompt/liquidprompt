@@ -1200,6 +1200,9 @@ _lp_temp_sensors() {
         temperature=$(($temperature+$i))
         count=$(($count+1))
     done
+    if test $count -eq 0; then
+        exit
+    fi
     echo -ne "$(($temperature/$count))"
 }
 

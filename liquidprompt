@@ -85,6 +85,7 @@ fi
 case $(uname) in
     FreeBSD)   LP_OS=FreeBSD ;;
     DragonFly) LP_OS=FreeBSD ;;
+    OpenBSD)   LP_OS=OpenBSD ;;
     Darwin)    LP_OS=Darwin  ;;
     SunOS)     LP_OS=SunOS   ;;
     *)         LP_OS=Linux   ;;
@@ -93,7 +94,7 @@ esac
 # Get cpu count
 case "$LP_OS" in
     Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
-    FreeBSD|Darwin) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
+    FreeBSD|Darwin|OpenBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
     SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
 esac
 
@@ -121,6 +122,13 @@ case "$LP_OS" in
             echo "$load"
         }
         LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
+        ;;
+    OpenBSD)
+        _lp_cpu_load() {
+            local bol load eol
+            read one two three <<< `sysctl -n vm.loadavg`
+            echo "$load"
+        }
         ;;
     SunOS)
         _lp_cpu_load () {
@@ -153,6 +161,9 @@ _lp_source_config()
         ti_setaf () { tput setaf "$1" ; }
     elif tput AF >/dev/null 2>&1 ; then
         # *BSD
+        ti_setaf () { tput AF "$1" ; }
+    elif tput AF 1 >/dev/null 2>&1 ; then
+        # OpenBSD
         ti_setaf () { tput AF "$1" ; }
     else
         echo "liquidprompt: terminal $TERM not supported" >&2
@@ -1235,7 +1246,7 @@ _lp_as_text()
 {
     # Remove colors from the computed prompt
     case "$LP_OS" in
-        Linux|FreeBSD|SunOS)  local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
+        Linux|FreeBSD|OpenBSD|SunOS)  local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
         Darwin) local pst=$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g") ;;
     esac
 
@@ -1392,7 +1403,7 @@ _lp_set_prompt()
 
     # execute the old prompt if not on Mac OS X (Mountain) Lion
     case "$LP_OS" in
-        Linux|FreeBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
+        Linux|FreeBSD|OpenBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
         Darwin)
             case "$(LP_DWIN_KERNEL_REL_VER)" in
                 11|12) update_terminal_cwd ;;

@@ -125,7 +125,9 @@ case "$LP_OS" in
         ;;
     OpenBSD)
         _lp_cpu_load() {
-            echo "$(LANG=C sysctl -n vm.loadavg | awk '{print $2}')"
+            local bol load eol
+            read one two three <<< `sysctl -n vm.loadavg`
+            echo "$load"
         }
         ;;
     SunOS)

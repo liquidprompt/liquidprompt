@@ -250,6 +250,7 @@ _lp_source_config()
     LP_MARK_BRACKET_OPEN=${LP_MARK_BRACKET_OPEN:-"["}
     LP_MARK_BRACKET_CLOSE=${LP_MARK_BRACKET_CLOSE:-"]"}
     LP_MARK_SHORTEN_PATH=${LP_MARK_SHORTEN_PATH:-" … "}
+    LP_MARK_PREFIX=${LP_MARK_PREFIX:-""}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -1510,7 +1511,7 @@ _lp_set_prompt()
             [[ "$LP_ENABLE_VCS_ROOT" = "1" ]] && PS1="${PS1}${LP_VCS}"
         fi
         # add return code and prompt mark
-        PS1="${PS1}${LP_ERR}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1="${PS1}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

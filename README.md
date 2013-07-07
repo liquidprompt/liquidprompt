@@ -271,6 +271,7 @@ Set to a null string "" if you do not want color.
 * Prompt mark
     * `LP_COLOR_MARK` as user
     * `LP_COLOR_MARK_ROOT` as root
+    * `LP_MARK_PREFIX="\n"` put the prompt on the second line
 * Current user
     * `LP_COLOR_USER_LOGGED` user who logged in
     * `LP_COLOR_USER_ALT` user but not the one who logged in

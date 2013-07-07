@@ -110,6 +110,13 @@ in the sections below.
 Check in your `.bashrc` that the `PROMPT_COMMAND` variable is not set, or else
 the prompt will not be available.
 
+### INSTALLATION VIA ANTIGEN
+
+To install via antigen, simply add the following line in your .zshrc after activating antigen:
+
+```
+antigen bundle nojhan/liquidprompt
+```
 
 ## DEPENDENCIES
 

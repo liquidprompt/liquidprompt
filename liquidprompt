@@ -586,6 +586,7 @@ _lp_shorten_path()
             echo "$p"
         fi
     else # zsh
+        unset p
         if (( len > max_len )); then
             print -P "%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
         else
@@ -616,6 +617,7 @@ _lp_get_dirtrim() {
         done
         [[ "$((PROMPT_DIRTRIM))" -eq 0 ]] && PROMPT_DIRTRIM=1
     fi
+    unset p
     echo "$PROMPT_DIRTRIM"
 }
 
@@ -1561,7 +1563,7 @@ _lp_set_prompt()
 
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
-    if [[ "$LP_OLD_PWD" != "$PWD" ]]; then
+    if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time
@@ -1615,7 +1617,7 @@ _lp_set_prompt()
         # The color is different if user is root
         LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
 
-        LP_OLD_PWD="$PWD"
+        LP_OLD_PWD="LP:$PWD"
 
     # if do not change of working directory but...
     elif [[ -n "$LP_VCS_TYPE" ]]; then # we are still in a VCS dir

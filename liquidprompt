@@ -710,13 +710,15 @@ _lp_git_branch()
     local gitdir
     gitdir="$([ $(\git ls-files . 2>/dev/null | wc -l) -gt 0 ] && \git rev-parse --git-dir 2>/dev/null)"
     [[ $? -ne 0 || ! $gitdir =~ (.*\/)?\.git.* ]] && return
-    local branch="$(\git symbolic-ref HEAD 2>/dev/null)"
-    if [[ $? -ne 0 || -z "$branch" ]] ; then
+    local branch
+    # Recent versions of Git support the --short option for symbolic-ref, but
+    # not 1.7.9 (Ubuntu 12.04)
+    if branch="$(\git symbolic-ref -q HEAD)"; then
+        _lp_escape "${branch#refs/heads/}"
+    else
         # In detached head state, use commit instead
         # No escape needed
-        \git rev-parse --short HEAD 2>/dev/null
-    else
-        _lp_escape "${branch#refs/heads/}"
+        \git rev-parse --short -q HEAD
     fi
 }
 

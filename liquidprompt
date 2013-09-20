@@ -25,6 +25,7 @@
 ###########
 
 # Alex Prengère     <alexprengere@gmail.com>      # untracked git files
+# Anthony Gelibert  <anthony.gelibert@me.com>     # small code fix
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
 # Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support

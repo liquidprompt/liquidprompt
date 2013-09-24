@@ -24,26 +24,26 @@
 # AUTHORS #
 ###########
 
-# Alex Prengère     <alexprengere@gmail.com>      # untracked git files
-# Anthony Gelibert  <anthony.gelibert@me.com>     # small code fix
+# Alex Prengère     <alexprengere@gmail.com>      # Untracked git files
+# Anthony Gelibert  <anthony.gelibert@me.com>     # Several fix
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
-# Brendan Fahy      <bmfahy@gmail.com>            # postfix variable
+# Brendan Fahy      <bmfahy@gmail.com>            # Postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
-# David Loureiro    <david.loureiro@sysfera.com>  # small portability fix
+# David Loureiro    <david.loureiro@sysfera.com>  # Small portability fix
 # Étienne Deparis   <etienne@depar.is>            # Fossil support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
-# François Schmidts <francois.schmidts@gmail.com> # small code fix, _lp_get_dirtrim
+# François Schmidts <francois.schmidts@gmail.com> # Small code fix, _lp_get_dirtrim
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
 # Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
 # Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
-# Joris Vaillant    <joris.vaillant@gmail.com>    # small git fix
-# Luc Didry         <luc@fiat-tux.fr>             # Zsh port, several fix
+# Joris Vaillant    <joris.vaillant@gmail.com>    # Small git fix
+# Luc Didry         <luc@fiat-tux.fr>             # ZSH port, several fix
 # Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
 # Markus Dreseler   <github@dreseler.de>          # Runtime of last command
-# Nicolas Lacourte  <nicolas@dotinfra.fr>         # screen title
+# Nicolas Lacourte  <nicolas@dotinfra.fr>         # Screen title
 # nojhan            <nojhan@gmail.com>            # Main author.
 # Olivier Mengué    <dolmen@cpan.org>             # Major optimizations and refactorings everywhere.
-# Poil              <poil@quake.fr>               # speed improvements
+# Poil              <poil@quake.fr>               # Speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
 

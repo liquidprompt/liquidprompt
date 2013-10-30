@@ -317,8 +317,14 @@ _lp_source_config()
         source "$configfile"
     fi
 
-# change to \H if darwin
-    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL=${_LP_HOST_SYMBOL}".$(hostname -d)" ; }
+    case "$LP_OS" in
+	Linux)
+	    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL=${_LP_HOST_SYMBOL}".$(hostname -d)" ; }
+	    ;;
+	*)
+	    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL="\H" ; }
+    esac
+
 }
 # do source config files
 _lp_source_config

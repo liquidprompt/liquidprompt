@@ -317,7 +317,7 @@ function _lp_init --description 'Initialize liquidprompt'
         end
 
         # Extract the battery load value in percent.
-        set -l bat (acpi --battery 2> /dev/null | sed 's/^Battery .*, //;s/\%.*$//')
+        set -l bat (acpi --battery 2> /dev/null | sed 's/\%.*$//;s/^Battery .*, //')
 
         if [ -z "$bat" ]
             # Battery level not found.
@@ -591,9 +591,9 @@ function _lp_config --description 'Configure liquidprompt'
         set -g NO_COL (set_color normal)
 
         # Default values (globals)
-        set -g LP_BATTERY_THRESHOLD 100
-        set -g LP_LOAD_THRESHOLD 5
-        set -g LP_TEMP_THRESHOLD 5
+        set -g LP_BATTERY_THRESHOLD 75
+        set -g LP_LOAD_THRESHOLD 60
+        set -g LP_TEMP_THRESHOLD 60
         set -g LP_PATH_LENGTH 35
         set -g LP_PATH_KEEP 2
         set -e LP_HOSTNAME_ALWAYS

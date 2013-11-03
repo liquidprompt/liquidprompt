@@ -529,15 +529,158 @@ function _lp_init --description 'Initialize liquidprompt'
     end
 
     function _lp_hg --description 'mercurial'
+        set -l ret
+        set -l branch (hg branch 2> /dev/null)
+
+        if [ -z "$branch" ]
+            return
+        end
+
+        set -l has_untracked (hg status 2>/dev/null | grep '\(^\?\)' | wc -l)
+        if [ -n "$has_untracked" ]
+            set has_untracked "$LP_COLOR_CHANGES""$LP_MARK_UNTRACKED"
+        end
+
+        set -l has_commit (hg outgoing --no-merges "$branch" 2>/dev/null | grep '\(^changeset\:\)' | wc -l)
+        if [ -z "$has_commit" ]
+            set has_commit 0
+        end
+
+        if [ (hg status --quiet -n | wc -l) -eq 0 ]
+            if [ "$has_commit" -gt 0 ]
+                # some commit(s) to push
+                set ret "$LP_COLOR_COMMITS""$branch""$NO_COL""(""$LP_COLOR_COMMITS""$has_commit""$NO_COL"")""$has_untracked""$NO_COL"
+            else
+                set ret "$LP_COLOR_UP""$branch""$has_untracked""$NO_COL" # nothing to commit or push
+            end
+        else
+            set -l has_line  (hg diff --stat 2>/dev/null | tail -n 1 | awk 'FS=" " {printf("+%s/-%s\n", $4, $6)}')
+            if [ "$has_commit" -gt 0 ]
+                # Changes to commit and commits to push
+                set ret "$LP_COLOR_CHANGES""$branch""$NO_COL""(""$LP_COLOR_DIFF""$has_lines""$NO_COL"",""$LP_COLOR_COMMITS""$has_commit""$NO_COL"")""$has_untracked""$NO_COL"
+            else
+                set ret "$LP_COLOR_CHANGES""$branch""$NO_COL""(""$LP_COLOR_DIFF""$has_lines""$NO_COL"")""$has_untracked""$NO_COL" # changes to commit
+            end
+        end
+        echo -ne "$ret"" "
+    end
+
+    function _lp_svn_branch --description 'Auxiliary function for _lp_svn'
+        set -l root
+        set -l url
+        set -l result
+
+        begin
+            set -l LANG C
+            set -l LC_ALL C
+            svn info 2> /dev/null | sed 's/^URL: \(.*\)/"\1"/g;s/^Repository Root: \(.*\)/"\1"/p' | read url root
+        end
+        # echo "eval (LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url=\"\1\"/p;s/^Repository Root: \(.*\)/root=\"\1\"/p'; echo $url $root" | bash | read url root
+
+        if [ -z "$root" ]
+            return
+        end
+        # Make url relative to root
+        set url (expr substr $url (expr length $root + 1) length $url)
+        if [ (expr "$url" : ".*/trunk.*") -ne 0 ]
+            echo -n trunk
+        else
+            set result (expr "$url" : '.*/branches/\([^/]*\)'; or expr "$url" : '/\([^/]*\)'; or basename "$root")
+            echo -n "$result"
+        end
     end
 
     function _lp_svn --description 'subversion'
+        set -l branch (_lp_svn_branch)
+        if [ -n $branch ]
+            set -l changes (svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?")
+            if [ "$changes" -eq 0 ]
+                echo "$LP_COLOR_UP""$branch""$NO_COL"" "
+            else
+                echo "$LP_COLOR_CHANGES""$branch""$NO_COL""(""$LP_COLOR_DIFF""$changes""$NO_COL"")"" "
+            end
+        end
+    end
+
+    function _lp_fossil_branch --description 'Auxiliary function for _lp_fossil'
+        set -l branch (fossil status 2>/dev/null | grep tags: | cut -c17-)
+        if [ -n "$branch" ]
+            echo "$branch"
+        else
+            fossil info > /dev/null; and echo "no-tag"
+        end
     end
 
     function _lp_fossil --description 'fossil'
+        set -l branch (_lp_fossil_branch)
+
+        if [ -n $branch ]
+            # Modified files (added or edited)
+            set -l C2E (fossil changes | wc -l)
+            # Deleted files
+            set -l C2D (fossil changes | grep DELETED | wc -l)
+            # Extras files
+            set -l C2A (fossil extras | wc -l)
+            set -l ret
+            set C2E (math "$C2E" - "$C2D")
+
+            if [ "$C2E" -gt 0 ]
+                set ret "$ret""+""$C2E"
+            end
+
+            if [ "$C2D" -gt 0 ]
+                if [ -z "$ret" ]
+                    set ret "$ret""-""$C2D"
+                else
+                    set ret "$ret""/-""$C2D"
+                end
+            end
+
+            if [ "$C2A" -gt 0 ]
+                set C2A "$LP_MARK_UNTRACKED"
+            else
+                set -e C2A
+            end
+
+            if [ -n "$ret" ]
+                set ret "(""$LP_COLOR_DIFF""$ret""$NO_COL"")"
+            end
+
+            if [ "$branch" = "no-tag" ]
+                # Warning, your branch has no tag name !
+                set branch "$LP_COLOR_COMMITS""$branch""$NO_COL""$ret""$LP_COLOR_COMMITS""$C2A""$NO_COL"
+            else
+                if [ "$C2E" -eq 0 -a "$C2D" -eq 0 ]
+                    # All is up-to-date
+                    set branch "$LP_COLOR_UP""$branch""$C2A""$NO_COL"
+                else
+                    # There're some changes to commit
+                    branch "$LP_COLOR_CHANGES""$branch""$NO_COL""$ret""$LP_COLOR_CHANGES""$C2A""$NO_COL"
+                end
+            end
+            echo -ne "$branch"" "
+        end
     end
 
     function _lp_bzr --description 'bazaar'
+        set -l output (bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)
+        if [ "$status" -ne 0 ]
+            return
+        end
+
+        set -l branch $output[1]
+        set -l revno $output[2]
+        set -l clean $output[3]
+
+        set -l ret
+        if [ -n "$branch" ]
+            if [ "$clean" -eq 0 ]
+                set ret "$LP_COLOR_CHANGES""$branch""$NO_COL""(""$LP_COLOR_COMMITS""$revno""$NO_COL"")"
+            else
+                set ret "$LP_COLOR_UP""$branch""$NO_COL""(""$LP_COLOR_COMMITS""$revno""$NO_COL"")"
+            end
+        end
+        echo -ne "$ret"" "
     end
 
     ## Actual init
@@ -545,7 +688,7 @@ function _lp_init --description 'Initialize liquidprompt'
     _lp_os_detect
     _lp_cpu_count
     _lp_cpu_load_choose
-    if [ (echo "$TERM" | head -c 6) = "screen" ]
+    if [ (expr "$TERM" : "screen.*") -eq 0 ]
         set -g LP_BRACKET_OPEN "$LP_COLOR_IN_MULTIPLEXER""$LP_MARK_BRACKET_OPEN""$NO_COL"
         set -g LP_BRACKET_CLOSE "$LP_COLOR_IN_MULTIPLEXER""$LP_MARK_BRACKET_CLOSE""$NO_COL"" "
     else
@@ -823,7 +966,7 @@ function _lp_checks -e lp_feature_option_changed --description 'Checks'
         if not set -q LP_ENABLE_TITLE
             functions -c _lp_title_default fish_title
         else
-            [ (echo $TERM | head -c 6) != "screen" ]; or set -q LP_ENABLE_SCREEN_TITLE
+            [ (expr "$TERM" : "screen.*") -ne 0 ]; or set -q LP_ENABLE_SCREEN_TITLE
             if [ "$status" -eq 0 ]
                 functions -c _lp_title fish_title
             end
@@ -859,21 +1002,29 @@ function _lp_directory -v PWD -e lp_dir_option_changed --description 'Check thin
     function _lp_wd_vcs_type --description 'Determine which vcs should be used'
         if set -q LP_ENABLE_GIT
             if [ (__fish_git_prompt) ]
-                echo "git"
+                if [ -d (git rev-parse --git-dir 2> /dev/null)"/svn" ]
+                    echo "git-svn"
+                else
+                    echo "git"
+                end
                 return
             end
         end
 
         if set -q LP_ENABLE_SVN
+            [ (svn info 2> /dev/null) ]; and echo "svn"; and return
         end
 
         if set -q LP_ENABLE_FOSSIL
+            [ (fossil status 2> /dev/null) ]; and echo "fossil"; and return
         end
 
         if set -q LP_ENABLE_HG
+            [ (_lp_hg) ]; and echo "hg"; and return
         end
 
         if set -q LP_ENABLE_BZR
+            [ (bzr nick 2> /dev/null) ]; and echo "bzr"; and return
         end
 
         if _lp_are_vcs_disabled

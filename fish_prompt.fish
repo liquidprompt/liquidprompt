@@ -1,44 +1,8 @@
+## Functions
 function fish_prompt --description 'Write out the prompt'
-
-    # Get the last command's return code. This must be done first.
-    set -g last_status "$status"
-
-    ## Configure liquidprompt.
-    # This should not be done more than once per instance of fish.
-    if functions -q _lp_config
-        _lp_config
-        # Prevent the user from running this function again.
-        functions -e _lp_config
-    end
-
-    ## Initialize liquidprompt.
-    # (Compute things that will not change during this instance of fish.)
-    # This should not be done more than once per instance of fish.
-    if functions -q _lp_init
-        _lp_init
-        # Prevent the user from running this function again.
-        functions -e _lp_config
-    end
-
-    ## Feature check.
-    # Run some checks and disable any option that should not be enabled.
-    # This can be done several times during the lifetime of an instance of fish.
-    if not set -q _LP_CHECKED
-        # Tell liquidprompt that the feature check is done.
-        set -g _LP_CHECKED
-        _lp_checks
-    end
-
-    ## Directory check.
-    # Just changed directory ? Run some tests on the current directory
-    # and enable or disable things.
-    _lp_directory
-
-    ## Prompt printing.
-    _lp_prompt
-
-    # Cleaning, the user doesn't need this.
-    set -e last_status
+    # _lp_prompt is automatically called before printing a new prompt
+    # (thanks to the 'fish_prompt' event) and sets $LP_PROMPT.
+    echo "$LP_PROMPT"
 end
 
 function _lp_init --description 'Initialize liquidprompt'
@@ -719,7 +683,7 @@ function _lp_config --description 'Configure liquidprompt'
     functions -e _lp_source_config
 end
 
-function _lp_checks --description 'Checks'
+function _lp_checks -e lp_feature_option_changed --description 'Checks'
     function _lp_check_features --description 'Check whether a tool is installed, and enable/disable it'
         # Disable features if the tool is not installed.
         [ (command command -v git) ]; or set -e LP_ENABLE_GIT
@@ -811,12 +775,9 @@ function _lp_checks --description 'Checks'
     functions -e _lp_choose_time
 end
 
-function _lp_directory --description 'Check things on directory change'
-    if set -q _LP_OLD_PWD
-        if [ "$_LP_OLD_PWD" = "$PWD" ]
-            return
-        end
-    end
+function _lp_directory -v PWD -e lp_dir_option_changed --description 'Check things on directory change'
+    # This function will be called when $PWD's value changes or when the
+    # _lp_dir_option_changed event is fired.
 
     ## Local functions
     function _lp_are_vcs_disabled --description 'Check whether VCS are disabled for the PWD'
@@ -931,7 +892,7 @@ function _lp_directory --description 'Check things on directory change'
     end
 
     ## Cleaning
-    set -g _LP_OLD_PWD "$PWD"
+    #set -g _LP_OLD_PWD "$PWD"
     set -e LP_WD_DISABLE_VCS
     set -e LP_PERM
     functions -e _lp_wd_vcs
@@ -961,7 +922,17 @@ function _lp_directory --description 'Check things on directory change'
     functions -e _lp_smart_mark
 end
 
-function _lp_prompt --description 'Compute the prompt'
+function _lp_prompt -e fish_prompt --description 'Compute the prompt'
+    # This must be done first
+    set -l LP_ERR (_lp_return_value $status)
+
+    set -g LP_PROMPT
+
+    if set -q _LP_BASIC_PROMPT
+        set LP_PROMPT "$LP_MARK"" "
+        return
+    end
+
     ## Variables used in the prompt.
     #
     # Reminder:
@@ -972,27 +943,17 @@ function _lp_prompt --description 'Compute the prompt'
     # directories:
     # LP_PERM, LP_PWD, LP_MARK
     # (and LP_VENV ?)
-    if set -q _LP_BASIC_PROMPT
-        echo "$LP_MARK "
-        return
-    end
 
     set -l LP_JOBS (_lp_jobcount)
     set -l LP_TEMP (_lp_temperature)
     set -l LP_LOAD (_lp_cpu_load_color)
     set -l LP_BATT (_lp_battery_color)
     set -l LP_TIME (_lp_time)
-
     set -l LP_PROXY (_lp_proxy)
     set -l LP_VENV (_lp_virtualenv)
-
-    set -l LP_ERR (_lp_return_value $last_status)
-
     set -l LP_VCS (_lp_wd_vcs)
 
     ## Prompt
-    set -l LP_PROMPT
-
     set LP_PROMPT "$LP_PROMPT_PREFIX""$LP_TIME""$LP_BATT""$LP_LOAD""$LP_TEMP""$LP_JOBS"
     set LP_PROMPT "$LP_PROMPT""$LP_BRACKET_OPEN""$LP_USER""$LP_HOST""$LP_PERM"
     set LP_PROMPT "$LP_PROMPT""$LP_PWD""$LP_BRACKET_CLOSE""$LP_VENV""$LP_PROXY"
@@ -1007,10 +968,12 @@ function _lp_prompt --description 'Compute the prompt'
 
     set -l LP_TITLE (_lp_title "$LP_PROMPT")
     set LP_PROMPT "$LP_TITLE""$LP_PROMPT"
+    set LP_PROMPT "$LP_PROMPT"" "
 
-    echo "$LP_PROMPT"" "
+    # echo "$LP_PROMPT"" "
 end
 
+## User utilities
 function lp_enable --description 'Enable an option'
     set -l available "PERM" "PROXY" "TEMP" "JOBS" "LOAD" "GIT" "SVN" "FOSSIL" "HG" "BZR" "BATT" "TIME" "VIRTUALENV" "VCS_ROOT" "TITLE" "SCREEN_TITLE" "SSH_COLORS"
 
@@ -1039,9 +1002,9 @@ function lp_enable --description 'Enable an option'
     end
 
     # Force liquidprompt to check the features.
-    set -e _LP_CHECKED
+    emit lp_feature_option_changed
     # Force liquidprompt to run the directory checks.
-    set -e _LP_OLD_PWD
+    emit lp_dir_option_changed
 
     return 0
 end
@@ -1074,9 +1037,9 @@ function lp_disable --description 'Disable an option'
     end
 
     # Force liquidprompt to check the features.
-    set -e _LP_CHECKED
+    emit lp_feature_option_changed
     # Force liquidprompt to run the directory checks.
-    set -e _LP_OLD_PWD
+    emit lp_dir_option_changed
 
     return 0
 end
@@ -1113,6 +1076,7 @@ function lp_prompt_on --description 'Display the liquidprompt'
     return 0
 end
 
+## Completion rules
 complete -c lp_enable -x -l list -d 'List available options'
 complete -c lp_enable -x -a 'PERM' -d 'Enable permissions color'
 complete -c lp_enable -x -a 'PROXY' -d 'Enable proxy display'
@@ -1147,5 +1111,12 @@ complete -c lp_disable -x -a 'TITLE' -d 'Disable title'
 complete -c lp_disable -x -a 'SCREEN_TITLE' -d 'Disable screen title'
 complete -c lp_disable -x -a 'SSH_COLORS' -d 'Disable ssh colors'
 
-# complete -c lp_enable -x -l list -a "PERM PROXY TEMP JOBS LOAD GIT SVN FOSSIL HG BZR BATT TIME VIRTUALENV VCS_ROOT TITLE SCREEN_TITLE SSH_COLORS"
-# complete -c lp_disable -x -l list -a "PERM PROXY TEMP JOBS LOAD GIT SVN FOSSIL HG BZR BATT TIME VIRTUALENV VCS_ROOT TITLE SCREEN_TITLE SSH_COLORS"
+## First initialization
+_lp_config
+_lp_init
+_lp_checks
+_lp_directory
+_lp_prompt
+# Erase unnecessary (at runtime) functions
+functions -e _lp_config
+functions -e _lp_init

@@ -197,14 +197,64 @@ function _lp_init --description 'Initialize liquidprompt'
         kill -9 (jobs -l -p)
     end
 
+    function _lp_title_choose --description 'Choose the right _lp_title function'
+        ## Local functions
+        function _lp_title_screen --description 'Title in screen TERMs'
+            set -l txt (_lp_as_text "$LP_PROMPT")
+            echo "$LP_SCREEN_TITLE_OPEN""$txt""$LP_SCREEN_TITLE_CLOSE"
+        end
+
+        function _lp_title_linux --description 'Title in linux TERMs'
+        end
+
+        function _lp_title_other --description 'Title in other TERMs'
+            echo (_lp_as_text "$LP_PROMPT")
+        end
+
+        functions -e _lp_title
+        switch "$TERM"
+            case screen'*'
+                functions -c _lp_title_screen _lp_title
+            case linux'*'
+                functions -c _lp_title_linux _lp_title
+            case '*'
+                functions -c _lp_title_other _lp_title
+        end
+
+        functions -e _lp_title_screen
+        functions -e _lp_title_linux
+        functions -e _lp_title_other
+    end
+
     ## Functions used at runtime
+    function _lp_as_text --description 'Get pure text from a string'
+        # Remove colors from the computed prompt.
+        set -l pst
+        switch $_LP_OS
+            case Linux FreeBSD SunOS
+                set pst (echo $argv[1] | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+            case Darwin
+                set pst (echo $argv[1] | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+        end
+
+        # Remove escape sequences
+        # set -l op (printf "%q" $_LP_OPEN_ESC)
+        # set -l cl (printf "%q" $_LP_CLOSE_ESC)
+        # Replace all open _or_ close tags with nothing.
+        # set pst (echo $pst | sed "s,$op\|$cl,,g")
+
+        echo -n $pst
+    end
+
+    function _lp_title_default --description 'Default fish_title'
+        echo $_ ' '
+        pwd
+    end
+
     function _lp_return_value --description 'Print the status'
         if [ "$argv[1]" -ne 0 ]
             echo "$LP_COLOR_ERR""$argv[1]""$NO_COL"" "
         end
-    end
-
-    function _lp_title --description 'Title'
     end
 
     function _lp_color_map --description 'Color map'
@@ -507,6 +557,7 @@ function _lp_init --description 'Initialize liquidprompt'
     _lp_user
     _lp_hostname
     _lp_jobs_hack
+    _lp_title_choose
 
     # Once the initialization is done, these functions are of no use.
     functions -e _lp_init_clean
@@ -516,6 +567,7 @@ function _lp_init --description 'Initialize liquidprompt'
     functions -e _lp_user
     functions -e _lp_hostname
     functions -e _lp_jobs_hack
+    functions -e _lp_title_choose
 end
 
 function _lp_config --description 'Configure liquidprompt'
@@ -766,13 +818,27 @@ function _lp_checks -e lp_feature_option_changed --description 'Checks'
         end
     end
 
+    function _lp_choose_title --description 'Choose the right fish_title'
+        functions -e fish_title
+        if not set -q LP_ENABLE_TITLE
+            functions -c _lp_title_default fish_title
+        else
+            [ (echo $TERM | head -c 6) != "screen" ]; or set -q LP_ENABLE_SCREEN_TITLE
+            if [ "$status" -eq 0 ]
+                functions -c _lp_title fish_title
+            end
+        end
+    end
+
     _lp_check_features
     _lp_choose_time
     _lp_check_user
     _lp_check_hostname
+    _lp_choose_title
 
     functions -e _lp_check_features
     functions -e _lp_choose_time
+    functions -e _lp_choose_title
 end
 
 function _lp_directory -v PWD -e lp_dir_option_changed --description 'Check things on directory change'
@@ -966,8 +1032,6 @@ function _lp_prompt -e fish_prompt --description 'Compute the prompt'
     end
     set LP_PROMPT "$LP_PROMPT""$LP_ERR""$LP_MARK""$LP_PROMPT_POSTFIX"
 
-    set -l LP_TITLE (_lp_title "$LP_PROMPT")
-    set LP_PROMPT "$LP_TITLE""$LP_PROMPT"
     set LP_PROMPT "$LP_PROMPT"" "
 
     # echo "$LP_PROMPT"" "

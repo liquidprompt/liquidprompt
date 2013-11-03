@@ -292,10 +292,11 @@ function _lp_init --description 'Initialize liquidprompt'
         end
 
         if [ "$load" -ge "$LP_LOAD_THRESHOLD" ]
-            set -l ret (_lp_color_map "$load" 200)"$LP_MARK_LOAD"
-
+            set -l ret
             if set -q LP_PERCENTS_ALWAYS
-                set ret "$ret""$load""%"
+                set ret "$NO_COL""$LP_MARK_LOAD"(_lp_color_map "$load" 200)"$load""%"
+            else
+                set ret (_lp_color_map "$load" 200)"$LP_MARK_LOAD"
             end
             echo -ne "$ret""$NO_COL"" "
         end
@@ -321,7 +322,7 @@ function _lp_init --description 'Initialize liquidprompt'
 
         set -l temperature (_lp_temp_sensors)
         if [ $temperature -ge $LP_TEMP_THRESHOLD ]
-            echo -ne "$LP_MARK_TEMP"(_lp_color_map "$temperature" 120)"$temperature""°""$NO_COL"" "
+            echo -ne "$NO_COL""$LP_MARK_TEMP"(_lp_color_map "$temperature" 120)"$temperature""°""$NO_COL"" "
         end
     end
 
@@ -688,7 +689,7 @@ function _lp_init --description 'Initialize liquidprompt'
     _lp_os_detect
     _lp_cpu_count
     _lp_cpu_load_choose
-    if [ (expr "$TERM" : "screen.*") -eq 0 ]
+    if [ (expr "$TERM" : "screen.*") -ne 0 ]
         set -g LP_BRACKET_OPEN "$LP_COLOR_IN_MULTIPLEXER""$LP_MARK_BRACKET_OPEN""$NO_COL"
         set -g LP_BRACKET_CLOSE "$LP_COLOR_IN_MULTIPLEXER""$LP_MARK_BRACKET_CLOSE""$NO_COL"" "
     else
@@ -915,11 +916,11 @@ function _lp_checks -e lp_feature_option_changed --description 'Checks'
             set -l half "🕜" "🕝" "🕞" "🕟" "🕠" "🕡" "🕢" "🕣" "🕤" "🕥" "🕦" "🕧"
 
             if [ "$min" -lt 15 ]
-                echo -n $plain[$hour]" "
+                echo -n "$LP_COLOR_TIME"$plain[$hour]"$NO_COL"" "
             else if [ "$min" -lt 45 ]
-                echo -n $half[$hour]" "
+                echo -n "$LP_COLOR_TIME"$half[$hour]"$NO_COL"" "
             else
-                echo -n $plain[(math "$hour % 12 +1")]" "
+                echo -n "$LP_COLOR_TIME"$plain[(math "$hour % 12 +1")]"$NO_COL"" "
             end
         end
 
@@ -927,8 +928,10 @@ function _lp_checks -e lp_feature_option_changed --description 'Checks'
             if not set -q LP_ENABLE_TIME
                 return
             end
+            set -l time (date "+%H%n%M%n%S")
+            set -l sep "$NO_COL"":"
 
-            echo (date "+%H:%M:%S")" "
+            echo "$LP_COLOR_TIME"$time[1]"$sep""$LP_COLOR_TIME"$time[2]"$sep""$LP_COLOR_TIME"$time[3]"$NO_COL"" "
         end
 
         # Choose the _lp_time function.
@@ -1123,12 +1126,18 @@ function _lp_directory -v PWD -e lp_dir_option_changed --description 'Check thin
 
     _lp_permissions_color
 
-    set -g LP_PWD (prompt_pwd)
+    set -l _pwd (prompt_pwd)
+    set -l _dirname (dirname "$_pwd")
+    set -l _basename (basename "$_pwd")
+    [ "$_dirname" != "/" ]; and set _dirname "$_dirname""/"
+    [ "$_basename" = "/" ]; and set -e _basename
+    [ "$PWD" = "$HOME" ]; and set -e _dirname
 
+    set -g LP_PWD
     if set -q _LP_USER_IS_ROOT
-        set LP_PWD "$LP_COLOR_PATH_ROOT""$LP_PWD""$NO_COL"
+        set LP_PWD "$LP_COLOR_PATH_ROOT""$_dirname"(set_color -o)"$_basename""$NO_COL"
     else
-        set LP_PWD "$LP_COLOR_PATH""$LP_PWD""$NO_COL"
+        set LP_PWD "$LP_COLOR_PATH""$_dirname"(set_color -o)"$_basename""$NO_COL"
     end
 
     ## Cleaning, again.

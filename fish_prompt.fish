@@ -758,7 +758,7 @@ function _lp_config --description 'Configure liquidprompt'
         set -e LP_HOSTNAME_ALWAYS
         set -e LP_USER_ALWAYS
         set -g LP_PERCENTS_ALWAYS
-        set -g LP_PS1 ""
+        set -e LP_PS1
         set -g LP_PROMPT_PREFIX ""
         set -g LP_PROMPT_POSTFIX ""
         set -g LP_TITLE_OPEN "\e]0;"
@@ -1171,21 +1171,23 @@ function _lp_prompt -e fish_prompt --description 'Compute the prompt'
     set -l LP_VCS (_lp_wd_vcs)
 
     ## Prompt
-    set LP_PROMPT "$LP_PROMPT_PREFIX""$LP_TIME""$LP_BATT""$LP_LOAD""$LP_TEMP""$LP_JOBS"
-    set LP_PROMPT "$LP_PROMPT""$LP_BRACKET_OPEN""$LP_USER""$LP_HOST""$LP_PERM"
-    set LP_PROMPT "$LP_PROMPT""$LP_PWD""$LP_BRACKET_CLOSE""$LP_VENV""$LP_PROXY"
-    if set -q _LP_USER_IS_ROOT
-        if set -q LP_ENABLE_VCS_ROOT
+    if [ -n "$LP_PS1" ]
+        set LP_PROMPT (eval echo $LP_PS1)
+    else
+        set LP_PROMPT "$LP_PROMPT_PREFIX""$LP_TIME""$LP_BATT""$LP_LOAD""$LP_TEMP""$LP_JOBS"
+        set LP_PROMPT "$LP_PROMPT""$LP_BRACKET_OPEN""$LP_USER""$LP_HOST""$LP_PERM"
+        set LP_PROMPT "$LP_PROMPT""$LP_PWD""$LP_BRACKET_CLOSE""$LP_VENV""$LP_PROXY"
+        if set -q _LP_USER_IS_ROOT
+            if set -q LP_ENABLE_VCS_ROOT
+                set LP_PROMPT "$LP_PROMPT""$LP_VCS"
+            end
+        else
             set LP_PROMPT "$LP_PROMPT""$LP_VCS"
         end
-    else
-        set LP_PROMPT "$LP_PROMPT""$LP_VCS"
+        set LP_PROMPT "$LP_PROMPT""$LP_ERR""$LP_MARK""$LP_PROMPT_POSTFIX"
+
+        set LP_PROMPT "$LP_PROMPT"" "
     end
-    set LP_PROMPT "$LP_PROMPT""$LP_ERR""$LP_MARK""$LP_PROMPT_POSTFIX"
-
-    set LP_PROMPT "$LP_PROMPT"" "
-
-    # echo "$LP_PROMPT"" "
 end
 
 ## User utilities

@@ -322,7 +322,13 @@ function _lp_init --description 'Initialize liquidprompt'
 
         set -l temperature (_lp_temp_sensors)
         if [ $temperature -ge $LP_TEMP_THRESHOLD ]
-            echo -ne "$NO_COL""$LP_MARK_TEMP"(_lp_color_map "$temperature" 120)"$temperature""°""$NO_COL"" "
+            set -l ret
+            if set -q LP_PERCENTS_ALWAYS
+                echo -ne "$NO_COL""$LP_MARK_TEMP"(_lp_color_map "$temperature" 120)"$temperature""°"
+            else
+                set ret (_lp_color_map "$temperature" 120)"$LP_MARK_TEMP"
+            end
+            echo -ne "$ret""$NO_COL"" "
         end
     end
 
@@ -388,9 +394,8 @@ function _lp_init --description 'Initialize liquidprompt'
             return
         else if [ -n "$bat" ]
             # The battery is discharging and under the threshold.
-            set ret "$LP_COLOR_DISCHARGING_UNDER""$mark""$NO_COL"
-
             if set -q LP_PERCENTS_ALWAYS
+                set ret "$NO_COL""$mark"
                 if [ "$bat" -le 100 -a "$bat" -gt 80 ]
                     set ret "$ret""$LP_COLORMAP_1"
                 else if [ "$bat" -le 80 -a "$bat" -gt 65 ]
@@ -414,6 +419,8 @@ function _lp_init --description 'Initialize liquidprompt'
                     set ret "$ret""$LP_COLORMAP_0"
                 end
                 set ret "$ret""$bat""%"
+            else
+                set ret "$LP_COLOR_DISCHARGING_UNDER""$mark""$NO_COL"
             end # LP_PERCENTS_ALWAYS
             echo -ne "$ret""$NO_COL"" "
         end # ret
@@ -445,7 +452,7 @@ function _lp_init --description 'Initialize liquidprompt'
         end
 
         set -l all_jobs (jobs | wc -l)
-        set -l running (jobs | grep "$LP_RUNNING_JOB_WORD" | wc -l)
+        set -l running (jobs | grep "$_LP_RUNNING_JOB_WORD" | wc -l)
         set -l stopped (math "$all_jobs - $running")
         set -l n_screen (screen -ls 2> /dev/null | grep -c "Detach")
         set -l n_tmux (tmux list-sessions 2> /dev/null ` grep -cv "attached")
@@ -458,17 +465,17 @@ function _lp_init --description 'Initialize liquidprompt'
         set -l ret
 
         if [ "$detached" -ne 0 ]
-            set ret "$ret""$LP_COLOR_JOB_D""$detached""$m_detached""$NO_COL"
+            set ret "$ret"(set_color -o)"$LP_COLOR_JOB_D""$detached""$NO_COL""$LP_COLOR_JOB_D""$m_detached""$NO_COL"
         end
 
         if [ "$running" -ne 0 ]
             [ -n "$ret" ]; and set ret "$ret""/"
-            set ret "$ret""$LP_COLOR_JOB_R""$running""$m_run""$NO_COL"
+            set ret "$ret"(set_color -o)"$LP_COLOR_JOB_R""$running""$NO_COL""$LP_COLOR_JOB_R""$m_run""$NO_COL"
         end
 
-        if [ $stopped -ne 0 ]
+        if [ "$stopped" -ne 0 ]
             [ -n "$ret" ]; and set ret "$ret""/"
-            set ret "$ret""$LP_COLOR_JOB_Z""$stopped""$m_stop""$NO_COL"
+            set ret "$ret"(set_color -o)"$LP_COLOR_JOB_Z""$stopped""$NO_COL""$LP_COLOR_JOB_Z""$m_stop""$NO_COL"
         end
 
         [ -n "$ret" ]; and set ret "$ret"" "
@@ -812,8 +819,8 @@ function _lp_config --description 'Configure liquidprompt'
         set -g LP_COLOR_PATH_ROOT "$BOLD_YELLOW"
         set -g LP_COLOR_PROXY "$BOLD_BLUE"
         set -g LP_COLOR_JOB_D "$YELLOW"
-        set -g LP_COLOR_JOB_R "$BOLD_YELLOW"
-        set -g LP_COLOR_JOB_Z "$BOLD_YELLOW"
+        set -g LP_COLOR_JOB_R "$YELLOW"
+        set -g LP_COLOR_JOB_Z "$YELLOW"
         set -g LP_COLOR_ERR "$PURPLE"
         set -g LP_COLOR_MARK "$BOLD"
         set -g LP_COLOR_MARK_ROOT "$BOLD_RED"

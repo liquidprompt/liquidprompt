@@ -322,7 +322,7 @@ _lp_source_config()
 	    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL=${_LP_HOST_SYMBOL}".$(hostname -d)" ; }
 	    ;;
 	*)
-	    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL="\H" ; }
+	    [[ "$LP_DOMAIN" = 1 ]] &&  if $_LP_SHELL_bash; then { _LP_HOST_SYMBOL="\H" ; } else { _LP_HOST_SYMBOL="%M" ; } fi
     esac
 
 }

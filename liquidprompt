@@ -261,7 +261,6 @@ _lp_source_config()
     LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD}
     LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
     LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-""}
-    LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
     LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
     LP_COLOR_HOST=${LP_COLOR_HOST:-""}
     LP_COLOR_SSH=${LP_COLOR_SSH:-$BLUE}
@@ -349,20 +348,13 @@ _lp_escape()
 # Who are we? #
 ###############
 
-# Yellow for root, bold if the user is not the login one, else no color.
-if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
-    # if user is not login user
-    if [[ ${USER} != "$(logname 2>/dev/null || echo $LOGNAME)" ]]; then
-        LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-    else
-        if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
-            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-        else
-            LP_USER=""
-        fi
-    fi
-else
+# Yellow for root, else no color.
+if [[ "${LP_USER_ALWAYS}" -eq "0" ]] ; then
+    LP_USER=""
+elif [[ "${EUID}" -eq "0" ]] ; then
     LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+else
+    LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
 fi
 
 

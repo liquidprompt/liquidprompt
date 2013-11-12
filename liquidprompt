@@ -42,6 +42,7 @@
 # nojhan            <nojhan@gmail.com>            # Main author.
 # Olivier Mengué    <dolmen@cpan.org>             # Major optimizations and refactorings everywhere.
 # Poil              <poil@quake.fr>               # speed improvements
+# Bogdan Rădulescu  <bogdan@nimblex.net>          # Small portability fix, several simplifications to save CPU cycles
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
 
@@ -385,16 +386,6 @@ _lp_connection()
 # The connection is not expected to change from inside the shell, so we
 # build this just once
 LP_HOST=""
-_chroot()
-{
-    if [[ -r /etc/debian_chroot ]] ; then
-        local debchroot
-        debchroot=$(cat /etc/debian_chroot)
-        echo "(${debchroot})"
-    fi
-}
-LP_HOST="$(_chroot)"
-unset _chroot
 
 # If we are connected with a X11 support
 if [[ -n "$DISPLAY" ]] ; then
@@ -406,7 +397,6 @@ fi
 case "$(_lp_connection)" in
 lcl)
     if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]] ; then
-        # FIXME do we want to display the chroot if local?
         LP_HOST="" # no hostname if local
     else
         LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"

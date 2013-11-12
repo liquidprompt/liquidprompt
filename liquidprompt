@@ -326,7 +326,6 @@ unset _lp_source_config
 [[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
-[[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; }
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
@@ -1016,18 +1015,17 @@ _lp_battery()
 {
     [[ "$LP_ENABLE_BATT" != 1 ]] && return
     local acpi
-    acpi="$(acpi --battery 2>/dev/null)"
+    acpi=(`cat /sys/class/power_supply/BAT0/uevent`)
     # Extract the battery load value in percent
     # First, remove the beginning of the line...
-    local bat="${acpi#Battery *, }"
-    bat="${bat%%%*}" # remove everything starting at '%'
+    local bat="${acpi[10]#POWER_SUPPLY_CAPACITY=}"
 
     if [[ -z "${bat}" ]] ; then
         # not battery level found
         return 4
 
     # discharging
-    elif [[ "$acpi" == *"Discharging"* ]] ; then
+    elif [[ "${acpi[1]#POWER_SUPPLY_STATUS=}" == "Discharging" ]] ; then
         if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
             # under threshold
             echo -n "${bat}"

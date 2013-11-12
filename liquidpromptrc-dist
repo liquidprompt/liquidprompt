@@ -71,10 +71,6 @@ LP_ENABLE_LOAD=1
 # Recommended value is 1
 LP_ENABLE_BATT=1
 
-# Do you want to use vcs features with root account
-# Recommended value is 0
-LP_ENABLE_VCS_ROOT=0
-
 # Do you want to use the git special features ?
 # Recommended value is 1
 LP_ENABLE_GIT=1

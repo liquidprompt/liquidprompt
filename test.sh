@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 print_ok()
 {
     local OK="\\033[1;32m"
@@ -130,6 +129,15 @@ git()
     esac
 }
 
+hostname()
+{
+    echo "Fake hostname $@" 1>&2
+    case $1 in
+	"-d" )
+	    echo "localdomain";;
+    esac
+}
+
 # global variables
 export http_proxy="fake"
 
@@ -186,8 +194,16 @@ assert_has Load_Level       32%    $LINENO
 assert_has User             "[\\\u"    $LINENO
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
     assert_not Hostname     "\\\h"    $LINENO
+    #only show domain if hostname is shown
+    assert_not Domainname     ".localdomain"    $LINENO
 else
     assert_has Hostname     "\\\h"    $LINENO
+    echo "HERE LP_DOMAIN is $LP_DOMAIN"
+    if [[ $LP_DOMAIN == 1 ]] ; then
+	assert_has Domainname     ".localdomain"    $LINENO
+    else
+	assert_not Domainname     ".localdomain"    $LINENO
+    fi
 fi
 assert_has Perms            :    $LINENO
 assert_has Path             $(pwd | sed -e "s|$HOME|~|")    $LINENO
@@ -310,8 +326,15 @@ log_prompt
 # We thus rely on the existing config.
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
     assert_not Hostname     "\\\h"    $LINENO
+    #only show domain if hostname is shown
+    assert_not Domainname     ".localdomain"    $LINENO
 else
     assert_has Hostname     "\\\h"    $LINENO
+    if [[ $LP_DOMAIN == 1 ]] ; then
+	assert_has Domainname     ".localdomain"    $LINENO
+    else
+	assert_not Domainname     ".localdomain"    $LINENO
+    fi
 fi
 
 echo "prompt_OFF"

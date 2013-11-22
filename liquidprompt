@@ -61,6 +61,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
     _LP_USER_SYMBOL="\u"
+
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
 elif test -n "$ZSH_VERSION" ; then
@@ -315,6 +316,15 @@ _lp_source_config()
     then
         source "$configfile"
     fi
+
+    case "$LP_OS" in
+	Linux)
+	    [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL=${_LP_HOST_SYMBOL}".$(hostname -d)" ; }
+	    ;;
+	*)
+	    [[ "$LP_DOMAIN" = 1 ]] &&  if $_LP_SHELL_bash; then { _LP_HOST_SYMBOL="\H" ; } else { _LP_HOST_SYMBOL="%M" ; } fi
+    esac
+
 }
 # do source config files
 _lp_source_config
@@ -1347,8 +1357,8 @@ _lp_time_analog()
     #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
     #
 
-    local plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
-    local half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
+    local plain=(� � � � � � � � � � � � )
+    local half=(� � � � 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
     # array index starts at 0
     local -i hi=hour-1

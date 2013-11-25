@@ -787,6 +787,24 @@ _lp_git_branch_color()
     fi
 }
 
+# Search upwards through a directory structure looking for a file/folder with
+# the given name.  Used to avoid invoking 'hg' and 'bzr'.
+_lp_upwards_find()
+{
+    while [[ "$PWD" != "/" ]] ; do
+        
+        # See if it's in the current directory.
+        local found=$(find "$PWD"/ -maxdepth 1 -name "$@" 2> /dev/null)
+        
+        # If it is, then echo the path (or anything), and return.
+        if [[ -n found ]] ; then
+            echo $found
+            return
+        fi
+        
+        cd ..
+    done
+}
 
 # MERCURIAL #
 
@@ -794,8 +812,18 @@ _lp_git_branch_color()
 _lp_hg_branch()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
+   
+    # First do a simple search to avoid having to invoke hg -- at least on my
+    # machine, the python startup causes a noticeable hitch when changing
+    # directories.
+    [[ -z "$(_lp_upwards_find '.hg')" ]] && return
+
+    # We found an .hg folder, so we need to invoke hg and see if we're actually
+    # in a repository.
+    
     local branch
     branch="$(hg branch 2>/dev/null)"
+
     [[ $? -eq 0 ]] && _lp_escape "$branch"
 
 }
@@ -1013,6 +1041,15 @@ _lp_fossil_branch_color()
 _lp_bzr_branch()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
+
+    # First do a simple search to avoid having to invoke bzr -- at least on my
+    # machine, the python startup causes a noticeable hitch when changing
+    # directories.
+    [[ -z $(_lp_upwards_find '.bzr') ]] && return
+
+    # We found an .bzr folder, so we need to invoke bzr and see if we're
+    # actually in a repository.
+
     local branch
     branch="$(bzr nick 2> /dev/null)"
     [[ $? -ne 0 ]] && return
@@ -1029,6 +1066,15 @@ _lp_bzr_branch()
 _lp_bzr_branch_color()
 {
     [[ "$LP_ENABLE_BZR" != 1 ]] && return
+
+    # First do a simple search to avoid having to invoke bzr -- at least on my
+    # machine, the python startup causes a noticeable hitch when changing
+    # directories.
+    [[ -z $(_lp_upwards_find '.bzr') ]] && return
+
+    # We found an .bzr folder, so we need to invoke bzr and see if we're
+    # actually in a repository.
+
     local output
     output="$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)"
     [[ $? -ne 0 ]] && return

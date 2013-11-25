@@ -835,7 +835,7 @@ _lp_hg_branch_color()
                 ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
             fi
         else
-            local has_line
+            local has_lines
             has_lines=$(hg diff --stat 2>/dev/null | tail -n 1 | awk 'FS=" " {printf("+%s/-%s\n", $4, $6)}')
             if [[ "$has_commit" -gt "0" ]] ; then
                 # Changes to commit and commits to push

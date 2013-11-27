@@ -769,6 +769,7 @@ _lp_git_branch_color()
         fi
 
         local shortstat
+        local ret
         shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
         if [[ -n "$shortstat" ]] ; then
             local has_lines

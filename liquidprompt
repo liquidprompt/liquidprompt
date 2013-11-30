@@ -512,18 +512,11 @@ esac
 unset _lp_connection
 
 
-# BASH/ZSH function that shortens
-# a very long path for display by removing
-# the left most parts and replacing them
-# with a leading ...
-#
-# the first argument is the path
-#
-# the second argument is the maximum allowed
-# length including the '/'s and ...
-# http://hbfs.wordpress.com/2009/09/01/short-pwd-in-bash-prompts/
-#
-# + keep some left part of the path if asked
+# Shorten the path of the current working directory
+# * Show only the current directory
+# * Show as much of the cwd path as possible, if shortened display a
+#   leading mark, such as ellipses, to indicate that part is missing
+# * show at least LP_PATH_KEEP leading dirs and current directory
 _lp_shorten_path()
 {
 
@@ -535,87 +528,53 @@ _lp_shorten_path()
         return
     fi
 
-    local p
-    p="${PWD/#$HOME/~}"
-    local -i len max_len
-    len=${#p}
-    (( max_len = ${COLUMNS:-80} * $LP_PATH_LENGTH / 100 ))
+    local ret=""
 
-    if $_LP_SHELL_bash; then
-        if (( len > max_len ))
-        then
-            # index of the directory to keep from the root
-            # (starts at 0 whith bash, 1 with zsh)
-            local -i keep=LP_PATH_KEEP-1
-            # the character that will replace the part of the path that is
-            # masked
-            local mask="$LP_MARK_SHORTEN_PATH"
-            local -i mask_len=${#mask}
-            # finds all the '/' in
-            # the path and stores their
-            # positions
-            #
-            local pos=()
-            local -i slashes=0
-            for ((i=0;i<len;i++))
-            do
-                if [[ "${p:i:1}" == / ]]
-                then
-                    pos=(${pos[@]} $i)
-                    let slashes++
-                fi
-            done
-            pos=(${pos[@]} $len)
+    local p="${PWD/#$HOME/~}"
+    local mask="${LP_MARK_SHORTEN_PATH}"
+    local -i max_len=$(( ${COLUMNS:-80} * $LP_PATH_LENGTH / 100 ))
 
-            # we have the '/'s, let's find the
-            # left-most that doesn't break the
-            # length limit
-            #
-            local -i i=keep
-            if (( keep > slashes )) ; then
-                i=slashes
-            fi
-            while (( len-pos[i] > max_len-mask_len ))
-            do
-                let i++
-            done
+    if [[ ${LP_PATH_KEEP} == -1 ]]; then
+        # only show the current directory, excluding any parent dirs
+        ret="${p##*/}" # discard everything upto and including the last slash
+        [[ "${ret}" == "" ]] && ret="/" # if in root directory
+    elif (( ${#p} <= ${max_len} )); then
+        ret="${p}"
+    elif [[ ${LP_PATH_KEEP} == 0 ]]; then
+        # len is over max len, show as much of the tail as is allowed
+        ret="${mask}${p:${#p} - ${max_len} + ${#mask}}"
+    else
+        # len is over max len, show at least LP_PATH_KEEP leading dirs and
+        # current directory
+        local tmp=${p//\//}
+        local -i delims=$(( ${#p} - ${#tmp} ))
 
-            # let us check if it's OK to
-            # print the whole thing
-            #
-            if (( pos[i] == 0 ))
-            then
-                # the path is shorter than
-                # the maximum allowed length,
-                # so no need for '…'
-                #
-                LP_PWD="$p"
+        for (( dir=0; dir < ${LP_PATH_KEEP}; dir++ )); do
+            (( ${dir} == ${delims} )) && break
 
-            elif (( pos[i] == len ))
-            then
-                # constraints are broken because
-                # the maximum allowed size is smaller
-                # than the last part of the path, plus
-                # ' … '
-                #
-                LP_PWD="${p:0:pos[keep]+1}${mask}${p:len-max_len+mask_len}"
-            else
-                # constraints are satisfied, at least
-                # some parts of the path, plus ' … ', are
-                # shorter than the maximum allowed size
-                #
-                LP_PWD="${p:0:pos[keep]+1}${mask}${p:pos[i]}"
-            fi
+            local left="${p#*/}"
+            local name="${p:0:${#p} - ${#left}}"
+            p="${left}"
+            ret="${ret}${name%/}/"
+        done
+
+        if (( ${delims} <= ${LP_PATH_KEEP} )); then
+            # no dirs between LP_PATH_KEEP leading dirs and current dir
+            ret="${ret}${p##*/}"
         else
-            LP_PWD="$p"
-        fi
-    else # zsh
-        if (( len > max_len )); then
-            LP_PWD="%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
-        else
-            LP_PWD='%~'
+            local base="${p##*/}"
+
+            p="${p:0:${#p} - ${#base}}"
+
+            ret="${ret%/}" # strip trailing slash
+
+            local -i len_left=$(( ${max_len} - ${#ret} - ${#base} - ${#mask} ))
+
+            ret="${ret}${mask}${p:${#p} - ${len_left}}${base}"
         fi
     fi
+
+    echo "${ret}"
 }
 
 # In bash shell, PROMPT_DIRTRIM is the number of directory to keep at the end

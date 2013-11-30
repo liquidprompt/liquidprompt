@@ -41,8 +41,8 @@
 # Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
 # Markus Dreseler   <github@dreseler.de>          # Runtime of last command
 # Nicolas Lacourte  <nicolas@dotinfra.fr>         # Screen title
-# nojhan            <nojhan@gmail.com>            # Main author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations, refactorings everywhere; Co-maintainer
+# nojhan            <nojhan@gmail.com>            # Original author.
+# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations, refactorings everywhere; current maintainer
 # Poil              <poil@quake.fr>               # Speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.

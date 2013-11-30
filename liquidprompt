@@ -1393,7 +1393,7 @@ _lp_temp_sensors() {
             temperature=$i
         fi
     done
-    echo -ne "$(($temperature/$count))"
+    echo -ne "$temperature"
 }
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an

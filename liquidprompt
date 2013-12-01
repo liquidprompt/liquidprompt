@@ -542,7 +542,9 @@ _lp_shorten_path()
         ret="${p}"
     elif [[ ${LP_PATH_KEEP} == 0 ]]; then
         # len is over max len, show as much of the tail as is allowed
-        ret="${mask}${p:${#p} - ${max_len} + ${#mask}}"
+        local ret="${p##*/}" # show at least complete current directory
+        p="${p:0:${#p} - ${#ret}}"
+        ret="${mask}${p:${#p} - (${max_len} - ${#ret} - ${#mask})}${ret}"
     else
         # len is over max len, show at least LP_PATH_KEEP leading dirs and
         # current directory

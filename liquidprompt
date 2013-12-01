@@ -568,7 +568,7 @@ _lp_shorten_path()
 
             p="${p:0:${#p} - ${#base}}"
 
-            ret="${ret%/}" # strip trailing slash
+            [[ ${ret} != "/" ]] && ret="${ret%/}" # strip trailing slash
 
             local -i len_left=$(( ${max_len} - ${#ret} - ${#base} - ${#mask} ))
 

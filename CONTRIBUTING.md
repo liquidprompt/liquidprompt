@@ -10,7 +10,7 @@ The main branch for development is `develop`. This is on top of this branch
 that you must write your patches.
 
 Any pull request built on top of `master` instead of `develop`
-is additionnal merge work for maintainers, and you want to avoid this if you
+is additional merge work for maintainers, and you want to avoid this if you
 aim for quick integration of your work.
 
 If you wrote your patch on the wrong branch the maintainers may choose to close
@@ -41,7 +41,7 @@ How to do the right thing?
 
     # Check that your local repo is up to date
     $ git fetch
-    # Rebase your work on the lastest state of `develop`
+    # Rebase your work on the latest state of `develop`
     $ git rebase upstream/develop
 
     # Push

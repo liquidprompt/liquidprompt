@@ -92,7 +92,7 @@ git clone https://github.com/nojhan/liquidprompt.git
 source liquidprompt/liquidprompt
 ```
 
-To use it everytime you start a shell add the following line to your
+To use it every time you start a shell add the following line to your
 `.bashrc` (if you use bash) or `.zshrc` (if you use zsh):
 
 `source ~/liquidprompt/liquidprompt`
@@ -342,11 +342,11 @@ version 3.
 * Browsing into very large subversion repositories may dramatically slow down
 the display of the liquid prompt (use `LP_DISABLED_VCS_PATH` to avoid that).
 * Subversion repository cannot display commits to be pushed, this is a
-limitation of the Subversion versionning model.
+limitation of the Subversion versioning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256)
-* The analog clock necessitate a unicode-aware terminal and a at least one
+* The analog clock necessitate a Unicode-aware terminal and a at least one
 sufficiently complete font on your system.
 The [Symbola](http://users.teilar.gr/~g1951d/) font, designed by Georges Douros,
 is known to work well.

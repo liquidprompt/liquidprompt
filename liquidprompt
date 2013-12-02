@@ -769,6 +769,7 @@ _lp_git_branch_color()
         fi
 
         local shortstat
+        local ret
         shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
         if [[ -n "$shortstat" ]] ; then
             local has_lines
@@ -1393,7 +1394,7 @@ _lp_temp_sensors() {
             temperature=$i
         fi
     done
-    echo -ne "$(($temperature/$count))"
+    echo -ne "$temperature"
 }
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an

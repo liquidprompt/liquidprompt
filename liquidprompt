@@ -1388,25 +1388,20 @@ _lp_load_color()
 _lp_temp_sensors()
 {
     # Return the hottest system temperature we get through the sensors command
-    local temperature=0
+    local i
     for i in $(sensors |
             sed -n -r "s/^(CPU|SYS|MB|Core|temp).*: *\+([0-9]*)\..°.*/\2/p"); do
-        if [[ $i -gt $temperature ]]; then
-            temperature=$i
-        fi
+        [[ $i -gt $temperature ]] && temperature=$i
     done
-    echo -ne "$temperature"
 }
 
 _lp_temp_acpi()
 {
-    local temperature i
-    temperature=0
+    local i
     for i in $(acpi -t | sed 's/.* \([0-9]*\)\.[0-9]* degrees C$/\1/p')
     do
-        (( $i > $temperature )) && temperature=$i
+        [[ $i -gt $temperature ]] && temperature=$i
     done
-    echo -ne "$temperature"
 }
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
@@ -1428,7 +1423,9 @@ _lp_temperature() {
     # and colorize it through _lp_color_map.
     [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    local temperature="$($_LP_TEMP_FUNCTION)"
+    local temperature
+    temperature=0
+    $_LP_TEMP_FUNCTION
     if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
     fi

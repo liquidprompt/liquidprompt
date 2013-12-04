@@ -802,16 +802,16 @@ _lp_git_branch_color()
 _lp_upwards_find()
 {
     while [[ "$PWD" != "/" ]] ; do
-        
+
         # See if it's in the current directory.
         local found=$(find "$PWD"/ -maxdepth 1 -name "$@" 2> /dev/null)
-        
+
         # If it is, then echo the path (or anything), and return.
         if [[ -n found ]] ; then
             echo $found
             return
         fi
-        
+
         cd ..
     done
 }
@@ -822,7 +822,7 @@ _lp_upwards_find()
 _lp_hg_branch()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
-   
+
     # First do a simple search to avoid having to invoke hg -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
@@ -830,7 +830,7 @@ _lp_hg_branch()
 
     # We found an .hg folder, so we need to invoke hg and see if we're actually
     # in a repository.
-    
+
     local branch
     branch="$(hg branch 2>/dev/null)"
 

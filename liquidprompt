@@ -1385,7 +1385,8 @@ _lp_load_color()
 # System temperature #
 ######################
 
-_lp_temp_sensors() {
+_lp_temp_sensors()
+{
     # Return the hottest system temperature we get through the sensors command
     local temperature=0
     for i in $(sensors |
@@ -1397,10 +1398,17 @@ _lp_temp_sensors() {
     echo -ne "$temperature"
 }
 
+_lp_temp_acpi()
+{
+    expr "$(acpi -t)" : '.* \([0-9]*\)\.[0-9]* degrees C'
+}
+
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
 # available command. _LP_TEMP_FUNCTION should return only a numeric value
 if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
-    if command -v sensors >/dev/null; then
+    if command -v acpi >/dev/null; then
+        _LP_TEMP_FUNCTION=_lp_temp_acpi
+    elif command -v sensors >/dev/null; then
         _LP_TEMP_FUNCTION=_lp_temp_sensors
     # elif command -v the_command_you_want_to_use; then
     #   _LP_TEMP_FUNCTION=your_function

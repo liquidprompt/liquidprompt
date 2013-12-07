@@ -1171,7 +1171,7 @@ case "$LP_OS" in
     {
         [[ "$LP_ENABLE_BATT" != 1 ]] && return
         local pmset="$(pmset -g batt | tail -n1)"
-        local bat="$(cut -f2 <<<$pmset)"
+        local bat="$(cut -f2 <<<"$pmset")"
         bat="${bat%%%*}"
         case "$pmset" in
             *charged*)

@@ -114,28 +114,13 @@ case "$LP_OS" in
             echo "$load"
         }
         ;;
-    FreeBSD)
+    FreeBSD|Darwin|OpenBSD)
         _lp_cpu_load () {
             local bol load eol
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
             read bol load eol <<<$( LANG=C sysctl -n vm.loadavg )
-            echo "$load"
-        }
-        ;;
-    Darwin)
-        _lp_cpu_load () {
-            local bol load eol
-            read bol load eol <<<$( LANG=C sysctl -n vm.loadavg )
-            echo "$load"
-        }
-        LP_DWIN_KERNEL_REL_VER=$(uname -r | cut -d . -f 1)
-        ;;
-    OpenBSD)
-        _lp_cpu_load() {
-            local bol load eol
-            read one two three <<< `sysctl -n vm.loadavg`
             echo "$load"
         }
         ;;
@@ -371,6 +356,20 @@ else
     LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
     LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
 fi
+
+# update_terminal_cwd is a shell function available on MacOS X Lion that
+# will update an icon of the directory displayed in the title of the terminal
+# window.
+# See http://hints.macworld.com/article.php?story=20110722211753852
+if [[ "$TERM_PROGRAM" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
+    _LP_TERM_UPDATE_DIR=update_terminal_cwd
+    # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
+    # See issue #196
+    PROMPT_COMMAND="${PROMPT_COMMAND//update_terminal_cwd; /}"
+else
+    _LP_TERM_UPDATE_DIR=:
+fi
+
 
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
@@ -1602,15 +1601,8 @@ _lp_set_prompt()
     local IFS="$(echo -e ' \t')
 "       # space, tab, LF
 
-    # execute the old prompt if not on Mac OS X (Mountain) Lion
-    case "$LP_OS" in
-        Linux|FreeBSD|OpenBSD|SunOS) $LP_OLD_PROMPT_COMMAND ;;
-        Darwin)
-            case "$(LP_DWIN_KERNEL_REL_VER)" in
-                11|12) update_terminal_cwd ;;
-                *) $LP_OLD_PROMPT_COMMAND ;;
-            esac ;;
-    esac
+    # execute the old prompt
+    eval "$LP_OLD_PROMPT_COMMAND"
 
     # left of main prompt: space at right
     LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"
@@ -1633,6 +1625,9 @@ _lp_set_prompt()
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
     if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
+        # Update directory icon for MacOS X
+        $_LP_TERM_UPDATE_DIR
+
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time

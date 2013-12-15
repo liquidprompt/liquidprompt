@@ -604,7 +604,7 @@ _lp_shorten_path()
 # liquidprompt can calculate this number under two condition, path shortening
 # must be activated and PROMPT_DIRTRIM must be already set.
 _lp_get_dirtrim() {
-    [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo 0 && return
+    [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo $PROMPT_DIRTRIM && return
 
     local p="${PWD/$HOME/~}"
     local len=${#p}

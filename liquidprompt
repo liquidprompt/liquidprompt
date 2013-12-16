@@ -232,7 +232,7 @@ _lp_source_config()
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
-    if [[ "$_LP_SHELL_bash" == true ]]
+    if $_LP_SHELL_bash
     then
         LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     else

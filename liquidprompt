@@ -510,11 +510,12 @@ unset _lp_connection
 # + keep some left part of the path if asked
 _lp_shorten_path()
 {
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 || -n "$PROMPT_DIRTRIM" ]] ; then
+    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] ; then
         if $_LP_SHELL_bash; then
-            echo "\\w"
+            [[ -n "$PROMPT_DIRTRIM" ]] && _lp_set_dirtrim
+            LP_PWD="\\w"
         else
-            print -P '%~'
+            LP_PWD='%~'
         fi
         return
     fi
@@ -573,7 +574,7 @@ _lp_shorten_path()
                 # the maximum allowed length,
                 # so no need for '…'
                 #
-                echo "$p"
+                LP_PWD="$p"
 
             elif (( pos[i] == len ))
             then
@@ -582,23 +583,22 @@ _lp_shorten_path()
                 # than the last part of the path, plus
                 # ' … '
                 #
-                echo "${p:0:pos[keep]+1}${mask}${p:len-max_len+mask_len}"
+                LP_PWD="${p:0:pos[keep]+1}${mask}${p:len-max_len+mask_len}"
             else
                 # constraints are satisfied, at least
                 # some parts of the path, plus ' … ', are
                 # shorter than the maximum allowed size
                 #
-                echo "${p:0:pos[keep]+1}${mask}${p:pos[i]}"
+                LP_PWD="${p:0:pos[keep]+1}${mask}${p:pos[i]}"
             fi
         else
-            echo "$p"
+            LP_PWD="$p"
         fi
     else # zsh
-        unset p
         if (( len > max_len )); then
-            print -P "%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
+            LP_PWD="%-${LP_PATH_KEEP}~%${max_len}<${LP_MARK_SHORTEN_PATH}<%~%<<"
         else
-            print -P '%~'
+            LP_PWD='%~'
         fi
     fi
 }
@@ -627,7 +627,7 @@ _lp_set_dirtrim() {
     fi
     PROMPT_DIRTRIM=$dt
     # For debugging
-    # echo $PROMPT_DIRTRIM
+    # echo PROMPT_DIRTRIM=$PROMPT_DIRTRIM >&2
 }
 
 # Display a ":"
@@ -1637,9 +1637,7 @@ _lp_set_prompt()
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time
         LP_PERM="$(_lp_permissions_color)"
-        LP_PWD="$(_lp_shorten_path)"
-        # Check that both LP_ENABLE_SHORTEN and PROMPT_DIRTRIM are set
-        [[ "_$LP_ENABLE_SHORTEN_PATH/$PROMPT_DIRTRIM" = _1/?* ]] && _lp_set_dirtrim
+        _lp_shorten_path   # set LP_PWD
 
         if _lp_are_vcs_enabled; then
             LP_VCS="$(_lp_git_branch_color)"

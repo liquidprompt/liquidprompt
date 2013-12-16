@@ -519,9 +519,11 @@ _lp_shorten_path()
         return
     fi
 
-    local p="${PWD/#$HOME/~}"
-    local -i len=${#p}
-    local -i max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
+    local p
+    p="${PWD/#$HOME/~}"
+    local -i len max_len
+    len=${#p}
+    (( max_len = ${COLUMNS:-80} * $LP_PATH_LENGTH / 100 ))
 
     if $_LP_SHELL_bash; then
         if (( len > max_len ))

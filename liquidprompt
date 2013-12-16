@@ -130,6 +130,8 @@ case "$LP_OS" in
         }
 esac
 
+# Reset so all PWD dependent variables are computed after loading
+unset LP_OLD_PWD
 
 #################
 # CONFIGURATION #

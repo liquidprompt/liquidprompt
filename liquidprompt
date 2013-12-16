@@ -32,7 +32,7 @@
 # David Loureiro    <david.loureiro@sysfera.com>  # Small portability fix
 # Étienne Deparis   <etienne@depar.is>            # Fossil support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
-# François Schmidts <francois.schmidts@gmail.com> # Small code fix, _lp_get_dirtrim
+# François Schmidts <francois.schmidts@gmail.com> # Initial PROMPT_DIRTRIM support
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
 # Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
 # Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
@@ -605,26 +605,27 @@ _lp_shorten_path()
 # of the displayed path (if "\w" is present in the PS1 var).
 # liquidprompt can calculate this number under two condition, path shortening
 # must be activated and PROMPT_DIRTRIM must be already set.
-_lp_get_dirtrim() {
-    [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]] && echo $PROMPT_DIRTRIM && return
-
+_lp_set_dirtrim() {
     local p="${PWD/$HOME/~}"
-    local len=${#p}
-    local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
-    local PROMPT_DIRTRIM=0
+    local -i max_len=${COLUMNS:-80}*$LP_PATH_LENGTH/100
+    local -i dt=0
 
-    if [[ "$((len))" -gt "$((max_len))" ]]; then
-        local i
-
-        for ((i=$len;i>=0;i--))
+    if (( ${#p} > max_len )); then
+        local q="/${p##*/}"
+        local show="$q"
+        # +3 because of the ellipsis: "..."
+        while (( ${#show}+3 < max_len ))
         do
-            [[ $(($len-$i)) -gt $max_len ]] && break
-            [[ "${p:i:1}" == "/" ]] && PROMPT_DIRTRIM=$((PROMPT_DIRTRIM+1))
+            (( dt++ ))
+            p="${p%$q}"
+            q="/${p##*/}"
+            show="$q$show"
         done
-        [[ "$((PROMPT_DIRTRIM))" -eq 0 ]] && PROMPT_DIRTRIM=1
+        (( dt == 0 )) && dt=1
     fi
-    unset p
-    echo "$PROMPT_DIRTRIM"
+    PROMPT_DIRTRIM=$dt
+    # For debugging
+    # echo $PROMPT_DIRTRIM
 }
 
 # Display a ":"
@@ -1635,7 +1636,8 @@ _lp_set_prompt()
         # LP_HOST is a global set at load time
         LP_PERM="$(_lp_permissions_color)"
         LP_PWD="$(_lp_shorten_path)"
-        [[ -n "$PROMPT_DIRTRIM" ]] && PROMPT_DIRTRIM="$(_lp_get_dirtrim)"
+        # Check that both LP_ENABLE_SHORTEN and PROMPT_DIRTRIM are set
+        [[ "_$LP_ENABLE_SHORTEN_PATH/$PROMPT_DIRTRIM" = _1/?* ]] && _lp_set_dirtrim
 
         if _lp_are_vcs_enabled; then
             LP_VCS="$(_lp_git_branch_color)"

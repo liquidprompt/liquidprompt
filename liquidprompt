@@ -363,6 +363,8 @@ if [[ "$TERM" == screen* ]]; then
     LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
     LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
+    LP_TITLE_OPEN="$LP_SCREEN_TITLE_OPEN"
+    LP_TITLE_CLOSE="$LP_SCREEN_TITLE_CLOSE"
 else
     LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
     LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
@@ -1497,24 +1499,7 @@ _lp_title()
     [[ "$LP_ENABLE_TITLE" != "1" ]] && return
 
     # Get the current computed prompt as pure text
-    local txt="$(_lp_as_text "$1")"
-
-    # Use it in the window's title
-    # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
-    # Otherwise line editing commands will mess the cursor positionning
-    case "$TERM" in
-      screen*)
-        [[ "$LP_ENABLE_SCREEN_TITLE" != "1" ]] && return
-        local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
-      ;;
-      linux*)
-        local title=""
-      ;;
-      *)
-        local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
-      ;;
-    esac
-    echo -n "${title}"
+    echo -n "${_LP_OPEN_ESC}${LP_TITLE_OPEN}$(_lp_as_text "$1")${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion

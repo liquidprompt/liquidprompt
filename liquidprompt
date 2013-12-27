@@ -827,10 +827,10 @@ _lp_upwards_find()
     while [[ "$PWD" != "/" ]] ; do
 
         # See if it's in the current directory.
-        local found=$(find "$PWD"/ -maxdepth 1 -name "$@" 2> /dev/null)
+        local found="$(find "$PWD"/ -maxdepth 1 -name "$@" 2> /dev/null)"
 
         # If it is, then echo the path (or anything), and return.
-        if [[ -n found ]] ; then
+        if [[ -n "$found" ]] ; then
             echo $found
             return
         fi

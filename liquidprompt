@@ -1077,7 +1077,7 @@ _lp_bzr_branch()
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
-    [[ -z $(_lp_upwards_find '.bzr') ]] && return
+    [[ -z "$(_lp_upwards_find '.bzr')" ]] && return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
@@ -1102,7 +1102,7 @@ _lp_bzr_branch_color()
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
-    [[ -z $(_lp_upwards_find '.bzr') ]] && return
+    [[ -z "$(_lp_upwards_find '.bzr')" ]] && return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.

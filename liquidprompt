@@ -1477,21 +1477,16 @@ _lp_temperature() {
 # DESIGN #
 ##########
 
+
+# Sed expression using extended regexp to remove shell codes around terminal
+# escape sequences
+_LP_CLEAN_ESC="$(printf "s,%q|%q,,g" "$_LP_OPEN_ESC" "$_LP_CLOSE_ESC")"
+
 # Remove all colors and escape characters of the given string and return a pure text
 _lp_as_text()
 {
     # Remove colors from the computed prompt
-    local pst
-    pst="$(echo "$1" | sed -$_LP_SED_EXTENDED 's/\x1B\[[0-9;]*[mK]//g')"
-
-    # Remove escape sequences
-    # FIXME check the zsh compatibility
-    # pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
-    local op="$(printf "%q" "$_LP_OPEN_ESC")"
-    local cl="$(printf "%q" "$_LP_CLOSE_ESC")"
-    pst="$(echo "$pst" | sed "s,$op\|$cl,,g")" # replace all open _or_ close tags with nothing
-
-    echo -n "$pst"
+    echo -n "$1" | sed -$_LP_SED_EXTENDED "s/\x1B\[[0-9;]*[mK]//g;$_LP_CLEAN_ESC"
 }
 
 _lp_title()

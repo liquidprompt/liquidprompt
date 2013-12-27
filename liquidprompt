@@ -1477,7 +1477,7 @@ _lp_as_text()
 {
     # Remove colors from the computed prompt
     local pst
-    pst="$(echo "$1" | sed -$_LP_SED_EXTENDED "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")"
+    pst="$(echo "$1" | sed -$_LP_SED_EXTENDED 's/\x1B\[[0-9;]*[mK]//g')"
 
     # Remove escape sequences
     # FIXME check the zsh compatibility

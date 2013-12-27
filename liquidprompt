@@ -106,6 +106,11 @@ case "$LP_OS" in
     SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
 esac
 
+# Extended regexp patterns for sed
+# GNU/BSD sed
+_LP_SED_EXTENDED=r
+[[ "$LP_OS" = Darwin ]] && _LP_SED_EXTENDED=E
+
 
 # get current load
 case "$LP_OS" in
@@ -357,10 +362,15 @@ esac
 if [[ "$TERM" == screen* ]]; then
     LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
     LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+    (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
+    LP_TITLE_OPEN="$LP_SCREEN_TITLE_OPEN"
+    LP_TITLE_CLOSE="$LP_SCREEN_TITLE_CLOSE"
 else
     LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
     LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
 fi
+
+[[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
 
 # update_terminal_cwd is a shell function available on MacOS X Lion that
 # will update an icon of the directory displayed in the title of the terminal
@@ -1467,24 +1477,16 @@ _lp_temperature() {
 # DESIGN #
 ##########
 
+
+# Sed expression using extended regexp to remove shell codes around terminal
+# escape sequences
+_LP_CLEAN_ESC="$(printf "s,%q|%q,,g" "$_LP_OPEN_ESC" "$_LP_CLOSE_ESC")"
+
 # Remove all colors and escape characters of the given string and return a pure text
 _lp_as_text()
 {
     # Remove colors from the computed prompt
-    case "$LP_OS" in
-        Linux|FreeBSD|OpenBSD|SunOS)  local pst="$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")" ;;
-        Darwin) local pst="$(echo $1 | sed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")" ;;
-    esac
-
-
-    # Remove escape sequences
-    # FIXME check the zsh compatibility
-    # pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
-    local op="$(printf "%q" "$_LP_OPEN_ESC")"
-    local cl="$(printf "%q" "$_LP_CLOSE_ESC")"
-    pst="$(echo $pst | sed "s,$op\|$cl,,g")" # replace all open _or_ close tags with nothing
-
-    echo -n "$pst"
+    echo -n "$1" | sed -$_LP_SED_EXTENDED "s/\x1B\[[0-9;]*[mK]//g;$_LP_CLEAN_ESC"
 }
 
 _lp_title()
@@ -1492,24 +1494,7 @@ _lp_title()
     [[ "$LP_ENABLE_TITLE" != "1" ]] && return
 
     # Get the current computed prompt as pure text
-    local txt="$(_lp_as_text "$1")"
-
-    # Use it in the window's title
-    # Escapes whill tells bash to ignore the non-printing control characters when calculating the width of the prompt.
-    # Otherwise line editing commands will mess the cursor positionning
-    case "$TERM" in
-      screen*)
-        [[ "$LP_ENABLE_SCREEN_TITLE" != "1" ]] && return
-        local title="${LP_SCREEN_TITLE_OPEN}${txt}${LP_SCREEN_TITLE_CLOSE}"
-      ;;
-      linux*)
-        local title=""
-      ;;
-      *)
-        local title="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${txt}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
-      ;;
-    esac
-    echo -n "${title}"
+    echo -n "${_LP_OPEN_ESC}${LP_TITLE_OPEN}$(_lp_as_text "$1")${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
@@ -1722,7 +1707,7 @@ _lp_set_prompt()
         source "$LP_PS1_FILE"
     fi
 
-    if [[ -z $LP_PS1 ]] ; then
+    if [[ -z "$LP_PS1" ]] ; then
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host and permissions colon

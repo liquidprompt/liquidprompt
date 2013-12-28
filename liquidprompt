@@ -242,12 +242,10 @@ _lp_source_config()
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
-    if $_LP_SHELL_bash
-    then
+    if $_LP_SHELL_bash; then
         LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     else
-        [[ "$LP_ENABLE_RUNTIME" == 1 ]] && echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.
-        LP_ENABLE_RUNTIME=0
+        LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-0}
     fi
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -357,6 +355,11 @@ case "$LP_OS" in
     Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
     *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
 esac
+
+if [[ "$LP_ENABLE_RUNTIME" == 1 ]] && ! $_LP_SHELL_bash; then
+    echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.
+    LP_ENABLE_RUNTIME=0
+fi
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then

@@ -837,19 +837,14 @@ _lp_git_branch_color()
 # the given name.  Used to avoid invoking 'hg' and 'bzr'.
 _lp_upwards_find()
 {
-    while [[ "$PWD" != "/" ]] ; do
-
-        # See if it's in the current directory.
-        local found="$(find "$PWD"/ -maxdepth 1 -name "$@" 2> /dev/null)"
-
-        # If it is, then echo the path (or anything), and return.
-        if [[ -n "$found" ]] ; then
-            echo $found
-            return
-        fi
-
-        cd ..
+    local dir
+    dir="$PWD"
+    while [[ -n "$dir" ]]
+    do
+        [[ -d "$dir/$1" ]] && return 0
+        dir="${dir%/*}"
     done
+    return 1
 }
 
 # MERCURIAL #
@@ -862,7 +857,7 @@ _lp_hg_branch()
     # First do a simple search to avoid having to invoke hg -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
-    [[ -z "$(_lp_upwards_find '.hg')" ]] && return
+    _lp_upwards_find .hg || return
 
     # We found an .hg folder, so we need to invoke hg and see if we're actually
     # in a repository.
@@ -1090,7 +1085,7 @@ _lp_bzr_branch()
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
-    [[ -z "$(_lp_upwards_find '.bzr')" ]] && return
+    _lp_upwards_find .bzr || return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
@@ -1115,7 +1110,7 @@ _lp_bzr_branch_color()
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
     # directories.
-    [[ -z "$(_lp_upwards_find '.bzr')" ]] && return
+    _lp_upwards_find .bzr || return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.

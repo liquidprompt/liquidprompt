@@ -575,8 +575,12 @@ _lp_shorten_path()
             ret="${ret}${mask}${p:${#p} - ${len_left}}${base}"
         fi
     fi
-
-    echo "${ret}"
+    # Escape special chars
+    if $_LP_SHELL_bash; then
+        LP_PWD="${ret/\\/\\\\}"
+    else # zsh
+        LP_PWD="${ret/%/%%}"
+    fi
 }
 
 # In bash shell, PROMPT_DIRTRIM is the number of directory to keep at the end

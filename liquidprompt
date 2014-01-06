@@ -389,6 +389,9 @@ else
     _LP_TERM_UPDATE_DIR=:
 fi
 
+# Default value for LP_PERM when LP_ENABLE_PERM is 0
+LP_PERM=:   # without color
+
 
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,
@@ -609,22 +612,6 @@ _lp_set_dirtrim() {
     PROMPT_DIRTRIM=$dt
     # For debugging
     # echo PROMPT_DIRTRIM=$PROMPT_DIRTRIM >&2
-}
-
-# Display a ":"
-# colored in green if user have write permission on the current directory
-# colored in red if it have not.
-_lp_permissions_color()
-{
-    if [[ "$LP_ENABLE_PERM" != 1 ]]; then
-        echo : # without color
-    else
-        if [[ -w "${PWD}" ]]; then
-            echo "${LP_COLOR_WRITE}:${NO_COL}"
-        else
-            echo "${LP_COLOR_NOWRITE}:${NO_COL}"
-        fi
-    fi
 }
 
 # Display the current Python virtual environnement, if available.
@@ -1603,7 +1590,18 @@ _lp_set_prompt()
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time
-        LP_PERM="$(_lp_permissions_color)"
+
+        # LP_PERM: shows a ":"
+        # - colored in green if user has write permission on the current dir
+        # - colored in red if not
+        if [[ "$LP_ENABLE_PERM" = 1 ]]; then
+            if [[ -w "${PWD}" ]]; then
+                LP_PERM="${LP_COLOR_WRITE}:${NO_COL}"
+            else
+                LP_PERM="${LP_COLOR_NOWRITE}:${NO_COL}"
+            fi
+        fi
+
         _lp_shorten_path   # set LP_PWD
 
         if _lp_are_vcs_enabled; then

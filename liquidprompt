@@ -614,14 +614,6 @@ _lp_set_dirtrim() {
     # echo PROMPT_DIRTRIM=$PROMPT_DIRTRIM >&2
 }
 
-# Display the current Python virtual environnement, if available.
-_lp_virtualenv()
-{
-    [[ "$LP_ENABLE_VIRTUALENV" != 1 ]] && return
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        echo "[${LP_COLOR_VIRTUALENV}$(basename $VIRTUAL_ENV)${NO_COL}]"
-    fi
-}
 
 
 ################
@@ -1577,12 +1569,16 @@ _lp_set_prompt()
         LP_PROXY=
     fi
 
-    # right of main prompt: space at left
-    LP_VENV="$(_lp_sl "$(_lp_virtualenv)")"
-    # if change of working directory
+    # Display the current Python virtual environnement, if available
+    if [[ "$LP_ENABLE_VIRTUALENV,$VIRTUAL_ENV" = 1,?* ]] ; then
+        LP_VENV=" [${LP_COLOR_VIRTUALENV}$(basename $VIRTUAL_ENV)${NO_COL}]"
+    else
+        LP_VENV=
+    fi
 
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
+    # if change of working directory
     if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR

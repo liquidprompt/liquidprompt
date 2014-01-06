@@ -586,7 +586,7 @@ _lp_shorten_path()
 # In bash shell, PROMPT_DIRTRIM is the number of directory to keep at the end
 # of the displayed path (if "\w" is present in the PS1 var).
 # liquidprompt can calculate this number under two condition, path shortening
-# must be activated and PROMPT_DIRTRIM must be already set.
+# must be disabled and PROMPT_DIRTRIM must be already set.
 _lp_set_dirtrim() {
     local p="${PWD/$HOME/~}"
     local -i max_len=${COLUMNS:-80}*$LP_PATH_LENGTH/100

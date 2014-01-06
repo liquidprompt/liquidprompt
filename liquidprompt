@@ -44,6 +44,7 @@
 # nojhan            <nojhan@gmail.com>            # Original author.
 # Olivier Mengué    <dolmen@cpan.org>             # Major optimizations, refactorings everywhere; current maintainer
 # Poil              <poil@quake.fr>               # Speed improvements
+# Rolf Morel        <rolfmorel@gmail.com>         # "Shorten path" refactoring and fixes
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
 

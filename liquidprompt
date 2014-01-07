@@ -50,8 +50,11 @@
 
 # See the README.md file for a summary of features.
 
+# Issue #161: do not load if not an interactive shell
+test -z "$TERM" -o "x$TERM" = dumb && return
+
 # Check for recent enough version of bash.
-if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
+if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
         unset bash bmajor bminor

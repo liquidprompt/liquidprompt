@@ -584,9 +584,11 @@ _lp_shorten_path()
     fi
     # Escape special chars
     if $_LP_SHELL_bash; then
-        LP_PWD="${ret/\\/\\\\}"
+        LP_PWD="${ret//\\/\\\\}"
     else # zsh
-        LP_PWD="${ret/%/%%}"
+        #LP_PWD="${ret//%/%%}"  # This doesn't work :(  zsh bug?
+        p='%'
+        LP_PWD="${ret//$p/%%}"
     fi
 }
 

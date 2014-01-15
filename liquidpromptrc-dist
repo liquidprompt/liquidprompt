@@ -122,7 +122,8 @@ LP_ENABLE_TEMP=1
 LP_TIME_ANALOG=0
 
 # Use the liquid prompt as the title of the terminal window
-# This may not work properly on exotic terminals, thus the
+# The content is not customizable, the implementation is very basic,
+# and this may not work properly on exotic terminals, thus the
 # recommended value is 0
 # See LP_TITLE_OPEN and LP_TITLE_CLOSE to change escape characters to adapt this
 # feature to your specific terminal.

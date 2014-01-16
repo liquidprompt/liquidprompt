@@ -633,7 +633,7 @@ _lp_jobcount_color()
 
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
-    local n_screen=$(screen -ls 2> /dev/null | grep -c '([Dd]etach[^)]*)$')
+    local n_screen=$(screen -ls 2> /dev/null | grep -c '[Dd]etach[^)]*)$')
     local n_tmux=$(tmux list-sessions 2> /dev/null | grep -cv attached)
     local detached=$(( $n_screen + $n_tmux ))
     local m_detached="d"

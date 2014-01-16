@@ -195,13 +195,14 @@ assert_has Load_Level       32%    $LINENO
 assert_has User             "[\\\u"    $LINENO
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
     assert_not Hostname     "\\\h"    $LINENO
-    #only show domain if hostname is shown
+    # only show domain if hostname is shown
     assert_not Domainname     ".domain"    $LINENO
 else
     if [[ $LP_DOMAIN == 1 ]] ; then
         assert_has Hostname     "hostname."    $LINENO
         assert_has Domainname   ".domain"    $LINENO
     else
+	assert_has Hostname     "\h"    $LINENO
         assert_not Domainname   ".domain"    $LINENO
     fi
 fi
@@ -321,13 +322,21 @@ echo "LOCAL HOST NAME"
 _lp_set_prompt
 log_prompt
 # As the hostname is set once at the script start,
-# and not re-interpret at each prompt,
+# and not re-interpret at each prompt,
 # we cannot export the option in the test script.
 # We thus rely on the existing config.
 if [[ $LP_HOSTNAME_ALWAYS == 0 ]] ; then
     assert_not Hostname     "\\\h"    $LINENO
+    # only show domain if hostname is shown
+    assert_not Domainname     ".domain"    $LINENO
 else
-    assert_has Hostname     "\\\h"    $LINENO
+    if [[ $LP_DOMAIN == 1 ]] ; then
+	assert_has Hostname     "hostname."    $LINENO
+        assert_has Domainname   ".domain"    $LINENO
+    else
+	assert_has Hostname     "\h"    $LINENO
+        assert_not Domainname   ".domain"    $LINENO
+    fi
 fi
 
 echo "prompt_OFF"

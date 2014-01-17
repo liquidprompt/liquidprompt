@@ -14,7 +14,7 @@ is additional merge work for maintainers, and you want to avoid this if you
 aim for quick integration of your work.
 
 If you wrote your patch on the wrong branch the maintainers may choose to close
-the pull request and ask you to rewrite it on top of the current 'develop'.
+the pull request and ask you to rewrite it on top of the current `develop`.
 
 
 How to do the right thing?
@@ -65,11 +65,12 @@ How to make a good pull request?
      - second line must be empty
      - following lines (72 chars max) are optional and take this space freely
        to express what that changes does.
-       Use references to Github issues number (ex: #432) if applicable
+       Use references to Github issues number (ex: `#432`) if applicable
 4. Use a good title for your pull request
 5. Put details, web links, in the pull request body. Use Markdown fully to
-   format the content (see Github help on formatting). For example use triple
-   backquote for code blocks.
+   format the content (see
+   [Markdown syntax](http://daringfireball.net/projects/markdown/syntax)).
+   For example use triple backquotes for code blocks.
 
 How my patch will be applied?
 -----------------------------
@@ -86,5 +87,5 @@ If your patch is accepted it will be applied either:
 In any case, your authorship will be preserved in the commit.
 
 
-Olivier Mengué.
+Olivier Mengué, maintainer.
 http://github.com/dolmen

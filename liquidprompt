@@ -829,7 +829,7 @@ _lp_hg_branch_color()
     if [[ -n "$branch" ]] ; then
 
         local has_untracked
-        has_untracked=$(hg status 2>/dev/null | grep '\(^\?\)' | wc -l)
+        has_untracked=$(hg status 2>/dev/null | grep -c '\(^\?\)')
         if [[ -z "$has_untracked" ]] ; then
             has_untracked=""
         else
@@ -837,7 +837,7 @@ _lp_hg_branch_color()
         fi
 
         local has_commit
-        has_commit=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep '\(^changeset\:\)' | wc -l)
+        has_commit=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
         if [[ -z "$has_commit" ]] ; then
             has_commit=0
         fi
@@ -951,11 +951,11 @@ _lp_fossil_branch_color()
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
-        PLUSLINE=$(fossil diff | egrep '^\+[^+].+$' | wc -l)
-        MINUSLINE=$(fossil diff | egrep '^-[^-].+$' | wc -l)
+        PLUSLINE=$(fossil diff | egrep -c '^\+[^+].+$')
+        MINUSLINE=$(fossil diff | egrep -c '^-[^-].+$')
         ret=""
 
-        C2AA=`fossil changes | grep ADDED | wc -l`
+        C2AA=`fossil changes | grep -c "ADDED"`
         if [[ $C2AA -gt 0 ]] ; then
             # We count the line "à la" git
             local ADDFILE
@@ -971,7 +971,7 @@ _lp_fossil_branch_color()
             ret+="+$PLUSLINE"
         fi
 
-        C2D=`fossil changes | grep DELETED | wc -l`
+        C2D=`fossil changes | grep -c "DELETED"`
         if [[ $C2D -gt 0 ]] ; then
             # We count the line "à la" git
             local DELFILE

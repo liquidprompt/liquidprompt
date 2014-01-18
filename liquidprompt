@@ -1,4 +1,3 @@
-
 ################################################################################
 # LIQUID PROMPT
 # An intelligent and non intrusive prompt for bash and zsh
@@ -465,7 +464,7 @@ _chroot()
 {
     if [[ -r /etc/debian_chroot ]] ; then
         local debchroot
-        debchroot="$(cat /etc/debian_chroot)"
+        debchroot="$(< /etc/debian_chroot)"
         echo "(${debchroot})"
     fi
 }

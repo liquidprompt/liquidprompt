@@ -962,7 +962,7 @@ _lp_fossil_branch_color()
             local FILE
             ADDFILE=`fossil changes | grep ADDED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2`
             for FILE in $ADDFILE ; do
-                PLULI=$(wc -l $FILE | cut -d" " -f1)
+                PLULI=$(wc -l < $FILE)
                 let PLUSLINE=$PLUSLINE+$PLULI
             done
         fi

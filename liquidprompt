@@ -978,7 +978,7 @@ _lp_fossil_branch_color()
             local FILE
             DELFILE=`fossil changes | grep DELETED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2`
             for FILE in $DELFILE ; do
-                MINLI=$(wc -l $FILE | cut -d" " -f1)
+                MINLI=$(wc -l < $FILE)
                 let MINUSLINE=$MINUSLINE+$MINLI
             done
         fi

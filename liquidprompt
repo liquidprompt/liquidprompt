@@ -602,8 +602,7 @@ _lp_set_dirtrim() {
         local q="/${p##*/}"
         local show="$q"
         # +3 because of the ellipsis: "..."
-        while (( ${#show}+3 < max_len ))
-        do
+        while (( ${#show}+3 < max_len )); do
             (( dt++ ))
             p="${p%$q}"
             q="/${p##*/}"
@@ -786,8 +785,7 @@ _lp_upwards_find()
 {
     local dir
     dir="$PWD"
-    while [[ -n "$dir" ]]
-    do
+    while [[ -n "$dir" ]]; do
         [[ -d "$dir/$1" ]] && return 0
         dir="${dir%/*}"
     done
@@ -1385,8 +1383,7 @@ _lp_temp_sensors()
 _lp_temp_acpi()
 {
     local i
-    for i in $(acpi -t | sed 's/.* \([0-9]*\)\.[0-9]* degrees C$/\1/p')
-    do
+    for i in $(acpi -t | sed 's/.* \([0-9]*\)\.[0-9]* degrees C$/\1/p'); do
         [[ $i -gt $temperature ]] && temperature=$i
     done
 }

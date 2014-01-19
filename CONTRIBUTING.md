@@ -72,6 +72,11 @@ How to make a good pull request?
    [Markdown syntax](http://daringfireball.net/projects/markdown/syntax)).
    For example use triple backquotes for code blocks.
 
+
+Never, ever, merge the branches `develop` or `master` of the main repo into one
+of your own branches. Instead, always rebase your own work on top the `develop`
+branch.
+
 How my patch will be applied?
 -----------------------------
 
@@ -85,6 +90,19 @@ If your patch is accepted it will be applied either:
   history linear, and so easier to track.
 
 In any case, your authorship will be preserved in the commit.
+
+What if my patch is not applied?
+--------------------------------
+
+If you don't even get a review, add a "ping" comment with increasing delay
+between pings: 1 week, 2 weeks, then every month.
+
+If a stable version is released while your pull request has still not been
+merged on any working branch of the main repo, it would be helpful to ease
+the maitainer's work by rebasing your branch on top of the latest `develop`
+and push it again to your Github repo. Be careful (for example create a
+branch or a tag before your rebase) because your may lose all your work in
+that process.
 
 
 Olivier Mengué, maintainer.

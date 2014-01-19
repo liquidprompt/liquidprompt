@@ -836,7 +836,8 @@ _lp_hg_branch_color()
         local -i commits
         commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
 
-        if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
+        # Check if there is some uncommitted stuff
+        if [[ -z "$(hg status --quiet -n)" ]] ; then
             if (( commits > 0 )) ; then
                 # some commit(s) to push
                 ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"

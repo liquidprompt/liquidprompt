@@ -842,7 +842,8 @@ _lp_hg_branch_color()
                 # some commit(s) to push
                 ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
+                # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}"
             fi
         else
             local has_lines

@@ -349,6 +349,7 @@ _lp_source_config()
     LP_COLOR_NOWRITE=${LP_COLOR_NOWRITE:-$RED}
     LP_COLOR_UP=${LP_COLOR_UP:-$GREEN}
     LP_COLOR_COMMITS=${LP_COLOR_COMMITS:-$YELLOW}
+    LP_COLOR_COMMITS_BEHIND=${LP_COLOR_COMMITS_BEHIND:-$BOLD_RED}
     LP_COLOR_CHANGES=${LP_COLOR_CHANGES:-$RED}
     LP_COLOR_DIFF=${LP_COLOR_DIFF:-$PURPLE}
     LP_COLOR_CHARGING_ABOVE=${LP_COLOR_CHARGING_ABOVE:-$GREEN}
@@ -761,14 +762,23 @@ _lp_git_branch_color()
         local remote
         remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
 
-        local -i has_commit
-        has_commit=0
+        local has_commit
+        local commit_ahead
+        local commit_behind
         if [[ -n "$remote" ]]; then
             local remote_branch
             remote_branch="$(\git config --get branch.${branch}.merge)"
-            if [[ -n "$remote_branch" ]]; then
-                has_commit="$(\git rev-list --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)"
-                [[ -z "$has_commit" ]] && has_commit=0
+            if [[ -n "$remote_branch" ]] ; then
+                remote_branch=${remote_branch/refs\/heads/refs\/remotes\/$remote}
+                commit_ahead="$(\git rev-list --count $remote_branch..HEAD 2>/dev/null)"
+                commit_behind="$(\git rev-list --count HEAD..$remote_branch 2>/dev/null)"
+                if [[ "$commit_ahead" -ne "0" && "$commit_behind" -ne "0" ]] ; then
+                    has_commit="${LP_COLOR_COMMITS}+$commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
+                elif [[ "$commit_ahead" -ne "0" ]]; then
+                    has_commit="${LP_COLOR_COMMITS}$commit_ahead${NO_COL}"
+                elif [[ "$commit_behind" -ne "0" ]]; then
+                    has_commit="${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
+                fi
             fi
         fi
 
@@ -799,16 +809,20 @@ _lp_git_branch_color()
             local has_lines
             has_lines="+$i_lines/-$d_lines"
 
-            if [[ "$has_commit" -gt "0" ]] ; then
+            if [[ -n "$has_commit" ]] ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
             else
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
             fi
         else
-            if [[ "$has_commit" -gt "0" ]] ; then
+            if [[ -n "$has_commit" ]] ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})"
+                if [[ "$commit_behind" -gt "0" ]]; then
+                    ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
+                else
+                    ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
+                fi
             else
                 ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
             fi

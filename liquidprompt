@@ -827,32 +827,31 @@ _lp_hg_branch_color()
     if [[ -n "$branch" ]] ; then
 
         local has_untracked
-        has_untracked=$(hg status 2>/dev/null | grep -c '\(^\?\)')
-        if [[ -z "$has_untracked" ]] ; then
-            has_untracked=""
-        else
+        has_untracked=
+        if hg status -u 2>/dev/null | grep -q '^\?' >/dev/null ; then
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
-        local has_commit
-        has_commit=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
-        if [[ -z "$has_commit" ]] ; then
-            has_commit=0
-        fi
+        # Count local commits waiting for a push
+        local -i commits
+        commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
 
-        if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
-            if [[ "$has_commit" -gt "0" ]] ; then
+        # Check if there is some uncommitted stuff
+        if [[ -z "$(hg status --quiet -n)" ]] ; then
+            if (( commits > 0 )) ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
+                # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}"
             fi
         else
             local has_lines
-            has_lines=$(hg diff --stat 2>/dev/null | tail -n 1 | awk 'FS=" " {printf("+%s/-%s\n", $4, $6)}')
-            if [[ "$has_commit" -gt "0" ]] ; then
+            # Parse the last line of the diffstat-style output
+            has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
+            if (( commits > 0 )) ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
             fi

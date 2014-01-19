@@ -827,10 +827,8 @@ _lp_hg_branch_color()
     if [[ -n "$branch" ]] ; then
 
         local has_untracked
-        has_untracked=$(hg status 2>/dev/null | grep -c '\(^\?\)')
-        if [[ -z "$has_untracked" ]] ; then
-            has_untracked=""
-        else
+        has_untracked=
+        if hg status -u 2>/dev/null | grep -q '^\?' >/dev/null ; then
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 

@@ -721,7 +721,7 @@ _lp_git_branch_color()
         local remote
         remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
 
-        local has_commit
+        local -i has_commit
         has_commit=0
         if [[ -n "$remote" ]] ; then
             local remote_branch

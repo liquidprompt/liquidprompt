@@ -877,7 +877,7 @@ _lp_svn_branch()
     if [[ "$url" == */trunk* ]] ; then
         echo -n trunk
     else
-        _lp_escape "$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")"
+        _lp_escape $(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")
     fi
 }
 

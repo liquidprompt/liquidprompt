@@ -1144,7 +1144,7 @@ case "$LP_OS" in
     _lp_battery()
     {
         [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
-        local pmset="$(pmset -g batt | tail -n1)"
+        local pmset="$(pmset -g batt | sed -n -e '/InternalBattery/p')"
         local bat="$(cut -f2 <<<"$pmset")"
         bat="${bat%%%*}"
         case "$pmset" in

@@ -1102,7 +1102,7 @@ case "$LP_OS" in
     Linux)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
         # Extract the battery load value in percent
@@ -1143,7 +1143,7 @@ case "$LP_OS" in
     Darwin)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
         local pmset="$(pmset -g batt | tail -n1)"
         local bat="$(cut -f2 <<<"$pmset")"
         bat="${bat%%%*}"

@@ -1453,7 +1453,7 @@ _lp_smart_mark()
     disabled) mark="$LP_MARK_DISABLED"        ;;
     *)
         if [[ -n "$LP_MARK_DEFAULT" ]]; then
-            mark=$LP_MARK_DEFAULT
+            mark="$LP_MARK_DEFAULT"
         else
             mark="$_LP_MARK_SYMBOL"
         fi

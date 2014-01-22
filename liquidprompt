@@ -87,6 +87,10 @@ else
     return
 fi
 
+# Save $IFS as we want to restore the default value at the beginning of the
+# prompt function
+_LP_IFS="$IFS"
+
 
 ###############
 # OS specific #
@@ -1547,8 +1551,7 @@ _lp_set_prompt()
 
     # Reset IFS to its default value to avoid strange behaviors
     # (in case the user is playing with the value at the prompt)
-    local IFS="$(echo -e ' \t')
-"       # space, tab, LF
+    local IFS="$_LP_IFS"
 
     # execute the old prompt
     eval "$LP_OLD_PROMPT_COMMAND"

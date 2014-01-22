@@ -710,7 +710,7 @@ _lp_git_branch_color()
 
         local end
         end="$NO_COL"
-        if LC_ALL=C \git status -s 2>/dev/null | grep -Eq '^\?\?'; then
+        if LC_ALL=C \git status --porcelain 2>/dev/null | grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 

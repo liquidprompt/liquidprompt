@@ -212,6 +212,8 @@ _lp_source_config()
 
     unset ti_sgr0 ti_bold ti_setaf
 
+    PRE_CALCULATED_IFS="$(echo -e ' \t')
+"       # space, tab, LF
 
     # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
@@ -1547,8 +1549,7 @@ _lp_set_prompt()
 
     # Reset IFS to its default value to avoid strange behaviors
     # (in case the user is playing with the value at the prompt)
-    local IFS="$(echo -e ' \t')
-"       # space, tab, LF
+    local IFS="$PRE_CALCULATED_IFS"
 
     # execute the old prompt
     eval "$LP_OLD_PROMPT_COMMAND"

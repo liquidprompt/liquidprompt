@@ -837,8 +837,12 @@ _lp_hg_branch_color()
         fi
 
         # Count local commits waiting for a push
+        #
+        # Unfortunately this requires contacting the remote, so this is always slow
+        # => disabled  https://github.com/nojhan/liquidprompt/issues/217
         local -i commits
-        commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
+        #commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
+        commits=0
 
         # Check if there is some uncommitted stuff
         if [[ -z "$(hg status --quiet -n)" ]] ; then

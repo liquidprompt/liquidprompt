@@ -1512,8 +1512,8 @@ _lp_time_analog()
     local -a half
     half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
-    # array index starts at 0
-    local -i hi=hour-1
+    # "date %I" returns a number between 1 and 12 and we want 12 to be 0.
+    local -i hi=$(( hour % 12))
 
     # add a space for correct alignment
     if (( min < 15 )) ; then

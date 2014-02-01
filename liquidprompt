@@ -928,7 +928,7 @@ _lp_fossil_branch()
     local branch
     branch=$(fossil status 2>/dev/null | sed -n "s/tags:[ ]*\(\w*\)$/\1/Ip")
     if [ -n "$branch" ]; then
-        _lp_escape "$branch"
+        echo "$branch"
     else
         if fossil info &>/dev/null ; then
             echo "no-tag"

@@ -1573,8 +1573,14 @@ _lp_set_prompt()
     # Display the current Ruby environnement, if available.
     LP_RVM=
     if [[ "$LP_ENABLE_RVM" = 1 ]] ; then
-        if [[ -n "$(rvm-prompt)" && "$(rvm-prompt)" != ".rvm-" ]] ; then
-            LP_RVM=" [${LP_COLOR_VIRTUALENV}$($HOME/.rvm/bin/rvm-prompt)${NO_COL}]"
+        if which rvm-prompt &>/dev/null ; then
+            _LP_RVM=`rvm-prompt`
+        elif which rbenv &>/dev/null ; then
+            _LP_RVM=`rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'`
+        fi
+
+        if [ -n "$_LP_RVM" ] ; then
+            LP_RVM=" [${LP_COLOR_VIRTUALENV}${_LP_RVM}${NO_COL}]"
         fi
     fi
 

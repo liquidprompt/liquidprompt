@@ -962,7 +962,7 @@ _lp_fossil_branch_color()
         fi
 
         if [ "$C2A" -gt 0 ]; then
-            C2A="$LP_MARK_UNTRACKED"
+            C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         else
             C2A=""
         fi

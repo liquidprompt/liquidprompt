@@ -1701,6 +1701,14 @@ _lp_set_prompt()
         LP_VENV=
     fi
 
+    # Display the current Ruby environnement, if available.
+    LP_RVM=
+    if [[ "$LP_ENABLE_RVM" = 1 ]] ; then
+        if [[ -n "$(rvm-prompt)" && "$(rvm-prompt)" != ".rvm-" ]] ; then
+            LP_RVM=" [${LP_COLOR_VIRTUALENV}$($HOME/.rvm/bin/rvm-prompt)${NO_COL}]"
+        fi
+    fi
+
     # Display the current software collections enabled, if available
     if [[ "$LP_ENABLE_SCLS,${X_SCLS-}" = 1,?* ]]; then
         LP_SCLS=" [${LP_COLOR_VIRTUALENV}${X_SCLS%"${X_SCLS##*[![:space:]]}"}${NO_COL}]"
@@ -1804,7 +1812,7 @@ _lp_set_prompt()
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_RVM}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

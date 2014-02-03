@@ -29,7 +29,7 @@
 # Brendan Fahy      <bmfahy@gmail.com>            # Postfix variable
 # Clément Mathieu   <clement@unportant.info>      # Bazaar support
 # David Loureiro    <david.loureiro@sysfera.com>  # Small portability fix
-# Étienne Deparis   <etienne@depar.is>            # Fossil support
+# Étienne Deparis   <etienne@depar.is>            # Fossil and Ruby virtual env support
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
 # François Schmidts <francois.schmidts@gmail.com> # Initial PROMPT_DIRTRIM support
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
@@ -327,7 +327,7 @@ _lp_source_config()
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
-    LP_ENABLE_RVM=${LP_ENABLE_RVM:-1}
+    LP_ENABLE_RUBY_VENV=${LP_ENABLE_RUBY_VENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
@@ -1703,16 +1703,16 @@ _lp_set_prompt()
     fi
 
     # Display the current Ruby environnement, if available.
-    LP_RVM=
-    if [[ "$LP_ENABLE_RVM" = 1 ]] ; then
+    LP_RUBY_VENV=
+    if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
         if which rvm-prompt &>/dev/null ; then
-            _LP_RVM=`rvm-prompt`
+            _LP_RUBY_VENV=`rvm-prompt  | sed -n "/@/{s/\([^-]*\)-\([0-9.]*\)\?\([^@]*\)\?@\(.*\)/\1 \2 (\4)/p;q};s/\([^-]*\)-\([0-9.]*\)\?\(.*\)\?/\1 \2/p"`
         elif which rbenv &>/dev/null ; then
-            _LP_RVM=`rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'`
+            _LP_RUBY_VENV=`rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'`
         fi
 
-        if [ -n "$_LP_RVM" ] ; then
-            LP_RVM=" [${LP_COLOR_VIRTUALENV}${_LP_RVM}${NO_COL}]"
+        if [ -n "$_LP_RUBY_VENV" ] ; then
+            LP_RUBY_VENV=" [${LP_COLOR_VIRTUALENV}${_LP_RUBY_VENV}${NO_COL}]"
         fi
     fi
 
@@ -1819,7 +1819,7 @@ _lp_set_prompt()
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_RVM}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_RUBY_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

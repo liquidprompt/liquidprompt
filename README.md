@@ -93,7 +93,7 @@ source liquidprompt/liquidprompt
 ```
 
 To use it every time you start a shell add the following line to your
-`.bashrc` (if you use bash) or `.zshrc` (if you use zsh):
+`.bashrc` (if you use bash) or `.zshrc` (if you use zsh) or `.profile` (on Mac OS X, since Mac OS's Terminal does not check `.bashrc` on launch:
 
 `source ~/liquidprompt/liquidprompt`
 

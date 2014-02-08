@@ -420,6 +420,17 @@ if [[ "$LP_ENABLE_RUNTIME" == 1 ]] && ! $_LP_SHELL_bash; then
     LP_ENABLE_RUNTIME=0
 fi
 
+LP_RUBY_VENV_CMD=
+if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
+    if command -v rvm-prompt >/dev/null ; then
+        LP_RUBY_VENV_CMD="rvm-prompt | sed -n '/@/{s/\([^-]*\)-\([0-9.]*\)\?\([^@]*\)\?@\(.*\)/\1 \2 (\4)/p;q};s/\([^-]*\)-\([0-9.]*\)\?\(.*\)\?/\1 \2/p'"
+    elif command -v rbenv >/dev/null ; then
+        LP_RUBY_VENV_CMD="rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'"
+    else
+        LP_ENABLE_RUBY_VENV=0
+    fi
+fi
+
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
     LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
@@ -1574,14 +1585,10 @@ _lp_set_prompt()
     # Display the current Ruby environnement, if available.
     LP_RUBY_VENV=
     if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
-        if which rvm-prompt &>/dev/null ; then
-            _LP_RUBY_VENV=`rvm-prompt  | sed -n "/@/{s/\([^-]*\)-\([0-9.]*\)\?\([^@]*\)\?@\(.*\)/\1 \2 (\4)/p;q};s/\([^-]*\)-\([0-9.]*\)\?\(.*\)\?/\1 \2/p"`
-        elif which rbenv &>/dev/null ; then
-            _LP_RUBY_VENV=`rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'`
-        fi
+        LP_RUBY_VENV=$(eval ${LP_RUBY_VENV_CMD})
 
-        if [ -n "$_LP_RUBY_VENV" ] ; then
-            LP_RUBY_VENV=" [${LP_COLOR_VIRTUALENV}${_LP_RUBY_VENV}${NO_COL}]"
+        if [ -n "$LP_RUBY_VENV" ] ; then
+            LP_RUBY_VENV=" [${LP_COLOR_VIRTUALENV}${LP_RUBY_VENV}${NO_COL}]"
         fi
     fi
 

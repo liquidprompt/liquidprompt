@@ -1090,11 +1090,15 @@ _lp_bzr_branch_color()
 ####################
 # Wifi link status #
 ####################
-_lp_wifi()
-{
-    # Linux
-    sed -n '3s/^ *[^ ]*  *[^ ]*  *\([0-9]*\).*/\1/p' /proc/net/wireless
-}
+case "$LP_OS" in
+    Linux)
+    _lp_wifi()
+    {
+        # Linux
+        sed -n '3s/^ *[^ ]*  *[^ ]*  *\([0-9]*\).*/\1/p' /proc/net/wireless
+    }
+    ;;
+esac
 
 ##################
 # Battery status #

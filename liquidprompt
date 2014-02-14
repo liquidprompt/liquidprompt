@@ -71,6 +71,11 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
+    # Disable the DEBUG trap used by the RUNTIME feature
+    # (in case we are reloading LP in the same shell after disabling
+    # the feature in .liquidpromptrc)
+    # FIXME this doesn't seem to work :(
+    [[ -n "$LP_ENABLE_RUNTIME" ]] && trap - DEBUG
 elif test -n "$ZSH_VERSION" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
@@ -1327,8 +1332,8 @@ _lp_reset_runtime()
     [ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && _LP_RUNTIME_LAST_SECONDS=$SECONDS && _LP_RUNTIME_SECONDS=0
 
     # A proper command has been executed if the last command was not related to liquidprompt
-    [ "$BASH_COMMAND" = _lp_set_prompt ] && _LP_RUNTIME_COMMAND_EXECUTED=0 && return
-    _LP_RUNTIME_COMMAND_EXECUTED=1
+    [ "$BASH_COMMAND" = _lp_set_prompt ]
+    _LP_RUNTIME_COMMAND_EXECUTED=$?
 }
 
 if [ "$LP_ENABLE_RUNTIME" = 1 ]

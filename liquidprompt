@@ -952,31 +952,29 @@ _lp_fossil_branch_color()
     branch="$(_lp_fossil_branch)"
 
     if [ -n "$branch" ]; then
-        local C2E # Modified files (added or edited)
+        local -i C2E # Modified files (added or edited)
         local C2A # Extras files
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
 	ret=$(fossil diff -v | awk "/^(+[^+])|(+$)/ { plus+=1; } /^(-[^-])|(-$)/ { minus+=1; } END { total=\"\"; if(plus>0){ total=\"+\"plus; if(minus>0) total=total\"/\"; } if(minus>0) total=total\"-\"minus; print total;}")
 
-        if [ "$C2E" -gt 0 ]; then
-	    if [ -n "$ret" ]; then
-		ret+=" in "
-	    fi
+        if (( C2E > 0 )); then
+	    [[ -n "$ret" ]] && ret+=" in "
 	    ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
         fi
 
-        if [ "$C2A" -gt 0 ]; then
+        if (( $C2A > 0 )); then
             C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         else
             C2A=""
         fi
 
-        if [ "$branch" = "no-tag" ]; then
+        if [[ "$branch" = "no-tag" ]]; then
             # Warning, your branch has no tag name !
             branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
         else
-            if [ "$C2E" -eq 0 ]; then
+            if (( C2E == 0 )); then
                 # All is up-to-date
                 branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
             else

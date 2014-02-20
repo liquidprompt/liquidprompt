@@ -926,9 +926,9 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
     local branch
-    branch="$(fossil status 2>/dev/null | grep tags: | cut -c17-)"
-    if [[ -n "$branch" ]] ; then
-        _lp_escape "$branch"
+    branch=$(fossil status 2>/dev/null | sed -n "s/tags:[ ]*\(\w*\)$/\1/Ip")
+    if [ -n "$branch" ]; then
+        echo "$branch"
     else
         if fossil info &>/dev/null ; then
             echo "no-tag"
@@ -951,76 +951,32 @@ _lp_fossil_branch_color()
     local branch
     branch="$(_lp_fossil_branch)"
 
-    if [[ -n "$branch" ]] ; then
+    if [ -n "$branch" ]; then
         local C2E # Modified files (added or edited)
-        local C2D # Deleted files
         local C2A # Extras files
-        local C2AA # Added files
-        local PLUSLINE # Added lines
-        local MINUSLINE # Deleted lines
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
-        PLUSLINE=$(fossil diff | egrep -c '^\+[^+].+$')
-        MINUSLINE=$(fossil diff | egrep -c '^-[^-].+$')
-        ret=""
+	ret=$(fossil diff -v | awk "/^(+[^+])|(+$)/ { plus+=1; } /^(-[^-])|(-$)/ { minus+=1; } END { total=\"\"; if(plus>0){ total=\"+\"plus; if(minus>0) total=total\"/\"; } if(minus>0) total=total\"-\"minus; print total;}")
 
-        C2AA=$(fossil changes | grep -c "ADDED")
-        if [[ $C2AA -gt 0 ]] ; then
-            # We count the line "à la" git
-            local ADDFILE
-            local FILE
-            ADDFILE=$(fossil changes | grep ADDED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2)
-            for FILE in $ADDFILE ; do
-                PLULI=$(wc -l < $FILE)
-                let PLUSLINE=$PLUSLINE+$PLULI
-            done
+        if [ "$C2E" -gt 0 ]; then
+	    if [ -n "$ret" ]; then
+		ret+=" in "
+	    fi
+	    ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
         fi
 
-        if [[ $PLUSLINE -gt 0 ]] ; then
-            ret+="+$PLUSLINE"
-        fi
-
-        C2D=$(fossil changes | grep -c "DELETED")
-        if [[ $C2D -gt 0 ]] ; then
-            # We count the line "à la" git
-            local DELFILE
-            local FILE
-            DELFILE=$(fossil changes | grep DELETED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2)
-            for FILE in $DELFILE ; do
-                MINLI=$(wc -l < $FILE)
-                let MINUSLINE=$MINUSLINE+$MINLI
-            done
-        fi
-
-        if [[ $MINUSLINE -gt 0 ]] ; then
-            if [[ "$ret" = "" ]] ; then
-                ret+="-$MINUSLINE"
-            else
-                ret+="/-$MINUSLINE"
-            fi
-        fi
-
-        if [[ "$C2E" -gt 0 ]] ; then
-            ret+=" in $C2E"
-        fi
-
-        if [[ "$C2A" -gt 0 ]] ; then
-            C2A="$LP_MARK_UNTRACKED"
+        if [ "$C2A" -gt 0 ]; then
+            C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         else
             C2A=""
         fi
 
-        if [[ "$ret" != "" ]] ; then
-            ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
-        fi
-
-
-        if [[ "$branch" = "no-tag" ]] ; then
+        if [ "$branch" = "no-tag" ]; then
             # Warning, your branch has no tag name !
             branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
         else
-            if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
+            if [ "$C2E" -eq 0 ]; then
                 # All is up-to-date
                 branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
             else
@@ -1028,7 +984,7 @@ _lp_fossil_branch_color()
                 branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
         fi
-        _lp_escape "$branch"
+        echo "$branch"
     fi
 }
 

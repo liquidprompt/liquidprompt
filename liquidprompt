@@ -68,6 +68,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
+    _LP_TIME_FORMATTED_SYMBOL="\D"
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
@@ -79,6 +80,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
     _LP_TIME_SYMBOL="%*"
+    _LP_TIME_FORMATTED_SYMBOL="%D"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
     _LP_PWD_SYMBOL="%~"
@@ -1522,7 +1524,14 @@ _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
     if [[ "$LP_TIME_ANALOG" != 1 ]]; then
-        echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        if [[ -n "$LP_TIME_FORMAT" ]]; then
+            # If the user provided a format string for the time, use that...
+            _LP_TIME_FORMATTED="${_LP_TIME_FORMATTED_SYMBOL}{${LP_TIME_FORMAT}}"
+        else
+            # ... otherwise use the placeholder for the default system time.
+            _LP_TIME_FORMATTED="${_LP_TIME_SYMBOL}"
+        fi
+        echo -n "${LP_COLOR_TIME}${_LP_TIME_FORMATTED}${NO_COL}"
     else
         echo -n "${LP_COLOR_TIME}"
         _lp_time_analog

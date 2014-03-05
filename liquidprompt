@@ -287,6 +287,7 @@ _lp_source_config()
     LP_MARK_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN:-"["}"
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
+    LP_MARK_MAILDIR="${LP_MARK_MAILDIR:-"✉"}"
     # LP_MARK_PREFIX="$LP_MARK_PREFIX"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
@@ -320,6 +321,7 @@ _lp_source_config()
     LP_COLOR_TIME=${LP_COLOR_TIME:-$BLUE}
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
+    LP_COLOR_MAILDIR=${LP_COLOR_MAILDIR:-$RED}
 
     LP_COLORMAP_0=${LP_COLORMAP_0:-""}
     LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
@@ -1059,6 +1061,27 @@ _lp_bzr_branch_color()
     echo -ne "$ret"
 }
 
+##################
+# Maildir status #
+##################
+
+_lp_maildir()
+{
+    [[ -z "$LP_MAILDIR_PATH" ]] && return
+    local p
+    local IFS=:
+    for p in $LP_MAILDIR_PATH; do
+        # Only scan actual directories.
+        if [[ -d "$p" ]]; then
+            local count
+            # Note: the final `tr` command is to trim the output of `wc`.
+            count=$(find "$p" -type f | wc -l | tr -d ' ')
+            if [[ "$count" -gt 0 ]]; then
+                echo -n "${LP_COLOR_MAILDIR}[${LP_MARK_MAILDIR}${count}]${NO_COL}"
+            fi
+        fi
+    done
+}
 
 ####################
 # Wifi link status #
@@ -1562,6 +1585,7 @@ _lp_set_prompt()
         LP_SCLS=
     fi
 
+    LP_MAILDIR="$(_lp_sl "$(_lp_maildir)")"
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
     # if change of working directory
@@ -1669,7 +1693,7 @@ _lp_set_prompt()
         PS1="${PS1}${LP_VCS}"
 
         # add return code and prompt mark
-        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1="${PS1}${LP_MAILDIR}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

@@ -143,4 +143,8 @@ LP_ENABLE_SSH_COLORS=0
 # will be disabled
 LP_DISABLED_VCS_PATH=""
 
+# Specify a list of complete and colon (":") separated paths in which local
+# maildirs are present.
+LP_MAILDIR_PATH=""
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

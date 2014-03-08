@@ -762,14 +762,12 @@ _lp_git_branch_color()
 
         local -i has_commit
         has_commit=0
-        if [[ -n "$remote" ]] ; then
+        if [[ -n "$remote" ]]; then
             local remote_branch
             remote_branch="$(\git config --get branch.${branch}.merge)"
-            if [[ -n "$remote_branch" ]] ; then
-                has_commit="$(\git rev-list --no-merges --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)"
-                if [[ -z "$has_commit" ]] ; then
-                    has_commit=0
-                fi
+            if [[ -n "$remote_branch" ]]; then
+                has_commit="$(\git rev-list --count ${remote_branch/refs\/heads/refs\/remotes\/$remote}..HEAD 2>/dev/null)"
+                [[ -z "$has_commit" ]] && has_commit=0
             fi
         fi
 

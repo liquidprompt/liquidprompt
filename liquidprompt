@@ -186,17 +186,30 @@ _lp_source_config()
     local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
     local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
     local ti_setaf
-    if tput setaf >/dev/null 2>&1 ; then
-        ti_setaf () { tput setaf "$1" ; }
-    elif tput AF >/dev/null 2>&1 ; then
-        # *BSD
-        ti_setaf () { tput AF "$1" ; }
-    elif tput AF 1 >/dev/null 2>&1 ; then
+    local ti_setab
+    if tput setaf 0 >/dev/null 2>&1; then
+        ti_setaf() { tput setaf "$1" ; }
+    elif tput AF 0 >/dev/null 2>&1; then
+        # FreeBSD
+        ti_setaf() { tput AF "$1" ; }
+    elif tput AF 0 0 0 >/dev/null 2>&1; then
         # OpenBSD
-        ti_setaf () { tput AF "$1" ; }
+        ti_setaf() { tput AF "$1" 0 0 ; }
     else
         echo "liquidprompt: terminal $TERM not supported" >&2
         ti_setaf () { : ; }
+    fi
+    if tput setab 0 >/dev/null 2>&1; then
+        ti_setab() { tput setab "$1" ; }
+    elif tput AB 0 >/dev/null 2>&1; then
+        # FreeBSD
+        ti_setab() { tput AB "$1" ; }
+    elif tput AB 0 0 0 >/dev/null 2>&1; then
+        # OpenBSD
+        ti_setab() { tput AB "$1" 0 0 ; }
+    else
+        echo "liquidprompt: terminal $TERM not supported" >&2
+        ti_setab() { : ; }
     fi
 
     # Colors: variables are local so they will have a value only
@@ -211,9 +224,9 @@ _lp_source_config()
 
     local RED="${_LP_OPEN_ESC}$(ti_setaf 1)${_LP_CLOSE_ESC}"
     local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 1)${_LP_CLOSE_ESC}"
-    local WARN_RED="${_LP_OPEN_ESC}$(ti_setaf 0 ; tput setab 1)${_LP_CLOSE_ESC}"
-    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7 ; tput setab 1)${_LP_CLOSE_ESC}"
-    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3 ; tput setab 1)${_LP_CLOSE_ESC}"
+    local WARN_RED="${_LP_OPEN_ESC}$(ti_setaf 0 ; ti_setab 1)${_LP_CLOSE_ESC}"
+    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7 ; ti_setab 1)${_LP_CLOSE_ESC}"
+    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3 ; ti_setab 1)${_LP_CLOSE_ESC}"
 
     local GREEN="${_LP_OPEN_ESC}$(ti_setaf 2)${_LP_CLOSE_ESC}"
     local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 2)${_LP_CLOSE_ESC}"
@@ -233,7 +246,7 @@ _lp_source_config()
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
 
-    unset ti_sgr0 ti_bold ti_setaf
+    unset ti_sgr0 ti_bold ti_setaf ti_setab
 
 
     # Default values (globals)

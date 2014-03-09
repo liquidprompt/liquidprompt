@@ -313,7 +313,7 @@ _lp_source_config()
     LP_MARK_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN:-"["}"
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
-    # LP_MARK_PREFIX="$LP_MARK_PREFIX"
+    LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -1653,7 +1653,7 @@ _lp_set_prompt()
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK="$(_lp_sb "$(_lp_smart_mark $LP_VCS_TYPE)")"
+        LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
 
         # The color is different if user is root
         LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"

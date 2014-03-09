@@ -43,7 +43,7 @@ fi
 LP_MARK_BRACKET_OPEN="["  # open bracket
 LP_MARK_BRACKET_CLOSE="]" # close bracket
 #LP_MARK_DEFAULT=""        # default prompt mark
-LP_MARK_PREFIX=""         # prompt mark prefix
+LP_MARK_PREFIX=" "        # prompt mark prefix
 LP_PS1_PREFIX=""
 LP_PS1_POSTFIX=""
 

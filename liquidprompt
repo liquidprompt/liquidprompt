@@ -489,19 +489,10 @@ _lp_connection()
 # The connection is not expected to change from inside the shell, so we
 # build this just once
 LP_HOST=""
-_chroot()
-{
-    if [[ -r /etc/debian_chroot ]] ; then
-        local debchroot
-        debchroot="$(< /etc/debian_chroot)"
-        echo "(${debchroot})"
-    fi
-}
-LP_HOST="$(_chroot)"
-unset _chroot
+[[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
 
 # If we are connected with a X11 support
-if [[ -n "$DISPLAY" ]] ; then
+if [[ -n "$DISPLAY" ]]; then
     LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
 else
     LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"

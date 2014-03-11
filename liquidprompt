@@ -241,6 +241,7 @@ _lp_source_config()
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
+    LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
@@ -266,6 +267,7 @@ _lp_source_config()
     LP_MARK_HG="${LP_MARK_HG:-"☿"}"
     LP_MARK_SVN="${LP_MARK_SVN:-"‡"}"
     LP_MARK_GIT="${LP_MARK_GIT:-"±"}"
+    LP_MARK_VCSH="${LP_MARK_VCSH:-"|"}"
     LP_MARK_FOSSIL="${LP_MARK_FOSSIL:-"⌘"}"
     LP_MARK_BZR="${LP_MARK_BZR:-"⚯"}"
     LP_MARK_DISABLED="${LP_MARK_DISABLED:-"⌀"}"
@@ -1447,6 +1449,7 @@ _lp_smart_mark()
     case "$LP_VCS_TYPE" in
     git)      mark="$LP_MARK_GIT"             ;;
     git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
+    git-vcsh) mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
     hg)       mark="$LP_MARK_HG"              ;;
     svn)      mark="$LP_MARK_SVN"             ;;
     fossil)   mark="$LP_MARK_FOSSIL"          ;;
@@ -1603,6 +1606,10 @@ _lp_set_prompt()
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
+                # If this is a vcsh repository
+                if [[ -n "$VCSH_DIRECTORY" ]]; then
+                    LP_VCS_TYPE="git-vcsh"
+                fi
                 # If this is a git-svn repository
                 if [[ -d "$(\git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
                     LP_VCS_TYPE="git-svn"

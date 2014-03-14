@@ -52,6 +52,8 @@
 # Issue #161: do not load if not an interactive shell
 test -z "$TERM" -o "x$TERM" = dumb && return
 
+_LP_SHELL_bash_42=false
+
 # Check for recent enough version of bash.
 if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
@@ -59,6 +61,11 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
         unset bash bmajor bminor
         return
     fi
+
+    if [[ $BASH_VERSION == 4.2.* ]]; then
+        _LP_SHELL_bash_42=true
+    fi
+
     unset bash bmajor bminor
 
     _LP_SHELL_bash=true
@@ -527,6 +534,15 @@ esac
 unset _lp_connection
 
 
+_lp_get_home_tilde_collapsed()
+{
+    if $_LP_SHELL_bash_42; then
+        echo ${PWD/#$HOME/~}
+    else
+        echo ${PWD/#$HOME/'~'}
+    fi
+}
+
 # Shorten the path of the current working directory
 # * Show only the current directory
 # * Show as much of the cwd path as possible, if shortened display a
@@ -545,7 +561,7 @@ _lp_shorten_path()
 
     local ret=""
 
-    local p="${PWD/#$HOME/~}"
+    local p="$(_lp_get_home_tilde_collapsed)"
     local mask="${LP_MARK_SHORTEN_PATH}"
     local -i max_len=$(( ${COLUMNS:-80} * $LP_PATH_LENGTH / 100 ))
 
@@ -603,7 +619,7 @@ _lp_shorten_path()
 # liquidprompt can calculate this number under two condition, path shortening
 # must be disabled and PROMPT_DIRTRIM must be already set.
 _lp_set_dirtrim() {
-    local p="${PWD/$HOME/~}"
+    local p="$(_lp_get_home_tilde_collapsed)"
     local -i max_len=${COLUMNS:-80}*$LP_PATH_LENGTH/100
     local -i dt=0
 

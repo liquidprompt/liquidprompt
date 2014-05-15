@@ -71,6 +71,11 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
+    # Disable the DEBUG trap used by the RUNTIME feature
+    # (in case we are reloading LP in the same shell after disabling
+    # the feature in .liquidpromptrc)
+    # FIXME this doesn't seem to work :(
+    [[ -n "$LP_ENABLE_RUNTIME" ]] && trap - DEBUG
 elif test -n "$ZSH_VERSION" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
@@ -86,6 +91,10 @@ else
     echo "liquidprompt: shell not supported" >&2
     return
 fi
+
+# Save $IFS as we want to restore the default value at the beginning of the
+# prompt function
+_LP_IFS="$IFS"
 
 
 ###############
@@ -241,6 +250,7 @@ _lp_source_config()
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
+    LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
@@ -251,6 +261,7 @@ _lp_source_config()
         LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-0}
     fi
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
+    LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
@@ -266,6 +277,7 @@ _lp_source_config()
     LP_MARK_HG="${LP_MARK_HG:-"☿"}"
     LP_MARK_SVN="${LP_MARK_SVN:-"‡"}"
     LP_MARK_GIT="${LP_MARK_GIT:-"±"}"
+    LP_MARK_VCSH="${LP_MARK_VCSH:-"|"}"
     LP_MARK_FOSSIL="${LP_MARK_FOSSIL:-"⌘"}"
     LP_MARK_BZR="${LP_MARK_BZR:-"⚯"}"
     LP_MARK_DISABLED="${LP_MARK_DISABLED:-"⌀"}"
@@ -632,7 +644,7 @@ _lp_jobcount_color()
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
     local n_screen=$(screen -ls 2> /dev/null | grep -c '[Dd]etach[^)]*)$')
-    local n_tmux=$(tmux list-sessions 2> /dev/null | grep -cv attached)
+    local n_tmux=$(tmux list-sessions 2> /dev/null | grep -cvE 'attached|command not found')
     local detached=$(( $n_screen + $n_tmux ))
     local m_detached="d"
     local m_stop="z"
@@ -710,18 +722,18 @@ _lp_git_branch_color()
 
         local end
         end="$NO_COL"
-        if LC_ALL=C \git status 2>/dev/null | grep -q '\(# Untracked\)'; then
+        if LC_ALL=C \git status --porcelain 2>/dev/null | grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
-        if [[ -n "$(\git stash list 2>/dev/null)" ]]; then
+        if [[ -n "$(\git stash list -n 1 2>/dev/null)" ]]; then
             end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
         fi
 
         local remote
         remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
 
-        local has_commit
+        local -i has_commit
         has_commit=0
         if [[ -n "$remote" ]] ; then
             local remote_branch
@@ -827,32 +839,35 @@ _lp_hg_branch_color()
     if [[ -n "$branch" ]] ; then
 
         local has_untracked
-        has_untracked=$(hg status 2>/dev/null | grep -c '\(^\?\)')
-        if [[ -z "$has_untracked" ]] ; then
-            has_untracked=""
-        else
+        has_untracked=
+        if hg status -u 2>/dev/null | grep -q '^\?' >/dev/null ; then
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
-        local has_commit
-        has_commit=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
-        if [[ -z "$has_commit" ]] ; then
-            has_commit=0
-        fi
+        # Count local commits waiting for a push
+        #
+        # Unfortunately this requires contacting the remote, so this is always slow
+        # => disabled  https://github.com/nojhan/liquidprompt/issues/217
+        local -i commits
+        #commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
+        commits=0
 
-        if [[ $(( $(hg status --quiet -n | wc -l) )) = 0 ]] ; then
-            if [[ "$has_commit" -gt "0" ]] ; then
+        # Check if there is some uncommitted stuff
+        if [[ -z "$(hg status --quiet -n)" ]] ; then
+            if (( commits > 0 )) ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}" # nothing to commit or push
+                # nothing to commit or push
+                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}"
             fi
         else
             local has_lines
-            has_lines=$(hg diff --stat 2>/dev/null | tail -n 1 | awk 'FS=" " {printf("+%s/-%s\n", $4, $6)}')
-            if [[ "$has_commit" -gt "0" ]] ; then
+            # Parse the last line of the diffstat-style output
+            has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
+            if (( commits > 0 )) ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$has_commit${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
             fi
@@ -877,8 +892,12 @@ _lp_svn_branch()
     url="${url:${#root}}"
     if [[ "$url" == */trunk* ]] ; then
         echo -n trunk
-    else
+    elif [[ "$url" == */branches* ]] ; then
         _lp_escape "$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")"
+    elif [[ "$url" == */tags* ]] ; then
+        _lp_escape "$(expr "$url" : '.*/tags/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")"
+    else
+        _lp_escape "$(basename "$root")"
     fi
 }
 
@@ -896,7 +915,7 @@ _lp_svn_branch_color()
     local branch
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]] ; then
-        local commits
+        local changes
         changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
         if [[ $changes -eq 0 ]] ; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
@@ -914,9 +933,9 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
     local branch
-    branch="$(fossil status 2>/dev/null | grep tags: | cut -c17-)"
-    if [[ -n "$branch" ]] ; then
-        _lp_escape "$branch"
+    branch=$(fossil status 2>/dev/null | sed -n "s/tags:[ ]*\(\w*\)$/\1/Ip")
+    if [ -n "$branch" ]; then
+        echo "$branch"
     else
         if fossil info &>/dev/null ; then
             echo "no-tag"
@@ -939,76 +958,30 @@ _lp_fossil_branch_color()
     local branch
     branch="$(_lp_fossil_branch)"
 
-    if [[ -n "$branch" ]] ; then
-        local C2E # Modified files (added or edited)
-        local C2D # Deleted files
+    if [ -n "$branch" ]; then
+        local -i C2E # Modified files (added or edited)
         local C2A # Extras files
-        local C2AA # Added files
-        local PLUSLINE # Added lines
-        local MINUSLINE # Deleted lines
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
-        PLUSLINE=$(fossil diff | egrep -c '^\+[^+].+$')
-        MINUSLINE=$(fossil diff | egrep -c '^-[^-].+$')
-        ret=""
+        ret=$(fossil diff -i -v | awk "/^(+[^+])|(+$)/ { plus+=1; } /^(-[^-])|(-$)/ { minus+=1; } END { total=\"\"; if(plus>0){ total=\"+\"plus; if(minus>0) total=total\"/\"; } if(minus>0) total=total\"-\"minus; print total;}")
 
-        C2AA=$(fossil changes | grep -c "ADDED")
-        if [[ $C2AA -gt 0 ]] ; then
-            # We count the line "à la" git
-            local ADDFILE
-            local FILE
-            ADDFILE=$(fossil changes | grep ADDED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2)
-            for FILE in $ADDFILE ; do
-                PLULI=$(wc -l < $FILE)
-                let PLUSLINE=$PLUSLINE+$PLULI
-            done
+        if (( C2E > 0 )); then
+            [[ -n "$ret" ]] && ret+=" in "
+            ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
         fi
 
-        if [[ $PLUSLINE -gt 0 ]] ; then
-            ret+="+$PLUSLINE"
-        fi
-
-        C2D=$(fossil changes | grep -c "DELETED")
-        if [[ $C2D -gt 0 ]] ; then
-            # We count the line "à la" git
-            local DELFILE
-            local FILE
-            DELFILE=$(fossil changes | grep DELETED | sed -e 's/\s\{2,\}/ /g' | cut -d" " -f2)
-            for FILE in $DELFILE ; do
-                MINLI=$(wc -l < $FILE)
-                let MINUSLINE=$MINUSLINE+$MINLI
-            done
-        fi
-
-        if [[ $MINUSLINE -gt 0 ]] ; then
-            if [[ "$ret" = "" ]] ; then
-                ret+="-$MINUSLINE"
-            else
-                ret+="/-$MINUSLINE"
-            fi
-        fi
-
-        if [[ "$C2E" -gt 0 ]] ; then
-            ret+=" in $C2E"
-        fi
-
-        if [[ "$C2A" -gt 0 ]] ; then
-            C2A="$LP_MARK_UNTRACKED"
+        if (( $C2A > 0 )); then
+            C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         else
             C2A=""
         fi
 
-        if [[ "$ret" != "" ]] ; then
-            ret="(${LP_COLOR_DIFF}$ret${NO_COL})"
-        fi
-
-
-        if [[ "$branch" = "no-tag" ]] ; then
+        if [[ "$branch" = "no-tag" ]]; then
             # Warning, your branch has no tag name !
             branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
         else
-            if [[ "$C2E" -eq 0 && "$C2D" -eq 0 ]] ; then
+            if (( C2E == 0 )); then
                 # All is up-to-date
                 branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
             else
@@ -1016,7 +989,7 @@ _lp_fossil_branch_color()
                 branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
             fi
         fi
-        _lp_escape "$branch"
+        echo "$branch"
     fi
 }
 
@@ -1103,7 +1076,7 @@ case "$LP_OS" in
     Linux)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
         # Extract the battery load value in percent
@@ -1144,8 +1117,8 @@ case "$LP_OS" in
     Darwin)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return
-        local pmset="$(pmset -g batt | tail -n1)"
+        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
+        local pmset="$(pmset -g batt | sed -n -e '/InternalBattery/p')"
         local bat="$(cut -f2 <<<"$pmset")"
         bat="${bat%%%*}"
         case "$pmset" in
@@ -1320,8 +1293,8 @@ _lp_reset_runtime()
     [ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && _LP_RUNTIME_LAST_SECONDS=$SECONDS && _LP_RUNTIME_SECONDS=0
 
     # A proper command has been executed if the last command was not related to liquidprompt
-    [ "$BASH_COMMAND" = _lp_set_prompt ] && _LP_RUNTIME_COMMAND_EXECUTED=0 && return
-    _LP_RUNTIME_COMMAND_EXECUTED=1
+    [ "$BASH_COMMAND" = _lp_set_prompt ]
+    _LP_RUNTIME_COMMAND_EXECUTED=$?
 }
 
 if [ "$LP_ENABLE_RUNTIME" = 1 ]
@@ -1447,6 +1420,7 @@ _lp_smart_mark()
     case "$LP_VCS_TYPE" in
     git)      mark="$LP_MARK_GIT"             ;;
     git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
+    git-vcsh) mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
     hg)       mark="$LP_MARK_HG"              ;;
     svn)      mark="$LP_MARK_SVN"             ;;
     fossil)   mark="$LP_MARK_FOSSIL"          ;;
@@ -1454,7 +1428,7 @@ _lp_smart_mark()
     disabled) mark="$LP_MARK_DISABLED"        ;;
     *)
         if [[ -n "$LP_MARK_DEFAULT" ]]; then
-            mark=$LP_MARK_DEFAULT
+            mark="$LP_MARK_DEFAULT"
         else
             mark="$_LP_MARK_SYMBOL"
         fi
@@ -1505,8 +1479,8 @@ _lp_time_analog()
     local -a half
     half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
 
-    # array index starts at 0
-    local -i hi=hour-1
+    # "date %I" returns a number between 1 and 12 and we want 12 to be 0.
+    local -i hi=$(( hour % 12))
 
     # add a space for correct alignment
     if (( min < 15 )) ; then
@@ -1548,8 +1522,7 @@ _lp_set_prompt()
 
     # Reset IFS to its default value to avoid strange behaviors
     # (in case the user is playing with the value at the prompt)
-    local IFS="$(echo -e ' \t')
-"       # space, tab, LF
+    local IFS="$_LP_IFS"
 
     # execute the old prompt
     eval "$LP_OLD_PROMPT_COMMAND"
@@ -1573,6 +1546,13 @@ _lp_set_prompt()
         LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
     else
         LP_VENV=
+    fi
+
+    # Display the current software collections enabled, if available
+    if [[ "$LP_ENABLE_SCLS,$X_SCLS" = 1,?* ]] ; then
+        LP_SCLS=" [${LP_COLOR_VIRTUALENV}${X_SCLS%"${X_SCLS##*[![:space:]]}"}${NO_COL}]"
+    else
+        LP_SCLS=
     fi
 
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
@@ -1603,6 +1583,10 @@ _lp_set_prompt()
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
+                # If this is a vcsh repository
+                if [[ -n "$VCSH_DIRECTORY" ]]; then
+                    LP_VCS_TYPE="git-vcsh"
+                fi
                 # If this is a git-svn repository
                 if [[ -d "$(\git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
                     LP_VCS_TYPE="git-svn"
@@ -1670,7 +1654,7 @@ _lp_set_prompt()
         # add user, host and permissions colon
         PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
+        PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

@@ -111,6 +111,10 @@ LP_RUNTIME_THRESHOLD=2
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
 
+# Display the enabled software collections, if any
+# Recommended value is 1
+LP_ENABLE_SCLS=1
+
 # Show average system temperature
 LP_ENABLE_TEMP=1
 

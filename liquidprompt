@@ -1052,7 +1052,10 @@ _lp_bzr_branch_color()
     local output
     output="$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)"
     [[ $? -ne 0 ]] && return
-    local tuple=($output)
+    $_LP_SHELL_zsh && setopt local_options && setopt sh_word_split
+    local tuple
+    tuple=($output)
+    $_LP_SHELL_zsh && unsetopt sh_word_split
     local branch=${tuple[_LP_FIRST_INDEX+0]}
     local revno=${tuple[_LP_FIRST_INDEX+1]}
     local clean=${tuple[_LP_FIRST_INDEX+2]}

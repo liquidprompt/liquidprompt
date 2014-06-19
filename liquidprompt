@@ -1069,14 +1069,14 @@ _lp_maildir()
 {
     [[ -z "$LP_MAILDIR_PATH" ]] && return
     local p
+    local count
     local IFS=:
     for p in $LP_MAILDIR_PATH; do
         # Only scan actual directories.
         if [[ -d "$p" ]]; then
-            local count
-            # Note: the final `tr` command is to trim the output of `wc`.
-            count=$(find "$p" -type f | wc -l | tr -d ' ')
-            if [[ "$count" -gt 0 ]]; then
+            count="$(find "$p" -type f -printf 1 | wc -l)"
+            # Don't quote $count as the output of wc may contain spaces
+            if [[ $count -gt 0 ]]; then
                 echo -n "${LP_COLOR_MAILDIR}[${LP_MARK_MAILDIR}${count}]${NO_COL}"
             fi
         fi

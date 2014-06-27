@@ -664,8 +664,6 @@ _lp_jobcount_color()
 {
     [[ "$LP_ENABLE_JOBS" != 1 ]] && return
 
-    local running=$(( $(jobs -r | wc -l) ))
-    local stopped=$(( $(jobs -s | wc -l) ))
     local m_stop="z"
     local m_run="&"
     local ret
@@ -677,17 +675,19 @@ _lp_jobcount_color()
         (( detached > 0 )) && ret="${ret}${LP_COLOR_JOB_D}${detached}d${NO_COL}"
     fi
 
-    if [[ $running != "0" ]] ; then
-        if [[ $ret != "" ]] ; then ret="${ret}/"; fi
+    local running=$(( $(jobs -r | wc -l) ))
+    if [[ $running != 0 ]] ; then
+        [[ -n "$ret" ]] && ret="${ret}/"
         ret="${ret}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
     fi
 
-    if [[ $stopped != "0" ]] ; then
-        if [[ $ret != "" ]] ; then ret="${ret}/"; fi
+    local stopped=$(( $(jobs -s | wc -l) ))
+    if [[ $stopped != 0 ]] ; then
+        [[ -n "$ret" ]] && ret="${ret}/"
         ret="${ret}${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
     fi
 
-    echo -ne "$ret"
+    echo -n "$ret"
 }
 
 

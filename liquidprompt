@@ -93,6 +93,19 @@ else
     return
 fi
 
+# Store $2 (or $?) as a true/false value in variable named $1
+# $? is propagated
+#   _lp_bool foo 5
+#   => foo=false
+#   _lp_bool foo 0
+#   => foo=true
+_lp_bool()
+{
+    local res=${2:-$?}
+    [[ $res = 0 ]] && eval $1=true || eval $1=false
+    return $res
+}
+
 # Save $IFS as we want to restore the default value at the beginning of the
 # prompt function
 _LP_IFS="$IFS"

@@ -718,9 +718,9 @@ _lp_are_vcs_enabled()
 _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
-    local gitdir
-    gitdir="$([ $(\git ls-files . 2>/dev/null | wc -l) -gt 0 ] && \git rev-parse --git-dir 2>/dev/null)"
-    [[ $? -ne 0 || ! $gitdir =~ (.*\/)?\.git.* ]] && return
+
+    \git rev-parse --inside-work-tree >/dev/null 2>&1 || return
+
     local branch
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)

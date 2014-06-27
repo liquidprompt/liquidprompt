@@ -295,7 +295,7 @@ _lp_source_config()
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
 
-    # LP_MARK_DEFAULT="$LP_MARK_DEFAULT"
+    LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
     LP_MARK_ADAPTER="${LP_MARK_ADAPTER:-"⏚"}"
     LP_MARK_LOAD="${LP_MARK_LOAD:-"⌂"}"
@@ -1451,13 +1451,7 @@ _lp_smart_mark()
     fossil)   mark="$LP_MARK_FOSSIL"          ;;
     bzr)      mark="$LP_MARK_BZR"             ;;
     disabled) mark="$LP_MARK_DISABLED"        ;;
-    *)
-        if [[ -n "$LP_MARK_DEFAULT" ]]; then
-            mark="$LP_MARK_DEFAULT"
-        else
-            mark="$_LP_MARK_SYMBOL"
-        fi
-        ;;
+    *)        mark="$LP_MARK_DEFAULT"         ;;
     esac
     echo -ne "${LP_COLOR_MARK}${mark}${NO_COL}"
 }

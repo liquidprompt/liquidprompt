@@ -499,7 +499,7 @@ _lp_connection()
 
 # Put the hostname if not locally connected
 # color it in cyan within SSH, and a warning red if within telnet
-# else diplay the host without color
+# else display the host without color
 # The connection is not expected to change from inside the shell, so we
 # build this just once
 LP_HOST=""
@@ -582,7 +582,7 @@ _lp_shorten_path()
 
     if [[ ${LP_PATH_KEEP} == -1 ]]; then
         # only show the current directory, excluding any parent dirs
-        ret="${p##*/}" # discard everything upto and including the last slash
+        ret="${p##*/}" # discard everything up to and including the last slash
         [[ "${ret}" == "" ]] && ret="/" # if in root directory
     elif (( ${#p} <= ${max_len} )); then
         ret="${p}"
@@ -1564,7 +1564,7 @@ _lp_set_prompt()
         LP_PROXY=
     fi
 
-    # Display the current Python virtual environnement, if available
+    # Display the current Python virtual environment, if available
     if [[ "$LP_ENABLE_VIRTUALENV,$VIRTUAL_ENV" = 1,?* ]] ; then
         LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
     else

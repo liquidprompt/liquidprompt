@@ -384,6 +384,9 @@ case "$LP_OS" in
     Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
     *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
 esac
+command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
+command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
+$_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?
 
 if [[ "$LP_ENABLE_RUNTIME" == 1 ]] && ! $_LP_SHELL_bash; then
     echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.
@@ -663,16 +666,15 @@ _lp_jobcount_color()
 
     local running=$(( $(jobs -r | wc -l) ))
     local stopped=$(( $(jobs -s | wc -l) ))
-    local n_screen=$(screen -ls 2> /dev/null | grep -c '[Dd]etach[^)]*)$')
-    local n_tmux=$(tmux list-sessions 2> /dev/null | grep -cvE 'attached|command not found')
-    local detached=$(( $n_screen + $n_tmux ))
-    local m_detached="d"
     local m_stop="z"
     local m_run="&"
-    local ret=""
+    local ret
 
-    if [[ $detached != "0" ]] ; then
-        ret="${ret}${LP_COLOR_JOB_D}${detached}${m_detached}${NO_COL}"
+    if $_LP_ENABLE_DETACHED_SESSIONS; then
+        local -i detached=0
+        $_LP_ENABLE_SCREEN && let detached=$(screen -ls 2> /dev/null | grep -c '[Dd]etach[^)]*)$')
+        $_LP_ENABLE_TMUX && let detached+=$(tmux list-sessions 2> /dev/null | grep -cv 'attached')
+        (( detached > 0 )) && ret="${ret}${LP_COLOR_JOB_D}${detached}d${NO_COL}"
     fi
 
     if [[ $running != "0" ]] ; then

@@ -65,7 +65,7 @@ commits to push;
 number of pending commits, if any;
 * a yellow plus if there is stashed modifications;
 * a red star if there is some untracked files in the repository;
-* the runtime of the last command, if it has exceeded a certain threshold
+* the runtime of the last command, if it has exceeded a certain threshold;
 * the error code of the last command, if it has failed in some way;
 * a smart mark: ± for git directories, ☿ for mercurial, ‡ for svn,
 ‡± for git-svn, ⌘ for fossil, $ or % for simple user, a red # for root;
@@ -124,14 +124,14 @@ Apart from obvious ones, some features depend on specific commands. If you do
 not install them, the corresponding feature will not be available, but you will
 see no error.
 
-* battery status needs `acpi`.
-* temperature status needs `lm-sensors`.
+* battery status needs `acpi` on GNU/Linux.
+* temperature status needs `acpi` or `lm-sensors` on GNU/Linux.
 * detached sessions is looking for `screen` and/or `tmux`.
 * VCS support features needs… `git`, `hg`, `svn`, `bzr` or `fossil`, but you
 knew it.
 
 For other features, the script uses commands that should be available on a large
-variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`.
+variety of unixes: `tput`, `grep`, `awk`, `sed`, `ps`, `who`, `expr`.
 
 
 ## FEATURES CONFIGURATION
@@ -324,7 +324,7 @@ Special characters:
 * `LP_MARK_FOSSIL` (default: "⌘") prompt mark in fossil repositories
 * `LP_MARK_BZR` (default: "⚯") prompt mark in bazaar repositories
 * `LP_MARK_DISABLED` (default: "⌀") prompt mark in disabled repositories (see `LP_DISABLED_VCS_PATH`)
-* `LP_MARK_UNTRACKED` (default: "*") if git has untracked files
+* `LP_MARK_UNTRACKED` (default: "\*") if git has untracked files
 * `LP_MARK_STASH` (default: "+") if git has stashed modifications
 * `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt
 * `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt

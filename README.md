@@ -336,8 +336,8 @@ Special characters:
 
 ## KNOWN LIMITATIONS AND BUGS
 
-Liquid prompt is distributed under the GNU Affero General Public License
-version 3.
+Liquid prompt is distributed under the [GNU Affero General Public License
+version 3](LICENSE).
 
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing into very large subversion repositories may dramatically slow down

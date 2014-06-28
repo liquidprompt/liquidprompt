@@ -917,12 +917,14 @@ _lp_svn_branch()
     url="${url:${#root}}"
     if [[ "$url" == */trunk* ]] ; then
         echo -n trunk
-    elif [[ "$url" == */branches* ]] ; then
-        _lp_escape "$(expr "$url" : '.*/branches/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")"
-    elif [[ "$url" == */tags* ]] ; then
-        _lp_escape "$(expr "$url" : '.*/tags/\([^/]*\)' || expr "$url" : '/\([^/]*\)' || basename "$root")"
+    elif [[ "$url" == */branches/?* ]] ; then
+        url="${url##*/branches/}"
+        _lp_escape "${url%/*}"
+    elif [[ "$url" == */tags/?* ]] ; then
+        url="${url##*/tags/}"
+        _lp_escape "${url%/*}"
     else
-        _lp_escape "$(basename "$root")"
+        _lp_escape "${root##*/}"
     fi
 }
 

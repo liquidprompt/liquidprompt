@@ -1,4 +1,4 @@
-Liquid prompt -- A useful adaptive prompt for Bash & Zsh
+Liquid prompt — A useful adaptive prompt for Bash & Zsh
 ========================================================
 
 Liquid prompt gives you a nicely displayed prompt with useful information

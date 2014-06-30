@@ -248,6 +248,12 @@ _lp_source_config()
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
 
+    # compute the hash of the hostname
+    # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
+    # FIXME check portability of cksum and add more formats (bold? 256 colors?)
+    local hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
+    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}"
+
     unset ti_sgr0 ti_bold ti_setaf ti_setab
 
 
@@ -525,19 +531,8 @@ lcl)
     ;;
 ssh)
     # If we want a different color for each host
-    if [[ "$LP_ENABLE_SSH_COLORS" -eq "1" ]]; then
-        # compute the hash of the hostname
-        # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
-        # FIXME check portability of cksum and add more formats (bold? 256 colors?)
-        hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
-        color=${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}
-        LP_HOST="${LP_HOST}${color}${_LP_HOST_SYMBOL}${NO_COL}"
-        unset hash
-        unset color
-    else
-        # the same color for all hosts
-        LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
-    fi
+    [[ "$LP_ENABLE_SSH_COLORS" -eq 1 ]] && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
     ;;
 su)
     LP_HOST="${LP_HOST}${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"

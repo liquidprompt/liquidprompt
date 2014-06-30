@@ -72,6 +72,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
+    _LP_PERCENT='%' # percent must be escaped on zsh
     # Disable the DEBUG trap used by the RUNTIME feature
     # (in case we are reloading LP in the same shell after disabling
     # the feature in .liquidpromptrc)
@@ -87,6 +88,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_TIME_SYMBOL="%*"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
+    _LP_PERCENT='%%'
     _LP_PWD_SYMBOL="%~"
 else
     echo "liquidprompt: shell not supported" >&2
@@ -1247,11 +1249,7 @@ _lp_battery_color()
                 ret="${ret}${LP_COLORMAP_0}"
             fi
 
-            if $_LP_SHELL_bash; then
-                ret="${ret}${bat}%"
-            else # zsh
-                ret="${ret}${bat}%%"
-            fi
+            ret="${ret}${bat}$_LP_PERCENT"
         fi # LP_PERCENTS_ALWAYS
         echo -ne "${ret}${NO_COL}"
     fi # ret
@@ -1360,11 +1358,7 @@ _lp_load_color()
         local ret="$(_lp_color_map $load 200)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
-            if $_LP_SHELL_bash; then
-                ret="${ret}$load%"
-            else # zsh
-                ret="${ret}$load%%"
-            fi
+            ret="${ret}${load}${_LP_PERCENT}"
         fi
         echo -nE "${ret}${NO_COL}"
     fi

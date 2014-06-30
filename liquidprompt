@@ -1223,26 +1223,27 @@ _lp_battery_color()
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
-            if   [[ ${bat} -le 100 ]] && [[ ${bat} -gt 80 ]] ; then # -20
-                ret="${ret}${LP_COLORMAP_1}"
-            elif [[ ${bat} -le 80  ]] && [[ ${bat} -gt 65 ]] ; then # -15
-                ret="${ret}${LP_COLORMAP_2}"
-            elif [[ ${bat} -le 65  ]] && [[ ${bat} -gt 50 ]] ; then # -15
-                ret="${ret}${LP_COLORMAP_3}"
-            elif [[ ${bat} -le 50  ]] && [[ ${bat} -gt 40 ]] ; then # -10
-                ret="${ret}${LP_COLORMAP_4}"
-            elif [[ ${bat} -le 40  ]] && [[ ${bat} -gt 30 ]] ; then # …
-                ret="${ret}${LP_COLORMAP_5}"
-            elif [[ ${bat} -le 30  ]] && [[ ${bat} -gt 20 ]] ; then
-                ret="${ret}${LP_COLORMAP_6}"
-            elif [[ ${bat} -le 20  ]] && [[ ${bat} -gt 10 ]] ; then
-                ret="${ret}${LP_COLORMAP_7}"
-            elif [[ ${bat} -le 10  ]] && [[ ${bat} -gt 5  ]] ; then
-                ret="${ret}${LP_COLORMAP_8}"
-            elif [[ ${bat} -le 5   ]] && [[ ${bat} -gt 0  ]] ; then
+            if   (( bat <=  0 )); then
+                ret="${ret}${LP_COLORMAP_0}"
+            elif (( bat <=  5 )); then         #  5
                 ret="${ret}${LP_COLORMAP_9}"
-            else
-                # for debugging purpose
+            elif (( bat <= 10 )); then         #  5
+                ret="${ret}${LP_COLORMAP_8}"
+            elif (( bat <= 20 )); then         # 10
+                ret="${ret}${LP_COLORMAP_7}"
+            elif (( bat <= 30 )); then         # 10
+                ret="${ret}${LP_COLORMAP_6}"
+            elif (( bat <= 40 )); then         # 10
+                ret="${ret}${LP_COLORMAP_5}"
+            elif (( bat <= 50 )); then         # 10
+                ret="${ret}${LP_COLORMAP_4}"
+            elif (( bat <= 65 )); then         # 15
+                ret="${ret}${LP_COLORMAP_3}"
+            elif (( bat <= 80 )); then         # 15
+                ret="${ret}${LP_COLORMAP_2}"
+            elif (( bat < 100 )); then         # 20
+                ret="${ret}${LP_COLORMAP_1}"
+            else # >= 100
                 ret="${ret}${LP_COLORMAP_0}"
             fi
 

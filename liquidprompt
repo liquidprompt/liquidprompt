@@ -1717,7 +1717,7 @@ prompt_tag()
 prompt_on()
 {
     # if liquidprompt has not been already set
-    if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
+    if [[ -z "$LP_OLD_PS1" ]] ; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
@@ -1743,10 +1743,6 @@ prompt_on()
             }
         #fi
     fi
-
-    # Keep in mind that LP has been sourced
-    # (to avoid recursive prompt command).
-    LP_LIQUIDPROMPT=1
 }
 
 # Come back to the old prompt

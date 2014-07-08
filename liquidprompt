@@ -1577,7 +1577,7 @@ _lp_set_prompt()
 
     # Display the current Python virtual environment, if available
     if [[ "$LP_ENABLE_VIRTUALENV,$VIRTUAL_ENV" = 1,?* ]] ; then
-        LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
+        LP_VENV=" ${LP_BRACKET_OPEN}${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}${LP_BRACKET_CLOSE}"
     else
         LP_VENV=
     fi
@@ -1588,7 +1588,7 @@ _lp_set_prompt()
         LP_RUBY_VENV=$(eval ${LP_RUBY_VENV_CMD})
 
         if [ -n "$LP_RUBY_VENV" ] ; then
-            LP_RUBY_VENV=" [${LP_COLOR_VIRTUALENV}${LP_RUBY_VENV}${NO_COL}]"
+            LP_RUBY_VENV=" ${LP_BRACKET_OPEN}${LP_COLOR_VIRTUALENV}${LP_RUBY_VENV}${NO_COL}${LP_BRACKET_CLOSE}"
         fi
     fi
 

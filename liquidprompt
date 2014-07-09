@@ -636,7 +636,7 @@ _lp_shorten_path()
 # must be disabled and PROMPT_DIRTRIM must be already set.
 _lp_set_dirtrim() {
     local p="$(_lp_get_home_tilde_collapsed)"
-    local -i max_len=${COLUMNS:-80}*$LP_PATH_LENGTH/100
+    local -i max_len="${COLUMNS:-80}*$LP_PATH_LENGTH/100"
     local -i dt=0
 
     if (( ${#p} > max_len )); then

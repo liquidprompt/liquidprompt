@@ -155,7 +155,7 @@ case "$LP_OS" in
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
-            read bol load eol <<<$( LANG=C sysctl -n vm.loadavg )
+            read bol load eol <<<"$( LANG=C sysctl -n vm.loadavg )"
             echo "$load"
         }
         ;;

@@ -579,13 +579,13 @@ _lp_shorten_path()
 
     local p="$(_lp_get_home_tilde_collapsed)"
     local mask="${LP_MARK_SHORTEN_PATH}"
-    local -i max_len=$(( ${COLUMNS:-80} * $LP_PATH_LENGTH / 100 ))
+    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 ))
 
     if [[ ${LP_PATH_KEEP} == -1 ]]; then
         # only show the current directory, excluding any parent dirs
         ret="${p##*/}" # discard everything up to and including the last slash
         [[ "${ret}" == "" ]] && ret="/" # if in root directory
-    elif (( ${#p} <= ${max_len} )); then
+    elif (( ${#p} <= max_len )); then
         ret="${p}"
     elif [[ ${LP_PATH_KEEP} == 0 ]]; then
         # len is over max len, show as much of the tail as is allowed
@@ -598,8 +598,8 @@ _lp_shorten_path()
         local tmp=${p//\//}
         local -i delims=$(( ${#p} - ${#tmp} ))
 
-        for (( dir=0; dir < ${LP_PATH_KEEP}; dir++ )); do
-            (( ${dir} == ${delims} )) && break
+        for (( dir=0; dir < LP_PATH_KEEP; dir++ )); do
+            (( dir == delims )) && break
 
             local left="${p#*/}"
             local name="${p:0:${#p} - ${#left}}"
@@ -607,7 +607,7 @@ _lp_shorten_path()
             ret="${ret}${name%/}/"
         done
 
-        if (( ${delims} <= ${LP_PATH_KEEP} )); then
+        if (( delims <= LP_PATH_KEEP )); then
             # no dirs between LP_PATH_KEEP leading dirs and current dir
             ret="${ret}${p##*/}"
         else
@@ -617,7 +617,7 @@ _lp_shorten_path()
 
             [[ ${ret} != "/" ]] && ret="${ret%/}" # strip trailing slash
 
-            local -i len_left=$(( ${max_len} - ${#ret} - ${#base} - ${#mask} ))
+            local -i len_left=$(( max_len - ${#ret} - ${#base} - ${#mask} ))
 
             ret="${ret}${mask}${p:${#p} - ${len_left}}${base}"
         fi

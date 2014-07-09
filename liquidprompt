@@ -1353,7 +1353,7 @@ _lp_load_color()
     tmp=${tmp#0}    # Remove leading '0', again (ex: 0.09)
     local -i load=${tmp:-0}/$_lp_CPUNUM
 
-    if (( load > $LP_LOAD_THRESHOLD )); then
+    if (( load > LP_LOAD_THRESHOLD )); then
         local ret="$(_lp_color_map $load 200)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then

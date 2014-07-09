@@ -1535,7 +1535,7 @@ _lp_set_prompt()
     if (( err != 0 )); then
         LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
     else
-        LP_ERR=     # Hidden
+        LP_ERR=''     # Hidden
     fi
 
     # Reset IFS to its default value to avoid strange behaviors

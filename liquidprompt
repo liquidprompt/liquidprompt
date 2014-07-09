@@ -466,7 +466,7 @@ _lp_escape()
 # Yellow for root, bold if the user is not the login one, else no color.
 if [[ "$EUID" -ne "0" ]] ; then  # if user is not root
     # if user is not login user
-    if [[ ${USER} != "$(logname 2>/dev/null || echo $LOGNAME)" ]]; then
+    if [[ ${USER} != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
         LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
     else
         if [[ "${LP_USER_ALWAYS}" -ne "0" ]] ; then
@@ -556,7 +556,7 @@ unset _lp_connection
 _lp_get_home_tilde_collapsed()
 {
     local tilde="~"
-    echo ${PWD/#$HOME/$tilde}
+    echo "${PWD/#$HOME/$tilde}"
 }
 
 # Shorten the path of the current working directory

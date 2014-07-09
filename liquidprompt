@@ -999,7 +999,7 @@ _lp_fossil_branch_color()
             ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
         fi
 
-        if (( $C2A > 0 )); then
+        if (( C2A > 0 )); then
             C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         else
             C2A=""

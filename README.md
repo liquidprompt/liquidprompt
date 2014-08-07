@@ -24,7 +24,7 @@ A liquid prompt displaying everything (a rare event!) may look like this:
 
 `code 🕤  ⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt][pyenv]↥ master(+10/-5,3)*+ 125 ± `
 
-It (may) displays:
+It (may) display:
 
 * A tag associated to the current shell session (you can easily add any
 prefix tag to your prompt, by invoking `prompt_tag MYTAG`).

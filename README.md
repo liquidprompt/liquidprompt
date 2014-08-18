@@ -352,3 +352,11 @@ sufficiently complete font on your system.
 The [Symbola](http://users.teilar.gr/~g1951d/) font, designed by Georges Douros,
 is known to work well.
 * Displaying the runtime currently only works with bash
+
+## AUTHORS
+
+Original author: [![endorse](https://api.coderwall.com/nojhan/endorsecount.png)](https://coderwall.com/nojhan)
+
+Current Maintainer: [![endorse](https://api.coderwall.com/dolmen/endorsecount.png)](https://coderwall.com/dolmen)
+
+And many contributors!

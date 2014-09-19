@@ -1732,7 +1732,7 @@ prompt_on()
         #        time _lp_set_prompt
         #    }
         #else
-            function precmd {
+            precmd() {
                 _lp_set_prompt
             }
         #fi

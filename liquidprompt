@@ -423,7 +423,7 @@ fi
 LP_RUBY_VENV_CMD=
 if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
     if command -v rvm-prompt >/dev/null ; then
-        LP_RUBY_VENV_CMD="rvm-prompt | sed -n '/@/{s/\([^-]*\)-\([0-9.]*\)\?\([^@]*\)\?@\(.*\)/\1 \2 (\4)/p;q};s/\([^-]*\)-\([0-9.]*\)\?\(.*\)\?/\1 \2/p'"
+        LP_RUBY_VENV_CMD="rvm-prompt v g"
     elif command -v rbenv >/dev/null ; then
         LP_RUBY_VENV_CMD="rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'"
     else

@@ -18,6 +18,5 @@ fi
 # If you have your own config for the liquid prompt, edit and uncomment this line:
 # source /path/to/liquidpromptrc
 
-# Use the liquidprompt
-source ~/.liquidprompt
-
+# Use the liquidprompt if interactive shell
+[[ $- = *i* ]] && source ~/.liquidprompt

@@ -115,6 +115,10 @@ LP_ENABLE_VIRTUALENV=1
 # Recommended value is 1
 LP_ENABLE_RUBY_VENV=1
 
+# If using RVM, personalize the rvm-prompt
+# see http://rvm.io/workflow/prompt for details.
+LP_RUBY_RVM_PROMPT='i v g s'
+
 # Display the enabled software collections, if any
 # Recommended value is 1
 LP_ENABLE_SCLS=1

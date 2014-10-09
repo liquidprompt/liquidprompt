@@ -1153,7 +1153,7 @@ case "$LP_OS" in
         local bat="$(cut -f2 <<<"$pmset")"
         bat="${bat%%%*}"
         case "$pmset" in
-            *charged*)
+            *charged* | "")
             return 4
             ;;
             *discharging*)

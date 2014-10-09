@@ -301,6 +301,7 @@ _lp_source_config()
     fi
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_RUBY_VENV=${LP_ENABLE_RUBY_VENV:-1}
+    LP_RUBY_RVM_PROMPT_OPTIONS="${LP_RUBY_RVM_PROMPT_OPTIONS:-"i v g s"}"
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
@@ -423,8 +424,7 @@ fi
 LP_RUBY_VENV_CMD=
 if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
     if command -v rvm-prompt >/dev/null ; then
-        [ -z "$LP_RUBY_RVM_PROMPT" ] && LP_RUBY_RVM_PROMPT="i v g s"
-        LP_RUBY_VENV_CMD="rvm-prompt $LP_RUBY_RVM_PROMPT"
+        LP_RUBY_VENV_CMD="rvm-prompt $LP_RUBY_RVM_PROMPT_OPTIONS"
     elif command -v rbenv >/dev/null ; then
         LP_RUBY_VENV_CMD="rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'"
     else

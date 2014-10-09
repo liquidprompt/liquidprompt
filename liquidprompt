@@ -479,7 +479,8 @@ fi
 LP_RUBY_VENV_CMD=
 if [[ "$LP_ENABLE_RUBY_VENV" = 1 ]] ; then
     if command -v rvm-prompt >/dev/null ; then
-        LP_RUBY_VENV_CMD="rvm-prompt i v g s"
+        [ -z "$LP_RUBY_RVM_PROMPT" ] && LP_RUBY_RVM_PROMPT="i v g s"
+        LP_RUBY_VENV_CMD="rvm-prompt $LP_RUBY_RVM_PROMPT"
     elif command -v rbenv >/dev/null ; then
         LP_RUBY_VENV_CMD="rbenv version | sed -e 's/ (set.*$//' -e 's/^ruby-//'"
     else

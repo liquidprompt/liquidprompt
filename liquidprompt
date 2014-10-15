@@ -1371,7 +1371,7 @@ _lp_temp_sensors()
 {
     # Return the hottest system temperature we get through the sensors command
     local i
-    for i in $(sensors |
+    for i in $(sensors 2>/dev/null |
             sed -n -r "s/^(CPU|SYS|MB|Core|temp).*: *\+([0-9]*)\..°.*/\2/p"); do
         [[ $i -gt $temperature ]] && temperature=$i
     done

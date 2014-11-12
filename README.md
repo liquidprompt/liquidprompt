@@ -355,8 +355,8 @@ is known to work well.
 
 ## AUTHORS
 
-Original author: [![endorse](https://api.coderwall.com/nojhan/endorsecount.png)](https://coderwall.com/nojhan)
-
 Current Maintainer: [![endorse](https://api.coderwall.com/dolmen/endorsecount.png)](https://coderwall.com/dolmen)
+
+Original author: [![endorse](https://api.coderwall.com/nojhan/endorsecount.png)](https://coderwall.com/nojhan)
 
 And many contributors!

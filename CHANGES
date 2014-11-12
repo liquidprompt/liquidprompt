@@ -54,7 +54,7 @@
 	- Add support for Software Collections (Github #299, #300)
 
 	Thanks to Anthony Gelibert, Frédéric Mahé, Panayiotis Kkolos, Étienne
-	Deparis, Frençois Schmidts, Linus Wallgren, Alexander Belaev, Bartosz
+	Deparis, François Schmidts, Linus Wallgren, Alexander Belaev, Bartosz
 	Janda, Brett McBride, Chase Colman, Cosmin L. Neagu, Matthew Micene,
 	Vincent Lara, Wilson Maravilha and Yannack for their patches. Thanks
 	to all the other contributors who reported issues or proposed patches

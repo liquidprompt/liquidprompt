@@ -53,6 +53,13 @@
 	- Add vcsh support (Github #148, #287)
 	- Add support for Software Collections (Github #299, #300)
 
+	Thanks to Anthony Gelibert, Frédéric Mahé, Panayiotis Kkolos, Étienne
+	Deparis, Frençois Schmidts, Linus Wallgren, Alexander Belaev, Bartosz
+	Janda, Brett McBride, Chase Colman, Cosmin L. Neagu, Matthew Micene,
+	Vincent Lara, Wilson Maravilha and Yannack for their patches. Thanks
+	to all the other contributors who reported issues or proposed patches
+	that have not been applied.
+
 1.8     2014-01-15  dolmen (Olivier Mengué)
 
 1.7     2013-11-30  nojhan

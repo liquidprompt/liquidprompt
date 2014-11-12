@@ -5,8 +5,8 @@
 
 # If you want to use different themes and features,
 # you can load the corresponding files here:
-#source ~/code/liquidprompt/nojhan.theme
-#LP_PS1_FILE="~/code/liquidprompt/nojhan.ps1"
+#source ~/.config/liquidprompt/nojhan.theme
+#LP_PS1_FILE="~/.config/liquidprompt/nojhan.ps1"
 
 #############
 # BEHAVIOUR #
@@ -33,7 +33,7 @@ LP_PATH_LENGTH=35
 LP_PATH_KEEP=2
 
 # Do you want to display the hostname, even if not connected through network?
-# Defaults to 0 (do not display hostname when localy connected)
+# Defaults to 0 (do not display hostname when locally connected)
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
@@ -110,6 +110,10 @@ LP_RUNTIME_THRESHOLD=2
 # Display the virtualenv that is currently activated, if any
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
+
+# Display the enabled software collections, if any
+# Recommended value is 1
+LP_ENABLE_SCLS=1
 
 # Show average system temperature
 LP_ENABLE_TEMP=1

@@ -8,20 +8,21 @@
 # characters at once.
 # Below is an example of how to fallback to ascii if the term is not unicode capable.
 # Defaults to UTF-8 characters.
-if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]] ; then
+if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]]; then
     # If charset is UTF-8.
-    LP_MARK_BATTERY="⌁"     # in front of the battery charge
-    LP_MARK_ADAPTER="⏚"     # displayed when plugged
-    LP_MARK_LOAD="⌂"        # in front of the load
-    LP_MARK_TEMP="θ"        # in front of the temp
-    LP_MARK_PROXY="↥"       # indicate a proxy in use
-    LP_MARK_HG="☿"   # prompt mark in hg repositories
-    LP_MARK_SVN="‡"  # prompt mark in svn repositories
-    LP_MARK_GIT="±"         # prompt mark in git repositories
+    LP_MARK_BATTERY="⌁"        # in front of the battery charge
+    LP_MARK_ADAPTER="⏚"        # displayed when plugged
+    LP_MARK_LOAD="⌂"           # in front of the load
+    LP_MARK_TEMP="θ"           # in front of the temp
+    LP_MARK_PROXY="↥"          # indicate a proxy in use
+    LP_MARK_HG="☿"             # prompt mark in hg repositories
+    LP_MARK_SVN="‡"            # prompt mark in svn repositories
+    LP_MARK_GIT="±"            # prompt mark in git repositories
     LP_MARK_FOSSIL="⌘"         # prompt mark in fossil repositories
-    LP_MARK_UNTRACKED="*"        # if git has untracked files
-    LP_MARK_STASH="+"        # if git has stashs
-    LP_MARK_SHORTEN_PATH="…" # prompt mark in shortened paths
+    LP_MARK_DISABLED="⌀"       # prompt mark in directory with disabled VCS info
+    LP_MARK_UNTRACKED="*"      # if git has untracked files
+    LP_MARK_STASH="+"          # if git has stashs
+    LP_MARK_SHORTEN_PATH=" … " # prompt mark in shortened paths
 else
     # If charset is anything else, fallback to ASCII chars
     LP_MARK_BATTERY="b"
@@ -33,19 +34,25 @@ else
     LP_MARK_SVN="="
     LP_MARK_GIT="+"
     LP_MARK_FOSSIL="f"
+    LP_MARK_DISABLED="!"
     LP_MARK_UNTRACKED="*"
     LP_MARK_STASH="+"
-    LP_MARK_SHORTEN_PATH="..."
+    LP_MARK_SHORTEN_PATH=" ... "
 fi
 
-# Do not prefix the prompt
+LP_MARK_BRACKET_OPEN="["  # open bracket
+LP_MARK_BRACKET_CLOSE="]" # close bracket
+#LP_MARK_DEFAULT=""        # default prompt mark
+LP_MARK_PREFIX=" "        # prompt mark prefix
 LP_PS1_PREFIX=""
+LP_PS1_POSTFIX=""
 
 # Colors
 # Available colors are:
 # BOLD, BLACK, BOLD_GRAY, WHITE, BOLD_WHITE,
-# GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE, BOLD_BLUE, PINK, CYAN, BOLD_CYAN
 # RED, BOLD_RED, WARN_RED, CRIT_RED, DANGER_RED,
+# GREEN, BOLD_GREEN, YELLOW, BOLD_YELLOW, BLUE,
+# BOLD_BLUE, PURPLE, PINK, CYAN, BOLD_CYAN
 # Set to a null string "" if you do not want color.
 
 # Current working directory
@@ -73,13 +80,14 @@ LP_COLOR_USER_ALT="$BOLD"         # user but not the one who logged in
 LP_COLOR_USER_ROOT="$BOLD_YELLOW" # root
 
 # Hostname
-LP_COLOR_HOST=""             # local host
-LP_COLOR_SSH="$BLUE"    # connected via SSH
-LP_COLOR_TELNET="$WARN_RED"  # connected via telnet
-LP_COLOR_X11_ON="$GREEN"         # connected with X11 support
-LP_COLOR_X11_OFF="$YELLOW"       # connected without X11 support
+LP_COLOR_HOST=""            # local host
+LP_COLOR_SSH="$BLUE"        # connected via SSH
+LP_COLOR_SU="$BOLD_YELLOW"  # connected remotely but in new environment through su/sudo
+LP_COLOR_TELNET="$WARN_RED" # connected via telnet
+LP_COLOR_X11_ON="$GREEN"    # connected with X11 support
+LP_COLOR_X11_OFF="$YELLOW"  # connected without X11 support
 
-# Separation mark (aka permiison in the working dir)
+# Separation mark (aka permission in the working dir)
 LP_COLOR_WRITE="$GREEN"  # have write permission
 LP_COLOR_NOWRITE="$RED"  # do not have write permission
 
@@ -98,7 +106,10 @@ LP_COLOR_DISCHARGING_UNDER="$RED"     # discharging and under threshold
 # Time
 LP_COLOR_TIME="$BLUE"
 
-# Virtualenv
+# Brackets inside screen/tmux
+LP_COLOR_IN_MULTIPLEXER="$BOLD_BLUE"
+
+# Virtual environment
 LP_COLOR_VIRTUALENV="$CYAN"
 
 # Runtime

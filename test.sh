@@ -108,7 +108,13 @@ nproc()
 acpi()
 {
     echo "fake acpi $@" 1>&2
-    echo 'Battery 0: Discharging, 55%, 01:39:34 remaining'
+    if [[ "x$1" == --battery ]]; then
+	echo 'Battery 0: Discharging, 55%, 01:39:34 remaining'
+    elif [[ "x$1" == -t ]]; then
+	echo 'Thermal 0: ok, 36.0 degrees C'
+    else
+	return 1
+    fi
 }
 
 

@@ -1,0 +1,81 @@
+
+
+1.9     2014-11-??  dolmen (Olivier Mengué)
+	Bug fixes:
+	- Battery indicator:
+	    * General fixes (Github #264)
+	    * MacOS: fix for computers without battery (like iMacs) (Github
+	      #319)
+	    * Optimize colormap
+	- Temperature indicator:
+	    * Linux: Add a guard against any future l10n of the 'acpi' command
+	    * Linux: Fix for negative temperature values (Github #308)
+	- CPU load:
+	    * Darwin/BSD: quoting fixes
+	- Hostname:
+	    * Fix colorization for SSH
+	    * Simplify chroot detection
+	- VCS:
+	    - Git:
+		* Use --porcelain for "git status" (Github #270)
+		* Minir optimization (Github #266)
+	    - Fossil:
+		* Cleanup and fixes (Github #274 and others)
+	    - Subversion:
+		* Fix branch/tag name extraction (Github #117, #237, #293)
+	    - Bazar:
+		* Fix branch name extraction
+		* zsh fixes (Github #303)
+	    - Mercurial:
+		* General cleanup for speed and fixes
+		* Disabled "hg outgoing" because it is slow (Github #217)
+	- Shortened path:
+	    * Bash: Fix quoting for PROMPT_DIRTRIM
+	- Prompt mark:
+	    * Simplify implementation of LP_MARK_DEFAULT
+	- Jobs:
+	    * Refactoring
+	    * Fix when screen/tmux are not installed (Github #304)
+	- Analog clock:
+	    * Fix hour for 12AM and 12PM (Github #273)
+	- Misc:
+	    * bash: save and set 'promptvars'
+	    * bash: workaround broken pattern substitution in bash 4.2 (Github
+	      #289, #294, #302)
+	    * zsh: fix restoration of the original (pre-liquidprompt) prompt
+	    * Fix tmux detection (Github #279)
+	    * Save IFS (Github #267)
+	    * Fix $TERM check (Github #291)
+	    * Various quoting fixes
+	    * Apply some shellcheck.com suggestions
+	    * Many, many optimizations (Github #267)
+	New features:
+	- Add vcsh support (Github #148, #287)
+	- Add support for Software Collections (Github #299, #300)
+
+	Thanks to Anthony Gelibert, Frédéric Mahé, Panayiotis Kkolos, Étienne
+	Deparis, Frençois Schmidts, Linus Wallgren, Alexander Belaev, Bartosz
+	Janda, Brett McBride, Chase Colman, Cosmin L. Neagu, Matthew Micene,
+	Vincent Lara, Wilson Maravilha and Yannack for their patches. Thanks
+	to all the other contributors who reported issues or proposed patches
+	that have not been applied.
+
+1.8     2014-01-15  dolmen (Olivier Mengué)
+
+1.7     2013-11-30  nojhan
+
+1.6     2013-05-14  nojhan
+
+1.5     2013-04-20  nojhan
+
+1.4     2013-04-11  nojhan
+
+1.3     2013-03-11  nojhan
+
+1.2     2013-01-16  nojhan
+
+1.1     2012-08-16  nojhan
+
+1.0     2012-08-10  nojhan
+
+0.0     2011-02-05  nojhan

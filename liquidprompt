@@ -406,6 +406,7 @@ unset _lp_source_config
 [[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
 [[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
 [[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
+[[ "$LP_DOMAIN"  = 1 ]] && { command -v hostname > /dev/null || LP_DOMAIN=0  ; }
 case "$LP_OS" in
     Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
     *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
@@ -458,6 +459,10 @@ _lp_escape()
     printf "%q" "$*"
 }
 
+# Show always domain in prompt if LP_DOMAIN is set to 1
+# For Bash using the \H to show also the domain does not work consistently
+# across all platforms, hostname -f does and it also works for ZSH
+ [[ "$LP_DOMAIN" = 1 ]] && { _LP_HOST_SYMBOL="$(_lp_escape $(hostname -f) )" ; }
 
 ###############
 # Who are we? #

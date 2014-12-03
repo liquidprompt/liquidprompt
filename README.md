@@ -220,7 +220,7 @@ You can sort what you want to see by sourcing your favorite template file
 
 You can start from the `liquid.ps1` file, which show the default settings.
 To use your own configuration, just set `LP_PS1_FILE` to your own file path in
-your `~/.liquipromptrc` and you're done.
+your `~/.liquidpromptrc` and you're done.
 
 Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
@@ -346,12 +346,12 @@ the display of the liquid prompt (use `LP_DISABLED_VCS_PATH` to avoid that).
 limitation of the Subversion versioning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
 * The window's title escape sequence may not work properly on some terminals
-(like xterm-256)
-* The analog clock necessitate a Unicode-aware terminal and a at least one
+(like xterm-256).
+* The analog clock requires a Unicode-aware terminal and at least one
 sufficiently complete font on your system.
 The [Symbola](http://users.teilar.gr/~g1951d/) font, designed by Georges Douros,
 is known to work well.
-* Displaying the runtime currently only works with bash
+* Displaying the runtime currently only works with bash.
 
 ## AUTHORS
 

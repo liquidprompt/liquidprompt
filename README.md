@@ -347,7 +347,7 @@ limitation of the Subversion versioning model.
 * The proxy detection only uses the `$http_proxy` environment variable.
 * The window's title escape sequence may not work properly on some terminals
 (like xterm-256).
-* The analog clock requires a Unicode-aware terminal and at least one
+* The analog clock requires a Unicode-aware terminal and at least a
 sufficiently complete font on your system.
 The [Symbola](http://users.teilar.gr/~g1951d/) font, designed by Georges Douros,
 is known to work well.

@@ -92,10 +92,13 @@ git clone https://github.com/nojhan/liquidprompt.git
 source liquidprompt/liquidprompt
 ```
 
-To use it every time you start a shell add the following line to your
+To use it every time you start a shell add the following lines to your
 `.bashrc` (if you use bash) or `.zshrc` (if you use zsh):
 
-`source ~/liquidprompt/liquidprompt`
+```
+# Load Liquid Prompt only in interactive shells, not from a script or from scp
+[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
+```
 
 Next up is the configuration, you can skip this step if you already like the defaults:
 

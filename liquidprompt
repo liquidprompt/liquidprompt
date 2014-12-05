@@ -91,8 +91,8 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_TIME_SYMBOL="%*"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
-    _LP_PERCENT='%%'
     _LP_PWD_SYMBOL="%~"
+    _LP_PERCENT='%%'
 else
     echo "liquidprompt: shell not supported" >&2
     return

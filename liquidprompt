@@ -72,6 +72,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
+    _LP_DIR_SYMBOL="\\W"
     _LP_PERCENT='%' # percent must be escaped on zsh
     # Disable the DEBUG trap used by the RUNTIME feature
     # (in case we are reloading LP in the same shell after disabling
@@ -89,6 +90,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
     _LP_PWD_SYMBOL="%~"
+    _LP_DIR_SYMBOL="%1~"
     _LP_PERCENT='%%'
 else
     echo "liquidprompt: shell not supported" >&2
@@ -268,7 +270,6 @@ _lp_source_config()
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
-    LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
@@ -282,6 +283,7 @@ _lp_source_config()
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
+    LP_CURRENT_DIR_ONLY=${LP_CURRENT_DIR_ONLY:-1}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
     LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
@@ -591,7 +593,11 @@ _lp_shorten_path()
 {
 
     if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
-        LP_PWD="$LP_PATH_DEFAULT"
+        if [[ "$LP_CURRENT_DIR_ONLY" != 1 ]]; then
+            LP_PWD="$_LP_PWD_SYMBOL"
+        else
+            LP_PWD="$_LP_DIR_SYMBOL"
+        fi
         if $_LP_SHELL_bash; then
             [[ -n "$PROMPT_DIRTRIM" ]] && _lp_set_dirtrim
         fi

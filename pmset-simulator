@@ -11,6 +11,13 @@ pmset()
 Now drawing from 'AC Power'
 EOF
 		;;
+	attached)
+		# https://github.com/nojhan/liquidprompt/issues/326#issuecomment-66120495
+		cat <<'EOF'
+Now drawing from 'AC Power'
+ -InternalBattery-0	37%; AC attached; not charging
+EOF
+		;;
 	charging)
 		# https://github.com/nojhan/liquidprompt/issues/326
 		cat <<EOF

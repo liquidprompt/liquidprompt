@@ -1152,10 +1152,10 @@ case "$LP_OS" in
         local percent status
         eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 status='\'\\2\'/p)"
         case "$status" in
-            *charged* | "")
+            charged | "")
             return 4
             ;;
-            *discharging*)
+            discharging)
             if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]] ; then
                 # under threshold
                 echo -n "${percent}"
@@ -1167,7 +1167,7 @@ case "$LP_OS" in
             fi
             ;;
             *)
-            # "charging"
+            # "charging", "AC attached"
             if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]] ; then
                 # under threshold
                 echo -n "${percent}"

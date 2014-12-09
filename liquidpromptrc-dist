@@ -20,7 +20,7 @@ LP_BATTERY_THRESHOLD=75
 # Recommended value is 60
 LP_LOAD_THRESHOLD=60
 
-# Minimal value after which the temperature is displayed (in celsius degrees)
+# Minimal value after which the temperature is displayed (in degrees Celsius)
 # Recommended value is 60
 LP_TEMP_THRESHOLD=60
 
@@ -37,7 +37,7 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
-# Do you want to display the user, even if he is the same than the logged one?
+# Do you want to display the user, even if the user is the same as the one logged in?
 # Defaults to 1 (always display the user)
 # set to 0 if you want to hide the logged user (it will always display different users)
 LP_USER_ALWAYS=1
@@ -47,51 +47,51 @@ LP_USER_ALWAYS=1
 # Defaults to 1 (display percentages)
 LP_PERCENTS_ALWAYS=1
 
-# Do you want to use the permissions feature ?
+# Do you want to use the permissions feature?
 # Recommended value is 1
 LP_ENABLE_PERM=1
 
-# Do you want to use the shorten path feature ?
+# Do you want to use the shorten path feature?
 # Recommended value is 1
 LP_ENABLE_SHORTEN_PATH=1
 
-# Do you want to use the proxy detection feature ?
+# Do you want to use the proxy detection feature?
 # Recommended value is 1
 LP_ENABLE_PROXY=1
 
-# Do you want to use the jobs feature ?
+# Do you want to use the jobs feature?
 # Recommended value is 1
 LP_ENABLE_JOBS=1
 
-# Do you want to use the load feature ?
+# Do you want to use the load feature?
 # Recommended value is 1
 LP_ENABLE_LOAD=1
 
-# Do you want to use the batt feature ?
+# Do you want to use the battery feature?
 # Recommended value is 1
 LP_ENABLE_BATT=1
 
-# Do you want to use vcs features with root account
+# Do you want to use VCS features with the root account?
 # Recommended value is 0
 LP_ENABLE_VCS_ROOT=0
 
-# Do you want to use the git special features ?
+# Do you want to use the Git special features?
 # Recommended value is 1
 LP_ENABLE_GIT=1
 
-# Do you want to use the svn special features ?
+# Do you want to use the Subversion special features?
 # Recommended value is 1
 LP_ENABLE_SVN=1
 
-# Do you want to use the mercurial special features ?
+# Do you want to use the Mercurial special features?
 # Recommended value is 1
 LP_ENABLE_HG=1
 
-# Do you want to use the fossil special features ?
+# Do you want to use the Fossil special features?
 # Recommended value is 1
 LP_ENABLE_FOSSIL=1
 
-# Do you want to use the bzr special features ?
+# Do you want to use the Bazaar special features?
 # Recommanded value is 1
 LP_ENABLE_BZR=1
 
@@ -125,7 +125,7 @@ LP_ENABLE_TEMP=1
 # Recommended value is 0
 LP_TIME_ANALOG=0
 
-# Use the liquid prompt as the title of the terminal window
+# Use the prompt as the title of the terminal window
 # The content is not customizable, the implementation is very basic,
 # and this may not work properly on exotic terminals, thus the
 # recommended value is 0

@@ -34,7 +34,7 @@ How to do the right thing?
 
     # Hack, commit, hack, commit...
 
-    # Fork the project on Github (if you haven t yet)
+    # Fork the project on GitHub (if you haven't yet)
 
     # Add the remote target for pushes
     $ git remote add github git@github.com:$GITHUB_USER/liquidprompt.git
@@ -44,19 +44,21 @@ How to do the right thing?
     # Rebase your work on the latest state of `develop`
     $ git rebase upstream/develop
 
-    # Push
+    # Push your commits
     $ git push github fix/my-fix
     $ git push github fix/my-feature
 
-    # Create the pull request on Github. Check that Github choose the `develop`
+    # Create the pull request on GitHub. Check that Github chose the `develop`
     # branch as the starting point for your branch.
 
 
 How to make a good pull request?
 --------------------------------
 
-1. Check that your git settings for authorship are right:
-     $ git config -l | grep ^user\.
+1. Check that your Git authorship settings are correct:
+
+        $ git config -l | grep ^user\.
+
 2. All the commits in the pull request must be on the same topic. If instead
    you propose fixes on different topics, use separate branches in your repo
    and make a pull request for each.
@@ -65,8 +67,8 @@ How to make a good pull request?
      - second line must be empty
      - following lines (72 chars max) are optional and take this space freely
        to express what that changes does.
-       Use references to Github issues number (ex: `#432`) if applicable
-4. Use a good title for your pull request
+       Use references to GitHub issues number (ex: `#432`) if applicable
+4. Use a good title for your pull request.
 5. Put details, web links, in the pull request body. Use Markdown fully to
    format the content (see
    [Markdown syntax](http://daringfireball.net/projects/markdown/syntax)).
@@ -100,7 +102,7 @@ between pings: 1 week, 2 weeks, then every month.
 If a stable version is released while your pull request has still not been
 merged on any working branch of the main repo, it would be helpful to ease
 the maitainer's work by rebasing your branch on top of the latest `develop`
-and push it again to your Github repo. Be careful (for example create a
+and push it again to your GitHub repo. Be careful (for example create a
 branch or a tag before your rebase) because your may lose all your work in
 that process.
 

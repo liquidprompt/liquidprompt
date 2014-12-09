@@ -6,7 +6,7 @@
 # Special characters
 # Be sure to use characters that exists in the font you use. You can use several
 # characters at once.
-# Below is an example of how to fallback to ascii if the term is not unicode capable.
+# Below is an example of how to fallback to ASCII if the term is not Unicode-capable.
 # Defaults to UTF-8 characters.
 if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]]; then
     # If charset is UTF-8.

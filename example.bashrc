@@ -1,23 +1,23 @@
 
-# if you want to use the liquidprompt without bothering about its configuration,
-# just:
+# If you want to use Liquid Prompt without bothering about its configuration,
+# just run the following command:
 # cp example.bashrc ~/.bashrc
 
-# This part is a minimalist bash config file example
+# The following is a minimalistic Bash config file
 
-# Use the system config if any
+# Use the system config if it exists
 if [ -f /etc/bashrc ]; then
-        . /etc/bashrc   # --> Read /etc/bashrc, if present.
+    . /etc/bashrc   # --> Read /etc/bashrc, if present.
 fi
 
-# Use bash completion, if installed
+# Use Bash completion, if installed
 if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-# If you have your own config for the liquid prompt, edit and uncomment this line:
+# If you have your own config for Liquid Prompt, edit and uncomment this line:
 # source /path/to/liquidpromptrc
 
-# Use the liquidprompt
+# Use Liquid Prompt
 source ~/.liquidprompt
 

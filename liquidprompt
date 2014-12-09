@@ -1,6 +1,6 @@
 ################################################################################
 # LIQUID PROMPT
-# An intelligent and non intrusive prompt for bash and zsh
+# An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
 
@@ -180,7 +180,7 @@ unset LP_OLD_PWD
 # to benefit of 'local' variables.
 #
 # What we do here:
-# 1. Setup variables that can be used by the user: the "API" of liquidprompt
+# 1. Setup variables that can be used by the user: the "API" of Liquid Prompt
 #    for config/theme. Those variables are local to the function.
 #    In practice, this is only color variables.
 # 2. Setup default values
@@ -630,9 +630,9 @@ _lp_shorten_path()
     fi
 }
 
-# In bash shell, PROMPT_DIRTRIM is the number of directory to keep at the end
+# In Bash shells, PROMPT_DIRTRIM is the number of directory to keep at the end
 # of the displayed path (if "\w" is present in the PS1 var).
-# liquidprompt can calculate this number under two condition, path shortening
+# Liquid Prompt can calculate this number under two conditions, path shortening
 # must be disabled and PROMPT_DIRTRIM must be already set.
 _lp_set_dirtrim() {
     local p="$(_lp_get_home_tilde_collapsed)"
@@ -1320,7 +1320,7 @@ _lp_reset_runtime()
     # reset the runtime counter
     [ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && _LP_RUNTIME_LAST_SECONDS=$SECONDS && _LP_RUNTIME_SECONDS=0
 
-    # A proper command has been executed if the last command was not related to liquidprompt
+    # A proper command has been executed if the last command was not related to Liquid Prompt
     [ "$BASH_COMMAND" = _lp_set_prompt ]
     _LP_RUNTIME_COMMAND_EXECUTED=$?
 }
@@ -1707,10 +1707,10 @@ prompt_tag()
     export LP_PS1_PREFIX="$(_lp_sr "$1")"
 }
 
-# Activate the liquid prompt
+# Activate Liquid Prompt
 prompt_on()
 {
-    # if liquidprompt has not been already set
+    # if Liquid Prompt has not been already set
     if [[ -z "$LP_OLD_PS1" ]] ; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
@@ -1728,7 +1728,7 @@ prompt_on()
         # That doesn't seem to work: no time output
         #if [[ "$LP_DEBUG_TIME" == 1 ]]; then
         #    function precmd {
-        #        local TIMEFMT='LiquidPrompt build time: %*E'
+        #        local TIMEFMT='Liquid Prompt build time: %*E'
         #        time _lp_set_prompt
         #    }
         #else
@@ -1765,7 +1765,7 @@ prompt_OFF()
     fi
 }
 
-# By default, sourcing liquidprompt will activate the liquid prompt
+# By default, sourcing liquidprompt will activate Liquid Prompt
 prompt_on
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

@@ -249,7 +249,7 @@ host, with a normal full path in blue and only the git support:
 
     export LP_PS1=`echo -ne "[\${LP_USER}\${LP_HOST}:\${BLUE}\$(pwd)\${NO_COL}] \${LP_GIT} \\\$ "`
 
-Note that you need to properly escape dollars in a string that wil be
+Note that you need to properly escape dollars in a string that will be
 interpreted by bash at each prompt.
 
 To erase your new formatting, just bring the `LP_PS1` to a null string:

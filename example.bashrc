@@ -20,9 +20,6 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-# If you have your own config for Liquid Prompt, edit and uncomment this line:
-# source /path/to/liquidpromptrc
-
 # Use Liquid Prompt
 source ~/.liquidprompt
 

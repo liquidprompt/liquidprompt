@@ -4,6 +4,8 @@
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
 	      We now have a pmset simulator to better detect regressions.
+	- Sample configuration files:
+	    * example.bashrc: major fixes
 	- Documentation:
 	    * Many small fixes
 

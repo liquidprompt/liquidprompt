@@ -1741,12 +1741,12 @@ prompt_on()
     else # zsh
         # That doesn't seem to work: no time output
         #if [[ "$LP_DEBUG_TIME" == 1 ]]; then
-        #    function precmd {
+        #    precmd() {
         #        local TIMEFMT='Liquid Prompt build time: %*E'
         #        time _lp_set_prompt
         #    }
         #else
-            function precmd {
+            precmd() {
                 _lp_set_prompt
             }
         #fi

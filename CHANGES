@@ -1,6 +1,17 @@
 
+1.10    201?-??-??
+	Bug fixes:
+	- Battery indicator:
+	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
+	      We now have a pmset simulator to better detect regressions.
+	- Documentation:
+	    * Many small fixes
 
-1.9     2014-11-??  dolmen (Olivier Mengué)
+	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
+	Hussey (@seanhussey)...
+	... for their patches or bug reports.
+
+1.9     2014-11-12  dolmen (Olivier Mengué)
 	Bug fixes:
 	- Battery indicator:
 	    * General fixes (Github #264)

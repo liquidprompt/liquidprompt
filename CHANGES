@@ -1,5 +1,8 @@
 
 1.10    201?-??-??
+	New feature:
+	- Git:
+	    * Also show the number of commits behind the remote (Github #269)
 	Bug fixes:
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
@@ -10,7 +13,7 @@
 	    * Many small fixes
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
-	Hussey (@seanhussey)...
+	Hussey (@seanhussey), François Schmidts (@jaesisvsm)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

@@ -1149,32 +1149,32 @@ case "$LP_OS" in
     _lp_battery()
     {
         [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
-        local pmset="$(pmset -g batt | sed -n -e '/InternalBattery/p')"
-        local bat="$(cut -f2 <<<"$pmset")"
-        bat="${bat%%%*}"
-        case "$pmset" in
-            *charged* | "")
+        local percent status
+        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 status='\'\\2\'/p)"
+        case "$status" in
+            charged | "")
             return 4
             ;;
-            *discharging*)
-            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+            discharging)
+            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]] ; then
                 # under threshold
-                echo -n "${bat}"
+                echo -n "${percent}"
                 return 0
             else
                 # above threshold
-                echo -n "${bat}"
+                echo -n "${percent}"
                 return 1
             fi
             ;;
             *)
-            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]] ; then
+            # "charging", "AC attached"
+            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]] ; then
                 # under threshold
-                echo -n "${bat}"
+                echo -n "${percent}"
                 return 2
             else
                 # above threshold
-                echo -n "${bat}"
+                echo -n "${percent}"
                 return 3
             fi
             ;;

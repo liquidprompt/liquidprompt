@@ -7,13 +7,16 @@
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
 	      We now have a pmset simulator to better detect regressions.
+	- Misc:
+	    * Fix bash 3 compatibility (Github #313)
 	- Sample configuration files:
 	    * example.bashrc: major fixes
 	- Documentation:
 	    * Many small fixes
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
-	Hussey (@seanhussey), François Schmidts (@jaesisvsm)...
+	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
+	(@morganizeit), Daniel Serodio (@dserodio)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

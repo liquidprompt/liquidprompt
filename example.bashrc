@@ -21,5 +21,5 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Use Liquid Prompt
-source ~/.liquidprompt
+source ~/liquidprompt/liquidprompt
 

@@ -12,6 +12,9 @@ elif [ -f /etc/bash.bashrc ]; then
     . /etc/bash.bashrc   # --> Read /etc/bash.bashrc, if present.
 fi
 
+# The following lines are only for interactive shells
+[[ $- = *i* ]] || return
+
 # Use Bash completion, if installed
 if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion

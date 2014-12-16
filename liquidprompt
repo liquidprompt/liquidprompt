@@ -1163,9 +1163,9 @@ case "$LP_OS" in
     _lp_battery()
     {
         [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
-        local percent status
-        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 status='\'\\2\'/p)"
-        case "$status" in
+        local percent batt_status
+        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
+        case "$batt_status" in
             charged | "")
             return 4
             ;;

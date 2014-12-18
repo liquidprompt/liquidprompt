@@ -721,7 +721,7 @@ _lp_git_branch()
 {
     [[ "$LP_ENABLE_GIT" != 1 ]] && return
 
-    \git rev-parse --inside-work-tree >/dev/null 2>&1 || return
+    \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 
     local branch
     # Recent versions of Git support the --short option for symbolic-ref, but

@@ -306,6 +306,7 @@ _lp_source_config()
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
+    LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -336,6 +337,7 @@ _lp_source_config()
     LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
     LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD}
     LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
+    LP_COLOR_MARK_SUDO=${LP_COLOR_MARK_SUDO:-$LP_COLOR_MARK_ROOT}
     LP_COLOR_USER_LOGGED=${LP_COLOR_USER_LOGGED:-""}
     LP_COLOR_USER_ALT=${LP_COLOR_USER_ALT:-$BOLD}
     LP_COLOR_USER_ROOT=${_ROOT:-$BOLD_YELLOW}
@@ -463,6 +465,7 @@ _lp_escape()
 ###############
 # Who are we? #
 ###############
+command -v _lp_sudo_check >/dev/null && unset -f _lp_sudo_check
 
 # Yellow for root, bold if the user is not the login one, else no color.
 if [[ "$EUID" -ne "0" ]]; then  # if user is not root
@@ -476,6 +479,20 @@ if [[ "$EUID" -ne "0" ]]; then  # if user is not root
             LP_USER=""
         fi
     fi
+    if [[ "$LP_ENABLE_SUDO" = 1 ]] && command -v sudo >/dev/null; then
+        LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
+        # Test the code with the commands:
+        #   sudo id   # sudo, enter your credentials
+        #   sudo -K   # revoke your credentials
+        _lp_sudo_check()
+        {
+            if sudo -n /bin/true 2>/dev/null; then
+                LP_COLOR_MARK=$LP_COLOR_MARK_SUDO
+            else
+                LP_COLOR_MARK=$LP_COLOR_MARK_NO_SUDO
+            fi
+        }
+    fi
 else # root!
     LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
     LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
@@ -485,6 +502,11 @@ else # root!
         LP_DISABLED_VCS_PATH=/
         LP_MARK_DISABLED="$_LP_MARK_SYMBOL"
     fi
+fi
+
+# Empty _lp_sudo_check if root or sudo disabled
+if ! command -v _lp_sudo_check >/dev/null; then
+    _lp_sudo_check() { :; }
 fi
 
 
@@ -1466,7 +1488,7 @@ _lp_smart_mark()
     disabled) mark="$LP_MARK_DISABLED"        ;;
     *)        mark="$LP_MARK_DEFAULT"         ;;
     esac
-    echo -ne "${LP_COLOR_MARK}${mark}${NO_COL}"
+    echo -ne "${mark}${NO_COL}"
 }
 
 # insert a space on the right
@@ -1569,6 +1591,7 @@ _lp_set_prompt()
     LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
     LP_BATT="$(_lp_sr "$(_lp_battery_color)")"
     LP_TIME="$(_lp_sr "$(_lp_time)")"
+    _lp_sudo_check
 
     # in main prompt: no space
     if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]]; then
@@ -1698,7 +1721,7 @@ _lp_set_prompt()
         PS1="${PS1}${LP_VCS}"
 
         # add return code and prompt mark
-        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

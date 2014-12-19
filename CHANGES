@@ -1,6 +1,13 @@
 
 1.10    201?-??-??
-	New feature:
+	New features:
+	- Sudo:
+	    * The color of the prompt mark is now dynamic and changes to
+	      LP_COLOR_MARK_SUDO (default: bold red) as long as your sudo
+	      credentials are cached (Github #335).
+	      This feature can be disabled with LP_ENABLE_SUDO=0 (as this is
+	      one more thing that slows the prompt).
+	      Use 'sudo -K' to revoke your credentials early.
 	- Git:
 	    * Also show the number of commits behind the remote (Github #269)
 	Bug fixes:

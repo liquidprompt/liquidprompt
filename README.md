@@ -284,6 +284,7 @@ Set the variable to a null string (`""`) if you do not want color.
 * Prompt mark
     * `LP_COLOR_MARK` as user
     * `LP_COLOR_MARK_ROOT` as root
+    * `LP_COLOR_MARK_SUDO` when you did `sudo` and your credentials are still cached (use `sudo -K` to revoke them)
     * `LP_MARK_PREFIX="\n"` put the prompt on the second line
 * Current user
     * `LP_COLOR_USER_LOGGED` user who logged in

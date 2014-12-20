@@ -55,7 +55,11 @@ LP_ENABLE_PERM=1
 # Recommended value is 1
 LP_ENABLE_SHORTEN_PATH=1
 
-# Do you want to use the proxy detection feature?
+# Display only current directory as path
+# Works only if LP_ENABLE_SHORTEN_PATH is set to 0
+LP_CURRENT_DIR_ONLY=1
+
+# Do you want to use the proxy detection feature ?
 # Recommended value is 1
 LP_ENABLE_PROXY=1
 
@@ -70,6 +74,9 @@ LP_ENABLE_LOAD=1
 # Do you want to use the battery feature?
 # Recommended value is 1
 LP_ENABLE_BATT=1
+
+# Do you want to use the 'sudo credentials' feature?
+LP_ENABLE_SUDO=1
 
 # Do you want to use VCS features with the root account?
 # Recommended value is 0

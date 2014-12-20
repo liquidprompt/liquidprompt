@@ -1,6 +1,34 @@
 
+1.10    201?-??-??
+	New features:
+	- Sudo:
+	    * The color of the prompt mark is now dynamic and changes to
+	      LP_COLOR_MARK_SUDO (default: bold red) as long as your sudo
+	      credentials are cached (Github #335).
+	      This feature can be disabled with LP_ENABLE_SUDO=0 (as this is
+	      one more thing that slows the prompt).
+	      Use 'sudo -K' to revoke your credentials early.
+	- Git:
+	    * Also show the number of commits behind the remote (Github #269)
+	Bug fixes:
+	- Git:
+	    * Fix typo in git work directory detection
+	- Battery indicator:
+	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
+	      We now have a pmset simulator to better detect regressions.
+	- Misc:
+	    * Fix bash 3 compatibility (Github #313)
+	- Sample configuration files:
+	    * example.bashrc: major fixes
+	- Documentation:
+	    * Many small fixes
 
-1.9     2014-11-??  dolmen (Olivier Mengué)
+	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
+	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
+	(@morganizeit), Daniel Serodio (@dserodio)...
+	... for their patches or bug reports.
+
+1.9     2014-11-12  dolmen (Olivier Mengué)
 	Bug fixes:
 	- Battery indicator:
 	    * General fixes (Github #264)

@@ -257,7 +257,8 @@ To erase your new formatting, just bind `LP_PS1` to a null string:
 ## Themes
 
 You can change the colors and special characters of some parts of Liquid Prompt
-by sourcing your favorite theme file (`*.theme`) in the configuration file.
+by sourcing your favorite theme file (`*.theme`) in the configuration file. See
+[`liquid.theme`](liquid.theme) for an example of the default Liquid Prompt theme.
 
 ### Colors
 

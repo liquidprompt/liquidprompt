@@ -416,6 +416,8 @@ esac
 command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
 command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
 $_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?
+# Use standard path symbols inside Midnight Commander
+[[ -n "$MC_SID" ]] && LP_ENABLE_SHORTEN_PATH=0
 
 if [[ "$LP_ENABLE_RUNTIME" == 1 ]] && ! $_LP_SHELL_bash; then
     echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.

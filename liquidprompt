@@ -288,6 +288,7 @@ _lp_source_config()
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
+    LP_ENABLE_OHMYGIT=${LP_ENABLE_OHMYGIT:-0}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
@@ -1692,6 +1693,7 @@ _lp_set_prompt()
 
         # Insert it in the prompt
         PS1="${LP_TITLE}${PS1}"
+        [[ $LP_ENABLE_OHMYGIT = 1 ]] && PS1="$(build_prompt)$PS1"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
@@ -1699,6 +1701,7 @@ _lp_set_prompt()
         #PS1="\[\033[G\]${PS1}${NO_COL}"
     else
         PS1=$LP_PS1
+        [[ $LP_ENABLE_OHMYGIT = 1 ]] && PS1="$(build_prompt)$PS1"
     fi
 }
 

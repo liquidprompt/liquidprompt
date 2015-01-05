@@ -273,6 +273,7 @@ _lp_source_config()
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
+    LP_RPS1=${LP_RPS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
@@ -1670,35 +1671,69 @@ _lp_set_prompt()
         source "$LP_PS1_FILE"
     fi
 
-    if [[ -z "$LP_PS1" ]] ; then
-        # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
-        # add user, host and permissions colon
-        PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
+    if [ "$_LP_SHELL_zsh" ] ; then
+        # If ZSH, use PS1 and RPS1
+        if [[ -z "$LP_PS1" ]] ; then
+            # add title, host, and permissions colon
+            PS1="${LP_PS1_PREFIX}${LP_JOBS}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+            # Add current directory, software collections, virtual enviornment, and proxy
+            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
 
-        # Add VCS infos
-        # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
-        # is set.
-        PS1="${PS1}${LP_VCS}"
+            # Add VCS infos
+            # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+            # is set.
+            PS1="${PS1}${LP_VCS}"
 
-        # add return code and prompt mark
-        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+            # add return code and prompt mark
+            PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
 
-        # "invisible" parts
-        # Get the current prompt on the fly and make it a title
-        LP_TITLE="$(_lp_title "$PS1")"
+            # "invisible" parts
+            # Get the current prompt on the fly and make it a title
+            LP_TITLE="$(_lp_title "$PS1")"
 
-        # Insert it in the prompt
-        PS1="${LP_TITLE}${PS1}"
-
-        # Glue the bash prompt always go to the first column.
-        # Avoid glitches after interrupting a command with Ctrl-C
-        # Does not seem to be necessary anymore?
-        #PS1="\[\033[G\]${PS1}${NO_COL}"
+            # Insert it in the prompt
+            PS1="${LP_TITLE}${PS1}"
+        else
+            PS1=$LP_PS1
+        fi
+        if [[ -z "$LP_RPS1" ]] ; then
+            RPS1="${LP_TIME}${LP_LOAD}${LP_TEMP}${LP_BATT}"
+        else
+            RPS1=$LP_RPS1
+        fi
     else
-        PS1=$LP_PS1
+        # If not ZSH, use only PS1
+        if [[ -z "$LP_PS1" ]] ; then
+            # add title escape time, jobs, load and battery
+            PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
+            # add user, host and permissions colon
+            PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
+
+            PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+
+            # Add VCS infos
+            # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+            # is set.
+            PS1="${PS1}${LP_VCS}"
+
+            # add return code and prompt mark
+            PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+
+            # "invisible" parts
+            # Get the current prompt on the fly and make it a title
+            LP_TITLE="$(_lp_title "$PS1")"
+
+            # Insert it in the prompt
+            PS1="${LP_TITLE}${PS1}"
+
+            # Glue the bash prompt always go to the first column.
+            # Avoid glitches after interrupting a command with Ctrl-C
+            # Does not seem to be necessary anymore?
+            #PS1="\[\033[G\]${PS1}${NO_COL}"
+        else
+            PS1=$LP_PS1
+        fi
     fi
 }
 

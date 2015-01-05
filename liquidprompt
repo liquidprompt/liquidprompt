@@ -133,9 +133,9 @@ esac
 
 # Get cpu count
 case "$LP_OS" in
-    Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
+    Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
     FreeBSD|Darwin|OpenBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
-    SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | grep -c "module: cpu_info" ) ;;
+    SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" ) ;;
 esac
 
 # Extended regexp patterns for sed
@@ -676,8 +676,8 @@ _lp_jobcount_color()
 
     if $_LP_ENABLE_DETACHED_SESSIONS; then
         local -i detached=0
-        $_LP_ENABLE_SCREEN && let detached=$(screen -ls 2> /dev/null | grep -c '[Dd]etach[^)]*)$')
-        $_LP_ENABLE_TMUX && let detached+=$(tmux list-sessions 2> /dev/null | grep -cv 'attached')
+        $_LP_ENABLE_SCREEN && let detached=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
+        $_LP_ENABLE_TMUX && let detached+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
         (( detached > 0 )) && ret="${ret}${LP_COLOR_JOB_D}${detached}d${NO_COL}"
     fi
 
@@ -750,7 +750,7 @@ _lp_git_branch_color()
 
         local end
         end="$NO_COL"
-        if LC_ALL=C \git status --porcelain 2>/dev/null | grep -Eq '^\?\?'; then
+        if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
@@ -866,7 +866,7 @@ _lp_hg_branch_color()
 
         local has_untracked
         has_untracked=
-        if hg status -u 2>/dev/null | grep -q '^\?' >/dev/null ; then
+        if hg status -u 2>/dev/null | \grep -q '^\?' >/dev/null ; then
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 
@@ -875,7 +875,7 @@ _lp_hg_branch_color()
         # Unfortunately this requires contacting the remote, so this is always slow
         # => disabled  https://github.com/nojhan/liquidprompt/issues/217
         local -i commits
-        #commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | grep -c '\(^changeset\:\)')
+        #commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | \grep -c '\(^changeset\:\)')
         commits=0
 
         # Check if there is some uncommitted stuff
@@ -944,7 +944,7 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]] ; then
         local changes
-        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v "?") ))
+        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | \grep -c -v "?") ))
         if [[ $changes -eq 0 ]] ; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else

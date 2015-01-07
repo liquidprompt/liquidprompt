@@ -15,6 +15,8 @@
 	- Git:
 	    * Also show the number of commits behind the remote (Github #269)
 	- Add variable LP_TTYN: the basename of the terminal (Github #357)
+	- Hostname:
+	    * Support more hostname colours on compatiable terminals.
 	Bug fixes:
 	- Git:
 	    * Fix typo in git work directory detection
@@ -28,7 +30,7 @@
 	- Documentation:
 	    * Many small fixes
 
-	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
+	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (@iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy)...

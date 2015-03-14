@@ -293,6 +293,7 @@ _lp_source_config()
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
+    LP_ENABLE_VCS_DIFF_COUNT=${LP_ENABLE_VCS_DIFF_COUNT:1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     if $_LP_SHELL_bash; then
         LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
@@ -815,33 +816,51 @@ _lp_git_branch_color()
         shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
         if [[ -n "$shortstat" ]]; then
-            local u_stat # shorstat of *unstaged* changes
-            u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
-            u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
+            if [[ $LP_ENABLE_VCS_DIFF_COUNT -eq 1 ]]; then
+                local u_stat # shorstat of *unstaged* changes
+                u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+                u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
 
-            local i_lines # inserted lines
-            if [[ "$u_stat" = *insertion* ]]; then
-                i_lines=${u_stat/ inser*}
+                local i_lines # inserted lines
+                if [[ "$u_stat" = *insertion* ]]; then
+                    i_lines=${u_stat/ inser*}
+                else
+                    i_lines=0
+                fi
+
+                local d_lines # deleted lines
+                if [[ "$u_stat" = *deletion* ]]; then
+                    d_lines=${u_stat/*\(+\), }
+                    d_lines=${d_lines/ del*/}
+                else
+                    d_lines=0
+                fi
+
+                if [[ $LP_ENABLE_VCS_DIFF_COUNT -eq 1 ]]; then
+                    local has_lines
+                    has_lines="+$i_lines/-$d_lines"
+
+                    if [[ -n "$has_commit" ]]; then
+                        # Changes to commit and commits to push
+                        ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
+                    else
+                        ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                    fi
+                else
+                    if [[ -n "$has_commit" ]]; then
+                        # Changes to commit and commits to push
+                        ret="${LP_COLOR_CHANGES}${branch}${NO_COL}($has_commit)"
+                    else
+                        ret="${LP_COLOR_CHANGES}${branch}${NO_COL}" # changes to commit
+                    fi
+                fi
             else
-                i_lines=0
-            fi
-
-            local d_lines # deleted lines
-            if [[ "$u_stat" = *deletion* ]]; then
-                d_lines=${u_stat/*\(+\), }
-                d_lines=${d_lines/ del*/}
-            else
-                d_lines=0
-            fi
-
-            local has_lines
-            has_lines="+$i_lines/-$d_lines"
-
-            if [[ -n "$has_commit" ]]; then
-                # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
-            else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                if [[ -n "$has_commit" ]]; then
+                    # Changes to commit and commits to push
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}($has_commit)"
+                else
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}" # changes to commit
+                fi
             fi
         else
             if [[ -n "$has_commit" ]]; then
@@ -930,14 +949,23 @@ _lp_hg_branch_color()
                 ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}"
             fi
         else
-            local has_lines
-            # Parse the last line of the diffstat-style output
-            has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
-            if (( commits > 0 )) ; then
-                # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
+            if [[ $LP_ENABLE_VCS_DIFF_COUNT -eq 1 ]]; then
+                local has_lines
+                # Parse the last line of the diffstat-style output
+                has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
+                if (( commits > 0 )) ; then
+                    # Changes to commit and commits to push
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
+                else
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
+                fi
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
+                if (( commits > 0 )) ; then
+                    # Changes to commit and commits to push
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
+                else
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}${has_untracked}${NO_COL}" # changes to commit
+                fi
             fi
         fi
         echo -ne "$ret"

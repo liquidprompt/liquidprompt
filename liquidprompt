@@ -1017,8 +1017,10 @@ _lp_svn_branch_color()
         changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | \grep -c -v "?") ))
         if [[ $changes -eq 0 ]]; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
-        else
+        elif [[ $LP_ENABLE_VCS_DIFF_COUNT -eq 1 ]]; then
             echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
+        else
+            echo "${LP_COLOR_CHANGES}${branch}${NO_COL} " # changes to commit
         fi
     fi
 }

@@ -353,7 +353,6 @@ version 3](LICENSE).
 * The analog clock requires a Unicode-aware terminal and at least a
   sufficiently complete font on your system. The [Symbola](http://users.teilar.gr/~g1951d/)
   font, designed by Georges Douros, is known to work well.
-* Displaying the runtime currently only works with Bash.
 
 
 ## Authors

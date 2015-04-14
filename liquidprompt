@@ -69,6 +69,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\t"
+    _LP_TTYN_SYMBOL="\l"
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
@@ -86,6 +87,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
     _LP_TIME_SYMBOL="%*"
+    _LP_TTYN_SYMBOL="%l"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
@@ -490,6 +492,8 @@ fi
 #################
 # Where are we? #
 #################
+
+LP_TTYN="${_LP_TTYN_SYMBOL}"
 
 _lp_connection()
 {

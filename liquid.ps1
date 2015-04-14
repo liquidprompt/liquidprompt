@@ -17,6 +17,7 @@
 # LP_ERR last error code
 # LP_MARK prompt mark
 # LP_TIME current time
+# LP_TTYN number of current terminal (useful in title for quick switching)
 # LP_RUNTIME runtime of last command
 # LP_MARK_PREFIX user-defined prompt mark prefix (helpful if you want 2-line prompts)
 # LP_PS1_PREFIX user-defined general-purpose prefix (default set a generic prompt as the window title)

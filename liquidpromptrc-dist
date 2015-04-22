@@ -72,7 +72,9 @@ LP_ENABLE_LOAD=1
 LP_ENABLE_BATT=1
 
 # Do you want to use the 'sudo credentials' feature?
-LP_ENABLE_SUDO=1
+# Be warned that this may pollute the syslog if you don't have sudo
+# credentials, and the sysadmin will hate you.
+LP_ENABLE_SUDO=0
 
 # Do you want to use VCS features with the root account?
 # Recommended value is 0

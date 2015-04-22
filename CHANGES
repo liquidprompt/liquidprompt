@@ -9,6 +9,9 @@
 	      This feature can be disabled with LP_ENABLE_SUDO=0 (as this is
 	      one more thing that slows the prompt).
 	      Use 'sudo -K' to revoke your credentials early.
+	    * This feature is disabled by default as there is no way to
+	      detect if the user has sudo rights without triggering a security
+	      alert that will annoy the sysadmin.
 	- Git:
 	    * Also show the number of commits behind the remote (Github #269)
 	- Add variable LP_TTYN: the basename of the terminal (Github #357)

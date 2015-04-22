@@ -173,6 +173,7 @@ prompt-building process:
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH into
 * `LP_ENABLE_RUNTIME`, if you want to display the runtime of the last command
+* `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
 * `LP_TIME_ANALOG`, if you want to show the time using an analog clock instead of numeric values
 

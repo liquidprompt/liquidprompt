@@ -11,6 +11,7 @@
 	      Use 'sudo -K' to revoke your credentials early.
 	- Git:
 	    * Also show the number of commits behind the remote (Github #269)
+	- Add variable LP_TTYN: the basename of the terminal (Github #357)
 	Bug fixes:
 	- Git:
 	    * Fix typo in git work directory detection
@@ -26,7 +27,8 @@
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
-	(@morganizeit), Daniel Serodio (@dserodio)...
+	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
+	(@jongiddy)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

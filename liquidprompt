@@ -454,6 +454,10 @@ fi
 # Default value for LP_PERM when LP_ENABLE_PERM is 0
 LP_PERM=:   # without color
 
+# Same as bash '\l', but inlined as a constant as the value will not change
+# during the shell's life
+LP_TTYN="$(basename $(tty))"
+
 
 # Escape the given strings
 # Must be used for all strings that may comes from remote sources,

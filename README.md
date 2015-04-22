@@ -239,6 +239,7 @@ Available features:
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequences
+*  LP_TTYN  the terminal basename
 * `LP_BRACKET_OPEN` and `LP_BRACKET_CLOSE`, brackets enclosing the user+path part
 
 For example, if you just want to have a prompt displaying the user and the

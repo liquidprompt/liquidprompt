@@ -1463,15 +1463,23 @@ _lp_temperature() {
 ##########
 
 
-# Sed expression using extended regexp to remove shell codes around terminal
-# escape sequences
-_LP_CLEAN_ESC="$(printf "s,%q|%q,,g" "$_LP_OPEN_ESC" "$_LP_CLOSE_ESC")"
+# Sed expression using extended regexp to match terminal
+# escape sequences with their wrappers
+# The generic solution, but unreadable:
+# _LP_CLEAN_ESC="$(printf "s,%q|%q,,g" "$_LP_OPEN_ESC" "$_LP_CLOSE_ESC")"
+# Hardcoded solution:
+if $_LP_SHELL_bash; then
+    _LP_CLEAN_ESC='\\\[([^\\]+|\\[^\]])*\\\]'
+else
+    _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
+fi
 
 # Remove all colors and escape characters of the given string and return a pure text
 _lp_as_text()
 {
-    # Remove colors from the computed prompt
-    echo -n "$1" | sed -$_LP_SED_EXTENDED "s/\x1B\[[0-9;]*[mK]//g;$_LP_CLEAN_ESC"
+    # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
+    # $_LP_CLOSE_ESC.
+    echo -n "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
 _lp_title()

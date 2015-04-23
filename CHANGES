@@ -21,6 +21,9 @@
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (Github #326)
 	      We now have a pmset simulator to better detect regressions.
+	- Title:
+	    * Fix terminal sequences that were sent in the title text (the
+	      escaping algorithm is rewritten and now just correct).
 	- Misc:
 	    * Fix bash 3 compatibility (Github #313)
 	- Sample configuration files:

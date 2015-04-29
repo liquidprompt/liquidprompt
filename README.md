@@ -55,7 +55,7 @@ Here is an overview of what Liquid Prompt is capable of displaying:
   a red one if not
 * the current directory in bold, shortened if it takes too much space while always
   preserving the first two directory names
-* the current Python virtual environment
+* the current Python or Haskell virtual environment
 * an up arrow if an HTTP proxy is in use
 * the name of the current branch if you are in a version control repository
   (Git, Mercurial, Subversion, Bazaar, or Fossil):

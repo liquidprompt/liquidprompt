@@ -1766,7 +1766,7 @@ prompt_on()
     if $_LP_SHELL_bash; then
         shopt -s promptvars
         PROMPT_COMMAND=_lp_set_prompt
-        [[ "$LP_DEBUG_TIME" == 1 ]] && PROMPT_COMMAND="time $PROMPT_COMMAND"
+        [[ "$LP_DEBUG_TIME" == 1 ]] && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
         # That doesn't seem to work: no time output
         #if [[ "$LP_DEBUG_TIME" == 1 ]]; then

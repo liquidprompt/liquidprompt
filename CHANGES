@@ -28,13 +28,14 @@
 	    * Fix bash 3 compatibility (Github #313)
 	- Sample configuration files:
 	    * example.bashrc: major fixes
+	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
 	- Documentation:
 	    * Many small fixes
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
-	(@jongiddy)...
+	(@jongiddy), Jeremy Clement (@jeremyclement)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

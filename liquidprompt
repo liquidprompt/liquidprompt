@@ -1465,11 +1465,8 @@ _lp_temperature() {
 
 # Sed expression using extended regexp to match terminal
 # escape sequences with their wrappers
-# The generic solution, but unreadable:
-# _LP_CLEAN_ESC="$(printf "s,%q|%q,,g" "$_LP_OPEN_ESC" "$_LP_CLOSE_ESC")"
-# Hardcoded solution:
 if $_LP_SHELL_bash; then
-    _LP_CLEAN_ESC='\\\[([^\\]+|\\[^\]])*\\\]'
+    _LP_CLEAN_ESC='\\\[([^\]+|\\[^]])*\\\]'
 else
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 fi

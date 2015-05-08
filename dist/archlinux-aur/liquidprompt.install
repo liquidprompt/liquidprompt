@@ -1,4 +1,0 @@
-post_install() {
-	 echo "Use 'source liquidprompt' to enable the prompt."
-}
-

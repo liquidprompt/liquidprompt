@@ -1493,9 +1493,9 @@ _lp_time_analog()
     #
 
     local -a plain
-    plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
+    plain=(🕛 🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 )
     local -a half
-    half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
+    half=(🕧 🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 )
 
     # "date %I" returns a number between 1 and 12 and we want 12 to be 0.
     local -i hi=$(( hour % 12))

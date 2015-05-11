@@ -147,7 +147,7 @@ export http_proxy="fake"
 # As if we were in an interactive shell
 export PS1="fake prompt \$"
 # load functions
-source ./liquidprompt
+. ../src/liquidprompt
 
 # Force liquid prompt function redefinition
 _lp_cpu_load()

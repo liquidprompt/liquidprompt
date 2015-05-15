@@ -121,6 +121,12 @@ the prompt will not be available.
 To install via antigen, simply add the following line in your `.zshrc` after activating antigen:
 
     antigen bundle nojhan/liquidprompt
+    
+### Installation via Homebrew
+
+On OS X, Liquid Prompt can be installed with [Homebrew](http://brew.sh):
+
+    brew install liquidprompt
 
 
 ## Dependencies

@@ -31,12 +31,13 @@
 	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
 	- Documentation:
 	    * Many small fixes
+	- Move dist/ to contrib/dist/ as files there are unmaintained
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
-	(@pkkolos)...
+	(@pkkolos), Arturo Borrero Gonzalez (@aborrero)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

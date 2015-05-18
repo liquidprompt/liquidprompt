@@ -54,7 +54,7 @@
 test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
-if test -n "$BASH_VERSION" -a -n "$PS1" ; then
+if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
         unset bash bmajor bminor
@@ -80,7 +80,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     # the feature in .liquidpromptrc)
     # FIXME this doesn't seem to work :(
     [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
-elif test -n "$ZSH_VERSION" ; then
+elif test -n "${ZSH_VERSION-}" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
     _LP_OPEN_ESC="%{"

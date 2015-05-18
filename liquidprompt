@@ -177,8 +177,6 @@ case "$LP_OS" in
         }
 esac
 
-# Reset so all PWD dependent variables are computed after loading
-unset LP_OLD_PWD
 
 #################
 # CONFIGURATION #
@@ -1790,7 +1788,7 @@ prompt_tag()
 # Activate Liquid Prompt
 prompt_on()
 {
-    # Reset LP_OLD_PWD
+    # Reset so all PWD dependent variables are computed after loading
     LP_OLD_PWD=""
 
     # if Liquid Prompt has not been already set

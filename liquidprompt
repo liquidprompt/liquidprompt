@@ -1790,6 +1790,9 @@ prompt_tag()
 # Activate Liquid Prompt
 prompt_on()
 {
+    # Reset LP_OLD_PWD
+    LP_OLD_PWD=""
+
     # if Liquid Prompt has not been already set
     if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"

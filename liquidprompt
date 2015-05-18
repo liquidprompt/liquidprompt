@@ -964,7 +964,7 @@ _lp_svn_branch()
     local root=
     local url=
     eval "$(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
-    [[ -z "$root" ]] && return
+    [[ -z "${root-}" ]] && return
 
     # Make url relative to root
     url="${url:${#root}}"

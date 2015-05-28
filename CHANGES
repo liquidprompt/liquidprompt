@@ -26,6 +26,8 @@
 	      escaping algorithm is rewritten and now just correct).
 	- Misc:
 	    * Fix bash 3 compatibility (Github #313)
+	- Shortened path:
+	    * Fix bugs when $PWD contains spaces or special chars (GitHub #369)
 	- Sample configuration files:
 	    * example.bashrc: major fixes
 	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
@@ -37,7 +39,8 @@
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
-	(@pkkolos), Arturo Borrero Gonzalez (@aborrero)...
+	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
+	(@SamK)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

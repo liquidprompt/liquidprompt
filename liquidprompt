@@ -628,7 +628,7 @@ _lp_shorten_path()
     else
         # len is over max len, show at least LP_PATH_KEEP leading dirs and
         # current directory
-        local tmp=${p//\//}
+        local tmp="${p//\//}"
         local -i delims=$(( ${#p} - ${#tmp} ))
 
         for (( dir=0; dir < LP_PATH_KEEP; dir++ )); do

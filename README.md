@@ -335,8 +335,6 @@ Set the variable to a null string (`""`) if you do not want color.
 * `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
-* `LP_SCREEN_TITLE_OPEN` (default: "\033k") escape character opening screen window's title
-* `LP_SCREEN_TITLE_CLOSE` (default: "\033\134") escape character closing screen window's title
 
 
 ## Known Limitations and Bugs

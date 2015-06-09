@@ -15,6 +15,9 @@
 	- Git:
 	    * Also show the number of commits behind the remote (Github #269)
 	- Add variable LP_TTYN: the basename of the terminal (Github #357)
+	Incompatible changes:
+	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
+          removed to simplify the code (GitHub #371)
 	Bug fixes:
 	- Git:
 	    * Fix typo in git work directory detection
@@ -34,13 +37,14 @@
 	- Documentation:
 	    * Many small fixes
 	- Move dist/ to contrib/dist/ as files there are unmaintained
+	- Fix title escapes in zsh inside tmux/screen (GitHub #370, #371)
 
 	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
 	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
-	(@SamK)...
+	(@SamK), Brian May (@brianmay)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

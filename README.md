@@ -345,8 +345,8 @@ version 3](LICENSE).
 * Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing very large Subversion repositories may dramatically slow down
   the display of Liquid Prompt (use `LP_DISABLED_VCS_PATH` to avoid that).
-* Subversion repositories cannot display commits to be pushed; this is a
-  limitation of the Subversion versioning model.
+* Subversion repositories cannot display commits to be pushed because
+  that's not how Subversion works
 * The proxy detection only uses the `$http_proxy` environment variable.
 * The window's title escape sequence may not work properly on some terminals
   (like `xterm-256`).

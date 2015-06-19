@@ -116,6 +116,32 @@ LP_COLOR_VIRTUALENV="$CYAN"
 # Runtime
 LP_COLOR_RUNTIME="$YELLOW"
 
+# Define folder name and color
+TAB_COLOR () {
+    if [ "${PWD/"FOLDERNAMEHERE"}" != "$PWD" ]; then
+      # First specified tab color
+      echo -ne "\033]6;1;bg;*;default\a"
+      echo -ne "\033]6;1;bg;red;brightness;255\a"
+      echo -ne "\033]6;1;bg;green;brightness;78\a"
+      echo -ne "\033]6;1;bg;blue;brightness;156\a"
+      echo -ne "\033]0;TABTITLEHERE\a"
+    elif [ "${PWD/"FOLDERNAMEHERE"}" != "$PWD" ]; then
+      # Second specified tab color
+      echo -ne "\033]6;1;bg;*;default\a"
+      echo -ne "\033]6;1;bg;red;brightness;126\a"
+      echo -ne "\033]6;1;bg;green;brightness;251\a"
+      echo -ne "\033]6;1;bg;blue;brightness;73\a"
+      echo -ne "\033]0;TABTITLEHERE\a"
+    else
+      # Default tab color  
+      echo -ne "\033]6;1;bg;*;default\a"
+      echo -ne "\033]6;1;bg;red;brightness;78\a"
+      echo -ne "\033]6;1;bg;green;brightness;255\a"
+      echo -ne "\033]6;1;bg;blue;brightness;176\a"
+      echo -ne "\033]0;TABTITLEHERE\a"
+    fi
+}
+
 # Color maps (battery and load levels)
 # Range from 0 (nothing special) to 9 (alert)
 LP_COLORMAP_0=""

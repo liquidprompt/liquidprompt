@@ -1414,8 +1414,9 @@ _lp_load_color()
 _lp_temp_sensors()
 {
     # Return the hottest system temperature we get through the sensors command
+    # Only the integer part is retained
     local i
-    for i in $(sensors -u | sed -n -r "s/^  temp._input: ([0-9]*)\..*/\1/p"); do
+    for i in $(sensors -u | sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
         [[ $i -gt $temperature ]] && temperature=$i
     done
 }
@@ -1423,6 +1424,7 @@ _lp_temp_sensors()
 _lp_temp_acpi()
 {
     local i
+    # Only the integer part is retained
     for i in $(LANG=C acpi -t | sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
         [[ $i -gt $temperature ]] && temperature=$i
     done

@@ -33,6 +33,7 @@
 	      escaping algorithm is rewritten and now just correct).
 	- Misc:
 	    * Fix bash 3 compatibility (GitHub #313)
+	    * Clear GREP_OPTIONS and skip 'grep' aliases (GitHub #372)
 	- Shortened path:
 	    * Fix bugs when $PWD contains spaces or special chars (GitHub #369)
 	- Sample configuration files:
@@ -49,7 +50,7 @@
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
 	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
 	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
-	François Schmidts (@jaesivsm)...
+	François Schmidts (@jaesivsm), @hegedus...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

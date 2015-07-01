@@ -1637,6 +1637,10 @@ _lp_set_prompt()
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
+        if [[ "$LP_ENABLE_TAB_COLOR" = 1 ]]; then
+            TAB_COLOR
+        fi
+
         LP_VCS=""
         LP_VCS_TYPE=""
         # LP_HOST is a global set at load time

@@ -148,4 +148,7 @@ LP_ENABLE_SSH_COLORS=0
 # will be disabled
 LP_DISABLED_VCS_PATH=""
 
+# Use different tab colors for specified directories (only works with iterm)
+LP_ENABLE_TAB_COLOR=1
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

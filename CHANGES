@@ -24,6 +24,10 @@
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (GitHub #326)
 	      We now have a pmset simulator to better detect regressions.
+	- Temperature indicator:
+	    * The code using the 'sensors' command now uses the '-u' option
+	      ("raw output") that is easier to parse. This format is at least
+	      7 years old. (GitHub #379, #380)
 	- Title:
 	    * Fix terminal sequences that were sent in the title text (the
 	      escaping algorithm is rewritten and now just correct).
@@ -44,7 +48,8 @@
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
 	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
-	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman)...
+	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
+	François Schmidts (@jaesivsm)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

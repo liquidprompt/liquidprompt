@@ -527,10 +527,11 @@ _lp_connection()
     if [[ -n "$SSH_CLIENT$SSH2_CLIENT$SSH_TTY" ]]; then
         echo ssh
     else
+        # tmux: see GH #304
         # TODO check on *BSD
-        local sess_src="$(who am i | sed -n 's/.*(\(.*\))/\1/p')"
+        local whoami="$(LANG=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
-        if [[ -z "$sess_src" || "$sess_src" = ":"* ]]; then
+        if [[ -z "$whoami" || x"$whoami" = x*'(:'* || x"$whoami" = x*'(tmux'* ]]; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
             echo su   # Remote su/sudo

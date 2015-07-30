@@ -1,0 +1,48 @@
+
+# Simulator for "pmset -g batt" for testing the implementation of
+# battery display on MacOS X
+
+pmset()
+{
+	case "$pmset_sim" in
+	iMac|no-battery)
+		# https://github.com/nojhan/liquidprompt/issues/315
+		cat <<EOF
+Now drawing from 'AC Power'
+EOF
+		;;
+	attached)
+		# https://github.com/nojhan/liquidprompt/issues/326#issuecomment-66120495
+		cat <<'EOF'
+Now drawing from 'AC Power'
+ -InternalBattery-0	37%; AC attached; not charging
+EOF
+		;;
+	charging)
+		# https://github.com/nojhan/liquidprompt/issues/326
+		cat <<'EOF'
+Now drawing from 'AC Power'
+ -InternalBattery-0	8%; charging; 2:46 remaining
+EOF
+		;;
+	discharging)
+		# https://github.com/nojhan/liquidprompt/issues/326
+		cat <<'EOF'
+Now drawing from 'Battery Power'
+ -InternalBattery-0	9%; discharging; (no estimate)
+EOF
+		;;
+	warning-Early)
+		# https://github.com/nojhan/liquidprompt/issues/326
+		cat <<'EOF'
+Now drawing from 'Battery Power'
+ -InternalBattery-0	7%; discharging; 0:13 remaining
+    Battery Warning: Early
+EOF
+		;;
+	*)
+		echo "unsupported '$pmset_sim' pmset simulation"
+		;;
+	esac
+}
+

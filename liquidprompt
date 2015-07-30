@@ -1079,11 +1079,21 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]]; then
         local changes
-        changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
-        if (( changes == 0 )); then
-            echo -nE "${LP_COLOR_UP}${branch}${NO_COL}"
+        local untracked
+        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c -v '^[?X]') ))
+        untracked=$(( $(svn status $LP_SVN_STATUS_OPTIONS | grep -c "?") ))
+        if [[ $changes -eq 0 ]] ; then
+            if [[ $untracked -eq 0 ]]; then
+                echo "${LP_COLOR_UP}${branch}${NO_COL}"
+            else
+                echo "${LP_COLOR_UP}${branch}${NO_COL}${LP_COLOR_CHANGES}${LP_MARK_UNTRACKED}${NO_COL}" # no changes, but untracked files
+            fi
         else
-            echo -nE "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
+            if [[ $untracked -eq 0 ]]; then
+                echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
+            else
+                echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})${LP_COLOR_CHANGES}${LP_MARK_UNTRACKED}${NO_COL}" # changes to commit with untracked files
+            fi
         fi
     fi
 }

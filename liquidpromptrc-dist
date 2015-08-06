@@ -32,6 +32,12 @@ LP_PATH_LENGTH=35
 # Recommended value is 2
 LP_PATH_KEEP=2
 
+# Do you want to show the "No sensors found!" message for hosts that does not
+# have a valid sensor config file.
+# Defaults to 0 (do not show me the message)
+# set to 1 if you want to always see the message for unconfigured hosts
+LP_SENSORS_DETECT_ALWAYS=0
+
 # Do you want to display the hostname, even if not connected through network?
 # Defaults to 0 (do not display hostname when locally connected)
 # set to 1 if you want to always see the hostname

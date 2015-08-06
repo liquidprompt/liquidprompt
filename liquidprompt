@@ -1391,7 +1391,7 @@ if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
     if command -v acpi >/dev/null; then
         _LP_TEMP_FUNCTION=_lp_temp_acpi
     elif command -v sensors >/dev/null; then
-        _LP_TEMP_FUNCTION=_lp_temp_sensors
+        ( [[ "$LP_SENSORS_DETECT_ALWAYS" == 1 ]] || sensors >/dev/null 2>&1 ) && _LP_TEMP_FUNCTION=_lp_temp_sensors
     # elif command -v the_command_you_want_to_use; then
     #   _LP_TEMP_FUNCTION=your_function
     else

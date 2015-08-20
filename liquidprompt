@@ -1557,7 +1557,7 @@ _lp_set_prompt()
     LP_TIME="$(_lp_sr "$(_lp_time)")"
 
     # in main prompt: no space
-    if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]] ; then
+    if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* || "$LP_ENABLE_PROXY,$HTTP_PROXY" = 1,?* || "$LP_ENABLE_PROXY,$ftp_proxy" = 1,?* || "$LP_ENABLE_PROXY,$FTP_PROXY" = 1,?* ]] ; then
         LP_PROXY="$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
     else
         LP_PROXY=

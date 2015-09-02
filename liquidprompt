@@ -961,7 +961,7 @@ _lp_fossil_branch()
 {
     [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
     local branch
-    branch=$(fossil status 2>/dev/null | sed -n "s/tags:[ ]*\(\w*\)$/\1/Ip")
+    branch=$(fossil status 2>/dev/null | sed -n "s/tags:[ ]*\([[:alnum:]]*\)$/\1/p")
     if [ -n "$branch" ]; then
         echo "$branch"
     else

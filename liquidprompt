@@ -1399,7 +1399,7 @@ _lp_load_color()
     local -i load=${tmp:-0}/$_lp_CPUNUM
 
     if (( load > LP_LOAD_THRESHOLD )); then
-        local ret="$(_lp_color_map $load 200)${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
             ret="${ret}${load}${_LP_PERCENT}"

@@ -454,7 +454,7 @@ LP_PERM=:   # without color
 
 # Same as bash '\l', but inlined as a constant as the value will not change
 # during the shell's life
-LP_TTYN="$(basename $(tty))"
+LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
 
 
 # Escape the given strings

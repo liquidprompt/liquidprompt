@@ -454,7 +454,7 @@ LP_PERM=:   # without color
 
 # Same as bash '\l', but inlined as a constant as the value will not change
 # during the shell's life
-LP_TTYN="$(basename $(tty))"
+LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
 
 
 # Escape the given strings
@@ -527,10 +527,11 @@ _lp_connection()
     if [[ -n "$SSH_CLIENT$SSH2_CLIENT$SSH_TTY" ]]; then
         echo ssh
     else
+        # tmux: see GH #304
         # TODO check on *BSD
-        local sess_src="$(who am i | sed -n 's/.*(\(.*\))/\1/p')"
+        local whoami="$(LANG=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
-        if [[ -z "$sess_src" || "$sess_src" = ":"* ]]; then
+        if [[ -z "$whoami" || x"$whoami" = x*'(:'* || x"$whoami" = x*'(tmux'* ]]; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
             echo su   # Remote su/sudo
@@ -1408,7 +1409,7 @@ _lp_load_color()
     local -i load=${tmp:-0}/$_lp_CPUNUM
 
     if (( load > LP_LOAD_THRESHOLD )); then
-        local ret="$(_lp_color_map $load 200)${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
             ret="${ret}${load}${_LP_PERCENT}"

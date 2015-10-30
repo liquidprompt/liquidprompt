@@ -33,6 +33,7 @@
 # Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
 # François Schmidts <francois.schmidts@gmail.com> # Initial PROMPT_DIRTRIM support
 # Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
+# Hagen Graf        <hagen@familygraf.de>         # Mercurial outgoing count using phases
 # Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
 # Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
 # Joris Vaillant    <joris.vaillant@gmail.com>    # Small git fix
@@ -899,7 +900,7 @@ _lp_hg_branch()
 # Set a color depending on the branch state:
 # - green if the repository is up to date
 # - red if there is changes to commit
-# - TODO: yellow if there is some commits not pushed
+# - yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
     [[ "$LP_ENABLE_HG" != 1 ]] && return
@@ -917,11 +918,13 @@ _lp_hg_branch_color()
 
         # Count local commits waiting for a push
         #
+        local -i commits
         # Unfortunately this requires contacting the remote, so this is always slow
         # => disabled  https://github.com/nojhan/liquidprompt/issues/217
-        local -i commits
         #commits=$(hg outgoing --no-merges ${branch} 2>/dev/null | \grep -c '\(^changeset\:\)')
-        commits=0
+        # Alternative: count commits in the draft-phase
+        # /dev/null for Mercurial version < 2.1, will always result in 0
+        commits=$(hg log -q -r "draft()" 2>/dev/null | wc -l)
 
         # Check if there is some uncommitted stuff
         if [[ -z "$(hg status --quiet -n)" ]]; then

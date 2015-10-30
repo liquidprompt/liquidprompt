@@ -342,7 +342,6 @@ Set the variable to a null string (`""`) if you do not want color.
 Liquid Prompt is distributed under the [GNU Affero General Public License
 version 3](LICENSE).
 
-* Does not display the number of commits to be pushed in Mercurial repositories.
 * Browsing very large Subversion repositories may dramatically slow down
   the display of Liquid Prompt (use `LP_DISABLED_VCS_PATH` to avoid that).
 * Subversion repositories cannot display commits to be pushed because

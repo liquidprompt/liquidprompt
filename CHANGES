@@ -21,6 +21,8 @@
 	Bug fixes:
 	- Git:
 	    * Fix typo in git work directory detection
+	- Fossil:
+	    * Fix on darwin (GitHub #390)
 	- Battery indicator:
 	    * MacOS: many fixes to handle (all?) edge cases (GitHub #326)
 	      We now have a pmset simulator to better detect regressions.
@@ -55,7 +57,7 @@
 	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
 	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
 	François Schmidts (@jaesivsm), @hegedus, Anthony Gelibert
-        (@anthonygelibert)...
+        (@anthonygelibert), Anthony Ramine (@nox)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

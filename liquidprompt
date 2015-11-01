@@ -476,12 +476,10 @@ if [[ "$EUID" -ne "0" ]]; then  # if user is not root
     # if user is not login user
     if [[ ${USER} != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
         LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
+    elif [[ "${LP_USER_ALWAYS}" -ne "0" ]]; then
+        LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
     else
-        if [[ "${LP_USER_ALWAYS}" -ne "0" ]]; then
-            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-        else
-            LP_USER=""
-        fi
+        LP_USER=""
     fi
     # "sudo -n" is only supported from sudo 1.7.0
     if [[ "$LP_ENABLE_SUDO" = 1 ]] \
@@ -846,17 +844,15 @@ _lp_git_branch_color()
             else
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
             fi
-        else
-            if [[ -n "$has_commit" ]]; then
-                # some commit(s) to push
-                if [[ "$commit_behind" -gt "0" ]]; then
-                    ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
-                else
-                    ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
-                fi
+        elif [[ -n "$has_commit" ]]; then
+            # some commit(s) to push
+            if [[ "$commit_behind" -gt "0" ]]; then
+                ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
             else
-                ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
             fi
+        else
+            ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
         fi
         echo -ne "$ret$end"
     fi
@@ -1009,10 +1005,8 @@ _lp_fossil_branch()
     branch=$(fossil status 2>/dev/null | sed -n $_LP_SED_EXTENDED 's/tags:[ ]*\(\w*\)$/\1/p')
     if [ -n "$branch" ]; then
         echo "$branch"
-    else
-        if fossil info &>/dev/null ; then
-            echo "no-tag"
-        fi
+    elif fossil info &>/dev/null ; then
+        echo "no-tag"
     fi
 }
 
@@ -1053,14 +1047,12 @@ _lp_fossil_branch_color()
         if [[ "$branch" = "no-tag" ]]; then
             # Warning, your branch has no tag name !
             branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
+        elif (( C2E == 0 )); then
+            # All is up-to-date
+            branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
         else
-            if (( C2E == 0 )); then
-                # All is up-to-date
-                branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
-            else
-                # There're some changes to commit
-                branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
-            fi
+            # There're some changes to commit
+            branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
         fi
         echo "$branch"
     fi
@@ -1177,16 +1169,14 @@ case "$LP_OS" in
             fi
 
         # charging
+        elif [[ ${bat} -le $LP_BATTERY_THRESHOLD ]]; then
+            # under threshold
+            echo -n "${bat}"
+            return 2
         else
-            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]]; then
-                # under threshold
-                echo -n "${bat}"
-                return 2
-            else
-                # above threshold
-                echo -n "${bat}"
-                return 3
-            fi
+            # above threshold
+            echo -n "${bat}"
+            return 3
         fi
     }
     ;;

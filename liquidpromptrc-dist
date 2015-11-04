@@ -37,6 +37,9 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 LP_HOSTNAME_ALWAYS=0
 
+# Use the FQDN instead of the short hostname if the hostname is displayed
+LP_ENABLE_FQDN=0
+
 # Do you want to display the user, even if the user is the same as the one logged in?
 # Defaults to 1 (always display the user)
 # set to 0 if you want to hide the logged user (it will always display different users)
@@ -147,8 +150,5 @@ LP_ENABLE_SSH_COLORS=0
 # Specify a list of complete and colon (":") separated paths in which, all vcs
 # will be disabled
 LP_DISABLED_VCS_PATH=""
-
-# Use the FQDN instead of the short hostname if the hostname is displayed
-LP_ENABLE_FQDN=0
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

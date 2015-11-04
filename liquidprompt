@@ -86,7 +86,7 @@ elif test -n "$ZSH_VERSION" ; then
     _LP_CLOSE_ESC="%}"
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
-    _LP_FQDN_SYMBOL="\M"
+    _LP_FQDN_SYMBOL="%M"
     _LP_TIME_SYMBOL="%*"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1

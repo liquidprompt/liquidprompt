@@ -905,6 +905,13 @@ _lp_hg_branch_color()
     branch="$(_lp_hg_branch)"
     if [[ -n "$branch" ]]; then
 
+        # extract currently active bookmark, if any
+        local bookmark
+        bookmark="$(hg bookmarks | sed -n 's/^ \* \(.*[^ ]\) *[0-9]\+:[0-9a-f]*$/\1/p')"
+        if [[ -n "$bookmark" ]]; then
+            bookmark=",$(_lp_escape "$bookmark")"
+        fi
+
         local has_untracked
         has_untracked=
         if hg status -u 2>/dev/null | \grep -q '^\?' >/dev/null ; then
@@ -923,10 +930,10 @@ _lp_hg_branch_color()
         if [[ -z "$(hg status --quiet -n)" ]]; then
             if (( commits > 0 )) ; then
                 # some commit(s) to push
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_COMMITS}${branch}${bookmark}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
                 # nothing to commit or push
-                ret="${LP_COLOR_UP}${branch}${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_UP}${branch}${bookmark}${has_untracked}${NO_COL}"
             fi
         else
             local has_lines
@@ -934,9 +941,9 @@ _lp_hg_branch_color()
             has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
             if (( commits > 0 )) ; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
+                ret="${LP_COLOR_CHANGES}${branch}${bookmark}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${bookmark}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
             fi
         fi
         echo -ne "$ret"

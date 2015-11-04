@@ -1371,16 +1371,20 @@ _lp_reset_runtime()
 if [ "$LP_ENABLE_RUNTIME" = 1 ]
 then
     if "$_LP_SHELL_zsh"; then
-        precmd() {
+        _lp_runtime_precmd() {
           if [ $timer ]; then
             export _LP_RUNTIME_SECONDS=$(($SECONDS - $timer))
             unset timer
           fi
         }
 
-        preexec() {
+        _lp_runtime_preexec() {
           export timer=${timer:-$SECONDS}
         }
+        typeset -ga precmd_functions
+        precmd_functions+=(_lp_runtime_precmd)
+        typeset -ga preexec_functions
+        preexec_functions+=(_lp_runtime_preexec)
     else
         # _lp_reset_runtime gets called whenever bash executes a command
         trap '_lp_reset_runtime' DEBUG
@@ -1793,12 +1797,12 @@ prompt_on()
     else # zsh
         # That doesn't seem to work: no time output
         #if [[ "$LP_DEBUG_TIME" == 1 ]]; then
-        #    precmd() {
+        #    _lp_main_precmd() {
         #        local TIMEFMT='Liquid Prompt build time: %*E'
         #        time _lp_set_prompt
         #    }
         #else
-            precmd() {
+            _lp_main_precmd() {
                 _lp_set_prompt
             }
         #fi
@@ -1813,7 +1817,7 @@ prompt_off()
         eval "$LP_OLD_SHOPT"
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
-        precmd() { : ; }
+        _lp_main_precmd() { : ; }
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
@@ -1826,10 +1830,16 @@ prompt_OFF()
         shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
-        precmd() { : ; }
+        _lp_main_precmd() { : ; }
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
+
+# Add _lp_main_precmd to global precmd hook
+if $_LP_SHELL_zsh; then
+    typeset -ga precmd_functions
+    precmd_functions+=(_lp_main_precmd)
+fi
 
 # By default, sourcing liquidprompt will activate Liquid Prompt
 prompt_on

@@ -548,46 +548,52 @@ _lp_connection()
 # The connection is not expected to change from inside the shell, so we
 # build this just once
 LP_HOST=""
-[[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
 
-# Which host symbol should we use?
-if [[ "${LP_ENABLE_FQDN}" -eq "1" ]] ; then
-    LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
-else
-    LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
-fi
+# Only process hostname elements if we haven't turned them off
+if [[ "${LP_HOSTNAME_ALWAYS}" -ne "-1" ]]; then
 
-# If we are connected with a X11 support
-if [[ -n "$DISPLAY" ]]; then
-    LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
-else
-    LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
-fi
+    [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
 
-case "$(_lp_connection)" in
-lcl)
-    if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]]; then
-        # FIXME do we want to display the chroot if local?
-        LP_HOST="" # no hostname if local
+    # Which host symbol should we use?
+    if [[ "${LP_ENABLE_FQDN}" -eq "1" ]] ; then
+        LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
     else
-        LP_HOST="${LP_HOST}${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
     fi
-    ;;
-ssh)
-    # If we want a different color for each host
-    [[ "$LP_ENABLE_SSH_COLORS" -eq 1 ]] && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-    LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
-    ;;
-su)
-    LP_HOST="${LP_HOST}${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
-    ;;
-tel)
-    LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
-    ;;
-*)
-    LP_HOST="${LP_HOST}${LP_HOST_SYMBOL}" # defaults to no color
-    ;;
-esac
+
+    # If we are connected with a X11 support
+    if [[ -n "$DISPLAY" ]]; then
+        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+    else
+        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+    fi
+
+    case "$(_lp_connection)" in
+    lcl)
+        if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]]; then
+            # FIXME do we want to display the chroot if local?
+            LP_HOST="" # no hostname if local
+        else
+            LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+        fi
+        ;;
+    ssh)
+        # If we want a different color for each host
+        [[ "$LP_ENABLE_SSH_COLORS" -eq 1 ]] && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+        LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+        ;;
+    su)
+        LP_HOST="${LP_HOST}${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
+        ;;
+    tel)
+        LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+        ;;
+    *)
+        LP_HOST="${LP_HOST}${_LP_HOST_SYMBOL}" # defaults to no color
+        ;;
+    esac
+
+fi
 
 # Useless now, so undefine
 unset _lp_connection

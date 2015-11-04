@@ -35,6 +35,7 @@ LP_PATH_KEEP=2
 # Do you want to display the hostname, even if not connected through network?
 # Defaults to 0 (do not display hostname when locally connected)
 # set to 1 if you want to always see the hostname
+# set to -1 if you want to never see the hostname
 LP_HOSTNAME_ALWAYS=0
 
 # Use the FQDN instead of the short hostname if the hostname is displayed

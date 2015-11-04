@@ -1,15 +1,75 @@
 
+1.10    201?-??-??
+	New features:
+	- Sudo:
+	    * The color of the prompt mark is now dynamic and changes to
+	      LP_COLOR_MARK_SUDO (default: bold red) as long as your sudo
+	      credentials are cached (GitHub #335).
+	      Requires sudo 1.7.0+.
+	      This feature can be disabled with LP_ENABLE_SUDO=0 (as this is
+	      one more thing that slows the prompt).
+	      Use 'sudo -K' to revoke your credentials early.
+	    * This feature is disabled by default as there is no way to
+	      detect if the user has sudo rights without triggering a security
+	      alert that will annoy the sysadmin.
+	- Git:
+	    * Also show the number of commits behind the remote (GitHub #269)
+	- Add variable LP_TTYN: the basename of the terminal (GitHub #357)
+	Incompatible changes:
+	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
+          removed to simplify the code (GitHub #371)
+	Bug fixes:
+	- Git:
+	    * Fix typo in git work directory detection
+	- Fossil:
+	    * Fix on darwin (GitHub #390)
+	- Battery indicator:
+	    * MacOS: many fixes to handle (all?) edge cases (GitHub #326)
+	      We now have a pmset simulator to better detect regressions.
+	- Temperature indicator:
+	    * The code using the 'sensors' command now uses the '-u' option
+	      ("raw output") that is easier to parse. This format is at least
+	      7 years old. (GitHub #379, #380)
+	- CPU load indicator:
+	    * Fix the scale that was incorrectly 0-200 (GitHub #391)
+	- Title:
+	    * Fix terminal sequences that were sent in the title text (the
+	      escaping algorithm is rewritten and now just correct).
+	- Terminal channel:
+	    * Fix detection of tmux (GitHub #304, #377)
+	- Misc:
+	    * Fix bash 3 compatibility (GitHub #313)
+	    * Clear GREP_OPTIONS and skip 'grep' aliases (GitHub #372)
+	- Shortened path:
+	    * Fix bugs when $PWD contains spaces or special chars (GitHub #369)
+	- Sample configuration files:
+	    * example.bashrc: major fixes
+	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
+	- Documentation:
+	    * Many small fixes
+	- Move dist/ to contrib/dist/ as files there are unmaintained
+	- Fix title escapes in zsh inside tmux/screen (GitHub #370, #371)
 
-1.9     2014-11-??  dolmen (Olivier Mengué)
+	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
+	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
+	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
+	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
+	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
+	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
+	François Schmidts (@jaesivsm), @hegedus, Anthony Gelibert
+        (@anthonygelibert), Anthony Ramine (@nox)...
+	... for their patches or bug reports.
+
+1.9     2014-11-12  dolmen (Olivier Mengué)
 	Bug fixes:
 	- Battery indicator:
-	    * General fixes (Github #264)
-	    * MacOS: fix for computers without battery (like iMacs) (Github
+	    * General fixes (GitHub #264)
+	    * MacOS: fix for computers without battery (like iMacs) (GitHub
 	      #319)
 	    * Optimize colormap
 	- Temperature indicator:
 	    * Linux: Add a guard against any future l10n of the 'acpi' command
-	    * Linux: Fix for negative temperature values (Github #308)
+	    * Linux: Fix for negative temperature values (GitHub #308)
 	- CPU load:
 	    * Darwin/BSD: quoting fixes
 	- Hostname:
@@ -17,41 +77,41 @@
 	    * Simplify chroot detection
 	- VCS:
 	    - Git:
-		* Use --porcelain for "git status" (Github #270)
-		* Minir optimization (Github #266)
+		* Use --porcelain for "git status" (GitHub #270)
+		* Minir optimization (GitHub #266)
 	    - Fossil:
-		* Cleanup and fixes (Github #274 and others)
+		* Cleanup and fixes (GitHub #274 and others)
 	    - Subversion:
-		* Fix branch/tag name extraction (Github #117, #237, #293)
+		* Fix branch/tag name extraction (GitHub #117, #237, #293)
 	    - Bazar:
 		* Fix branch name extraction
-		* zsh fixes (Github #303)
+		* zsh fixes (GitHub #303)
 	    - Mercurial:
 		* General cleanup for speed and fixes
-		* Disabled "hg outgoing" because it is slow (Github #217)
+		* Disabled "hg outgoing" because it is slow (GitHub #217)
 	- Shortened path:
 	    * Bash: Fix quoting for PROMPT_DIRTRIM
 	- Prompt mark:
 	    * Simplify implementation of LP_MARK_DEFAULT
 	- Jobs:
 	    * Refactoring
-	    * Fix when screen/tmux are not installed (Github #304)
+	    * Fix when screen/tmux are not installed (GitHub #304)
 	- Analog clock:
-	    * Fix hour for 12AM and 12PM (Github #273)
+	    * Fix hour for 12AM and 12PM (GitHub #273)
 	- Misc:
 	    * bash: save and set 'promptvars'
-	    * bash: workaround broken pattern substitution in bash 4.2 (Github
+	    * bash: workaround broken pattern substitution in bash 4.2 (GitHub
 	      #289, #294, #302)
 	    * zsh: fix restoration of the original (pre-liquidprompt) prompt
-	    * Fix tmux detection (Github #279)
-	    * Save IFS (Github #267)
-	    * Fix $TERM check (Github #291)
+	    * Fix tmux detection (GitHub #279)
+	    * Save IFS (GitHub #267)
+	    * Fix $TERM check (GitHub #291)
 	    * Various quoting fixes
 	    * Apply some shellcheck.com suggestions
-	    * Many, many optimizations (Github #267)
+	    * Many, many optimizations (GitHub #267)
 	New features:
-	- Add vcsh support (Github #148, #287)
-	- Add support for Software Collections (Github #299, #300)
+	- Add vcsh support (GitHub #148, #287)
+	- Add support for Software Collections (GitHub #299, #300)
 
 	Thanks to Anthony Gelibert, Frédéric Mahé, Panayiotis Kkolos, Étienne
 	Deparis, François Schmidts, Linus Wallgren, Alexander Belaev, Bartosz

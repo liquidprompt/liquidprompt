@@ -1449,6 +1449,11 @@ _lp_temp_acpi()
     done
 }
 
+_lp_temp_raspberry()
+{
+    temperature=$(vcgencmd measure_temp | sed 's/temp=//;s/\..*//')
+}
+
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
 # available command. _LP_TEMP_FUNCTION should return only a numeric value
 if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
@@ -1456,6 +1461,8 @@ if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
         _LP_TEMP_FUNCTION=_lp_temp_acpi
     elif command -v sensors >/dev/null; then
         _LP_TEMP_FUNCTION=_lp_temp_sensors
+    elif command -v vcgencmd >/dev/null; then
+        _LP_TEMP_FUNCTION=_lp_temp_raspberry
     # elif command -v the_command_you_want_to_use; then
     #   _LP_TEMP_FUNCTION=your_function
     else

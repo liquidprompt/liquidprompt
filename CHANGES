@@ -56,17 +56,16 @@
 	- Move dist/ to contrib/dist/ as files there are unmaintained
 	- Fix title escapes in zsh inside tmux/screen (GitHub #370, #371)
 
-	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (iKevinY), Sean
+	Thanks to Matt Fletcher (@MaffooBristol), Kevin Yap (@iKevinY), Sean
 	Hussey (@seanhussey), François Schmidts (@jaesisvsm), Morgan Knicely
 	(@morganizeit), Daniel Serodio (@dserodio), Jonathan Giddy
 	(@jongiddy), Jeremy Clement (@jeremyclement), Panayiotis Kkolos
 	(@pkkolos), Arturo Borrero Gonzalez (@aborrero), Samuel Krieg
 	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
-	François Schmidts (@jaesivsm), @hegedus, Anthony Gelibert
-	(@anthonygelibert), Anthony Ramine (@nox), Erik M Jacobs (@thoraxe),
-	Pedro Parracho (@berserck), Brad Beyenhof (@augmentedfourth),
-	Austen Adler (@stonewareslord), Hagen Graf (@hcgraf), William
-	P. Riley-Land (@wprl)...
+	@hegedus, Anthony Gelibert (@anthonygelibert), Anthony Ramine (@nox),
+	Erik M Jacobs (@thoraxe), Pedro Parracho (@berserck), Brad Beyenhof
+	(@augmentedfourth), Austen Adler (@stonewareslord), Hagen Graf
+	(@hcgraf), William P. Riley-Land (@wprl)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

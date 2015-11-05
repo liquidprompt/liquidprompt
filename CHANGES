@@ -17,6 +17,7 @@
 	- Add variable LP_TTYN: the basename of the terminal (GitHub #357)
 	- Add setting LP_ENABLE_FQDN to show the fully qualified domain name
 	  of the host (GitHub #254, #277)
+        - LP_HOSTNAME_ALWAYS=-1 to always hide the hostname (GitHub #406)
 	Incompatible changes:
 	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
           removed to simplify the code (GitHub #371)
@@ -60,7 +61,7 @@
 	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
 	François Schmidts (@jaesivsm), @hegedus, Anthony Gelibert
 	(@anthonygelibert), Anthony Ramine (@nox), Erik M Jacobs (@thoraxe),
-	Pedro Parracho (@berserck)...
+	Pedro Parracho (@berserck), Brad Beyenhof (@augmentedfourth)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

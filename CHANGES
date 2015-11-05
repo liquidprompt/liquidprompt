@@ -18,6 +18,8 @@
 	- Add setting LP_ENABLE_FQDN to show the fully qualified domain name
 	  of the host (GitHub #254, #277)
         - LP_HOSTNAME_ALWAYS=-1 to always hide the hostname (GitHub #406)
+	- Run duration of the last command (LP_ENABLE_RUNTIME) is now also
+	  supported on zsh (GitHub #404, #355)
 	Incompatible changes:
 	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
           removed to simplify the code (GitHub #371)
@@ -61,7 +63,8 @@
 	(@SamK), Brian May (@brianmay), Colin Lieberman (@colinlieberman),
 	François Schmidts (@jaesivsm), @hegedus, Anthony Gelibert
 	(@anthonygelibert), Anthony Ramine (@nox), Erik M Jacobs (@thoraxe),
-	Pedro Parracho (@berserck), Brad Beyenhof (@augmentedfourth)...
+	Pedro Parracho (@berserck), Brad Beyenhof (@augmentedfourth),
+	Austen Adler (@stonewareslord), Hagen Graf (@hcgraf) ...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

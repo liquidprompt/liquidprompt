@@ -46,6 +46,7 @@
 # Rolf Morel        <rolfmorel@gmail.com>         # "Shorten path" refactoring and fixes
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
+# Austen Adler      <stonewareslord@gmail.com>    # ZSH runtime
 
 # See the README.md file for a summary of features.
 
@@ -95,6 +96,11 @@ elif test -n "$ZSH_VERSION" ; then
 else
     echo "liquidprompt: shell not supported" >&2
     return
+fi
+
+# For ZSH, autoload required functions
+if $_LP_SHELL_zsh; then
+    autoload -Uz add-zsh-hook
 fi
 
 # Store $2 (or $?) as a true/false value in variable named $1
@@ -292,11 +298,7 @@ _lp_source_config()
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
-    if $_LP_SHELL_bash; then
-        LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
-    else
-        LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-0}
-    fi
+    LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -417,11 +419,6 @@ command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
 $_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?
 # Use standard path symbols inside Midnight Commander
 [[ -n "$MC_SID" ]] && LP_ENABLE_SHORTEN_PATH=0
-
-if [[ "$LP_ENABLE_RUNTIME" == 1 ]] && ! $_LP_SHELL_bash; then
-    echo Unfortunately, runtime printing for zsh is not yet supported. Turn LP_ENABLE_RUNTIME off in your config to hide this message.
-    LP_ENABLE_RUNTIME=0
-fi
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
@@ -1378,8 +1375,23 @@ _lp_reset_runtime()
 
 if [ "$LP_ENABLE_RUNTIME" = 1 ]
 then
-    # _lp_reset_runtime gets called whenever bash executes a command
-    trap '_lp_reset_runtime' DEBUG
+    if "$_LP_SHELL_zsh"; then
+        _lp_runtime_precmd() {
+          if [ $timer ]; then
+            export _LP_RUNTIME_SECONDS=$(($SECONDS - $timer))
+            unset timer
+          fi
+        }
+
+        _lp_runtime_preexec() {
+          export timer=${timer:-$SECONDS}
+        }
+        add-zsh-hook precmd _lp_runtime_precmd
+        add-zsh-hook preexec _lp_runtime_preexec
+    else
+        # _lp_reset_runtime gets called whenever bash executes a command
+        trap '_lp_reset_runtime' DEBUG
+    fi
 fi
 
 ###############
@@ -1788,14 +1800,12 @@ prompt_on()
     else # zsh
         # That doesn't seem to work: no time output
         #if [[ "$LP_DEBUG_TIME" == 1 ]]; then
-        #    precmd() {
+        #    _lp_main_precmd() {
         #        local TIMEFMT='Liquid Prompt build time: %*E'
         #        time _lp_set_prompt
         #    }
         #else
-            precmd() {
-                _lp_set_prompt
-            }
+            add-zsh-hook precmd _lp_set_prompt
         #fi
     fi
 }
@@ -1808,7 +1818,7 @@ prompt_off()
         eval "$LP_OLD_SHOPT"
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
-        precmd() { : ; }
+        add-zsh-hook -d precmd _lp_set_prompt
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
@@ -1821,7 +1831,7 @@ prompt_OFF()
         shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
-        precmd() { : ; }
+        add-zsh-hook -d precmd _lp_set_prompt
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }

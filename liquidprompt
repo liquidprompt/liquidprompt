@@ -907,7 +907,7 @@ _lp_hg_branch_color()
 
         # extract currently active bookmark, if any
         local bookmark
-        bookmark="$(hg bookmarks | sed -n 's/^ \* \(.*[^ ]\) *[0-9]\+:[0-9a-f]*$/\1/p')"
+        bookmark="$(hg bookmarks | sed -n 's/^ \* \(.*[^ ]\) * [0-9][0-9]*:[0-9a-f]*$/\1/p')"
         if [[ -n "$bookmark" ]]; then
             bookmark=",$(_lp_escape "$bookmark")"
         fi

@@ -857,6 +857,9 @@ _lp_git_branch_color()
 
         local end
         end="$NO_COL"
+		
+		end="$(_lp_git_head_status)$end"
+
         if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
@@ -933,6 +936,15 @@ _lp_git_branch_color()
         fi
         echo -nE "$ret$end"
     fi
+}
+
+# Display additional information of the 
+_lp_git_head_status() {
+	local gitdir
+	gitdir="$(\git rev-parse --git-dir 2>/dev/null)"
+	if [ -f "${gitdir}/MERGE_HEAD" ] ; then
+		echo "MERGING"
+	fi
 }
 
 # Search upwards through a directory structure looking for a file/folder with

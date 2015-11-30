@@ -529,7 +529,7 @@ _lp_connection()
         # TODO check on *BSD
         local whoami="$(LANG=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
-        if [[ -z "$whoami" || x"$whoami" = x*'(:'* || x"$whoami" = x*'(tmux'* ]]; then
+        if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
             echo su   # Remote su/sudo

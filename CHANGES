@@ -42,6 +42,7 @@
 	      escaping algorithm is rewritten and now just correct).
 	- Terminal channel:
 	    * Fix detection of tmux (GitHub #304, #377)
+            * Fix detection of local session on OS X (GitHub #407)
 	- Misc:
 	    * Fix bash 3 compatibility (GitHub #313)
 	    * Clear GREP_OPTIONS and skip 'grep' aliases (GitHub #372)
@@ -65,7 +66,8 @@
 	@hegedus, Anthony Gelibert (@anthonygelibert), Anthony Ramine (@nox),
 	Erik M Jacobs (@thoraxe), Pedro Parracho (@berserck), Brad Beyenhof
 	(@augmentedfourth), Austen Adler (@stonewareslord), Hagen Graf
-	(@hcgraf), William P. Riley-Land (@wprl)...
+	(@hcgraf), William P. Riley-Land (@wprl), Dave Rigby (@daverigby),
+	Ned Batchelder (@nedbat)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

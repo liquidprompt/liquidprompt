@@ -881,7 +881,7 @@ _lp_git_head_status() {
 	gitdir="$(\git rev-parse --git-dir 2>/dev/null)"
 	if [ -f "${gitdir}/MERGE_HEAD" ] ; then
 		echo " MERGING"
-	elif [ -d "${gitdir}/rebase-apply" ] ; then
+	elif [[ -d "${gitdir}/rebase-apply" ]] || [[ -d "${gitdir}/rebase-merge" ]] ; then
 		echo " REBASING"
 	elif [ -f "${gitdir}/CHERRY_PICK_HEAD" ] ; then
 		echo " CHERRY-PICKING"

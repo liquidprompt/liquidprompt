@@ -1432,7 +1432,7 @@ _lp_temp_sensors()
     # Only the integer part is retained
     local i
     for i in $(sensors -u | sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-        [[ $i -gt $temperature ]] && temperature=$i
+        [[ $i -gt ${temperature:-0} ]] && temperature=$i
     done
 }
 
@@ -1441,13 +1441,14 @@ _lp_temp_acpi()
     local i
     # Only the integer part is retained
     for i in $(LANG=C acpi -t | sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-        [[ $i -gt $temperature ]] && temperature=$i
+        [[ $i -gt ${temperature:-0} ]] && temperature=$i
     done
 }
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
 # available command. _LP_TEMP_FUNCTION should return only a numeric value
 if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
+    unset _LP_TEMP_FUNCTION
     if command -v acpi >/dev/null; then
         _LP_TEMP_FUNCTION=_lp_temp_acpi
     elif command -v sensors >/dev/null; then
@@ -1456,6 +1457,22 @@ if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
     #   _LP_TEMP_FUNCTION=your_function
     else
         LP_ENABLE_TEMP=0
+    fi
+
+    # Check that we can retrieve temperature at least once
+    # If not, set LP_ENABLE_TEMP=0
+    if [[ -n "$_LP_TEMP_FUNCTION" ]]; then
+        _lp_check_temp()
+        {
+            local temperature
+            $_LP_TEMP_FUNCTION 2>/dev/null
+            [[ -n "$temperature" ]]
+        }
+
+        _lp_check_temp || LP_ENABLE_TEMP=0
+
+        # We don't need the function anymore
+        unset _lp_check_temp
     fi
 fi
 

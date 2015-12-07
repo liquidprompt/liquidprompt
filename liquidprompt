@@ -1437,28 +1437,28 @@ if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
     {
         # Return the hottest system temperature we get through the sensors command
         # Only the integer part is retained
-        local i
+        local -i i
         for i in $(sensors -u |
                 sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-            [[ $i -gt ${temperature:-0} ]] && temperature=$i
+            (( $i > ${temperature:-0} )) && temperature=i
         done
     }
 
     # Implementation using 'acpi -t'
     _lp_temp_acpi()
     {
-        local i
+        local -i i
         # Only the integer part is retained
         for i in $(LANG=C acpi -t |
                 sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-            [[ $i -gt ${temperature:-0} ]] && temperature=$i
+            (( $i > ${temperature:-0} )) && temperature=i
         done
     }
 
     # Dynamic selection of backend
     _lp_temp_detect()
     {
-        local temperature
+        local -i temperature
         local cmd
 
         # Global variable
@@ -1491,12 +1491,11 @@ _lp_temperature()
 {
     [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    local temperature
+    local -i temperature
     temperature=0
     $_LP_TEMP_FUNCTION
-    if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
+    (( temperature >= LP_TEMP_THRESHOLD )) && \
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
-    fi
 }
 
 ##########

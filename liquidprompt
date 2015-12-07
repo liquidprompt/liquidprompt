@@ -1346,17 +1346,16 @@ _LP_RUNTIME_LAST_SECONDS=$SECONDS
 
 _lp_runtime()
 {
-    [[ "$LP_ENABLE_RUNTIME" != 1 ]] && return
-    if [[ $_LP_RUNTIME_SECONDS -ge $LP_RUNTIME_THRESHOLD ]]
+    if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
     then
         echo -ne "${LP_COLOR_RUNTIME}"
         # display runtime seconds as days, hours, minutes, and seconds
-        [[ "$_LP_RUNTIME_SECONDS" -ge 86400 ]] && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
-        [[ "$_LP_RUNTIME_SECONDS" -ge 3600 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
-        [[ "$_LP_RUNTIME_SECONDS" -ge 60 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
-        echo -ne $((_LP_RUNTIME_SECONDS % 60))s
-        echo -ne "${NO_COL}"
+        (( _LP_RUNTIME_SECONDS >= 86400 )) && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
+        (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
+        (( _LP_RUNTIME_SECONDS >= 60 )) && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
+        echo -ne $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
     fi
+    :
 }
 
 _lp_reset_runtime()

@@ -1376,21 +1376,25 @@ then
     else
         _lp_runtime_before()
         {
-            # Compute number of seconds since program was started
-            (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+            # For debugging
+            #echo "XXX $BASH_COMMAND"
 
-            # If no proper command was executed (i.e., user pressed <Enter>
-            # without entering a command), reset the runtime counter
-            [[ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ]] \
-                && _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_RUNTIME_SECONDS=0
+            # If the previous command was just the refresh of the prompt,
+            # reset the counter
+            if (( _LP_RUNTIME_SKIP )); then
+                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
+            else
+                # Compute number of seconds since program was started
+                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+            fi
 
-            # A proper command has been executed if the last command was not
-            # related to Liquid Prompt
+            # If the command to run is the prompt, we'll have to ignore it
             [[ "$BASH_COMMAND" = "$PROMPT_COMMAND" ]]
-            _LP_RUNTIME_COMMAND_EXECUTED=$?
+            _LP_RUNTIME_SKIP=$?
         }
 
-        # _lp_reset_runtime gets called just before bash executes a command
+        # _lp_runtime_before gets called just before bash executes a command,
+        # including $PROMPT_COMMAND
         trap _lp_runtime_before DEBUG
     fi
 fi

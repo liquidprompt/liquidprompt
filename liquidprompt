@@ -1361,14 +1361,16 @@ _lp_runtime()
 _lp_reset_runtime()
 {
     # Compute number of seconds since program was started
-    _LP_RUNTIME_SECONDS=$((SECONDS - _LP_RUNTIME_LAST_SECONDS))
+    let _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS
 
-    # If no proper command was executed (i.e., someone pressed enter without entering a command),
-    # reset the runtime counter
-    [ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && _LP_RUNTIME_LAST_SECONDS=$SECONDS && _LP_RUNTIME_SECONDS=0
+    # If no proper command was executed (i.e., user pressed <Enter> without
+    # entering a command), reset the runtime counter
+    [[ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ]] \
+        && _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_RUNTIME_SECONDS=0
 
-    # A proper command has been executed if the last command was not related to Liquid Prompt
-    [ "$BASH_COMMAND" = _lp_set_prompt ]
+    # A proper command has been executed if the last command was not related to
+    # Liquid Prompt
+    [[ "$BASH_COMMAND" = _lp_set_prompt ]]
     _LP_RUNTIME_COMMAND_EXECUTED=$?
 }
 

@@ -1376,7 +1376,7 @@ _lp_reset_runtime()
 
 if [[ "$LP_ENABLE_RUNTIME" = 1 ]]
 then
-    if "$_LP_SHELL_zsh"; then
+    if $_LP_SHELL_zsh; then
         _lp_runtime_precmd() {
             if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
                 (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
@@ -1390,7 +1390,7 @@ then
         add-zsh-hook precmd _lp_runtime_precmd
         add-zsh-hook preexec _lp_runtime_preexec
     else
-        # _lp_reset_runtime gets called whenever bash executes a command
+        # _lp_reset_runtime gets called just before bash executes a command
         trap '_lp_reset_runtime' DEBUG
     fi
 fi

@@ -1358,40 +1358,40 @@ _lp_runtime()
     :
 }
 
-_lp_reset_runtime()
-{
-    # Compute number of seconds since program was started
-    (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
-
-    # If no proper command was executed (i.e., user pressed <Enter> without
-    # entering a command), reset the runtime counter
-    [[ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ]] \
-        && _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_RUNTIME_SECONDS=0
-
-    # A proper command has been executed if the last command was not related to
-    # Liquid Prompt
-    [[ "$BASH_COMMAND" = _lp_set_prompt ]]
-    _LP_RUNTIME_COMMAND_EXECUTED=$?
-}
-
 if [[ "$LP_ENABLE_RUNTIME" = 1 ]]
 then
     if $_LP_SHELL_zsh; then
-        _lp_runtime_precmd() {
+        _lp_runtime_before() {
+          _LP_RUNTIME_LAST_SECONDS=$SECONDS
+        }
+        _lp_runtime_after() {
             if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
                 (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
                 unset _LP_RUNTIME_LAST_SECONDS
             fi
         }
 
-        _lp_runtime_preexec() {
-          _LP_RUNTIME_LAST_SECONDS=$SECONDS
-        }
-        add-zsh-hook precmd _lp_runtime_precmd
-        add-zsh-hook preexec _lp_runtime_preexec
+        add-zsh-hook preexec _lp_runtime_before
+        add-zsh-hook precmd  _lp_runtime_after
     else
+        _lp_runtime_before()
+        {
+            # Compute number of seconds since program was started
+            (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+
+            # If no proper command was executed (i.e., user pressed <Enter>
+            # without entering a command), reset the runtime counter
+            [[ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ]] \
+                && _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_RUNTIME_SECONDS=0
+
+            # A proper command has been executed if the last command was not
+            # related to Liquid Prompt
+            [[ "$BASH_COMMAND" = _lp_set_prompt ]]
+            _LP_RUNTIME_COMMAND_EXECUTED=$?
+        }
+
         # _lp_reset_runtime gets called just before bash executes a command
-        trap '_lp_reset_runtime' DEBUG
+        trap _lp_runtime_before DEBUG
     fi
 fi
 

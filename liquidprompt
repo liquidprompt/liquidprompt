@@ -1361,7 +1361,7 @@ _lp_runtime()
 _lp_reset_runtime()
 {
     # Compute number of seconds since program was started
-    let _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS
+    (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
 
     # If no proper command was executed (i.e., user pressed <Enter> without
     # entering a command), reset the runtime counter
@@ -1374,18 +1374,18 @@ _lp_reset_runtime()
     _LP_RUNTIME_COMMAND_EXECUTED=$?
 }
 
-if [ "$LP_ENABLE_RUNTIME" = 1 ]
+if [[ "$LP_ENABLE_RUNTIME" = 1 ]]
 then
     if "$_LP_SHELL_zsh"; then
         _lp_runtime_precmd() {
-          if [ $timer ]; then
-            export _LP_RUNTIME_SECONDS=$(($SECONDS - $timer))
-            unset timer
-          fi
+            if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
+                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+                unset _LP_RUNTIME_LAST_SECONDS
+            fi
         }
 
         _lp_runtime_preexec() {
-          export timer=${timer:-$SECONDS}
+          _LP_RUNTIME_LAST_SECONDS=$SECONDS
         }
         add-zsh-hook precmd _lp_runtime_precmd
         add-zsh-hook preexec _lp_runtime_preexec

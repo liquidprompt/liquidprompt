@@ -1386,7 +1386,7 @@ then
 
             # A proper command has been executed if the last command was not
             # related to Liquid Prompt
-            [[ "$BASH_COMMAND" = _lp_set_prompt ]]
+            [[ "$BASH_COMMAND" = "$PROMPT_COMMAND" ]]
             _LP_RUNTIME_COMMAND_EXECUTED=$?
         }
 

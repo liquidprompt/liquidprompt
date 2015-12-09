@@ -1121,6 +1121,7 @@ _lp_bzr_branch_color()
     local branch=${tuple[_LP_FIRST_INDEX+0]}
     local revno=${tuple[_LP_FIRST_INDEX+1]}
     local clean=${tuple[_LP_FIRST_INDEX+2]}
+    local ret
 
     if [[ -n "$branch" ]]; then
         if [[ "$clean" -eq 0 ]]; then

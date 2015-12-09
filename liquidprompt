@@ -618,7 +618,7 @@ _lp_shorten_path()
         return
     fi
 
-    local ret=""
+    local ret=
 
     local p="$(_lp_get_home_tilde_collapsed)"
     local mask="${LP_MARK_SHORTEN_PATH}"
@@ -715,7 +715,7 @@ _lp_jobcount_color()
 
     local m_stop="z"
     local m_run="&"
-    local ret
+    local ret=
 
     if $_LP_ENABLE_DETACHED_SESSIONS; then
         local -i detached=0
@@ -804,7 +804,7 @@ _lp_git_branch_color()
         local remote
         remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
 
-        local has_commit
+        local has_commit=""
         local commit_ahead
         local commit_behind
         if [[ -n "$remote" ]]; then
@@ -963,8 +963,8 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     [[ "$LP_ENABLE_SVN" != 1 ]] && return
-    local root
-    local url
+    local root=
+    local url=
     eval "$(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
     [[ -z "$root" ]] && return
 
@@ -985,7 +985,7 @@ _lp_svn_branch()
 
 # Set a color depending on the branch state:
 # - green if the repository is clean
-#   (use $LP_SVN_STATUS_OPTS to define what that means with
+#   (use $LP_SVN_STATUS_OPTIONS to define what that means with
 #    the --depth option of 'svn status')
 # - red if there is changes to commit
 # Note that, due to subversion way of managing changes,
@@ -998,7 +998,7 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]]; then
         local changes
-        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | \grep -c -v "?") ))
+        changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
         if [[ $changes -eq 0 ]]; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else
@@ -1121,7 +1121,7 @@ _lp_bzr_branch_color()
     local branch=${tuple[_LP_FIRST_INDEX+0]}
     local revno=${tuple[_LP_FIRST_INDEX+1]}
     local clean=${tuple[_LP_FIRST_INDEX+2]}
-    local ret
+    local ret=
 
     if [[ -n "$branch" ]]; then
         if [[ "$clean" -eq 0 ]]; then

@@ -79,7 +79,7 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     # (in case we are reloading LP in the same shell after disabling
     # the feature in .liquidpromptrc)
     # FIXME this doesn't seem to work :(
-    [[ -n "$LP_ENABLE_RUNTIME" ]] && trap - DEBUG
+    [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
 elif test -n "$ZSH_VERSION" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
@@ -418,7 +418,7 @@ command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
 command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
 $_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?
 # Use standard path symbols inside Midnight Commander
-[[ -n "$MC_SID" ]] && LP_ENABLE_SHORTEN_PATH=0
+[[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
@@ -440,7 +440,7 @@ fi
 # will update an icon of the directory displayed in the title of the terminal
 # window.
 # See http://hints.macworld.com/article.php?story=20110722211753852
-if [[ "$TERM_PROGRAM" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
+if [[ "${TERM_PROGRAM-}" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
     _LP_TERM_UPDATE_DIR=update_terminal_cwd
     # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
     # See issue #196
@@ -522,7 +522,7 @@ fi
 
 _lp_connection()
 {
-    if [[ -n "$SSH_CLIENT$SSH2_CLIENT$SSH_TTY" ]]; then
+    if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
         echo ssh
     else
         # tmux: see GH #304
@@ -1394,6 +1394,7 @@ then
             _LP_RUNTIME_SKIP=$?
         }
 
+        _LP_RUNTIME_SKIP=0
         # _lp_runtime_before gets called just before bash executes a command,
         # including $PROMPT_COMMAND
         trap _lp_runtime_before DEBUG
@@ -1636,21 +1637,21 @@ _lp_set_prompt()
     _lp_sudo_check
 
     # in main prompt: no space
-    if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_PROXY,${http_proxy-}" = 1,?* ]]; then
         LP_PROXY="$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
     else
         LP_PROXY=
     fi
 
     # Display the current Python virtual environment, if available
-    if [[ "$LP_ENABLE_VIRTUALENV,$VIRTUAL_ENV" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}" = 1,?* ]]; then
         LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
     else
         LP_VENV=
     fi
 
     # Display the current software collections enabled, if available
-    if [[ "$LP_ENABLE_SCLS,$X_SCLS" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_SCLS,${X_SCLS-}" = 1,?* ]]; then
         LP_SCLS=" [${LP_COLOR_VIRTUALENV}${X_SCLS%"${X_SCLS##*[![:space:]]}"}${NO_COL}]"
     else
         LP_SCLS=
@@ -1659,7 +1660,7 @@ _lp_set_prompt()
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
     # if change of working directory
-    if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
+    if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
@@ -1685,7 +1686,7 @@ _lp_set_prompt()
             LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
                 # If this is a vcsh repository
-                if [[ -n "$VCSH_DIRECTORY" ]]; then
+                if [[ -n "${VCSH_DIRECTORY-}" ]]; then
                     LP_VCS_TYPE="git-vcsh"
                 fi
                 # If this is a git-svn repository
@@ -1745,7 +1746,7 @@ _lp_set_prompt()
         esac
     fi
 
-    if [[ -f "$LP_PS1_FILE" ]]; then
+    if [[ -f "${LP_PS1_FILE-}" ]]; then
         source "$LP_PS1_FILE"
     fi
 
@@ -1790,7 +1791,7 @@ prompt_tag()
 prompt_on()
 {
     # if Liquid Prompt has not been already set
-    if [[ -z "$LP_OLD_PS1" ]]; then
+    if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"

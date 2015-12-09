@@ -54,7 +54,7 @@
 test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
-if test -n "$BASH_VERSION" -a -n "$PS1" ; then
+if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
         unset bash bmajor bminor
@@ -79,8 +79,8 @@ if test -n "$BASH_VERSION" -a -n "$PS1" ; then
     # (in case we are reloading LP in the same shell after disabling
     # the feature in .liquidpromptrc)
     # FIXME this doesn't seem to work :(
-    [[ -n "$LP_ENABLE_RUNTIME" ]] && trap - DEBUG
-elif test -n "$ZSH_VERSION" ; then
+    [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
+elif test -n "${ZSH_VERSION-}" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
     _LP_OPEN_ESC="%{"
@@ -177,8 +177,6 @@ case "$LP_OS" in
         }
 esac
 
-# Reset so all PWD dependent variables are computed after loading
-unset LP_OLD_PWD
 
 #################
 # CONFIGURATION #
@@ -418,7 +416,7 @@ command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
 command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
 $_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?
 # Use standard path symbols inside Midnight Commander
-[[ -n "$MC_SID" ]] && LP_ENABLE_SHORTEN_PATH=0
+[[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
 # If we are running in a terminal multiplexer, brackets are colored
 if [[ "$TERM" == screen* ]]; then
@@ -440,7 +438,7 @@ fi
 # will update an icon of the directory displayed in the title of the terminal
 # window.
 # See http://hints.macworld.com/article.php?story=20110722211753852
-if [[ "$TERM_PROGRAM" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
+if [[ "${TERM_PROGRAM-}" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
     _LP_TERM_UPDATE_DIR=update_terminal_cwd
     # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
     # See issue #196
@@ -522,7 +520,7 @@ fi
 
 _lp_connection()
 {
-    if [[ -n "$SSH_CLIENT$SSH2_CLIENT$SSH_TTY" ]]; then
+    if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
         echo ssh
     else
         # tmux: see GH #304
@@ -618,7 +616,7 @@ _lp_shorten_path()
         return
     fi
 
-    local ret=""
+    local ret=
 
     local p="$(_lp_get_home_tilde_collapsed)"
     local mask="${LP_MARK_SHORTEN_PATH}"
@@ -715,7 +713,7 @@ _lp_jobcount_color()
 
     local m_stop="z"
     local m_run="&"
-    local ret
+    local ret=
 
     if $_LP_ENABLE_DETACHED_SESSIONS; then
         local -i detached=0
@@ -804,7 +802,7 @@ _lp_git_branch_color()
         local remote
         remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
 
-        local has_commit
+        local has_commit=""
         local commit_ahead
         local commit_behind
         if [[ -n "$remote" ]]; then
@@ -963,10 +961,10 @@ _lp_hg_branch_color()
 _lp_svn_branch()
 {
     [[ "$LP_ENABLE_SVN" != 1 ]] && return
-    local root
-    local url
+    local root=
+    local url=
     eval "$(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
-    [[ -z "$root" ]] && return
+    [[ -z "${root-}" ]] && return
 
     # Make url relative to root
     url="${url:${#root}}"
@@ -985,7 +983,7 @@ _lp_svn_branch()
 
 # Set a color depending on the branch state:
 # - green if the repository is clean
-#   (use $LP_SVN_STATUS_OPTS to define what that means with
+#   (use $LP_SVN_STATUS_OPTIONS to define what that means with
 #    the --depth option of 'svn status')
 # - red if there is changes to commit
 # Note that, due to subversion way of managing changes,
@@ -998,7 +996,7 @@ _lp_svn_branch_color()
     branch="$(_lp_svn_branch)"
     if [[ -n "$branch" ]]; then
         local changes
-        changes=$(( $(svn status $LP_SVN_STATUS_OPTIONS | \grep -c -v "?") ))
+        changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
         if [[ $changes -eq 0 ]]; then
             echo "${LP_COLOR_UP}${branch}${NO_COL}"
         else
@@ -1121,6 +1119,7 @@ _lp_bzr_branch_color()
     local branch=${tuple[_LP_FIRST_INDEX+0]}
     local revno=${tuple[_LP_FIRST_INDEX+1]}
     local clean=${tuple[_LP_FIRST_INDEX+2]}
+    local ret=
 
     if [[ -n "$branch" ]]; then
         if [[ "$clean" -eq 0 ]]; then
@@ -1393,6 +1392,7 @@ then
             _LP_RUNTIME_SKIP=$?
         }
 
+        _LP_RUNTIME_SKIP=0
         # _lp_runtime_before gets called just before bash executes a command,
         # including $PROMPT_COMMAND
         trap _lp_runtime_before DEBUG
@@ -1589,7 +1589,7 @@ _lp_time_analog()
 _lp_time()
 {
     [[ "$LP_ENABLE_TIME" != 1 ]] && return
-    if [[ "$LP_TIME_ANALOG" != 1 ]]; then
+    if [[ "${LP_TIME_ANALOG-}" != 1 ]]; then
         echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
         echo -n "${LP_COLOR_TIME}"
@@ -1635,21 +1635,21 @@ _lp_set_prompt()
     _lp_sudo_check
 
     # in main prompt: no space
-    if [[ "$LP_ENABLE_PROXY,$http_proxy" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_PROXY,${http_proxy-}" = 1,?* ]]; then
         LP_PROXY="$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
     else
         LP_PROXY=
     fi
 
     # Display the current Python virtual environment, if available
-    if [[ "$LP_ENABLE_VIRTUALENV,$VIRTUAL_ENV" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}" = 1,?* ]]; then
         LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
     else
         LP_VENV=
     fi
 
     # Display the current software collections enabled, if available
-    if [[ "$LP_ENABLE_SCLS,$X_SCLS" = 1,?* ]]; then
+    if [[ "$LP_ENABLE_SCLS,${X_SCLS-}" = 1,?* ]]; then
         LP_SCLS=" [${LP_COLOR_VIRTUALENV}${X_SCLS%"${X_SCLS##*[![:space:]]}"}${NO_COL}]"
     else
         LP_SCLS=
@@ -1658,7 +1658,7 @@ _lp_set_prompt()
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
     # if change of working directory
-    if [[ "$LP_OLD_PWD" != "LP:$PWD" ]]; then
+    if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
@@ -1684,7 +1684,7 @@ _lp_set_prompt()
             LP_VCS_TYPE="git"
             if [[ -n "$LP_VCS" ]]; then
                 # If this is a vcsh repository
-                if [[ -n "$VCSH_DIRECTORY" ]]; then
+                if [[ -n "${VCSH_DIRECTORY-}" ]]; then
                     LP_VCS_TYPE="git-vcsh"
                 fi
                 # If this is a git-svn repository
@@ -1744,7 +1744,7 @@ _lp_set_prompt()
         esac
     fi
 
-    if [[ -f "$LP_PS1_FILE" ]]; then
+    if [[ -f "${LP_PS1_FILE-}" ]]; then
         source "$LP_PS1_FILE"
     fi
 
@@ -1788,8 +1788,11 @@ prompt_tag()
 # Activate Liquid Prompt
 prompt_on()
 {
+    # Reset so all PWD dependent variables are computed after loading
+    LP_OLD_PWD=""
+
     # if Liquid Prompt has not been already set
-    if [[ -z "$LP_OLD_PS1" ]]; then
+    if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"

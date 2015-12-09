@@ -112,10 +112,10 @@ fi
 _lp_bool()
 {
     local res=${2:-$?}
-    if [[ $res = 0 ]]; then
-        eval $1=true
-    else
+    if (( res )); then
         eval $1=false
+    else
+        eval $1=true
     fi
     return $res
 }

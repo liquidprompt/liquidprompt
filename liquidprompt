@@ -1346,51 +1346,56 @@ _LP_RUNTIME_LAST_SECONDS=$SECONDS
 
 _lp_runtime()
 {
-    [[ "$LP_ENABLE_RUNTIME" != 1 ]] && return
-    if [[ $_LP_RUNTIME_SECONDS -ge $LP_RUNTIME_THRESHOLD ]]
+    if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
     then
         echo -ne "${LP_COLOR_RUNTIME}"
         # display runtime seconds as days, hours, minutes, and seconds
-        [[ "$_LP_RUNTIME_SECONDS" -ge 86400 ]] && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
-        [[ "$_LP_RUNTIME_SECONDS" -ge 3600 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
-        [[ "$_LP_RUNTIME_SECONDS" -ge 60 ]] && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
-        echo -ne $((_LP_RUNTIME_SECONDS % 60))s
-        echo -ne "${NO_COL}"
+        (( _LP_RUNTIME_SECONDS >= 86400 )) && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
+        (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
+        (( _LP_RUNTIME_SECONDS >= 60 )) && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
+        echo -ne $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
     fi
+    :
 }
 
-_lp_reset_runtime()
-{
-    # Compute number of seconds since program was started
-    _LP_RUNTIME_SECONDS=$((SECONDS - _LP_RUNTIME_LAST_SECONDS))
-
-    # If no proper command was executed (i.e., someone pressed enter without entering a command),
-    # reset the runtime counter
-    [ "$_LP_RUNTIME_COMMAND_EXECUTED" != 1 ] && _LP_RUNTIME_LAST_SECONDS=$SECONDS && _LP_RUNTIME_SECONDS=0
-
-    # A proper command has been executed if the last command was not related to Liquid Prompt
-    [ "$BASH_COMMAND" = _lp_set_prompt ]
-    _LP_RUNTIME_COMMAND_EXECUTED=$?
-}
-
-if [ "$LP_ENABLE_RUNTIME" = 1 ]
+if [[ "$LP_ENABLE_RUNTIME" = 1 ]]
 then
-    if "$_LP_SHELL_zsh"; then
-        _lp_runtime_precmd() {
-          if [ $timer ]; then
-            export _LP_RUNTIME_SECONDS=$(($SECONDS - $timer))
-            unset timer
-          fi
+    if $_LP_SHELL_zsh; then
+        _lp_runtime_before() {
+          _LP_RUNTIME_LAST_SECONDS=$SECONDS
+        }
+        _lp_runtime_after() {
+            if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
+                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+                unset _LP_RUNTIME_LAST_SECONDS
+            fi
         }
 
-        _lp_runtime_preexec() {
-          export timer=${timer:-$SECONDS}
-        }
-        add-zsh-hook precmd _lp_runtime_precmd
-        add-zsh-hook preexec _lp_runtime_preexec
+        add-zsh-hook preexec _lp_runtime_before
+        add-zsh-hook precmd  _lp_runtime_after
     else
-        # _lp_reset_runtime gets called whenever bash executes a command
-        trap '_lp_reset_runtime' DEBUG
+        _lp_runtime_before()
+        {
+            # For debugging
+            #echo "XXX $BASH_COMMAND"
+
+            # If the previous command was just the refresh of the prompt,
+            # reset the counter
+            if (( _LP_RUNTIME_SKIP )); then
+                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
+            else
+                # Compute number of seconds since program was started
+                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+            fi
+
+            # If the command to run is the prompt, we'll have to ignore it
+            [[ "$BASH_COMMAND" = "$PROMPT_COMMAND" ]]
+            _LP_RUNTIME_SKIP=$?
+        }
+
+        # _lp_runtime_before gets called just before bash executes a command,
+        # including $PROMPT_COMMAND
+        trap _lp_runtime_before DEBUG
     fi
 fi
 

@@ -394,14 +394,14 @@ _lp_source_config
 unset _lp_source_config
 
 # Disable features if the tool is not installed
-[[ "$LP_ENABLE_GIT"  = 1 ]] && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
-[[ "$LP_ENABLE_SVN"  = 1 ]] && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
-[[ "$LP_ENABLE_FOSSIL"  = 1 ]] && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
-[[ "$LP_ENABLE_HG"   = 1 ]] && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
-[[ "$LP_ENABLE_BZR"  = 1 ]] && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
+(( LP_ENABLE_GIT ))    && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
+(( LP_ENABLE_SVN ))    && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
+(( LP_ENABLE_FOSSIL )) && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
+(( LP_ENABLE_HG ))     && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
+(( LP_ENABLE_BZR ))    && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
 case "$LP_OS" in
-    Darwin) [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
-    *)      [[ "$LP_ENABLE_BATT" = 1 ]] && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
+    Darwin) (( LP_ENABLE_BATT )) && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
+    *)      (( LP_ENABLE_BATT )) && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
 esac
 command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
 command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
@@ -471,7 +471,7 @@ if [[ "$EUID" -ne "0" ]]; then  # if user is not root
         LP_USER=""
     fi
     # "sudo -n" is only supported from sudo 1.7.0
-    if [[ "$LP_ENABLE_SUDO" = 1 ]] \
+    if (( LP_ENABLE_SUDO )) \
             && command -v sudo >/dev/null \
             && LC_MESSAGES=C sudo -V | GREP_OPTIONS= \grep -qE '^Sudo version (1(\.([789]\.|[1-9][0-9])|[0-9])|[2-9])'
     then
@@ -493,7 +493,7 @@ else # root!
     LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
     LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
     # Disable VCS info for all paths
-    if [[ "$LP_ENABLE_VCS_ROOT" != 1 ]]; then
+    if (( ! LP_ENABLE_VCS_ROOT )); then
         LP_DISABLED_VCS_PATH=/
         LP_MARK_DISABLED="$_LP_MARK_SYMBOL"
     fi
@@ -536,12 +536,12 @@ _lp_connection()
 LP_HOST=""
 
 # Only process hostname elements if we haven't turned them off
-if [[ "${LP_HOSTNAME_ALWAYS}" -ne "-1" ]]; then
+if (( LP_HOSTNAME_ALWAYS != -1 )); then
 
     [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
 
     # Which host symbol should we use?
-    if [[ "${LP_ENABLE_FQDN}" -eq "1" ]] ; then
+    if (( LP_ENABLE_FQDN )); then
         LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
     else
         LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
@@ -556,16 +556,16 @@ if [[ "${LP_HOSTNAME_ALWAYS}" -ne "-1" ]]; then
 
     case "$(_lp_connection)" in
     lcl)
-        if [[ "${LP_HOSTNAME_ALWAYS}" -eq "0" ]]; then
+        if (( LP_HOSTNAME_ALWAYS )); then
+            LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+        else
             # FIXME do we want to display the chroot if local?
             LP_HOST="" # no hostname if local
-        else
-            LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
         fi
         ;;
     ssh)
         # If we want a different color for each host
-        [[ "$LP_ENABLE_SSH_COLORS" -eq 1 ]] && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+        (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
         LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     su)
@@ -599,7 +599,7 @@ _lp_get_home_tilde_collapsed()
 _lp_shorten_path()
 {
 
-    if [[ "$LP_ENABLE_SHORTEN_PATH" != 1 ]]; then
+    if (( ! LP_ENABLE_SHORTEN_PATH )); then
         LP_PWD="$LP_PATH_DEFAULT"
         if $_LP_SHELL_bash; then
             [[ -n "$PROMPT_DIRTRIM" ]] && _lp_set_dirtrim
@@ -700,7 +700,7 @@ _lp_set_dirtrim() {
 # - attached stopped jobs (suspended with Ctrl-Z)
 _lp_jobcount_color()
 {
-    [[ "$LP_ENABLE_JOBS" != 1 ]] && return
+    (( LP_ENABLE_JOBS )) || return
 
     local m_stop="z"
     local m_run="&"
@@ -750,7 +750,7 @@ _lp_are_vcs_enabled()
 # Get the branch name of the current directory
 _lp_git_branch()
 {
-    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+    (( LP_ENABLE_GIT )) || return
 
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 
@@ -774,7 +774,7 @@ _lp_git_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_git_branch_color()
 {
-    [[ "$LP_ENABLE_GIT" != 1 ]] && return
+    (( LP_ENABLE_GIT )) || return
 
     local branch
     branch="$(_lp_git_branch)"
@@ -878,7 +878,7 @@ _lp_upwards_find()
 # Get the branch name of the current directory
 _lp_hg_branch()
 {
-    [[ "$LP_ENABLE_HG" != 1 ]] && return
+    (( LP_ENABLE_HG )) || return
 
     # First do a simple search to avoid having to invoke hg -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
@@ -900,7 +900,7 @@ _lp_hg_branch()
 # - TODO: yellow if there is some commits not pushed
 _lp_hg_branch_color()
 {
-    [[ "$LP_ENABLE_HG" != 1 ]] && return
+    (( LP_ENABLE_HG )) || return
 
     local branch
     local ret
@@ -923,7 +923,7 @@ _lp_hg_branch_color()
 
         # Check if there is some uncommitted stuff
         if [[ -z "$(hg status --quiet -n)" ]]; then
-            if (( commits > 0 )) ; then
+            if (( commits > 0 )); then
                 # some commit(s) to push
                 ret="${LP_COLOR_COMMITS}${branch}${NO_COL}(${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
@@ -934,7 +934,7 @@ _lp_hg_branch_color()
             local has_lines
             # Parse the last line of the diffstat-style output
             has_lines="$(hg diff --stat 2>/dev/null | sed -n '$ s!^.*, \([0-9]*\) .*, \([0-9]*\).*$!+\1/-\2!p')"
-            if (( commits > 0 )) ; then
+            if (( commits > 0 )); then
                 # Changes to commit and commits to push
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},${LP_COLOR_COMMITS}$commits${NO_COL})${has_untracked}${NO_COL}"
             else
@@ -951,7 +951,8 @@ _lp_hg_branch_color()
 # For the first level of the repository, gives the repository name
 _lp_svn_branch()
 {
-    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+    (( LP_ENABLE_SVN )) || return
+
     local root=
     local url=
     eval "$(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
@@ -981,7 +982,7 @@ _lp_svn_branch()
 # informations are only displayed for the CURRENT directory.
 _lp_svn_branch_color()
 {
-    [[ "$LP_ENABLE_SVN" != 1 ]] && return
+    (( LP_ENABLE_SVN )) || return
 
     local branch
     branch="$(_lp_svn_branch)"
@@ -1002,7 +1003,7 @@ _lp_svn_branch_color()
 # Get the tag name of the current directory
 _lp_fossil_branch()
 {
-    [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
+    (( LP_ENABLE_FOSSIL )) || return
     local branch
     branch=$(fossil status 2>/dev/null | sed -n $_LP_SED_EXTENDED 's/tags:[ ]*\(\w*\)$/\1/p')
     if [ -n "$branch" ]; then
@@ -1022,7 +1023,7 @@ _lp_fossil_branch()
 # - when files are DELETED
 _lp_fossil_branch_color()
 {
-    [[ "$LP_ENABLE_FOSSIL" != 1 ]] && return
+    (( LP_ENABLE_FOSSIL )) || return
 
     local branch
     branch="$(_lp_fossil_branch)"
@@ -1065,7 +1066,7 @@ _lp_fossil_branch_color()
 # Get the branch name of the current directory
 _lp_bzr_branch()
 {
-    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    (( LP_ENABLE_BZR )) || return
 
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
@@ -1090,7 +1091,7 @@ _lp_bzr_branch()
 # Add the number of pending commits and the impacted lines.
 _lp_bzr_branch_color()
 {
-    [[ "$LP_ENABLE_BZR" != 1 ]] && return
+    (( LP_ENABLE_BZR )) || return
 
     # First do a simple search to avoid having to invoke bzr -- at least on my
     # machine, the python startup causes a noticeable hitch when changing
@@ -1147,7 +1148,7 @@ case "$LP_OS" in
     Linux)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
+        (( LP_ENABLE_BATT )) || return 4
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
         # Extract the battery load value in percent
@@ -1186,7 +1187,7 @@ case "$LP_OS" in
     Darwin)
     _lp_battery()
     {
-        [[ "$LP_ENABLE_BATT" != 1 ]] && return 4
+        (( LP_ENABLE_BATT )) || return 4
         local percent batt_status
         eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
         case "$batt_status" in
@@ -1229,7 +1230,7 @@ esac
 # a    red ⌁ if the battery is discharging and above threshold
 _lp_battery_color()
 {
-    [[ "$LP_ENABLE_BATT" != 1 ]] && return
+    (( LP_ENABLE_BATT )) || return
 
     local mark=$LP_MARK_BATTERY
     local chargingmark=$LP_MARK_ADAPTER
@@ -1321,7 +1322,7 @@ _lp_color_map() {
         else
             echo -ne "${LP_COLORMAP_7}"
         fi
-    elif (( value < 90 )) ; then
+    elif (( value < 90 )); then
         echo -ne "${LP_COLORMAP_8}"
     else # (( value >= 90 ))
         echo -ne "${LP_COLORMAP_9}"
@@ -1348,8 +1349,7 @@ _lp_runtime()
     :
 }
 
-if [[ "$LP_ENABLE_RUNTIME" = 1 ]]
-then
+if (( LP_ENABLE_RUNTIME )); then
     if $_LP_SHELL_zsh; then
         _lp_runtime_before() {
           _LP_RUNTIME_LAST_SECONDS=$SECONDS
@@ -1404,7 +1404,7 @@ _lp_load_color()
     # Then we have to choose the values at which the colours switch, with
     # anything past yellow being pretty important.
 
-    [[ "$LP_ENABLE_LOAD" != 1 ]] && return
+    (( LP_ENABLE_LOAD )) || return
 
     local tmp="$(_lp_cpu_load)"
     tmp=${tmp/./}   # Remove '.'
@@ -1415,7 +1415,7 @@ _lp_load_color()
     if (( load > LP_LOAD_THRESHOLD )); then
         local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
-        if [[ "$LP_PERCENTS_ALWAYS" == 1 ]]; then
+        if (( LP_PERCENTS_ALWAYS )); then
             ret="${ret}${load}${_LP_PERCENT}"
         fi
         echo -nE "${ret}${NO_COL}"
@@ -1495,7 +1495,7 @@ _lp_as_text()
 
 _lp_title()
 {
-    [[ "$LP_ENABLE_TITLE" != "1" ]] && return
+    (( LP_ENABLE_TITLE )) || return
 
     # Get the current computed prompt as pure text
     echo -n "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
@@ -1568,9 +1568,9 @@ _lp_time_analog()
     local -i hi=$(( hour % 12 + _LP_FIRST_INDEX))
 
     # add a space for correct alignment
-    if (( min < 15 )) ; then
+    if (( min < 15 )); then
         echo -n "${plain[hi]} "
-    elif (( min < 45 )) ; then
+    elif (( min < 45 )); then
         echo -n "${half[hi]} "
     else
         echo -n "${plain[hi+1]} "
@@ -1579,7 +1579,7 @@ _lp_time_analog()
 
 _lp_time()
 {
-    [[ "$LP_ENABLE_TIME" != 1 ]] && return
+    (( LP_ENABLE_TIME )) || return
     if [[ "${LP_TIME_ANALOG-}" != 1 ]]; then
         echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
@@ -1660,7 +1660,7 @@ _lp_set_prompt()
         # LP_PERM: shows a ":"
         # - colored in green if user has write permission on the current dir
         # - colored in red if not
-        if [[ "$LP_ENABLE_PERM" = 1 ]]; then
+        if (( LP_ENABLE_PERM )); then
             if [[ -w "${PWD}" ]]; then
                 LP_PERM="${LP_COLOR_WRITE}:${NO_COL}"
             else
@@ -1795,10 +1795,10 @@ prompt_on()
     if $_LP_SHELL_bash; then
         shopt -s promptvars
         PROMPT_COMMAND=_lp_set_prompt
-        [[ "$LP_DEBUG_TIME" == 1 ]] && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
+        (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
         # That doesn't seem to work: no time output
-        #if [[ "$LP_DEBUG_TIME" == 1 ]]; then
+        #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {
         #        local TIMEFMT='Liquid Prompt build time: %*E'
         #        time _lp_set_prompt

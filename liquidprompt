@@ -1428,7 +1428,7 @@ _lp_load_color()
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
 # available command.
-if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
+if (( LP_ENABLE_TEMP )); then
 
     # Backends for TEMP. Each backend must return the result in $temperature.
 
@@ -1489,7 +1489,7 @@ fi
 # and colorize it through _lp_color_map.
 _lp_temperature()
 {
-    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
+    (( LP_ENABLE_TEMP )) || return
 
     local -i temperature
     temperature=0

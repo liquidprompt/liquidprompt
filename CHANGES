@@ -35,6 +35,9 @@
 	    * The code using the 'sensors' command now uses the '-u' option
 	      ("raw output") that is easier to parse. This format is at least
 	      7 years old. (GitHub #379, #380)
+	    * We now try each backend (acpi/sensors) once to check it works
+	      at startup and disable the feature if none works.
+	      (GitHub #410, #319, #381, #387)
 	- CPU load indicator:
 	    * Fix the scale that was incorrectly 0-200 (GitHub #391)
 	- Title:

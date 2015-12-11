@@ -56,7 +56,7 @@ test -z "$TERM" -o "x$TERM" = xdumb && return
 # Check for recent enough version of bash.
 if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-    if [[ $bmajor -lt 3 ]] || [[ $bmajor -eq 3 && $bminor -lt 2 ]]; then
+    if (( bmajor < 3 || ( bmajor == 3 && bminor < 2 ) )); then
         unset bash bmajor bminor
         return
     fi
@@ -376,26 +376,17 @@ _lp_source_config()
     # Debugging flags
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
 
+
+    # System config
+    [[ -f "/etc/liquidpromptrc" ]] && source "/etc/liquidpromptrc"
+
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
-
-    local configfile
-    if [[ -f "/etc/liquidpromptrc" ]]
-    then
-        source "/etc/liquidpromptrc"
-    fi
-    if [[ -f "$HOME/.liquidpromptrc" ]]
-    then
-        configfile="$HOME/.liquidpromptrc"
-    elif [[ -z "$XDG_HOME_DIR" ]]
-    then
-        configfile="$HOME/.config/liquidpromptrc"
+    if [[ -f "$HOME/.liquidpromptrc" ]]; then
+        source "$HOME/.liquidpromptrc"
     else
-        configfile="$XDG_HOME_DIR/liquidpromptrc"
-    fi
-    if [[ -f "$configfile" ]]
-    then
-        source "$configfile"
+        local configfile="${XDG_HOME_DIR:-$HOME/.config}/liquidpromptrc"
+        [[ -f "$configfile" ]] && source "$configfile"
     fi
 }
 # do source config files

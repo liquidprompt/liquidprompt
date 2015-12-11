@@ -1426,50 +1426,76 @@ _lp_load_color()
 # System temperature #
 ######################
 
-_lp_temp_sensors()
-{
-    # Return the hottest system temperature we get through the sensors command
-    # Only the integer part is retained
-    local i
-    for i in $(sensors -u | sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-        [[ $i -gt $temperature ]] && temperature=$i
-    done
-}
-
-_lp_temp_acpi()
-{
-    local i
-    # Only the integer part is retained
-    for i in $(LANG=C acpi -t | sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-        [[ $i -gt $temperature ]] && temperature=$i
-    done
-}
-
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
-# available command. _LP_TEMP_FUNCTION should return only a numeric value
-if [[ "$LP_ENABLE_TEMP" = 1 ]]; then
-    if command -v acpi >/dev/null; then
-        _LP_TEMP_FUNCTION=_lp_temp_acpi
-    elif command -v sensors >/dev/null; then
-        _LP_TEMP_FUNCTION=_lp_temp_sensors
-    # elif command -v the_command_you_want_to_use; then
-    #   _LP_TEMP_FUNCTION=your_function
-    else
-        LP_ENABLE_TEMP=0
-    fi
+# available command.
+if (( LP_ENABLE_TEMP )); then
+
+    # Backends for TEMP. Each backend must return the result in $temperature.
+
+    # Implementation using lm-sensors
+    _lp_temp_sensors()
+    {
+        # Return the hottest system temperature we get through the sensors command
+        # Only the integer part is retained
+        local -i i
+        for i in $(sensors -u |
+                sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
+            (( $i > ${temperature:-0} )) && temperature=i
+        done
+    }
+
+    # Implementation using 'acpi -t'
+    _lp_temp_acpi()
+    {
+        local -i i
+        # Only the integer part is retained
+        for i in $(LANG=C acpi -t |
+                sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
+            (( $i > ${temperature:-0} )) && temperature=i
+        done
+    }
+
+    # Dynamic selection of backend
+    _lp_temp_detect()
+    {
+        local -i temperature
+        local cmd
+
+        # Global variable
+        unset _LP_TEMP_FUNCTION
+
+        for cmd
+        do
+            command -v $cmd >/dev/null || continue
+
+            _LP_TEMP_FUNCTION=_lp_temp_$cmd
+            # Check that we can retrieve temperature at least once
+            $_LP_TEMP_FUNCTION 2>/dev/null
+            # If $temperature is set, success!
+            [[ -n "$temperature" ]] && return 0
+            unset $_LP_TEMP_FUNCTION _LP_TEMP_FUNCTION
+        done
+        return 1
+    }
+
+    # Try each _lp_temp method
+    # If no function worked, disable the feature
+    _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
+    unset _lp_temp_detect
 fi
 
-_lp_temperature() {
-    # Will display the numeric value as we got it through the _LP_TEMP_FUNCTION
-    # and colorize it through _lp_color_map.
-    [[ "$LP_ENABLE_TEMP" != 1 ]] && return
 
-    local temperature
+# Will display the numeric value as we get through the _LP_TEMP_FUNCTION
+# and colorize it through _lp_color_map.
+_lp_temperature()
+{
+    (( LP_ENABLE_TEMP )) || return
+
+    local -i temperature
     temperature=0
     $_LP_TEMP_FUNCTION
-    if [[ $temperature -ge $LP_TEMP_THRESHOLD ]]; then
+    (( temperature >= LP_TEMP_THRESHOLD )) && \
         echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
-    fi
 }
 
 ##########

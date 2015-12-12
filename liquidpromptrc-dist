@@ -59,7 +59,11 @@ LP_ENABLE_PERM=1
 # Recommended value is 1
 LP_ENABLE_SHORTEN_PATH=1
 
-# Do you want to use the proxy detection feature?
+# Display only current directory as path
+# Works only if LP_ENABLE_SHORTEN_PATH is set to 0
+LP_CURRENT_DIR_ONLY=1
+
+# Do you want to use the proxy detection feature ?
 # Recommended value is 1
 LP_ENABLE_PROXY=1
 

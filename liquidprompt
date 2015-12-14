@@ -871,9 +871,7 @@ _lp_git_branch_color()
     if [[ -n "$branch" ]]; then
 
         local end
-        end="$NO_COL"
-        
-        end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}$end"
+        end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}"
 
         if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"

@@ -1230,35 +1230,30 @@ _lp_battery_color()
 
     local mark=$LP_MARK_BATTERY
     local chargingmark=$LP_MARK_ADAPTER
-    local bat
-    local ret
+    local -i bat ret
     bat="$(_lp_battery)"
     ret=$?
 
-    if [[ $ret == 4 || $bat == 100 ]]; then
+    if (( ret == 4 || bat == 100 )); then
         # no battery support or battery full: nothing displayed
-        return
-    elif [[ $ret == 3 && $bat != 100 ]]; then
+    elif (( ret == 3 && $bat != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
         echo -ne "${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
-        return
-    elif [[ $ret == 2 ]]; then
+    elif (( ret == 2 )); then
         # charging but under threshold
         # yellow ⏚
         echo -ne "${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
-        return
-    elif [[ $ret == 1 ]]; then
+    elif (( ret == 1 )); then
         # discharging but above threshold
         # yellow ⌁
         echo -ne "${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
-        return
-
     # discharging and under threshold
-    elif [[ "$bat" != "" ]]; then
-        ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
+    else
+        local res
+        res="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
 
-        if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
+        if (( LP_PERCENTS_ALWAYS )); then
             local -i idx
             if   (( bat <=  0 )); then
                 idx=0
@@ -1284,9 +1279,9 @@ _lp_battery_color()
                 idx=0
             fi
 
-            ret="${ret}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT"
+            res="${res}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
         fi # LP_PERCENTS_ALWAYS
-        echo -ne "${ret}${NO_COL}"
+        echo -ne "${res}"
     fi # ret
 }
 

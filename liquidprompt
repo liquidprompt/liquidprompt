@@ -748,7 +748,7 @@ _lp_jobcount_color()
         ret="${ret}${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
     fi
 
-    echo -n "$ret"
+    echo -nE "$ret"
 }
 
 
@@ -879,7 +879,7 @@ _lp_git_branch_color()
         else
             ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
         fi
-        echo -ne "$ret$end"
+        echo -nE "$ret$end"
     fi
 }
 
@@ -964,7 +964,7 @@ _lp_hg_branch_color()
                 ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})${has_untracked}${NO_COL}" # changes to commit
             fi
         fi
-        echo -ne "$ret"
+        echo -nE "$ret"
     fi
 }
 
@@ -1013,9 +1013,9 @@ _lp_svn_branch_color()
         local changes
         changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
         if [[ $changes -eq 0 ]]; then
-            echo "${LP_COLOR_UP}${branch}${NO_COL}"
+            echo -nE "${LP_COLOR_UP}${branch}${NO_COL}"
         else
-            echo "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
+            echo -nE "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
         fi
     fi
 }
@@ -1030,9 +1030,9 @@ _lp_fossil_branch()
     local branch
     branch=$(fossil status 2>/dev/null | sed -n $_LP_SED_EXTENDED 's/tags:[ ]*\(\w*\)$/\1/p')
     if [ -n "$branch" ]; then
-        echo "$branch"
+        echo -nE "$branch"
     elif fossil info &>/dev/null ; then
-        echo "no-tag"
+        echo -n "no-tag"
     fi
 }
 
@@ -1080,7 +1080,7 @@ _lp_fossil_branch_color()
             # There're some changes to commit
             branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
         fi
-        echo "$branch"
+        echo -nE "$branch"
     fi
 }
 
@@ -1144,7 +1144,7 @@ _lp_bzr_branch_color()
         fi
 
     fi
-    echo -ne "$ret"
+    echo -nE "$ret"
 }
 
 
@@ -1183,7 +1183,7 @@ case "$LP_OS" in
             # no battery level found
             return 4
         fi
-        echo -n "$bat"
+        echo -nE "$bat"
         # discharging
         if [[ "$acpi" == *"Discharging"* ]]; then
             # under => 0, above => 1
@@ -1240,15 +1240,15 @@ _lp_battery_color()
     elif (( ret == 3 && $bat != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
-        echo -ne "${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
+        echo -nE "${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
     elif (( ret == 2 )); then
         # charging but under threshold
         # yellow ⏚
-        echo -ne "${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
+        echo -nE "${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
     elif (( ret == 1 )); then
         # discharging but above threshold
         # yellow ⌁
-        echo -ne "${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
+        echo -nE "${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
     # discharging and under threshold
     else
         local res
@@ -1282,7 +1282,7 @@ _lp_battery_color()
 
             res="${res}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
         fi # LP_PERCENTS_ALWAYS
-        echo -ne "${res}"
+        echo -nE "${res}"
     fi
 }
 
@@ -1293,7 +1293,7 @@ _lp_color_map() {
     scale=${2:-100}
     # Transform the value to a 0..${#COLOR_MAP} scale
     idx=_LP_FIRST_INDEX+100*$1/scale/${#LP_COLORMAP[*]}
-    echo -n "${LP_COLORMAP[idx]}"
+    echo -nE "${LP_COLORMAP[idx]}"
 }
 
 ###########################
@@ -1306,12 +1306,12 @@ _lp_runtime()
 {
     if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
     then
-        echo -ne "${LP_COLOR_RUNTIME}"
+        echo -nE "${LP_COLOR_RUNTIME}"
         # display runtime seconds as days, hours, minutes, and seconds
-        (( _LP_RUNTIME_SECONDS >= 86400 )) && echo -ne $((_LP_RUNTIME_SECONDS / 86400))d
-        (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -ne $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
-        (( _LP_RUNTIME_SECONDS >= 60 )) && echo -ne $((_LP_RUNTIME_SECONDS % 3600 / 60))m
-        echo -ne $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
+        (( _LP_RUNTIME_SECONDS >= 86400 )) && echo -n $((_LP_RUNTIME_SECONDS / 86400))d
+        (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -n $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
+        (( _LP_RUNTIME_SECONDS >= 60 )) && echo -n $((_LP_RUNTIME_SECONDS % 3600 / 60))m
+        echo -n $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
     fi
     :
 }
@@ -1462,7 +1462,7 @@ _lp_temperature()
     temperature=0
     $_LP_TEMP_FUNCTION
     (( temperature >= LP_TEMP_THRESHOLD )) && \
-        echo -ne "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
+        echo -nE "${LP_MARK_TEMP}$(_lp_color_map $temperature 120)$temperature°${NO_COL}"
 }
 
 ##########
@@ -1483,7 +1483,7 @@ _lp_as_text()
 {
     # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
     # $_LP_CLOSE_ESC.
-    echo -n "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
+    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
 _lp_title()
@@ -1491,9 +1491,9 @@ _lp_title()
     (( LP_ENABLE_TITLE )) || return
 
     # Get the current computed prompt as pure text
-    echo -n "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
+    echo -nE "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
     _lp_as_text "$1"
-    echo -n "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    echo -nE "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
@@ -1512,25 +1512,25 @@ _lp_smart_mark()
     disabled) mark="$LP_MARK_DISABLED"        ;;
     *)        mark="$LP_MARK_DEFAULT"         ;;
     esac
-    echo -ne "${mark}${NO_COL}"
+    echo -nE "${mark}${NO_COL}"
 }
 
 # insert a space on the right
 _lp_sr()
 {
-    [[ -n "$1" ]] && echo -n "$1 "
+    [[ -n "$1" ]] && echo -nE "$1 "
 }
 
 # insert a space on the left
 _lp_sl()
 {
-    [[ -n "$1" ]] && echo -n " $1"
+    [[ -n "$1" ]] && echo -nE " $1"
 }
 
 # insert two space, before and after
 _lp_sb()
 {
-    [[ -n "$1" ]] && echo -n " $1 "
+    [[ -n "$1" ]] && echo -nE " $1 "
 }
 
 ###################
@@ -1562,11 +1562,11 @@ _lp_time_analog()
 
     # add a space for correct alignment
     if (( min < 15 )); then
-        echo -n "${plain[hi]} "
+        echo -nE "${plain[hi]} "
     elif (( min < 45 )); then
-        echo -n "${half[hi]} "
+        echo -nE "${half[hi]} "
     else
-        echo -n "${plain[hi+1]} "
+        echo -nE "${plain[hi+1]} "
     fi
 }
 
@@ -1574,11 +1574,11 @@ _lp_time()
 {
     (( LP_ENABLE_TIME )) || return
     if [[ "${LP_TIME_ANALOG-}" != 1 ]]; then
-        echo -n "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     else
-        echo -n "${LP_COLOR_TIME}"
+        echo -nE "${LP_COLOR_TIME}"
         _lp_time_analog
-        echo -n "${NO_COL}"
+        echo -nE "${NO_COL}"
     fi
 }
 

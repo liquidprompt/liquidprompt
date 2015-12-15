@@ -1180,30 +1180,18 @@ case "$LP_OS" in
         bat="${bat%%%*}" # remove everything starting at '%'
 
         if [[ -z "${bat}" ]]; then
-            # not battery level found
+            # no battery level found
             return 4
-
+        fi
+        echo -n "$bat"
         # discharging
-        elif [[ "$acpi" == *"Discharging"* ]]; then
-            if [[ ${bat} -le $LP_BATTERY_THRESHOLD ]]; then
-                # under threshold
-                echo -n "${bat}"
-                return 0
-            else
-                # above threshold
-                echo -n "${bat}"
-                return 1
-            fi
-
+        if [[ "$acpi" == *"Discharging"* ]]; then
+            # under => 0, above => 1
+            return $(( bat > LP_BATTERY_THRESHOLD ))
         # charging
-        elif [[ ${bat} -le $LP_BATTERY_THRESHOLD ]]; then
-            # under threshold
-            echo -n "${bat}"
-            return 2
         else
-            # above threshold
-            echo -n "${bat}"
-            return 3
+            # under => 2, above => 3
+            return $(( 1 + ( bat > LP_BATTERY_THRESHOLD ) ))
         fi
     }
     ;;
@@ -1218,27 +1206,12 @@ case "$LP_OS" in
             return 4
             ;;
             discharging)
-            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]]; then
-                # under threshold
-                echo -n "${percent}"
-                return 0
-            else
-                # above threshold
-                echo -n "${percent}"
-                return 1
-            fi
+                # under => 0, above => 1
+                return $(( percent > LP_BATTERY_THRESHOLD ))
             ;;
-            *)
-            # "charging", "AC attached"
-            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]]; then
-                # under threshold
-                echo -n "${percent}"
-                return 2
-            else
-                # above threshold
-                echo -n "${percent}"
-                return 3
-            fi
+            *)  # "charging", "AC attached"
+                # under => 2, above => 3
+                return $(( 1 + ( percent > LP_BATTERY_THRESHOLD ) ))
             ;;
         esac
     }

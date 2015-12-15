@@ -1236,6 +1236,7 @@ _lp_battery_color()
 
     if (( ret == 4 || bat == 100 )); then
         # no battery support or battery full: nothing displayed
+        :
     elif (( ret == 3 && $bat != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
@@ -1282,7 +1283,7 @@ _lp_battery_color()
             res="${res}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
         fi # LP_PERCENTS_ALWAYS
         echo -ne "${res}"
-    fi # ret
+    fi
 }
 
 _lp_color_map() {

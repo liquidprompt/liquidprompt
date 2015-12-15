@@ -362,16 +362,20 @@ _lp_source_config()
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
 
-    LP_COLORMAP_0=${LP_COLORMAP_0:-""}
-    LP_COLORMAP_1=${LP_COLORMAP_1:-$GREEN}
-    LP_COLORMAP_2=${LP_COLORMAP_2:-$BOLD_GREEN}
-    LP_COLORMAP_3=${LP_COLORMAP_3:-$YELLOW}
-    LP_COLORMAP_4=${LP_COLORMAP_4:-$BOLD_YELLOW}
-    LP_COLORMAP_5=${LP_COLORMAP_5:-$RED}
-    LP_COLORMAP_6=${LP_COLORMAP_6:-$BOLD_RED}
-    LP_COLORMAP_7=${LP_COLORMAP_7:-$WARN_RED}
-    LP_COLORMAP_8=${LP_COLORMAP_8:-$CRIT_RED}
-    LP_COLORMAP_9=${LP_COLORMAP_9:-$DANGER_RED}
+    if [[ -z "${LP_COLORMAP-}" ]]; then
+        LP_COLORMAP=(
+            ""               # 0
+            "$GREEN"         # 1
+            "$BOLD_GREEN"    # 2
+            "$YELLOW"        # 3
+            "$BOLD_YELLOW"   # 4
+            "$RED"           # 5
+            "$BOLD_RED"      # 6
+            "$WARN_RED"      # 7
+            "$CRIT_RED"      # 8
+            "$DANGER_RED"    # 9
+        )
+    fi
 
     # Debugging flags
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
@@ -387,6 +391,25 @@ _lp_source_config()
     else
         local configfile="${XDG_HOME_DIR:-$HOME/.config}/liquidpromptrc"
         [[ -f "$configfile" ]] && source "$configfile"
+    fi
+
+    # Delete this code in version 1.11
+    if [[ -n "${LP_COLORMAP_1-}" ]]; then
+        echo "liquidprompt: LP_COLORMAP_x variables are deprecated. Update your theme to use LP_COLORMAP array." >&2
+        LP_COLORMAP=(
+            "$LP_COLORMAP_0"
+            "$LP_COLORMAP_1"
+            "$LP_COLORMAP_2"
+            "$LP_COLORMAP_3"
+            "$LP_COLORMAP_4"
+            "$LP_COLORMAP_5"
+            "$LP_COLORMAP_6"
+            "$LP_COLORMAP_7"
+            "$LP_COLORMAP_8"
+            "$LP_COLORMAP_9"
+        )
+        unset LP_COLORMAP_0 LP_COLORMAP_1 LP_COLORMAP_2 LP_COLORMAP_3 LP_COLORMAP_4 \
+              LP_COLORMAP_5 LP_COLORMAP_6 LP_COLORMAP_7 LP_COLORMAP_8 LP_COLORMAP_9
     fi
 }
 # do source config files
@@ -1263,31 +1286,32 @@ _lp_battery_color()
         ret="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
+            local -i idx
             if   (( bat <=  0 )); then
-                ret="${ret}${LP_COLORMAP_0}"
+                idx=0
             elif (( bat <=  5 )); then         #  5
-                ret="${ret}${LP_COLORMAP_9}"
+                idx=9
             elif (( bat <= 10 )); then         #  5
-                ret="${ret}${LP_COLORMAP_8}"
+                idx=8
             elif (( bat <= 20 )); then         # 10
-                ret="${ret}${LP_COLORMAP_7}"
+                idx=7
             elif (( bat <= 30 )); then         # 10
-                ret="${ret}${LP_COLORMAP_6}"
+                idx=6
             elif (( bat <= 40 )); then         # 10
-                ret="${ret}${LP_COLORMAP_5}"
+                idx=5
             elif (( bat <= 50 )); then         # 10
-                ret="${ret}${LP_COLORMAP_4}"
+                idx=4
             elif (( bat <= 65 )); then         # 15
-                ret="${ret}${LP_COLORMAP_3}"
+                idx=3
             elif (( bat <= 80 )); then         # 15
-                ret="${ret}${LP_COLORMAP_2}"
+                idx=2
             elif (( bat < 100 )); then         # 20
-                ret="${ret}${LP_COLORMAP_1}"
+                idx=1
             else # >= 100
-                ret="${ret}${LP_COLORMAP_0}"
+                idx=0
             fi
 
-            ret="${ret}${bat}$_LP_PERCENT"
+            ret="${ret}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT"
         fi # LP_PERCENTS_ALWAYS
         echo -ne "${ret}${NO_COL}"
     fi # ret
@@ -1296,37 +1320,11 @@ _lp_battery_color()
 _lp_color_map() {
     # Default scale: 0..100
     # Custom scale: 0..$2
-    local -i scale value
+    local -i scale idx
     scale=${2:-100}
-    # Transform the value to a 0..100 scale
-    value=100*$1/scale
-    if (( value < 50 )); then
-        if (( value <  30 )); then
-            if   (( value <  10 )); then
-                echo -ne "${LP_COLORMAP_0}"
-            elif (( value <  20 )); then
-                echo -ne "${LP_COLORMAP_1}"
-            else # 40..59
-                echo -ne "${LP_COLORMAP_2}"
-            fi
-        elif (( value <  40 )); then
-            echo -ne "${LP_COLORMAP_3}"
-        else # 80..99
-            echo -ne "${LP_COLORMAP_4}"
-        fi
-    elif (( value <  80 )); then
-        if (( value <  60 )); then
-            echo -ne "${LP_COLORMAP_5}"
-        elif (( value <  70 )); then
-            echo -ne "${LP_COLORMAP_6}"
-        else
-            echo -ne "${LP_COLORMAP_7}"
-        fi
-    elif (( value < 90 )); then
-        echo -ne "${LP_COLORMAP_8}"
-    else # (( value >= 90 ))
-        echo -ne "${LP_COLORMAP_9}"
-    fi
+    # Transform the value to a 0..${#COLOR_MAP} scale
+    idx=_LP_FIRST_INDEX+100*$1/scale/${#LP_COLORMAP[*]}
+    echo -n "${LP_COLORMAP[idx]}"
 }
 
 ###########################

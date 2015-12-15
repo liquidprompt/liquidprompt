@@ -1,5 +1,10 @@
 
 1.10    201?-??-??
+	Breaking changes:
+	- In themes, LP_COLORMAP_x variables are replaced by a single
+	  LP_COLORMAP array variable. A warning will be displayed at startup
+	  if your config still uses the old variables, but a compatibility
+	  shim is active (will be removed in next release).
 	New features:
 	- Sudo:
 	    * The color of the prompt mark is now dynamic and changes to

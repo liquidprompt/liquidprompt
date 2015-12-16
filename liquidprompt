@@ -155,24 +155,22 @@ _LP_SED_EXTENDED=r
 case "$LP_OS" in
     Linux)
         _lp_cpu_load () {
-            local load eol
-            read load eol < /proc/loadavg
-            echo "$load"
+            local eol
+            read lp_cpu_load eol < /proc/loadavg
         }
         ;;
     FreeBSD|Darwin|OpenBSD)
         _lp_cpu_load () {
-            local bol load eol
+            local bol eol
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
-            read bol load eol <<<"$( LANG=C sysctl -n vm.loadavg )"
-            echo "$load"
+            read bol lp_cpu_load eol <<<"$( LANG=C sysctl -n vm.loadavg )"
         }
         ;;
     SunOS)
         _lp_cpu_load () {
-            LANG=C uptime | awk '{print substr($10,0,length($10))}'
+            read lp_cpu_load <<<"$( LANG=C uptime | awk '{print substr($10,0,length($10))}' )"
         }
 esac
 
@@ -1372,11 +1370,14 @@ _lp_load_color()
 
     (( LP_ENABLE_LOAD )) || return
 
-    local tmp="$(_lp_cpu_load)"
-    tmp=${tmp/./}   # Remove '.'
-    tmp=${tmp#0}    # Remove leading '0'
-    tmp=${tmp#0}    # Remove leading '0', again (ex: 0.09)
-    local -i load=${tmp:-0}/$_lp_CPUNUM
+    local lp_cpu_load
+    # Get value (OS-specific) into lp_cpu_load
+    _lp_cpu_load
+
+    lp_cpu_load=${lp_cpu_load/./}   # Remove '.'
+    lp_cpu_load=${lp_cpu_load#0}    # Remove leading '0'
+    lp_cpu_load=${lp_cpu_load#0}    # Remove leading '0', again (ex: 0.09)
+    local -i load=${lp_cpu_load:-0}/$_lp_CPUNUM
 
     if (( load > LP_LOAD_THRESHOLD )); then
         local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"

@@ -74,7 +74,8 @@ if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     _LP_MARK_SYMBOL='\$'
     _LP_FIRST_INDEX=0
     _LP_PWD_SYMBOL="\\w"
-    _LP_PERCENT='%' # percent must be escaped on zsh
+    _LP_PERCENT='%'    # must be escaped on zsh
+    _LP_BACKSLASH='\\' # must be escaped on bash
     # Disable the DEBUG trap used by the RUNTIME feature
     # (in case we are reloading LP in the same shell after disabling
     # the feature in .liquidpromptrc)
@@ -92,6 +93,7 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
+    _LP_BACKSLASH="\\"
     _LP_PWD_SYMBOL="%~"
 
     # For ZSH, autoload required functions
@@ -435,7 +437,8 @@ if [[ "$TERM" == screen* ]]; then
     LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
     LP_TITLE_OPEN="$(printf '\033k')"
-    LP_TITLE_CLOSE="$(printf '\033\\')"
+    # "\e\" but on bash \ must be escaped
+    LP_TITLE_CLOSE="$(printf '\033%s' "$_LP_BACKSLASH")"
 else
     LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
     LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"

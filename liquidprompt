@@ -93,15 +93,14 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
     _LP_PWD_SYMBOL="%~"
+
+    # For ZSH, autoload required functions
+    autoload -Uz add-zsh-hook
 else
     echo "liquidprompt: shell not supported" >&2
     return
 fi
 
-# For ZSH, autoload required functions
-if $_LP_SHELL_zsh; then
-    autoload -Uz add-zsh-hook
-fi
 
 # Store $2 (or $?) as a true/false value in variable named $1
 # $? is propagated

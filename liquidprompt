@@ -1491,9 +1491,9 @@ _lp_title()
     (( LP_ENABLE_TITLE )) || return
 
     # Get the current computed prompt as pure text
-    echo -nE "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
+    echo -ne "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
     _lp_as_text "$1"
-    echo -nE "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    echo -ne "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion

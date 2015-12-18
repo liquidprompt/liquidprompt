@@ -56,6 +56,11 @@
 	    * Clear GREP_OPTIONS and skip 'grep' aliases (GitHub #372)
 	- Shortened path:
 	    * Fix bugs when $PWD contains spaces or special chars (GitHub #369)
+	    * Optimize implementation in case of LP_PATH_KEEP=-1 : LP_PWD
+	      becomes static (related to GitHub #256, #336)
+	    * Optimize implementation in case LP_ENABLE_SHORTEN_PATH=0
+	    * Optimize implementation in case LP_ENABLE_SHORTEN_PATH=0 on bash
+	      with PROMPT_DIRTRIM
 	- Sample configuration files:
 	    * example.bashrc: major fixes
 	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
@@ -77,7 +82,7 @@
 	(@hcgraf), William P. Riley-Land (@wprl), Dave Rigby (@daverigby),
 	Ned Batchelder (@nedbat), Fabien Marty (@thefab), Alessio Garzi
 	(@Ozzyboshi), Roger Huang (@rhuang2014), Sebastian Bremicker
-	(@sebrem)...
+	(@sebrem), Alex Prengere ()...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

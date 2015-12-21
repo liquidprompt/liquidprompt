@@ -631,7 +631,7 @@ _lp_shorten_path()
     if (( ! LP_ENABLE_SHORTEN_PATH )); then
         # We are not supposed to come here often as this case is already
         # optimized at install time
-        LP_PWD="$LP_PATH_DEFAULT"
+        LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NOCOL"
         return
     fi
 
@@ -684,9 +684,9 @@ _lp_shorten_path()
     fi
     # Escape special chars
     if $_LP_SHELL_bash; then
-        LP_PWD="${ret//\\/\\\\}"
+        LP_PWD="${LP_COLOR_PATH}${ret//\\/\\\\}$NOCOL"
     else # zsh
-        LP_PWD="${ret//\%/%%}"
+        LP_PWD="${LP_COLOR_PATH}${ret//\%/%%}$NOCOL"
     fi
 }
 
@@ -698,11 +698,12 @@ if (( LP_ENABLE_SHORTEN_PATH )); then
             :
         }
         # Will never change
-        LP_PWD="${_LP_DIR_SYMBOL}"
+        LP_PWD="${LP_COLOR_PATH}${_LP_DIR_SYMBOL}$NOCOL"
     fi
 else
     # Will never change
-    LP_PWD="$LP_PATH_DEFAULT"
+    LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NOCOL"
+
     if $_LP_SHELL_bash && [[ -n "$PROMPT_DIRTRIM" ]]; then
         unset -f _lp_shorten_path
         alias _lp_shorten_path=_lp_set_dirtrim
@@ -710,7 +711,7 @@ else
 fi
 
 
-# In Bash shells, PROMPT_DIRTRIM is the number of directory to keep at the end
+# In Bash shells, PROMPT_DIRTRIM is the number of directories to keep at the end
 # of the displayed path (if "\w" is present in the PS1 var).
 # Liquid Prompt can calculate this number under two conditions, path shortening
 # must be disabled and PROMPT_DIRTRIM must be already set.

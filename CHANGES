@@ -5,6 +5,9 @@
 	  LP_COLORMAP array variable. A warning will be displayed at startup
 	  if your config still uses the old variables, but a compatibility
 	  shim is active (will be removed in next release).
+	- Many LP_ENABLE_* settings are now static (their effect applies when
+	  liquidprompt is loaded, and changing them at the prompt does nothing)
+	  to more and more improve speed.
 	New features:
 	- Sudo:
 	    * The color of the prompt mark is now dynamic and changes to

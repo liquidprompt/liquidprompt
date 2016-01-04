@@ -421,16 +421,26 @@ _lp_source_config()
 _lp_source_config
 unset _lp_source_config
 
-# Disable features if the tool is not installed
-(( LP_ENABLE_GIT ))    && { command -v git  >/dev/null || LP_ENABLE_GIT=0  ; }
-(( LP_ENABLE_SVN ))    && { command -v svn  >/dev/null || LP_ENABLE_SVN=0  ; }
-(( LP_ENABLE_FOSSIL )) && { command -v fossil  >/dev/null || LP_ENABLE_FOSSIL=0  ; }
-(( LP_ENABLE_HG ))     && { command -v hg   >/dev/null || LP_ENABLE_HG=0   ; }
-(( LP_ENABLE_BZR ))    && { command -v bzr > /dev/null || LP_ENABLE_BZR=0  ; }
-case "$LP_OS" in
-    Darwin) (( LP_ENABLE_BATT )) && { command -v pmset >/dev/null || LP_ENABLE_BATT=0 ; };;
-    *)      (( LP_ENABLE_BATT )) && { command -v acpi >/dev/null || LP_ENABLE_BATT=0 ; };;
-esac
+# Disable feature if the tool is not installed
+_lp_require_tool()
+{
+    (( LP_ENABLE_$1 )) && { command -v $2 >/dev/null || eval LP_ENABLE_$1=0 ; }
+}
+
+_lp_require_tool GIT git
+_lp_require_tool SVN svn
+_lp_require_tool FOSSIL fossil
+_lp_require_tool HG hg
+_lp_require_tool BZR bzr
+
+if [[ "$LP_OS" = Darwin ]]; then
+    _lp_require_tool BATT pmset
+else
+    _lp_require_tool BATT acpi
+fi
+
+unset -f _lp_require_tool
+
 command -v screen >/dev/null ; _lp_bool _LP_ENABLE_SCREEN $?
 command -v tmux >/dev/null   ; _lp_bool _LP_ENABLE_TMUX $?
 $_LP_ENABLE_SCREEN || $_LP_ENABLE_TMUX ; _lp_bool _LP_ENABLE_DETACHED_SESSIONS $?

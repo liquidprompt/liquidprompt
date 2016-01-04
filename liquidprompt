@@ -490,11 +490,11 @@ _lp_escape()
 command -v _lp_sudo_check >/dev/null && unset -f _lp_sudo_check
 
 # Yellow for root, bold if the user is not the login one, else no color.
-if [[ "$EUID" -ne "0" ]]; then  # if user is not root
+if (( EUID != 0 )); then  # if user is not root
     # if user is not login user
-    if [[ ${USER} != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
+    if [[ "${USER}" != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
         LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-    elif [[ "${LP_USER_ALWAYS}" -ne "0" ]]; then
+    elif (( LP_USER_ALWAYS )); then
         LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
     else
         LP_USER=""
@@ -641,13 +641,13 @@ _lp_shorten_path()
     local mask="${LP_MARK_SHORTEN_PATH}"
     local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 ))
 
-    if [[ ${LP_PATH_KEEP} == -1 ]]; then
+    if (( LP_PATH_KEEP == -1 )); then
         # only show the current directory, excluding any parent dirs
         ret="${p##*/}" # discard everything up to and including the last slash
         [[ "${ret}" == "" ]] && ret="/" # if in root directory
     elif (( ${#p} <= max_len )); then
         ret="${p}"
-    elif [[ ${LP_PATH_KEEP} == 0 ]]; then
+    elif (( LP_PATH_KEEP == 0 )); then
         # len is over max len, show as much of the tail as is allowed
         ret="${p##*/}" # show at least complete current directory
         p="${p:0:${#p} - ${#ret}}"
@@ -940,7 +940,7 @@ _lp_hg_branch()
     local branch
     branch="$(hg branch 2>/dev/null)"
 
-    [[ $? -eq 0 ]] && _lp_escape "$branch"
+    (( $? == 0 )) && _lp_escape "$branch"
 }
 
 # Set a color depending on the branch state:
@@ -1038,7 +1038,7 @@ _lp_svn_branch_color()
     if [[ -n "$branch" ]]; then
         local changes
         changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
-        if [[ $changes -eq 0 ]]; then
+        if (( changes == 0 )); then
             echo -nE "${LP_COLOR_UP}${branch}${NO_COL}"
         else
             echo -nE "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
@@ -1127,7 +1127,7 @@ _lp_bzr_branch()
 
     local branch
     branch="$(bzr nick 2> /dev/null)"
-    [[ $? -ne 0 ]] && return
+    (( $? != 0 )) && return
     _lp_escape "$branch"
 }
 
@@ -1152,7 +1152,7 @@ _lp_bzr_branch_color()
 
     local output
     output="$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)"
-    [[ $? -ne 0 ]] && return
+    (( $? != 0 )) && return
     $_LP_SHELL_zsh && setopt local_options && setopt sh_word_split
     local tuple
     tuple=($output)
@@ -1163,7 +1163,7 @@ _lp_bzr_branch_color()
     local ret=
 
     if [[ -n "$branch" ]]; then
-        if [[ "$clean" -eq 0 ]]; then
+        if (( clean == 0 )); then
             ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else
             ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
@@ -1602,12 +1602,12 @@ _lp_time_analog()
 _lp_time()
 {
     (( LP_ENABLE_TIME )) || return
-    if [[ "${LP_TIME_ANALOG-}" != 1 ]]; then
-        echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
-    else
+    if (( LP_TIME_ANALOG )); then
         echo -nE "${LP_COLOR_TIME}"
         _lp_time_analog
         echo -nE "${NO_COL}"
+    else
+        echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
     fi
 }
 

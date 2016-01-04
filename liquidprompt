@@ -1611,17 +1611,24 @@ _lp_time_analog()
     fi
 }
 
-_lp_time()
-{
-    (( LP_ENABLE_TIME )) || return
+if (( LP_ENABLE_TIME )); then
     if (( LP_TIME_ANALOG )); then
-        echo -nE "${LP_COLOR_TIME}"
-        _lp_time_analog
-        echo -nE "${NO_COL}"
+        _lp_time()
+        {
+            echo -nE "${LP_COLOR_TIME}"
+            _lp_time_analog
+            echo -nE "${NO_COL}"
+        }
     else
-        echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        _lp_time()
+        {
+            echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        }
     fi
-}
+else
+    _lp_time() { : ; }
+fi
+
 
 ########################
 # Construct the prompt #

@@ -269,7 +269,8 @@ _lp_source_config()
     local hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
     LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}"
 
-    unset ti_sgr0 ti_bold ti_setaf ti_setab
+    unset ti_sgr0 ti_bold
+    unset -f ti_setaf ti_setab
 
 
     # Default values (globals)
@@ -419,7 +420,7 @@ _lp_source_config()
 }
 # do source config files
 _lp_source_config
-unset _lp_source_config
+unset -f _lp_source_config
 
 # Disable feature if the tool is not installed
 _lp_require_tool()
@@ -621,7 +622,7 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
 fi
 
 # Useless now, so undefine
-unset _lp_connection
+unset -f _lp_connection
 
 
 _lp_get_home_tilde_collapsed()
@@ -1479,7 +1480,8 @@ if (( LP_ENABLE_TEMP )); then
             $_LP_TEMP_FUNCTION 2>/dev/null
             # If $temperature is set, success!
             [[ -n "$temperature" ]] && return 0
-            unset $_LP_TEMP_FUNCTION _LP_TEMP_FUNCTION
+            unset -f $_LP_TEMP_FUNCTION
+            unset _LP_TEMP_FUNCTION
         done
         return 1
     }
@@ -1487,7 +1489,7 @@ if (( LP_ENABLE_TEMP )); then
     # Try each _lp_temp method
     # If no function worked, disable the feature
     _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
-    unset _lp_temp_detect
+    unset -f _lp_temp_detect
 fi
 
 

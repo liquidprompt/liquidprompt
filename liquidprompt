@@ -1611,21 +1611,20 @@ _lp_time_analog()
     fi
 }
 
+# LP_TIME is set colored, with a space on the right side
 if (( LP_ENABLE_TIME )); then
     if (( LP_TIME_ANALOG )); then
         _lp_time()
         {
-            echo -nE "${LP_COLOR_TIME}"
-            _lp_time_analog
-            echo -nE "${NO_COL}"
+            LP_TIME="${LP_COLOR_TIME}$(_lp_time_analog)${NO_COL} "
         }
     else
-        _lp_time()
-        {
-            echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
-        }
+        # Never changes
+        LP_TIME="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL} "
+        _lp_time() { : ; }
     fi
 else
+    LP_TIME=""
     _lp_time() { : ; }
 fi
 
@@ -1663,7 +1662,7 @@ _lp_set_prompt()
     LP_TEMP="$(_lp_sr "$(_lp_temperature)")"
     LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
     LP_BATT="$(_lp_sr "$(_lp_battery_color)")"
-    LP_TIME="$(_lp_sr "$(_lp_time)")"
+    _lp_time
     _lp_sudo_check
 
     # in main prompt: no space

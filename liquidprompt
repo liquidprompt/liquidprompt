@@ -1592,8 +1592,13 @@ if (( LP_ENABLE_TIME )); then
 
         _lp_time()
         {
-            # hh: 01..12  mm: 00..59
-            local -i $(date "+hh=%I mm=%M") clock
+            # %I: "00".."12"  %M: "00".."59"
+            # Bash interprets a '0' prefix as octal
+            # so we have to clean that
+            local hhmm="$(date "+hh=%I mm=%M")"
+            # hh:  1..12  mm: 0..59
+            local -i hh mm clock
+            eval ${hhmm//=0/=}  # Line split for zsh
             # clock: 0 .. 25
             #   1:00..1:14 -> 0
             #   1:15..1:44 -> 1

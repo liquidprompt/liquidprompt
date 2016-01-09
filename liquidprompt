@@ -1752,9 +1752,6 @@ _lp_set_prompt()
         # end of the prompt line: double spaces
         LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
 
-        # The color is different if user is root
-        LP_PWD="${LP_COLOR_PATH}${LP_PWD}${NO_COL}"
-
         LP_OLD_PWD="LP:$PWD"
 
     # if do not change of working directory but...

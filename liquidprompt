@@ -1577,51 +1577,52 @@ _lp_sb()
 ###################
 # CURRENT TIME    #
 ###################
-_lp_time_analog()
-{
-    # get the date as "hours(12) minutes" in a single call
-    # make a bash array with it
-    local -a d
-    d=( $(date "+%I %M") )
-    # separate hours and minutes
-    local -i hour=${d[_LP_FIRST_INDEX+0]#0} # no leading 0
-    local -i min=${d[_LP_FIRST_INDEX+1]#0}
 
-    # The targeted unicode characters are the "CLOCK FACE" ones
-    # They are located in the codepages between:
-    #     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
-    #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
-    #
-
-    local -a plain
-    plain=(🕐 🕑 🕒 🕓 🕔 🕕 🕖 🕗 🕘 🕙 🕚 🕛 )
-    local -a half
-    half=(🕜 🕝 🕞 🕟 🕠 🕡 🕢 🕣 🕤 🕥 🕦 🕧 )
-
-    # "date %I" returns a number between 1 and 12 and we want 12 to be 0.
-    local -i hi=$(( hour % 12 + _LP_FIRST_INDEX))
-
-    # add a space for correct alignment
-    if (( min < 15 )); then
-        echo -nE "${plain[hi]} "
-    elif (( min < 45 )); then
-        echo -nE "${half[hi]} "
-    else
-        echo -nE "${plain[hi+1]} "
-    fi
-}
-
-_lp_time()
-{
-    (( LP_ENABLE_TIME )) || return
+# LP_TIME is set colored, with a space on the right side
+if (( LP_ENABLE_TIME )); then
     if (( LP_TIME_ANALOG )); then
-        echo -nE "${LP_COLOR_TIME}"
-        _lp_time_analog
-        echo -nE "${NO_COL}"
+        typeset -i _LP_CLOCK_PREV=-1
+        # The targeted unicode characters are the "CLOCK FACE" ones
+        # They are located in the codepages between:
+        #     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
+        #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
+        # Generated with:
+        # perl -C -E 'say join("", map {chr(0x1F550+$_)." ".chr(0x1F55C+$_)." "} 0..11)'
+        _LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢 🕗 🕣 🕘 🕤 🕙 🕥 🕚 🕦 🕛 🕧 )
+
+        _lp_time()
+        {
+            # %I: "00".."12"  %M: "00".."59"
+            # Bash interprets a '0' prefix as octal
+            # so we have to clean that
+            local hhmm="$(date "+hh=%I mm=%M")"
+            # hh:  1..12  mm: 0..59
+            local -i hh mm clock
+            eval ${hhmm//=0/=}  # Line split for zsh
+            # clock: 0 .. 25
+            #   1:00..1:14 -> 0
+            #   1:15..1:44 -> 1
+            #   1:45..2:15 -> 2
+            #   ...
+            #   12:15..12:44 -> 23
+            #   12:45..12:59 -> 0
+            if (( ( clock=((hh*60+mm-45)/30)%24 ) != _LP_CLOCK_PREV )); then
+                # There is a space just after the clock char because the glyph
+                # width is twice usual glyphs
+                LP_TIME="${LP_COLOR_TIME}${_LP_CLOCK[clock+_LP_FIRST_INDEX]} ${NO_COL} "
+                _LP_CLOCK_PREV=clock
+            fi
+        }
     else
-        echo -nE "${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+        # Never changes
+        LP_TIME="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL} "
+        _lp_time() { : ; }
     fi
-}
+else
+    LP_TIME=""
+    _lp_time() { : ; }
+fi
+
 
 ########################
 # Construct the prompt #
@@ -1656,7 +1657,7 @@ _lp_set_prompt()
     LP_TEMP="$(_lp_sr "$(_lp_temperature)")"
     LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
     LP_BATT="$(_lp_sr "$(_lp_battery_color)")"
-    LP_TIME="$(_lp_sr "$(_lp_time)")"
+    _lp_time
     _lp_sudo_check
 
     # in main prompt: no space

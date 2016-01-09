@@ -67,7 +67,9 @@
 	- Sample configuration files:
 	    * example.bashrc: major fixes
 	- The last statement of liquidprompt did not return 0 (GitHub #360,#361)
-	- Analog clock: fix the first hour after midnight on zsh (GitHub #365)
+	- Analog clock:
+	    * complete rewrite for speed and correctness (GitHub #365 and other
+	      issues)
 	- Documentation:
 	    * Many small fixes
 	- Move dist/ to contrib/dist/ as files there are unmaintained

@@ -1255,19 +1255,19 @@ case "$LP_OS" in
         # If we found a "defect" state, i.e. a battery reading was empty
         if [[ ${bat_states[(i)defect]} -le $#bat_states ]]; then
             return 4;
-        elif [[ $#bat_states*$#bat_states -ne $#bat_states+$#bat_levels+$#bat_capacity ]]; then
+        elif [[ $#bat_states*3 -ne $#bat_states+$#bat_levels+$#bat_capacity ]]; then
             # The battery levels, states or capacities are not present in the same amount.
             # Should not happen.
             return 4;
         else
             # No defect detected; sum up and put out state.
-            local $fullcapacity=0
-            local $currentcapacity=0
+            local fullcapacity=0
+            local currentcapacity=0
 
             # Add up current and last full capacities.
             for (( i = 1; i <= $#bat_states; i++ )); do
-                (($currentcapacity+=$bat_level[$i]*$bat_capacity[$i]))
-                (($fullcapacity+=$bat_capacity[$i]))
+                ((currentcapacity+=$bat_levels[$i] * $bat_capacity[$i]))
+                ((fullcapacity+=$bat_capacity[$i]))
             done
 
             # Calculate percentage of full.

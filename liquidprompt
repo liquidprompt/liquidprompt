@@ -45,6 +45,7 @@
 # Poil              <poil@quake.fr>               # Speed improvements
 # Rolf Morel        <rolfmorel@gmail.com>         # "Shorten path" refactoring and fixes
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
+# Tobias Wolter     <towo@towo.eu>                # Battery level from multiple batteries.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
 # Austen Adler      <stonewareslord@gmail.com>    # ZSH runtime
 
@@ -1210,26 +1211,96 @@ case "$LP_OS" in
     {
         (( LP_ENABLE_BATT )) || return 4
         local acpi
-        acpi="$(acpi --battery 2>/dev/null)"
-        # Extract the battery load value in percent
-        # First, remove the beginning of the line...
-        local bat="${acpi#Battery *, }"
-        bat="${bat%%%*}" # remove everything starting at '%'
+        acpi="$(acpi --battery --details 2>/dev/null)"
 
-        if [[ -z "${bat}" ]]; then
-            # no battery level found
-            return 4
-        fi
-        echo -nE "$bat"
-        # discharging
-        if [[ "$acpi" == *"Discharging"* ]]; then
-            # under => 0, above => 1
-            return $(( bat > LP_BATTERY_THRESHOLD ))
-        # charging
+        # Define some arrays to house our variables.
+        typeset -a bat_levels
+        typeset -a bat_states
+        typeset -a bat_capacity
+
+        echo $acpi | while read line; do
+            if [[ "$line" == *"design capacity"* ]]; then
+                # extract design capacity to accurately calculate power levels
+                local cap=${line#Battery * last full capacity }
+                cap="${cap% mAh*}";
+
+                if [[ -z "${cap}" ]]; then
+                    # This shouldn't happen.
+                    bat_capacity=+( defect );
+                else
+                    bat_capacity+=( $cap );
+                fi
+            else
+                # normal battery state line
+                local bat="${line#Battery *, }"
+                bat="${bat%%%*}" # remove everything starting at '%'
+
+                if [[ -z "${bat}" ]] ; then
+                    bat_levels+=( 0 )
+                    bat_states+=( defect )
+
+                # discharging
+                elif [[ "$line" == *"Discharging"* ]] ; then
+                    bat_levels+=( $bat )
+                    bat_states+=( discharging )
+
+                # charging, or unknown, which is usually charging
+                else
+                    bat_levels+=( $bat )
+                    bat_states+=( charging )
+                fi
+            fi
+        done
+
+        # If we found a "defect" state, i.e. a battery reading was empty
+        if [[ ${bat_states[(i)defect]} -le $#bat_states ]]; then
+            return 4;
+        elif [[ $#bat_states*$#bat_states -ne $#bat_states+$#bat_levels+$#bat_capacity ]]; then
+            # The battery levels, states or capacities are not present in the same amount.
+            # Should not happen.
+            return 4;
         else
-            # under => 2, above => 3
-            return $(( 1 + ( bat > LP_BATTERY_THRESHOLD ) ))
+            # No defect detected; sum up and put out state.
+            local $fullcapacity=0
+            local $currentcapacity=0
+
+            # Add up current and last full capacities.
+            for (( i = 1; i <= $#bat_states; i++ )); do
+                (($currentcapacity+=$bat_level[$i]*$bat_capacity[$i]))
+                (($fullcapacity+=$bat_capacity[$i]))
+            done
+
+            # Calculate percentage of full.
+            local percents=$(echo "scale = 2; $currentcapacity / $fullcapacity * 100" | bc);
+            percents=${percents%.*};
+
+            # Output our result.
+            echo -n "${percents}";
+
+            # Caveat: if we get the especially weird state of some batteries charging, some discharging,
+            # it will just show as discharging. That should normally not be an issue.
+            if [[ ${percents} -le $LP_BATTERY_THRESHOLD ]]; then
+                # below threshold
+                if [[ ${bat_states[(i)discharging]} -le $#bat_states ]]; then
+                    # discharging
+                    return 0;
+                else
+                    #charging
+                    return 2;
+                fi
+            else
+                # above threshold
+                if [[ ${bat_states[(i)discharging]} -le $#bat_states ]]; then
+                    # discharging
+                    return 1;
+                else
+                    # charging
+                    return 3;
+                fi
+            fi
+>>>>>>> b40cde4... Calculate percentage from multiple batteries
         fi
+
     }
     ;;
     Darwin)

@@ -1299,7 +1299,6 @@ case "$LP_OS" in
                     return 3;
                 fi
             fi
->>>>>>> b40cde4... Calculate percentage from multiple batteries
         fi
 
     }

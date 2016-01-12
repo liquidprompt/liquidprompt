@@ -1826,6 +1826,16 @@ prompt_on()
             LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND="$(whence -f precmd)"
+            _LP_OLD_SETOPT=()
+            # Dump option names: echo ${(ko)options}
+            for o in promptpercent promptbang promptsubst
+            do
+                if [[ "${options[$o]}" = on ]]; then
+                    _LP_OLD_SETOPT+=$o
+                else
+                    _LP_OLD_SETOPT+=no$o
+                fi
+            done
         fi
     fi
     if $_LP_SHELL_bash; then
@@ -1833,6 +1843,8 @@ prompt_on()
         PROMPT_COMMAND=_lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
+        # Set options that affect PS1 evaluation
+        setopt promptpercent nopromptbang nopromptsubst
         # That doesn't seem to work: no time output
         #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {
@@ -1854,6 +1866,7 @@ prompt_off()
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd _lp_set_prompt
+        setopt ${_LP_OLD_SETOPT}
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
@@ -1867,6 +1880,7 @@ prompt_OFF()
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd _lp_set_prompt
+        setopt promptpercent nopromptbang nopromptsubst
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }

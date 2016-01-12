@@ -32,6 +32,9 @@
 	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
           removed to simplify the code (GitHub #371)
 	Bug fixes:
+	- Fix escaping of special chars from $PWD (well, almost, see GitHub
+	  #389) and explicitely set the shell options we need (instead of
+	  relying on the shell default settings)
 	- Git:
 	    * Fix typo in git work directory detection
 	- Fossil:

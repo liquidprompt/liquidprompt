@@ -85,8 +85,7 @@ if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     # like $PWD, VCS branch names...
     _lp_escape()
     {
-        arg="${1//\\/\\\\}"
-        echo -nE "${arg//\$/\\\$}"
+        echo -nE "${1//\\/\\\\}"
     }
 
     # Disable the DEBUG trap used by the RUNTIME feature
@@ -1839,7 +1838,7 @@ prompt_on()
         fi
     fi
     if $_LP_SHELL_bash; then
-        shopt -s promptvars
+        shopt -u promptvars
         PROMPT_COMMAND=_lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh

@@ -79,6 +79,15 @@ if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
     _LP_BACKSLASH='\\' # must be escaped on bash
+
+    # Escape the given strings
+    # Must be used for all strings injected in PS1 that may comes from remote sources,
+    # like $PWD, VCS branch names...
+    _lp_escape()
+    {
+        echo -nE "${1//\\/\\\\}"
+    }
+
     # Disable the DEBUG trap used by the RUNTIME feature
     # (in case we are reloading LP in the same shell after disabling
     # the feature in .liquidpromptrc)
@@ -101,6 +110,12 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
     _LP_BACKSLASH="\\"
+
+    _lp_escape()
+    {
+        arg="${1//\\/\\\\}"
+        echo -nE "${arg//\%/$_LP_PERCENT}"
+    }
 
     # For ZSH, autoload required functions
     autoload -Uz add-zsh-hook
@@ -486,14 +501,6 @@ LP_PERM=:   # without color
 LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
 
 
-# Escape the given strings
-# Must be used for all strings that may comes from remote sources,
-# like VCS branch names
-_lp_escape()
-{
-    printf "%q" "$*"
-}
-
 
 ###############
 # Who are we? #
@@ -694,11 +701,7 @@ _lp_shorten_path()
         fi
     fi
     # Escape special chars
-    if $_LP_SHELL_bash; then
-        LP_PWD="${LP_COLOR_PATH}${ret//\\/\\\\}$NO_COL"
-    else # zsh
-        LP_PWD="${LP_COLOR_PATH}${ret//\%/%%}$NO_COL"
-    fi
+    LP_PWD="${LP_COLOR_PATH}$(_lp_escape "$ret")$NO_COL"
 }
 
 if (( LP_ENABLE_SHORTEN_PATH )); then
@@ -1822,13 +1825,25 @@ prompt_on()
             LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND="$(whence -f precmd)"
+            _LP_OLD_SETOPT=()
+            # Dump option names: echo ${(ko)options}
+            for o in promptpercent promptbang promptsubst
+            do
+                if [[ "${options[$o]}" = on ]]; then
+                    _LP_OLD_SETOPT+=$o
+                else
+                    _LP_OLD_SETOPT+=no$o
+                fi
+            done
         fi
     fi
     if $_LP_SHELL_bash; then
-        shopt -s promptvars
+        shopt -u promptvars
         PROMPT_COMMAND=_lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
+        # Set options that affect PS1 evaluation
+        setopt promptpercent nopromptbang nopromptsubst
         # That doesn't seem to work: no time output
         #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {
@@ -1850,6 +1865,7 @@ prompt_off()
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd _lp_set_prompt
+        setopt ${_LP_OLD_SETOPT}
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
@@ -1857,12 +1873,13 @@ prompt_off()
 # Use an empty prompt: just the \$ mark
 prompt_OFF()
 {
-    PS1="\$ "
+    PS1="$_LP_MARK_SYMBOL "
     if $_LP_SHELL_bash; then
         shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd _lp_set_prompt
+        setopt promptpercent nopromptbang nopromptsubst
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }

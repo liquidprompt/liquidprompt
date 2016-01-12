@@ -1873,7 +1873,7 @@ prompt_off()
 # Use an empty prompt: just the \$ mark
 prompt_OFF()
 {
-    PS1="\$ "
+    PS1="$_LP_MARK_SYMBOL "
     if $_LP_SHELL_bash; then
         shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"

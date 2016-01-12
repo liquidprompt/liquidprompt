@@ -1200,6 +1200,7 @@ _lp_wifi()
 ##################
 
 # Get the battery status in percent
+# Some minor rounding errors may occur.
 # returns 0 (and battery level) if battery is discharging and under threshold
 # returns 1 (and battery level) if battery is discharging and above threshold
 # returns 2 (and battery level) if battery is charging but under threshold
@@ -1266,7 +1267,7 @@ case "$LP_OS" in
 
             # Add up current and last full capacities.
             for (( i = 1; i <= $#bat_states; i++ )); do
-                ((currentcapacity+=$bat_levels[$i] * $bat_capacity[$i]))
+                ((currentcapacity+=$(echo "scale = 2; $bat_levels[$i] / 100 * $bat_capacity[$i]" | bc)))
                 ((fullcapacity+=$bat_capacity[$i]))
             done
 

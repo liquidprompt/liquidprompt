@@ -119,6 +119,14 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     # For ZSH, autoload required functions
     autoload -Uz add-zsh-hook
+
+    # Disable previous hooks as options that set them
+    # may have changed
+    {
+        add-zsh-hook -d precmd  _lp_set_prompt
+        add-zsh-hook -d preexec _lp_runtime_before
+        add-zsh-hook -d precmd  _lp_runtime_after
+    } >/dev/null
 else
     echo "liquidprompt: shell not supported" >&2
     return

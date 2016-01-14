@@ -1833,6 +1833,12 @@ prompt_on()
             LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND="$(whence -f precmd)"
+            _LP_ZSH_PROMPT_THEME=""
+            if [[ -n "$prompt_theme" && "$prompt_theme" != off ]]; then
+                _LP_ZSH_PROMPT_THEME="$prompt_theme"
+                # Disable the prompt to disable its precmd hook
+                prompt off
+            fi
             _LP_OLD_SETOPT=()
             # Dump option names: echo ${(ko)options}
             for o in promptpercent promptbang promptsubst
@@ -1877,6 +1883,7 @@ prompt_off()
     else # zsh
         add-zsh-hook -d precmd $_LP_ZSH_HOOK
         setopt ${_LP_OLD_SETOPT}
+        (( ${#_LP_ZSH_PROMPT_THEME} )) && prompt $_LP_ZSH_PROMPT_THEME
         eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }

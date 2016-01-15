@@ -1852,12 +1852,14 @@ prompt_on()
         fi
     fi
     if $_LP_SHELL_bash; then
+        # Disable parameter/command expansion from PS1
         shopt -u promptvars
         PROMPT_COMMAND=_lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
         [[ -n "$_LP_ZSH_HOOK" ]] && add-zsh-hook -d precmd $_LP_ZSH_HOOK
         # Set options that affect PS1 evaluation
+        # Disable parameter/command expansion; enable percent expansion
         setopt promptpercent nopromptbang nopromptsubst
         # 'time' doesn't seem to work on shell functions: no time output
         #if (( LP_DEBUG_TIME )); then

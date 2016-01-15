@@ -1830,7 +1830,7 @@ prompt_on()
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
-            LP_OLD_SHOPT="$(shopt -p promptvars)"
+            _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND="$(whence -f precmd)"
             _LP_ZSH_PROMPT_THEME=""
@@ -1878,7 +1878,7 @@ prompt_off()
 {
     PS1=$LP_OLD_PS1
     if $_LP_SHELL_bash; then
-        eval "$LP_OLD_SHOPT"
+        eval "$_LP_OLD_SHOPT"
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd $_LP_ZSH_HOOK

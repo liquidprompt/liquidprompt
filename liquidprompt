@@ -1656,12 +1656,8 @@ _lp_set_prompt()
     local IFS="$_LP_IFS"
     local GREP_OPTIONS=
 
-    # execute the old prompt
-    if $_LP_SHELL_bash; then
-        eval "$LP_OLD_PROMPT_COMMAND"
-    else # zsh
-        eval "${${LP_OLD_PROMPT_COMMAND#*$'\n'}%$'\n'*}"
-    fi
+    # bash: execute the old prompt hook
+    eval "$LP_OLD_PROMPT_COMMAND"
 
     # left of main prompt: space at right
     LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"
@@ -1832,7 +1828,7 @@ prompt_on()
             LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
             _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
-            LP_OLD_PROMPT_COMMAND="$(whence -f precmd)"
+            LP_OLD_PROMPT_COMMAND=""
             _LP_ZSH_PROMPT_THEME=""
             if [[ -n "$prompt_theme" && "$prompt_theme" != off ]]; then
                 _LP_ZSH_PROMPT_THEME="$prompt_theme"
@@ -1886,7 +1882,6 @@ prompt_off()
         add-zsh-hook -d precmd $_LP_ZSH_HOOK
         setopt ${_LP_OLD_SETOPT}
         (( ${#_LP_ZSH_PROMPT_THEME} )) && prompt $_LP_ZSH_PROMPT_THEME
-        eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
 
@@ -1900,7 +1895,6 @@ prompt_OFF()
     else # zsh
         add-zsh-hook -d precmd $_LP_ZSH_HOOK
         setopt promptpercent nopromptbang nopromptsubst
-        eval "$LP_OLD_PROMPT_COMMAND"
     fi
 }
 

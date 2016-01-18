@@ -415,11 +415,21 @@ _lp_source_config()
 
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
+
+    local search
+    # leading ":" is so we can rely on ${search%:*} removing something
+    search=":${XDG_CONFIG_HOME:-"$HOME/.config"}:${XDG_CONFIG_DIRS:-/etc/xdg}"
+
+    while [[ -n "$search" ]]; do
+        last="${search##*:}"
+        if [[ -n "$last" ]] && [[ -f "$last/liquidpromptrc" ]]; then
+            source "$last/liquidpromptrc"
+        fi
+        search="${search%:*}"
+    done
+
     if [[ -f "$HOME/.liquidpromptrc" ]]; then
         source "$HOME/.liquidpromptrc"
-    else
-        local configfile="${XDG_CONFIG_HOME:-$HOME/.config}/liquidpromptrc"
-        [[ -f "$configfile" ]] && source "$configfile"
     fi
 
     # Delete this code in version 1.11
@@ -439,7 +449,6 @@ _lp_source_config()
         )
         unset LP_COLORMAP_0 LP_COLORMAP_1 LP_COLORMAP_2 LP_COLORMAP_3 LP_COLORMAP_4 \
               LP_COLORMAP_5 LP_COLORMAP_6 LP_COLORMAP_7 LP_COLORMAP_8 LP_COLORMAP_9
-    fi
 }
 # do source config files
 _lp_source_config

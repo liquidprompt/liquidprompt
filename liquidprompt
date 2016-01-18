@@ -1077,7 +1077,7 @@ _lp_fossil_branch()
     (( LP_ENABLE_FOSSIL )) || return
     local branch
     branch=$(fossil status 2>/dev/null | sed -n $_LP_SED_EXTENDED 's/tags:[ ]*\(\w*\)$/\1/p')
-    if [ -n "$branch" ]; then
+    if [[ -n "$branch" ]]; then
         echo -nE "$branch"
     elif fossil info &>/dev/null ; then
         echo -n "no-tag"
@@ -1099,7 +1099,7 @@ _lp_fossil_branch_color()
     local branch
     branch="$(_lp_fossil_branch)"
 
-    if [ -n "$branch" ]; then
+    if [[ -n "$branch" ]]; then
         local -i C2E # Modified files (added or edited)
         local C2A # Extras files
         local ret

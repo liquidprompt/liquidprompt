@@ -46,7 +46,7 @@ How to do the right thing?
 
     # Push your commits
     $ git push github fix/my-fix
-    $ git push github fix/my-feature
+    $ git push github feature/my-feature
 
     # Create the pull request on GitHub. Check that Github chose the `develop`
     # branch as the starting point for your branch.

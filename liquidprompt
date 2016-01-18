@@ -777,10 +777,10 @@ _lp_jobcount_color()
 {
     (( LP_ENABLE_JOBS )) || return
 
-    local m_stop="z"
-    local m_run="&"
-    local ret=
+    local ret=""
+    local -i r s
 
+    # Count detached sessions
     if (( _LP_ENABLE_DETACHED_SESSIONS )); then
         local -i detached=0
         (( _LP_ENABLE_SCREEN )) && detached=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
@@ -788,16 +788,16 @@ _lp_jobcount_color()
         (( detached > 0 )) && ret+="${LP_COLOR_JOB_D}${detached}d${NO_COL}"
     fi
 
-    local running=$(( $(jobs -r | wc -l) ))
-    if [[ $running != 0 ]]; then
+    # Count running jobs
+    if (( r = $(jobs -r | wc -l) )); then
         [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        ret+="${LP_COLOR_JOB_R}${r}&${NO_COL}"
     fi
 
-    local stopped=$(( $(jobs -s | wc -l) ))
-    if [[ $stopped != 0 ]]; then
+    # Count stopped jobs
+    if (( s = $(jobs -s | wc -l) )); then
         [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        ret+="${LP_COLOR_JOB_Z}${s}z${NO_COL}"
     fi
 
     echo -nE "$ret"

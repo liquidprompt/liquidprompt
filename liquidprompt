@@ -612,7 +612,7 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     case "$(_lp_connection)" in
     lcl)
         if (( LP_HOSTNAME_ALWAYS )); then
-            LP_HOST="${LP_HOST}${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+            LP_HOST+="${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
         else
             # FIXME do we want to display the chroot if local?
             LP_HOST="" # no hostname if local
@@ -621,16 +621,16 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     ssh)
         # If we want a different color for each host
         (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-        LP_HOST="${LP_HOST}${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     su)
-        LP_HOST="${LP_HOST}${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     tel)
-        LP_HOST="${LP_HOST}${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     *)
-        LP_HOST="${LP_HOST}${_LP_HOST_SYMBOL}" # defaults to no color
+        LP_HOST+="${_LP_HOST_SYMBOL}" # defaults to no color
         ;;
     esac
 
@@ -690,12 +690,12 @@ _lp_shorten_path()
             local left="${p#*/}"
             local name="${p:0:${#p} - ${#left}}"
             p="${left}"
-            ret="${ret}${name%/}/"
+            ret+="${name%/}/"
         done
 
         if (( delims <= LP_PATH_KEEP )); then
             # no dirs between LP_PATH_KEEP leading dirs and current dir
-            ret="${ret}${p##*/}"
+            ret+="${p##*/}"
         else
             local base="${p##*/}"
 
@@ -705,7 +705,7 @@ _lp_shorten_path()
 
             local -i len_left=$(( max_len - ${#ret} - ${#base} - ${#mask} ))
 
-            ret="${ret}${mask}${p:${#p} - ${len_left}}${base}"
+            ret+="${mask}${p:${#p} - ${len_left}}${base}"
         fi
     fi
     # Escape special chars
@@ -781,19 +781,19 @@ _lp_jobcount_color()
         local -i detached=0
         $_LP_ENABLE_SCREEN && let detached=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
         $_LP_ENABLE_TMUX && let detached+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
-        (( detached > 0 )) && ret="${ret}${LP_COLOR_JOB_D}${detached}d${NO_COL}"
+        (( detached > 0 )) && ret+="${LP_COLOR_JOB_D}${detached}d${NO_COL}"
     fi
 
     local running=$(( $(jobs -r | wc -l) ))
     if [[ $running != 0 ]]; then
-        [[ -n "$ret" ]] && ret="${ret}/"
-        ret="${ret}${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
+        [[ -n "$ret" ]] && ret+='/'
+        ret+="${LP_COLOR_JOB_R}${running}${m_run}${NO_COL}"
     fi
 
     local stopped=$(( $(jobs -s | wc -l) ))
     if [[ $stopped != 0 ]]; then
-        [[ -n "$ret" ]] && ret="${ret}/"
-        ret="${ret}${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
+        [[ -n "$ret" ]] && ret+='/'
+        ret+="${LP_COLOR_JOB_Z}${stopped}${m_stop}${NO_COL}"
     fi
 
     echo -nE "$ret"
@@ -1328,7 +1328,7 @@ _lp_battery_color()
                 idx=0
             fi
 
-            res="${res}${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
+            res+="${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
         fi # LP_PERCENTS_ALWAYS
         echo -nE "${res}"
     fi
@@ -1434,7 +1434,7 @@ _lp_load_color()
         local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if (( LP_PERCENTS_ALWAYS )); then
-            ret="${ret}${load}${_LP_PERCENT}"
+            ret+="${load}${_LP_PERCENT}"
         fi
         echo -nE "${ret}${NO_COL}"
     fi
@@ -1782,17 +1782,17 @@ _lp_set_prompt()
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host and permissions colon
-        PS1="${PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
+        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1="${PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
         # is set.
-        PS1="${PS1}${LP_VCS}"
+        PS1+="${LP_VCS}"
 
         # add return code and prompt mark
-        PS1="${PS1}${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

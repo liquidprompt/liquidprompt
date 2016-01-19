@@ -85,7 +85,7 @@ if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     # like $PWD, VCS branch names...
     _lp_escape()
     {
-        echo -nE "${1//\\/\\\\}"
+        echo -nE "${1//\\/\\\\}"      #"}" # workaround vim syntax
     }
 
     # Disable the DEBUG trap used by the RUNTIME feature
@@ -113,7 +113,7 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _lp_escape()
     {
-        arg="${1//\\/\\\\}"
+        arg="${1//\\/\\\\}"                  #"}" # workaround vim syntax
         echo -nE "${arg//\%/$_LP_PERCENT}"
     }
 

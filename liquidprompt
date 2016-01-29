@@ -1569,6 +1569,11 @@ _lp_set_prompt()
     else
         LP_VENV=
     fi
+    if [[ "$LP_ENABLE_VIRTUALENV,$CONDA_DEFAULT_ENV" = 1,?* ]] ; then
+        LP_VENV=" [${LP_COLOR_VIRTUALENV}${CONDA_DEFAULT_ENV##*/}${NO_COL}]"
+    else
+        LP_VENV=
+    fi
 
     # Display the current software collections enabled, if available
     if [[ "$LP_ENABLE_SCLS,$X_SCLS" = 1,?* ]] ; then

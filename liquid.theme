@@ -73,6 +73,7 @@ LP_COLOR_ERR="$PURPLE"
 # Prompt mark
 LP_COLOR_MARK="$BOLD"     # as user
 LP_COLOR_MARK_ROOT="$BOLD_RED"  # as root
+LP_COLOR_MARK_SUDO="$BOLD_RED"  # when sudo credentials are cached
 
 # Current user
 LP_COLOR_USER_LOGGED=""           # user who logged in
@@ -92,10 +93,11 @@ LP_COLOR_WRITE="$GREEN"  # have write permission
 LP_COLOR_NOWRITE="$RED"  # do not have write permission
 
 # VCS
-LP_COLOR_UP="$GREEN"        # repository is up to date / a push have been made
-LP_COLOR_COMMITS="$YELLOW"  # some commits have not been pushed
-LP_COLOR_CHANGES="$RED"     # there is some changes to commit
-LP_COLOR_DIFF="$PURPLE"     # number of lines impacted by current changes
+LP_COLOR_UP="$GREEN"                # repository is up to date / a push have been made
+LP_COLOR_COMMITS="$YELLOW"          # some commits have not been pushed
+LP_COLOR_COMMITS_BEHIND="$BOLD_RED" # some commits have not been pushed
+LP_COLOR_CHANGES="$RED"             # there is some changes to commit
+LP_COLOR_DIFF="$PURPLE"             # number of lines impacted by current changes
 
 # Battery
 LP_COLOR_CHARGING_ABOVE="$GREEN"      # charging and above threshold
@@ -115,17 +117,19 @@ LP_COLOR_VIRTUALENV="$CYAN"
 # Runtime
 LP_COLOR_RUNTIME="$YELLOW"
 
-# Color maps (battery and load levels)
+# Color map (for battery and load levels, and temperature)
 # Range from 0 (nothing special) to 9 (alert)
-LP_COLORMAP_0=""
-LP_COLORMAP_1="$GREEN"
-LP_COLORMAP_2="$BOLD_GREEN"
-LP_COLORMAP_3="$YELLOW"
-LP_COLORMAP_4="$BOLD_YELLOW"
-LP_COLORMAP_5="$RED"
-LP_COLORMAP_6="$BOLD_RED"
-LP_COLORMAP_7="$WARN_RED"
-LP_COLORMAP_8="$CRIT_RED"
-LP_COLORMAP_9="$DANGER_RED"
+LP_COLORMAP=(
+    ""
+    "$GREEN"
+    "$BOLD_GREEN"
+    "$YELLOW"
+    "$BOLD_YELLOW"
+    "$RED"
+    "$BOLD_RED"
+    "$WARN_RED"
+    "$CRIT_RED"
+    "$DANGER_RED"
+)
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

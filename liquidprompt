@@ -418,7 +418,7 @@ _lp_source_config()
     if [[ -f "$HOME/.liquidpromptrc" ]]; then
         source "$HOME/.liquidpromptrc"
     else
-        local configfile="${XDG_HOME_DIR:-$HOME/.config}/liquidpromptrc"
+        local configfile="${XDG_CONFIG_HOME:-$HOME/.config}/liquidpromptrc"
         [[ -f "$configfile" ]] && source "$configfile"
     fi
 

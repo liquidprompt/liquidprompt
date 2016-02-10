@@ -32,6 +32,7 @@
 	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
           removed to simplify the code (GitHub #371)
 	Bug fixes:
+	- Use $XDG_CONFIG_HOME to locate the config (GitHub #415, #420)
 	- Improved zsh integration (but most issues had no impact of the
 	  user experience)
 	- Fix escaping of special chars from $PWD (well, almost, see GitHub

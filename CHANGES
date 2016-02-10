@@ -21,7 +21,8 @@
 	      detect if the user has sudo rights without triggering a security
 	      alert that will annoy the sysadmin.
 	- Git:
-	    * Also show the number of commits behind the remote (GitHub #269)
+	    * Show the number of commits behind the remote (GitHub #269)
+	    * Show the rebasing/merging/cherry-picking state (GitHub #409)
 	- Add variable LP_TTYN: the basename of the terminal (GitHub #357)
 	- Add setting LP_ENABLE_FQDN to show the fully qualified domain name
 	  of the host (GitHub #254, #277)
@@ -93,7 +94,8 @@
 	(@hcgraf), William P. Riley-Land (@wprl), Dave Rigby (@daverigby),
 	Ned Batchelder (@nedbat), Fabien Marty (@thefab), Alessio Garzi
 	(@Ozzyboshi), Roger Huang (@rhuang2014), Sebastian Bremicker
-	(@sebrem), Alex Prengere ()...
+	(@sebrem), Alex Prengere (@alexprengere), Philipp Grogg (@grog-gg),
+	Tener Hades (@tenerhades)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

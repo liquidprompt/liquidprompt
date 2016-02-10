@@ -841,6 +841,21 @@ _lp_git_branch()
     fi
 }
 
+
+# Display additional information if HEAD is in merging, rebasing
+# or cherry-picking state
+_lp_git_head_status() {
+    local gitdir
+    gitdir="$(\git rev-parse --git-dir 2>/dev/null)"
+    if [[ -f "${gitdir}/MERGE_HEAD" ]]; then
+        echo " MERGING"
+    elif [[ -d "${gitdir}/rebase-apply" || -d "${gitdir}/rebase-merge" ]]; then
+        echo " REBASING"
+    elif [[ -f "${gitdir}/CHERRY_PICK_HEAD" ]]; then
+        echo " CHERRY-PICKING"
+    fi
+}
+
 # Set a color depending on the branch state:
 # - green if the repository is up to date
 # - yellow if there is some commits not pushed
@@ -856,7 +871,8 @@ _lp_git_branch_color()
     if [[ -n "$branch" ]]; then
 
         local end
-        end="$NO_COL"
+        end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}"
+
         if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -Eq '^\?\?'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi

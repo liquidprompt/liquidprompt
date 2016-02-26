@@ -326,6 +326,7 @@ _lp_source_config()
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
     LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
+    LP_MARK_PERM="${LP_MARK_PERM:-":"}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -447,7 +448,7 @@ else
 fi
 
 # Default value for LP_PERM when LP_ENABLE_PERM is 0
-LP_PERM=:   # without color
+LP_PERM=${LP_MARK_PERM}   # without color
 
 
 # Escape the given strings
@@ -1591,11 +1592,12 @@ _lp_set_prompt()
         # LP_PERM: shows a ":"
         # - colored in green if user has write permission on the current dir
         # - colored in red if not
+        # - can set another symbol with LP_MARK_PERM
         if [[ "$LP_ENABLE_PERM" = 1 ]]; then
             if [[ -w "${PWD}" ]]; then
-                LP_PERM="${LP_COLOR_WRITE}:${NO_COL}"
+                LP_PERM="${LP_COLOR_WRITE}${LP_MARK_PERM}${NO_COL}"
             else
-                LP_PERM="${LP_COLOR_NOWRITE}:${NO_COL}"
+                LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
             fi
         fi
 

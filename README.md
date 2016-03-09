@@ -334,6 +334,8 @@ Set the variable to a null string (`""`) if you do not want color.
 * `LP_MARK_STASH` (default: "+") if Git has stashed modifications
 * `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt
 * `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt
+* `LP_MARK_PERM` (default: ":") colored green red or green to indicate write
+  permissions of the current directory
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 

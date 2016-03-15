@@ -1096,7 +1096,7 @@ _lp_fossil_branch()
 {
     (( LP_ENABLE_FOSSIL )) || return
     local branch
-    branch=$(fossil status 2>/dev/null | sed -n $_LP_SED_EXTENDED 's/tags:[ ]*\(\w*\)$/\1/p')
+    branch=$(fossil status 2>/dev/null | sed -n -$_LP_SED_EXTENDED 's/^tags:\s+(\w*)$/\1/p')
     if [[ -n "$branch" ]]; then
         echo -nE "$branch"
     elif fossil info &>/dev/null ; then

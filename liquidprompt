@@ -1876,7 +1876,7 @@ prompt_on()
         [[ -n "$_LP_ZSH_HOOK" ]] && add-zsh-hook -d precmd $_LP_ZSH_HOOK
         # Set options that affect PS1 evaluation
         # Disable parameter/command expansion; enable percent expansion
-        setopt promptpercent nopromptbang nopromptsubst
+        setopt promptpercent nopromptbang
         # 'time' doesn't seem to work on shell functions: no time output
         #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {

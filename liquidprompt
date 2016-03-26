@@ -718,11 +718,6 @@ _lp_shorten_path()
 
 if (( LP_ENABLE_SHORTEN_PATH )); then
     if (( LP_PATH_KEEP == -1 )); then
-        # _lp_shorten_path becomes a noop
-        _lp_shorten_path()
-        {
-            :
-        }
         # Will never change
         LP_PWD="${LP_COLOR_PATH}${_LP_DIR_SYMBOL}$NO_COL"
     fi

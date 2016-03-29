@@ -8,6 +8,9 @@
 	- Many LP_ENABLE_* settings are now static (their effect applies when
 	  liquidprompt is loaded, and changing them at the prompt does nothing)
 	  to more and more improve speed.
+	- zsh: option 'nopromptsubst' is enabled for security reasons.
+          This will unfortunately also affect evaluations of other prompt
+	  contexts such as RPS1.
 	New features:
 	- Sudo:
 	    * The color of the prompt mark is now dynamic and changes to

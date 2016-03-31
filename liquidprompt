@@ -1406,7 +1406,7 @@ if (( LP_ENABLE_RUNTIME )); then
 
             # If the previous command was just the refresh of the prompt,
             # reset the counter
-            if (( _LP_RUNTIME_SKIP )); then
+            if (( _LP_RUNTIME_SKIP == 0 )); then
                 _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
             else
                 # Compute number of seconds since program was started

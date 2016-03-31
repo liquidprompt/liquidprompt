@@ -1414,7 +1414,7 @@ if (( LP_ENABLE_RUNTIME )); then
             fi
 
             # If the command to run is the prompt, we'll have to ignore it
-            [[ "$BASH_COMMAND" = "$PROMPT_COMMAND" ]]
+            [[ "$BASH_COMMAND" != "$PROMPT_COMMAND" ]]
             _LP_RUNTIME_SKIP=$?
         }
 

@@ -32,6 +32,7 @@
         - LP_HOSTNAME_ALWAYS=-1 to always hide the hostname (GitHub #406)
 	- Run duration of the last command (LP_ENABLE_RUNTIME) is now also
 	  supported on zsh (GitHub #404, #355)
+	- Python: add support for Conda (CONDA_DEFAULT_ENV) (GitHub #425)
 	Incompatible changes:
 	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
           removed to simplify the code (GitHub #371)
@@ -100,7 +101,7 @@
 	(@Ozzyboshi), Roger Huang (@rhuang2014), Sebastian Bremicker
 	(@sebrem), Alex Prengere (@alexprengere), Philipp Grogg (@grog-gg),
 	Tener Hades (@tenerhades), Thomas Kühnel (@kuehnelth), Étienne Deparis
-	(@milouse), @Hotschke...
+	(@milouse), @Hotschke, Software Mechanic (@softwaremechanic)...
 	... for their patches or bug reports.
 
 1.9     2014-11-12  dolmen (Olivier Mengué)

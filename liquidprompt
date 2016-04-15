@@ -410,16 +410,31 @@ _lp_source_config()
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
 
 
-    # System config
-    [[ -f "/etc/liquidpromptrc" ]] && source "/etc/liquidpromptrc"
+    local configfile
 
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
+
     if [[ -f "$HOME/.liquidpromptrc" ]]; then
-        source "$HOME/.liquidpromptrc"
+        configfile="$HOME/.liquidpromptrc"
     else
-        local configfile="${XDG_CONFIG_HOME:-$HOME/.config}/liquidpromptrc"
-        [[ -f "$configfile" ]] && source "$configfile"
+        local search
+        # trailing ":" is so that ${search#*:} always removes something
+        search="${XDG_CONFIG_HOME:-"$HOME/.config"}:${XDG_CONFIG_DIRS:-/etc/xdg}:"
+        while [[ -n "$search" ]]; do
+            path="${search%%:*}"
+            search="${search#*:}"
+            if [[ -f "$path/liquidpromptrc" ]]; then
+                configfile="$path/liquidpromptrc"
+                break
+            fi
+        done
+    fi
+
+    if [[ -n "$configfile" ]]; then
+        source "$configfile"
+    elif [[ -f "/etc/liquidpromptrc" ]]; then
+        source "/etc/liquidpromptrc"
     fi
 
     # Delete this code in version 1.11

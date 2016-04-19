@@ -1696,8 +1696,12 @@ _lp_set_prompt()
     fi
 
     # Display the current Python virtual environment, if available
-    if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}" = 1,?* ]]; then
-        LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
+    if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}${CONDA_DEFAULT_ENV-}" = 1,?* ]]; then
+        if [[ -n "${VIRTUAL_ENV-}" ]]; then
+            LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
+        else
+            LP_VENV=" [${LP_COLOR_VIRTUALENV}${CONDA_DEFAULT_ENV##*/}${NO_COL}]"
+        fi
     else
         LP_VENV=
     fi

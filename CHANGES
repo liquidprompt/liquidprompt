@@ -11,6 +11,8 @@
 	- zsh: option 'nopromptsubst' is enabled for security reasons.
           This will unfortunately also affect evaluations of other prompt
 	  contexts such as RPS1.
+	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
+          removed to simplify the code (GitHub #371)
 	New features:
 	- Sudo:
 	    * The color of the prompt mark is now dynamic and changes to
@@ -33,9 +35,6 @@
 	- Run duration of the last command (LP_ENABLE_RUNTIME) is now also
 	  supported on zsh (GitHub #404, #355)
 	- Python: add support for Conda (CONDA_DEFAULT_ENV) (GitHub #425)
-	Incompatible changes:
-	- Variables LP_SCREEN_TITLE_OPEN and LP_SCREEN_TITLE_CLOSE are now
-          removed to simplify the code (GitHub #371)
 	Bug fixes:
 	- Use $XDG_CONFIG_HOME to locate the config (GitHub #415, #420, #425)
 	- Improved zsh integration (but most issues had no impact of the

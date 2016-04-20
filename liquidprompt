@@ -418,14 +418,15 @@ _lp_source_config()
     if [[ -f "$HOME/.liquidpromptrc" ]]; then
         configfile="$HOME/.liquidpromptrc"
     else
+        local first
         local search
         # trailing ":" is so that ${search#*:} always removes something
         search="${XDG_CONFIG_HOME:-"$HOME/.config"}:${XDG_CONFIG_DIRS:-/etc/xdg}:"
         while [[ -n "$search" ]]; do
-            path="${search%%:*}"
+            first="${search%%:*}"
             search="${search#*:}"
-            if [[ -f "$path/liquidpromptrc" ]]; then
-                configfile="$path/liquidpromptrc"
+            if [[ -f "$first/liquidpromptrc" ]]; then
+                configfile="$first/liquidpromptrc"
                 break
             fi
         done

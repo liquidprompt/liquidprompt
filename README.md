@@ -215,6 +215,27 @@ it to add a keyword to each of your different terminals:
     mycode [:~/code/liquidprompt] develop ±
 
 
+### Adding a Prefix/Postfix not shown in the title
+
+When using `LP_ENABLE_TITLE=1`, the prompt will be dispalyed as is in the window's title.
+To prefix or postfix the prompt only in the command line and not in the title,
+use `LP_PS1_PRETITLE` and `LP_PS1_POSTTITLE`.
+
+For example, if you want to add a line separator across all you terminal:
+
+    LP_PS1_PRETITLE="$(printf '%*s\n' $(tput cols) '' | tr ' ' '-')"
+
+If you want to customize the typing field:
+
+    LP_PS1_POSTTITLE="${WHITE}〉 "
+
+Note: in this example, you most probably want to reset the color of the output.
+You should thus add a call to a reset command before anything is run.
+In bash, you should add the following debug trap:
+
+    trap 'tput sgr0' DEBUG
+
+
 ### Rearranging the Prompt
 
 You can sort what you want to see by sourcing your favorite template file

@@ -1,5 +1,5 @@
 
-1.10    201?-??-??
+1.10    2016-05-30
 	Breaking changes:
 	- In themes, LP_COLORMAP_x variables are replaced by a single
 	  LP_COLORMAP array variable. A warning will be displayed at startup

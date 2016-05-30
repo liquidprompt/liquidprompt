@@ -19,8 +19,7 @@
 	      LP_COLOR_MARK_SUDO (default: bold red) as long as your sudo
 	      credentials are cached (GitHub #335).
 	      Requires sudo 1.7.0+.
-	      This feature can be disabled with LP_ENABLE_SUDO=0 (as this is
-	      one more thing that slows the prompt).
+	      This feature must be enabled with LP_ENABLE_SUDO=1
 	      Use 'sudo -K' to revoke your credentials early.
 	    * This feature is disabled by default as there is no way to
 	      detect if the user has sudo rights without triggering a security

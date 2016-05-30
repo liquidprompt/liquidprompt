@@ -6,21 +6,11 @@ Contributing a patch
 
 The public stable branch for end users is `master`.
 
-The main branch for development is `develop`. This is on top of this branch
-that you must write your patches.
-
-Any pull request built on top of `master` instead of `develop`
-is additional merge work for maintainers, and you want to avoid this if you
-aim for quick integration of your work.
-
-If you wrote your patch on the wrong branch the maintainers may choose to close
-the pull request and ask you to rewrite it on top of the current `develop`.
-
 
 How to do the right thing?
 --------------------------
 
-    $ git clone -b develop -o upstream git://github.com/nojhan/liquidprompt.git
+    $ git clone -o upstream git://github.com/nojhan/liquidprompt.git
     $ cd liquidprompt
 
     # Run liquidprompt and check that your issue is still on that branch
@@ -41,14 +31,14 @@ How to do the right thing?
 
     # Check that your local repo is up to date
     $ git fetch
-    # Rebase your work on the latest state of `develop`
-    $ git rebase upstream/develop
+    # Rebase your work on the latest state of `master`
+    $ git rebase upstream/master
 
     # Push your commits
     $ git push github fix/my-fix
     $ git push github feature/my-feature
 
-    # Create the pull request on GitHub. Check that Github chose the `develop`
+    # Create the pull request on GitHub. Check that Github chose the `master`
     # branch as the starting point for your branch.
 
 
@@ -75,8 +65,8 @@ How to make a good pull request?
    For example use triple backquotes for code blocks.
 
 
-Never, ever, merge the branches `develop` or `master` of the main repo into one
-of your own branches. Instead, always rebase your own work on top the `develop`
+Never, ever, merge the branches `master` of the main repo into one
+of your own branches. Instead, always rebase your own work on top the `master`
 branch.
 
 How my patch will be applied?
@@ -88,7 +78,7 @@ pull requests.
 
 If your patch is accepted it will be applied either:
 - by "merging" your branch
-- by cherry-picking your commit on top of the `develop` branch. This makes the
+- by cherry-picking your commit on top of the `master` branch. This makes the
   history linear, and so easier to track.
 
 In any case, your authorship will be preserved in the commit.
@@ -101,7 +91,7 @@ between pings: 1 week, 2 weeks, then every month.
 
 If a stable version is released while your pull request has still not been
 merged on any working branch of the main repo, it would be helpful to ease
-the maitainer's work by rebasing your branch on top of the latest `develop`
+the maitainer's work by rebasing your branch on top of the latest `master`
 and push it again to your GitHub repo. Be careful (for example create a
 branch or a tag before your rebase) because your may lose all your work in
 that process.

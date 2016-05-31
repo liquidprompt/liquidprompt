@@ -556,7 +556,7 @@ if (( EUID != 0 )); then  # if user is not root
         #   sudo -K   # revoke your credentials
         _lp_sudo_check()
         {
-            if sudo -n /bin/true 2>/dev/null; then
+            if sudo -n true 2>/dev/null; then
                 LP_COLOR_MARK=$LP_COLOR_MARK_SUDO
             else
                 LP_COLOR_MARK=$LP_COLOR_MARK_NO_SUDO

@@ -1291,12 +1291,26 @@ case "$LP_OS" in
             return 4
             ;;
             discharging)
-                # under => 0, above => 1
-                return $(( percent > LP_BATTERY_THRESHOLD ))
+            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]]; then
+                # under threshold
+                echo -n "${percent}"
+                return 0
+            else
+                # above threshold
+                echo -n "${percent}"
+                return 1
+            fi
             ;;
             *)  # "charging", "AC attached"
-                # under => 2, above => 3
-                return $(( 1 + ( percent > LP_BATTERY_THRESHOLD ) ))
+            if [[ ${percent} -le $LP_BATTERY_THRESHOLD ]]; then
+                # under threshold
+                echo -n "${percent}"
+                return 2
+            else
+                # above threshold
+                echo -n "${percent}"
+                return 3
+            fi
             ;;
         esac
     }

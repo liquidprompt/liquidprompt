@@ -353,7 +353,8 @@ version 3](LICENSE).
   (like `xterm-256`).
 * The analog clock requires a Unicode-aware terminal and at least a
   sufficiently complete font on your system. The [Symbola](http://users.teilar.gr/~g1951d/)
-  font, designed by Georges Douros, is known to work well.
+  font, designed by Georges Douros, is known to work well. On Debian or Ubuntu
+  install try the `fonts-symbola` or `ttf-ancient-fonts` package.
 
 
 ## Authors

@@ -1291,10 +1291,12 @@ case "$LP_OS" in
             return 4
             ;;
             discharging)
+                echo -nE "$percent"
                 # under => 0, above => 1
                 return $(( percent > LP_BATTERY_THRESHOLD ))
             ;;
             *)  # "charging", "AC attached"
+                echo -nE "$percent"
                 # under => 2, above => 3
                 return $(( 1 + ( percent > LP_BATTERY_THRESHOLD ) ))
             ;;

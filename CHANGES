@@ -1,4 +1,9 @@
 
+1.11    ????-??-??
+	Bug fixes:
+	- OS X: sudo feature fixed
+	- OS X: battery level restored
+
 1.10    2016-05-30
 	Breaking changes:
 	- In themes, LP_COLORMAP_x variables are replaced by a single

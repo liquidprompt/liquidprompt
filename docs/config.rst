@@ -888,7 +888,7 @@ Marks
    Mark used for closing core prompt brackets. Used by the default theme for
    enclosing user, host, and current working directory sections.
 
-   See also: :attr:`LP_MARK_BRACKET_OPEN`.
+   See also: :attr:`LP_MARK_BRACKET_OPEN`, :attr:`LP_MARK_MULTIPLEXER_CLOSE`.
 
 .. attribute:: LP_MARK_BRACKET_OPEN
    :type: string
@@ -897,7 +897,7 @@ Marks
    Mark used for opening core prompt brackets. Used by the default theme for
    enclosing user, host, and current working directory sections.
 
-   See also: :attr:`LP_MARK_BRACKET_CLOSE`.
+   See also: :attr:`LP_MARK_BRACKET_CLOSE`, :attr:`LP_MARK_MULTIPLEXER_OPEN`.
 
 .. attribute:: LP_MARK_BZR
    :type: string
@@ -987,6 +987,28 @@ Marks
    Mark used before displaying load average.
 
    See also: :attr:`LP_ENABLE_LOAD`.
+
+.. attribute:: LP_MARK_MULTIPLEXER_CLOSE
+   :type: string
+   :value: $LP_MARK_BRACKET_CLOSE
+
+   Mark used for closing core prompt brackets. Used by the default theme when
+   inside of a multiplexer.
+
+   See also: :attr:`LP_MARK_MULTIPLEXER_OPEN`, :attr:`LP_MARK_BRACKET_CLOSE`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_MARK_MULTIPLEXER_OPEN
+   :type: string
+   :value: $LP_MARK_BRACKET_OPEN
+
+   Mark used for opening core prompt brackets. Used by the default theme when
+   inside of a multiplexer.
+
+   See also: :attr:`LP_MARK_MULTIPLEXER_CLOSE`, :attr:`LP_MARK_BRACKET_OPEN`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_MARK_PERM
    :type: string
@@ -1237,8 +1259,8 @@ Valid preset color variables are:
    :type: string
    :value: $BOLD_BLUE
 
-   Color used for :attr:`LP_MARK_BRACKET_OPEN` and :attr:`LP_MARK_BRACKET_CLOSE`
-   if the terminal is in a multiplexer.
+   Color used for :attr:`LP_MARK_MULTIPLEXER_OPEN` and
+   :attr:`LP_MARK_MULTIPLEXER_CLOSE` if the terminal is in a multiplexer.
 
 .. attribute:: LP_COLOR_JOB_D
    :type: string

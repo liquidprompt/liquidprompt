@@ -145,6 +145,7 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
 
 * `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is displayed
 * `LP_LOAD_THRESHOLD`, the minimal value after which the load average is displayed
+* `LP_LOAD_SCALE_MAX`, the load that is considered the maximum when choosing colors
 * `LP_TEMP_THRESHOLD`, the minimal value after which the average temperature is displayed
 * `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display the path

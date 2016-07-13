@@ -257,6 +257,14 @@ To erase your new formatting, just bind `LP_PS1` to a null string:
     export LP_PS1=""
 
 
+### Display virtualenv parent dir name
+
+If you would like to create your virtualenvs inside your projects with standart name like `venv`,you may want
+to see parent project name instead of standart `venv` (which now not handled by activate and can't be changed thought `--prompt`. To do this you can enable `LP_VIRTUALENV_PARENT`:
+
+  LP_VIRTUALENV_PARENT=1
+
+
 ## Themes
 
 You can change the colors and special characters of some parts of Liquid Prompt

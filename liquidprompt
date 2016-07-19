@@ -289,7 +289,7 @@ _lp_source_config()
     # compute the hash of the hostname
     # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
     # FIXME check portability of cksum and add more formats (bold? 256 colors?)
-    local hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
+    local hash=$(( 1 + $(hostname | cksum | sed 's/[^0-9].*$//') % 6 ))
     LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}"
 
     unset ti_sgr0 ti_bold

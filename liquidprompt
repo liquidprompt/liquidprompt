@@ -1788,8 +1788,11 @@ _lp_set_prompt()
                 fi # svn
             fi # hg
 
-        else # if this vcs rep is disabled
+        # if this vcs rep is disabled
+        elif [[ "$LP_ENABLE_VCS_ROOT" != 1 && "$EUID" == 0 ]]; then
             LP_VCS="" # not necessary, but more readable
+            LP_VCS_TYPE=""
+        else
             LP_VCS_TYPE="disabled"
         fi
 

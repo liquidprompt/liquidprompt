@@ -1142,7 +1142,20 @@ _lp_fossil_branch_color()
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
-        ret=$(fossil diff -i -v | awk "/^(+[^+])|(+$)/ { plus+=1; } /^(-[^-])|(-$)/ { minus+=1; } END { total=\"\"; if(plus>0){ total=\"+\"plus; if(minus>0) total=total\"/\"; } if(minus>0) total=total\"-\"minus; print total;}")
+        ret=$(fossil diff -i -v | awk '
+            /^(\+[^+])|(\+$)/ { plus+=1 }
+            /^(-[^-])|(-$)/ { minus+=1 }
+            END {
+                total=""
+                if (plus>0) {
+                    total="+"plus
+                    if(minus>0) total=total"/"
+                }
+                if (minus>0) {
+                    total=total"-"minus
+                }
+                print total
+            }')
 
         if (( C2E > 0 )); then
             [[ -n "$ret" ]] && ret+=" in "

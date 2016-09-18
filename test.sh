@@ -6,9 +6,9 @@ if [ -z "$BASH_VERSION$ZSH_VERSION" ]; then
     for sh in bash zsh
     do
 	if [ -x /bin/$sh ]; then
-	    /bin/$sh "$0"
+		/bin/$sh "$0"
 	elif [ -x /usr/bin/$sh ]; then
-	    /usr/bin/$sh "$0"
+		/usr/bin/$sh "$0"
 	fi
     done
     exit 0

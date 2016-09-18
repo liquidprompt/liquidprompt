@@ -584,6 +584,7 @@ fi
 # Where are we? #
 #################
 
+if ! type _lp_connection &> /dev/null; then
 _lp_connection()
 {
     if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
@@ -602,6 +603,7 @@ _lp_connection()
         fi
     fi
 }
+fi
 
 # Put the hostname if not locally connected
 # color it in cyan within SSH, and a warning red if within telnet

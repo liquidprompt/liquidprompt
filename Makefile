@@ -15,7 +15,7 @@ test-bash:
 
 watch:
 	@echo 'watching for changes...' && \
-	fswatch -x liquidprompt liquid.ps1 liquid.theme tests/*.{bats,bash} 2>/dev/null | \
+	fswatch -x liquidprompt liquid.ps1 liquid.theme tests/*.{bats,bash} tests/cases/*.sh 2>/dev/null | \
 		while read -r f attr; do \
 			if ! [ -z "$$f" ] && [[ "$$attr" =~ Updated ]]; then \
 				echo "file changed: $$f ($$attr)"; \

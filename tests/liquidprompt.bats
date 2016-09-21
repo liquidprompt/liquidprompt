@@ -17,3 +17,7 @@ load support
 @test 'lp: stock: tags' {
     run_shell tests/cases/tags.sh
 }
+
+@test 'lp: stock: time' {
+    run_shell tests/cases/time.sh
+}

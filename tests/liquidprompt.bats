@@ -13,3 +13,7 @@ load support
 @test 'lp: stock: path shortening' {
     run_shell tests/cases/path-shorten.sh
 }
+
+@test 'lp: stock: tags' {
+    run_shell tests/cases/tags.sh
+}

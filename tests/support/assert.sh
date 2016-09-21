@@ -22,12 +22,12 @@ function eval_prompt
     _LP_PS1="$PS1"
     _LP_PS1_PLAIN="$(strip_colors <<< "$_LP_PS1")"
 
-    function assert_ps1_not       { _assert "$_LP_PS1" 0 "$@"; }
-    function assert_ps1_has       { _assert "$_LP_PS1" 1 "$@"; }
-    function assert_ps1_is        { _assert "$_LP_PS1" 2 "$@"; }
-    function assert_ps1_plain_not { _assert "$_LP_PS1_PLAIN" 0 "$@"; }
-    function assert_ps1_plain_has { _assert "$_LP_PS1_PLAIN" 1 "$@"; }
-    function assert_ps1_plain_is  { _assert "$_LP_PS1_PLAIN" 2 "$@"; }
+    function assert_ps1_not       { _assert_hard "$_LP_PS1" 0 "$@"; }
+    function assert_ps1_has       { _assert_hard "$_LP_PS1" 1 "$@"; }
+    function assert_ps1_is        { _assert_hard "$_LP_PS1" 2 "$@"; }
+    function assert_ps1_plain_not { _assert_hard "$_LP_PS1_PLAIN" 0 "$@"; }
+    function assert_ps1_plain_has { _assert_hard "$_LP_PS1_PLAIN" 1 "$@"; }
+    function assert_ps1_plain_is  { _assert_hard "$_LP_PS1_PLAIN" 2 "$@"; }
 }
 
 function strip_colors
@@ -38,6 +38,10 @@ function strip_colors
             s|%{||g;   s|%}||g
             s|||g
         '
+}
+
+function _assert_hard {
+    _assert "$@" || exit $?
 }
 
 function _assert

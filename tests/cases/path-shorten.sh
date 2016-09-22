@@ -7,10 +7,7 @@ assert_path () {
 
 echo "$PWD"
 
-for t in \
-    {0..8}:'/tmp … path' \
-    9:'/tmp … /path' \
-    10:'/tmp … g/path'
+for t in {0..8}:'/tmp … path'
 do
     IFS=: read -r ns p <<< "$t"
     for n in $ns; do

@@ -1904,6 +1904,13 @@ prompt_on()
         fi
     fi
     if $_LP_SHELL_bash; then
+        # Prevent some cases where the user shoots in his own foot.
+        # PROMPT_COMMAND is not exported by default, but some users
+        # incorrectly export it from their profile/bashrc (GitHub #450),
+        # so we preventively UNexport it.
+        # TODO: warn the user if it was exported
+        declare -g +x PROMPT_COMMAND
+
         # Disable parameter/command expansion from PS1
         shopt -u promptvars
         PROMPT_COMMAND=_lp_set_prompt

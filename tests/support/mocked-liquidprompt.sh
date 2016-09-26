@@ -13,8 +13,9 @@ DETACHED_SESSION_COUNT=4
 _tmux="$(which tmux)"
 function tmux
 {
+    local i
     if [[ "$1" == list-sessions ]]; then
-        for i in eval "echo {1..$DETACHED_JOB_COUNT_TMUX}"; do
+        for i in $(eval "echo {1..$DETACHED_SESSION_COUNT_TMUX}"); do
             echo 'detached'
         done
     else
@@ -25,8 +26,9 @@ function tmux
 _screen="$(which screen)"
 function screen
 {
+    local i
     if [[ "$1" == -ls ]]; then
-        for i in eval "echo {1..$DETACHED_JOB_COUNT_SCREEN}"; do
+        for i in $(eval "echo {1..$DETACHED_SESSION_COUNT_SCREEN}"); do
             echo 'Detach)'
         done
     else

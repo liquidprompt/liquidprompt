@@ -17,17 +17,17 @@ function eval_prompt
         echo "...check: $1"
     fi
 
-    export _LP_PS1 _LP_PS1_PLAIN
+    export _TEST_LP_PS1 _TEST_LP_PS1_PLAIN
     _lp_set_prompt
-    _LP_PS1="$PS1"
-    _LP_PS1_PLAIN="$(strip_colors <<< "$_LP_PS1")"
+    _TEST_LP_PS1="$PS1"
+    _TEST_LP_PS1_PLAIN="$(strip_colors <<< "$_TEST_LP_PS1")"
 
-    function assert_ps1_not       { _assert_hard "$_LP_PS1" 0 "$@"; }
-    function assert_ps1_has       { _assert_hard "$_LP_PS1" 1 "$@"; }
-    function assert_ps1_is        { _assert_hard "$_LP_PS1" 2 "$@"; }
-    function assert_ps1_plain_not { _assert_hard "$_LP_PS1_PLAIN" 0 "$@"; }
-    function assert_ps1_plain_has { _assert_hard "$_LP_PS1_PLAIN" 1 "$@"; }
-    function assert_ps1_plain_is  { _assert_hard "$_LP_PS1_PLAIN" 2 "$@"; }
+    function assert_ps1_not       { _assert_hard "$_TEST_LP_PS1" 0 "$@"; }
+    function assert_ps1_has       { _assert_hard "$_TEST_LP_PS1" 1 "$@"; }
+    function assert_ps1_is        { _assert_hard "$_TEST_LP_PS1" 2 "$@"; }
+    function assert_ps1_plain_not { _assert_hard "$_TEST_LP_PS1_PLAIN" 0 "$@"; }
+    function assert_ps1_plain_has { _assert_hard "$_TEST_LP_PS1_PLAIN" 1 "$@"; }
+    function assert_ps1_plain_is  { _assert_hard "$_TEST_LP_PS1_PLAIN" 2 "$@"; }
 }
 
 function strip_colors

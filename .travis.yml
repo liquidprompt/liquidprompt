@@ -6,14 +6,18 @@ env:
   - TEST_CONNECTION=lcl TEST_SHELL=bash
   - TEST_CONNECTION=lcl TEST_SHELL=zsh
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:duggan/bats'
+    packages:
+      - bats
+      - zsh
+
 before_install:
   - |
     if [[ "$TRAVIS_OS_NAME" == osx ]]; then
       brew install bats zsh
-    else
-      sudo add-apt-repository ppa:duggan/bats --yes
-      sudo apt-get update -qq
-      sudo apt-get install -qq -y bats zsh
     fi
 
 script:

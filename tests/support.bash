@@ -20,8 +20,9 @@ function setup
     rm -rf "$TMP_DIR"
     mkdir -p "$TMP_DIR"
 
-    # on OSX, we are handed a deep path to some
-    # /var/private/tmp/ directory
+    # on OSX, we are handed a deep path to some /var/private/tmp/ directory
+    # which throws off assertions about path shortening in the various test
+    # cases.
     if [[ "$OS" == osx ]]
     then
         rm -f /tmp/liquidprompt-tests

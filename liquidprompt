@@ -632,7 +632,7 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     case "$(_lp_connection)" in
     lcl)
         if (( LP_HOSTNAME_ALWAYS )); then
-            LP_HOST+="${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
+            LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
         else
             # FIXME do we want to display the chroot if local?
             LP_HOST="" # no hostname if local
@@ -641,16 +641,16 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     ssh)
         # If we want a different color for each host
         (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-        LP_HOST+="${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
         ;;
     su)
-        LP_HOST+="${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
         ;;
     tel)
-        LP_HOST+="${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
         ;;
     *)
-        LP_HOST+="${_LP_HOST_SYMBOL}" # defaults to no color
+        LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
         ;;
     esac
 

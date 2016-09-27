@@ -3,6 +3,10 @@ NEXT
 	New features:
 	- Workaround broken .bashrc that export PROMPT_COMMAND (GH #450, #463):
 	  we now unexport it on startup
+	Bug fixes:
+	- Fix regression in LP_ENABLE_FQDN implementation (GitHub #472)
+	Thanks to Roman (@hatifnatt)...
+	... for their patches or bug reports.
 
 1.11    2016-06-25
 	Bug fixes:

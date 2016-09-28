@@ -1909,7 +1909,10 @@ prompt_on()
         # incorrectly export it from their profile/bashrc (GitHub #450),
         # so we preventively UNexport it.
         # TODO: warn the user if it was exported
-        declare -g +x PROMPT_COMMAND
+        if (( ${BASH_VERSION%%.*} > 4 )) || [[ ${BASH_VERSION} > 4.2 ]]; then
+            # -g is only available since bash 4.2
+            declare -g +x PROMPT_COMMAND
+        fi
 
         # Disable parameter/command expansion from PS1
         shopt -u promptvars

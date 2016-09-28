@@ -5,7 +5,7 @@ NEXT
 	  we now unexport it on startup
 	Bug fixes:
 	- Fix regression in LP_ENABLE_FQDN implementation (GitHub #472)
-	Thanks to Roman (@hatifnatt)...
+	Thanks to Roman (@hatifnatt), Jon Garrison (@jpwgarrison)...
 	... for their patches or bug reports.
 
 1.11    2016-06-25

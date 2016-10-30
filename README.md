@@ -69,13 +69,13 @@ Here is an overview of what Liquid Prompt is capable of displaying:
 * the runtime of the last command, if it has exceeded a certain threshold
 * the error code of the last command, if it has failed in some way
 * a smart mark at the end of the prompt:
-  * `±` for Git
-  * `☿` for Mercurial
-  * `‡` for Subversion
-  * `‡±` for Git-Subversion
-  * `⌘` for Fossil
-  * `$` or `%` for a simple user
-  * a red `#` for the root user
+  * `±` for Git,
+  * `☿` for Mercurial,
+  * `‡` for Subversion,
+  * `‡±` for Git-Subversion,
+  * `⌘` for Fossil,
+  * `$` or `%` for a simple user, in red if you have `sudo` rights,
+  * a red `#` for the root user.
 * if desired, the prompt will be replicated in your terminal window's
   title (without the colors)
 

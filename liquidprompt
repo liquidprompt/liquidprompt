@@ -201,7 +201,7 @@ case "$LP_OS" in
         ;;
     SunOS)
         _lp_cpu_load () {
-            read lp_cpu_load <<<"$( LANG=C uptime | awk '{print substr($10,0,length($10))}' )"
+            read lp_cpu_load <<<"$( LANG=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
         }
 esac
 

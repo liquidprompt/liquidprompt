@@ -523,7 +523,8 @@ else
 fi
 
 # Default value for LP_PERM when LP_ENABLE_PERM is 0
-LP_PERM=:   # without color
+LP_PERM_CHAR="${LP_PERM_CHAR:-":"}"
+LP_PERM=$LP_PERM_CHAR  # without color
 
 # Same as bash '\l', but inlined as a constant as the value will not change
 # during the shell's life
@@ -1761,9 +1762,9 @@ _lp_set_prompt()
         # - colored in red if not
         if (( LP_ENABLE_PERM )); then
             if [[ -w "${PWD}" ]]; then
-                LP_PERM="${LP_COLOR_WRITE}:${NO_COL}"
+                LP_PERM="${LP_COLOR_WRITE}${LP_PERM_CHAR}${NO_COL}"
             else
-                LP_PERM="${LP_COLOR_NOWRITE}:${NO_COL}"
+                LP_PERM="${LP_COLOR_NOWRITE}${LP_PERM_CHAR}${NO_COL}"
             fi
         fi
 

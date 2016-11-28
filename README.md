@@ -234,7 +234,7 @@ Available features:
 * `LP_JOBS` detached `screen` or `tmux` sessions/running jobs/suspended jobs
 * `LP_USER` user
 * `LP_HOST` hostname
-* `LP_PERM` a colon (`:`)
+* `LP_PERM` a colon (`:`) (Character ':' configurable via LP_PERM_CHAR variable)
 * `LP_PWD` current working directory
 * `LP_PROXY` HTTP proxy
 * `LP_VCS` informations concerning the current working repository

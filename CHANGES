@@ -3,12 +3,15 @@ NEXT
 	New features:
 	- Workaround broken .bashrc that export PROMPT_COMMAND (GH #450, #463):
 	  we now unexport it on startup
+	- Allow to customize the symbol before the path that shows if the
+	  directory is writable: LP_MARK_PERM (GitHub #430, #484)
 	Bug fixes:
 	- Fix regression in LP_ENABLE_FQDN implementation (GitHub #472)
 	- Fix LP_COLOR_HOST_HASH on SunOS (GitHub #461, #462)
 	Thanks to Roman (@hatifnatt), Jon Garrison (@jpwgarrison),
 	Mark Vander Stel (@Rycieos), Bryce Jasmer (b-jazz), Felix
-	Schlitter (@felixSchl)...
+	Schlitter (@felixSchl), Philip Garrison (@pgarrison), Lubomir
+	Host (@lhost)...
 	... for their patches or bug reports.
 
 1.11    2016-06-25

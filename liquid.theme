@@ -116,6 +116,9 @@ LP_COLOR_IN_MULTIPLEXER="$BOLD_BLUE"
 # Virtual environment
 LP_COLOR_VIRTUALENV="$CYAN"
 
+# Nodeenv virtual environment
+LP_COLOR_NODEENV="$LP_COLOR_VIRTUALENV"
+
 # Runtime
 LP_COLOR_RUNTIME="$YELLOW"
 

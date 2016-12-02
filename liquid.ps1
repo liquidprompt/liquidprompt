@@ -12,6 +12,7 @@
 # LP_PERM a colon ":"
 # LP_PWD current working directory
 # LP_VENV Python virtual environment
+# LP_NODEENV Nodeenv virtual environment
 # LP_PROXY HTTP proxy
 # LP_VCS the content of the current repository
 # LP_ERR last error code
@@ -33,7 +34,7 @@ LP_PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_JOBS}"
 # add user, host and permissions colon
 LP_PS1="${LP_PS1}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-LP_PS1="${LP_PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_PROXY}"
+LP_PS1="${LP_PS1}${LP_PWD}${LP_BRACKET_CLOSE}${LP_VENV}${LP_NODEENV}${LP_PROXY}"
 
 # Add VCS infos
 # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

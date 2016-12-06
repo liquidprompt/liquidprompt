@@ -90,6 +90,12 @@ specific text and formatting may change.
 
    .. versionadded:: 2.0
 
+.. function:: _lp_aws_profile_color() -> var:lp_aws_profile_color
+
+   Returns :func:`_lp_aws_profile` with color from :attr:`LP_COLOR_AWS_PROFILE`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_battery_color() -> var:lp_battery_color
 
    Returns data from :func:`_lp_battery`, colored with:

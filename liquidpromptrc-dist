@@ -162,6 +162,10 @@ LP_ENABLE_KUBECONTEXT=0
 # in order to output "dev" and "test" in prompt.
 LP_DELIMITER_KUBECONTEXT=
 
+# Display the current active AWS_PROFILE, if any
+# Recommended value is 1
+LP_ENABLE_AWS_PROFILE=1
+
 # Show highest system temperature
 LP_ENABLE_TEMP=1
 

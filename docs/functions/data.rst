@@ -86,6 +86,16 @@ Development Environment
 Environment
 -----------
 
+.. function:: _lp_aws_profile() -> var:lp_aws_profile
+
+   Returns ``true`` if the :envvar:`AWS_PROFILE` or :envvar:`AWS_DEFAULT_PROFILE`
+   variables are found in the environment (in that order of preference).
+   Returns the contents of the variable.
+
+   Can be disabled by :attr:`LP_ENABLE_AWS_PROFILE`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_connected_display()
 
    Returns ``true`` if there is a connected X11 display.

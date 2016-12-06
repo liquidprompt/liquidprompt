@@ -216,6 +216,7 @@ __lp_source_config() {
     LP_ENABLE_RUNTIME_BELL=${LP_ENABLE_RUNTIME_BELL:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
+    LP_ENABLE_AWS_PROFILE=${LP_ENABLE_AWS_PROFILE:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
@@ -292,6 +293,7 @@ __lp_source_config() {
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
+    LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
 
     if [[ -z "${LP_COLORMAP-}" ]]; then
         LP_COLORMAP=(
@@ -1314,6 +1316,26 @@ _lp_dirstack_color() {
     _lp_dirstack || return "$?"
 
     lp_dirstack_color="${LP_COLOR_DIRSTACK}${LP_MARK_DIRSTACK}${lp_dirstack}${NO_COL}"
+}
+
+_lp_aws_profile() {
+    (( LP_ENABLE_AWS_PROFILE )) || return 2
+
+    local ret
+
+    local aws_profile="${AWS_PROFILE-${AWS_DEFAULT_PROFILE-}}"
+    if [[ -n $aws_profile ]]; then
+        __lp_escape "${aws_profile}"
+        lp_aws_profile=$ret
+    else
+        return 1
+    fi
+}
+
+_lp_aws_profile_color() {
+    _lp_aws_profile || return "$?"
+
+    lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
 }
 
 ################
@@ -2735,6 +2757,12 @@ _lp_default_theme_prompt_data() {
         LP_SCLS=
     fi
 
+    if _lp_aws_profile_color; then
+        LP_AWS_PROFILE=" $lp_aws_profile_color"
+    else
+        LP_AWS_PROFILE=
+    fi
+
     if _lp_runtime_color; then
         LP_RUNTIME=" $lp_runtime_color"
     else
@@ -2768,7 +2796,7 @@ _lp_default_theme_prompt_template() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_KUBECONTEXT}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_KUBECONTEXT}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

@@ -85,6 +85,26 @@ by typing `prompt_off`. Use `prompt_on` to bring it back. You can disable
 by using the `prompt_OFF` command.
 
 
+## Videos and German media
+
+### English video
+
+[Kristian Köhntopp](https://github.com/isotopp) made this [great video](http://www.youtube.com/watch?v=iHOpw55TI-U) and [allowed us to share it](https://github.com/nojhan/liquidprompt/issues/482#issuecomment-263557096) here:
+
+[![Liquidprompt demo with git](https://j.gifs.com/Lg1kPp.gif)](http://www.youtube.com/watch?v=iHOpw55TI-U)
+
+The above gif is just a small fraction of the actual video.
+
+### German article and video
+
+The below German Video ["Linux - Liquid prompt"](https://www.youtube.com/watch?v=gHMQKZGjjiw)  is by www.openscreencast.de and based on Linux Mint 15 recorded on 20131012 and licensed under [CC by SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+
+It is based on the article ["Liquid prompt - Eine erweiterte Prompt für Bash und zsh"](http://www.freiesmagazin.de/freiesMagazin-2013-09) written by [Sujeevan Vijayakumaran](http://svij.org/) at
+
+[![Elaborate liquidprompt demo](https://j.gifs.com/BgXJRW.gif)](http://www.youtube.com/watch?v=gHMQKZGjjiw)
+
+The video linked from the above gif is even more extensive than the English video from Kristian.
+
 ## Test Drive and Installation
 
 Installation is simple. The basic dependencies are standard Unix utilities/commands.

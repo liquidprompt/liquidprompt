@@ -8,10 +8,11 @@ NEXT
 	Bug fixes:
 	- Fix regression in LP_ENABLE_FQDN implementation (GitHub #472)
 	- Fix LP_COLOR_HOST_HASH on SunOS (GitHub #461, #462)
+	- Fix LP_MARK_DEFAULT being ignored if root (GitHub #501)
 	Thanks to Roman (@hatifnatt), Jon Garrison (@jpwgarrison),
 	Mark Vander Stel (@Rycieos), Bryce Jasmer (b-jazz), Felix
 	Schlitter (@felixSchl), Philip Garrison (@pgarrison), Lubomir
-	Host (@lhost)...
+	Host (@lhost), Iain Hallam (@iainhallam)...
 	... for their patches or bug reports.
 
 1.11    2016-06-25

@@ -896,7 +896,7 @@ _lp_git_branch_color()
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
-        if [[ -n "$(\git stash list -n 1 2>/dev/null)" ]]; then
+        if [[ -n "$(\git rev-parse refs/stash 2>/dev/null | grep -v 'refs/stash')" ]]; then
             end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
         fi
 

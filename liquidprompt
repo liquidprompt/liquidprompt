@@ -320,6 +320,7 @@ _lp_source_config()
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
+    LP_ENABLE_GIT_BRANCH_ONLY=${LP_ENABLE_GIT_BRANCH_ONLY:-0}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
@@ -892,80 +893,82 @@ _lp_git_branch_color()
         local end
         end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}"
 
-        if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -q '^\?\?'; then
-            end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
-        fi
+        local ret
+        ret="${LP_COLOR_UP}${branch}"
+        if (( ! LP_ENABLE_GIT_BRANCH_ONLY )); then
 
-        # Show if there is a git stash
-        if \git rev-parse --verify -q refs/stash >/dev/null; then
-            end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
-        fi
+            if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -q '^\?\?'; then
+                end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
+            fi
 
-        local remote
-        remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
+            # Show if there is a git stash
+            if \git rev-parse --verify -q refs/stash >/dev/null; then
+                end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
+            fi
 
-        local has_commit=""
-        local commit_ahead
-        local commit_behind
-        if [[ -n "$remote" ]]; then
-            local remote_branch
-            remote_branch="$(\git config --get branch.${branch}.merge)"
-            if [[ -n "$remote_branch" ]]; then
-                remote_branch=${remote_branch/refs\/heads/refs\/remotes\/$remote}
-                commit_ahead="$(\git rev-list --count $remote_branch..HEAD 2>/dev/null)"
-                commit_behind="$(\git rev-list --count HEAD..$remote_branch 2>/dev/null)"
-                if [[ "$commit_ahead" -ne "0" && "$commit_behind" -ne "0" ]]; then
-                    has_commit="${LP_COLOR_COMMITS}+$commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
-                elif [[ "$commit_ahead" -ne "0" ]]; then
-                    has_commit="${LP_COLOR_COMMITS}$commit_ahead${NO_COL}"
-                elif [[ "$commit_behind" -ne "0" ]]; then
-                    has_commit="${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
+            local remote
+            remote="$(\git config --get branch.${branch}.remote 2>/dev/null)"
+
+            local has_commit=""
+            local commit_ahead
+            local commit_behind
+            if [[ -n "$remote" ]]; then
+                local remote_branch
+                remote_branch="$(\git config --get branch.${branch}.merge)"
+                if [[ -n "$remote_branch" ]]; then
+                    remote_branch=${remote_branch/refs\/heads/refs\/remotes\/$remote}
+                    commit_ahead="$(\git rev-list --count $remote_branch..HEAD 2>/dev/null)"
+                    commit_behind="$(\git rev-list --count HEAD..$remote_branch 2>/dev/null)"
+                    if [[ "$commit_ahead" -ne "0" && "$commit_behind" -ne "0" ]]; then
+                        has_commit="${LP_COLOR_COMMITS}+$commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
+                    elif [[ "$commit_ahead" -ne "0" ]]; then
+                        has_commit="${LP_COLOR_COMMITS}$commit_ahead${NO_COL}"
+                    elif [[ "$commit_behind" -ne "0" ]]; then
+                        has_commit="${LP_COLOR_COMMITS_BEHIND}-$commit_behind${NO_COL}"
+                    fi
                 fi
             fi
-        fi
 
-        local ret
-        local shortstat # only to check for uncommitted changes
-        shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+            local shortstat # only to check for uncommitted changes
+            shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
-        if [[ -n "$shortstat" ]]; then
-            local u_stat # shorstat of *unstaged* changes
-            u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
-            u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
+            if [[ -n "$shortstat" ]]; then
+                local u_stat # shorstat of *unstaged* changes
+                u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+                u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
 
-            local i_lines # inserted lines
-            if [[ "$u_stat" = *insertion* ]]; then
-                i_lines=${u_stat/ inser*}
-            else
-                i_lines=0
+                local i_lines # inserted lines
+                if [[ "$u_stat" = *insertion* ]]; then
+                    i_lines=${u_stat/ inser*}
+                else
+                    i_lines=0
+                fi
+
+                local d_lines # deleted lines
+                if [[ "$u_stat" = *deletion* ]]; then
+                    d_lines=${u_stat/*\(+\), }
+                    d_lines=${d_lines/ del*/}
+                else
+                    d_lines=0
+                fi
+
+                local has_lines
+                has_lines="+$i_lines/-$d_lines"
+
+                if [[ -n "$has_commit" ]]; then
+                    # Changes to commit and commits to push
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
+                else
+                    ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                fi
+            elif [[ -n "$has_commit" ]]; then
+                # some commit(s) to push
+                if [[ "$commit_behind" -gt "0" ]]; then
+                    ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
+                else
+                    ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
+                fi
             fi
-
-            local d_lines # deleted lines
-            if [[ "$u_stat" = *deletion* ]]; then
-                d_lines=${u_stat/*\(+\), }
-                d_lines=${d_lines/ del*/}
-            else
-                d_lines=0
-            fi
-
-            local has_lines
-            has_lines="+$i_lines/-$d_lines"
-
-            if [[ -n "$has_commit" ]]; then
-                # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
-            else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
-            fi
-        elif [[ -n "$has_commit" ]]; then
-            # some commit(s) to push
-            if [[ "$commit_behind" -gt "0" ]]; then
-                ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
-            else
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
-            fi
-        else
-            ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
         fi
         echo -nE "$ret$end"
     fi

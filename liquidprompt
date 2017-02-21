@@ -854,6 +854,7 @@ _lp_git_branch()
     if branch="$(\git symbolic-ref -q HEAD)"; then
         _lp_escape "${branch#refs/heads/}"
     else
+        \git describe --tags --exact-match 2>/dev/null && return
         # In detached head state, use commit instead
         # No escape needed
         \git rev-parse --short -q HEAD

@@ -9,10 +9,13 @@ NEXT
 	- Fix regression in LP_ENABLE_FQDN implementation (GitHub #472)
 	- Fix LP_COLOR_HOST_HASH on SunOS (GitHub #461, #462)
 	- Fix LP_MARK_DEFAULT being ignored if root (GitHub #501)
+	- Git:
+	  * Faster "git stash" check (GitHub #503)
 	Thanks to Roman (@hatifnatt), Jon Garrison (@jpwgarrison),
 	Mark Vander Stel (@Rycieos), Bryce Jasmer (b-jazz), Felix
 	Schlitter (@felixSchl), Philip Garrison (@pgarrison), Lubomir
-	Host (@lhost), Iain Hallam (@iainhallam)...
+	Host (@lhost), Iain Hallam (@iainhallam), Matt
+	Smith (@ncs-msmith)...
 	... for their patches or bug reports.
 
 1.11    2016-06-25

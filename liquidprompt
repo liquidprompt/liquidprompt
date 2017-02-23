@@ -934,6 +934,7 @@ else
                 fi
             fi
 
+            local ret
             local shortstat # only to check for uncommitted changes
             shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
@@ -960,7 +961,6 @@ else
                 local has_lines
                 has_lines="+$i_lines/-$d_lines"
 
-                local ret
                 if [[ -n "$has_commit" ]]; then
                     # Changes to commit and commits to push
                     ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"

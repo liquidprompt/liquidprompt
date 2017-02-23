@@ -876,7 +876,7 @@ _lp_git_head_status() {
     fi
 }
 
-if [[ LP_ENABLE_GIT_BRANCH_ONLY ]]; then
+if (( LP_ENABLE_GIT_BRANCH_ONLY )); then
     # Only display the current branch, in green by default.
     _lp_git_branch_color()
     {

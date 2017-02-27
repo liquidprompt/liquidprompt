@@ -422,6 +422,7 @@ _lp_source_config()
     else
         local first
         local search
+        local path
         # trailing ":" is so that ${search#*:} always removes something
         search="${XDG_CONFIG_HOME:-"$HOME/.config"}:${XDG_CONFIG_DIRS:-/etc/xdg}:"
         while [[ -n "$search" ]]; do

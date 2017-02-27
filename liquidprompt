@@ -1522,7 +1522,7 @@ if (( LP_ENABLE_TEMP )); then
     {
         local -i i
         # Only the integer part is retained
-        for i in $(LANG=C acpi -t |
+        for i in $(LANG=C acpi -t 2>/dev/null |
                 sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
             (( $i > ${temperature:-0} )) && temperature=i
         done

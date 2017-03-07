@@ -430,6 +430,9 @@ _lp_source_config()
             if [[ -f "$first/liquidpromptrc" ]]; then
                 configfile="$first/liquidpromptrc"
                 break
+            elif [[ -f "$first/liquidprompt/liquidpromptrc" ]]; then
+                configfile="$first/liquidprompt/liquidpromptrc"
+                break
             fi
         done
     fi

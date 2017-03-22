@@ -72,6 +72,7 @@ if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
     _LP_HOST_SYMBOL="\h"
     _LP_FQDN_SYMBOL="\H"
     _LP_TIME_SYMBOL="\t"
+    _LP_TTYN_SYMBOL="\l"
     _LP_MARK_SYMBOL='\$'
     _LP_PWD_SYMBOL="\\w"
     _LP_DIR_SYMBOL="\\W"
@@ -103,6 +104,7 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_HOST_SYMBOL="%m"
     _LP_FQDN_SYMBOL="%M"
     _LP_TIME_SYMBOL="%*"
+    _LP_TTYN_SYMBOL="%l"
     _LP_MARK_SYMBOL='%(!.#.%%)'
     _LP_PWD_SYMBOL="%~"
     _LP_DIR_SYMBOL="%1~"
@@ -585,6 +587,8 @@ fi
 #################
 # Where are we? #
 #################
+
+LP_TTYN="${_LP_TTYN_SYMBOL}"
 
 _lp_connection()
 {

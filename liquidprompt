@@ -311,6 +311,7 @@ _lp_source_config()
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
+    LP_VIRTUALENV_PARENT=${LP_VIRTUALENV_PARENT:-0}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -1732,7 +1733,11 @@ _lp_set_prompt()
     # Display the current Python virtual environment, if available
     if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}${CONDA_DEFAULT_ENV-}" = 1,?* ]]; then
         if [[ -n "${VIRTUAL_ENV-}" ]]; then
-            LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
+            if [[ "$LP_VIRTUALENV_PARENT" ]]; then
+                LP_VENV=" [${LP_COLOR_VIRTUALENV}$(basename $(dirname $VIRTUAL_ENV))${NO_COL}]"
+            else
+                LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
+            fi
         else
             LP_VENV=" [${LP_COLOR_VIRTUALENV}${CONDA_DEFAULT_ENV##*/}${NO_COL}]"
         fi

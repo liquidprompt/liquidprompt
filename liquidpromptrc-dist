@@ -130,6 +130,11 @@ LP_RUNTIME_THRESHOLD=2
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
 
+# Display virtualenv parent directory name, if you want to
+# create virtualenv inside your projects with standart name
+# like `venv`. Default value is 0.
+LP_VIRTUALENV_PARENT=0
+
 # Display the enabled software collections, if any
 # Recommended value is 1
 LP_ENABLE_SCLS=1

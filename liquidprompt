@@ -1711,8 +1711,11 @@ _lp_set_prompt()
     local IFS="$_LP_IFS"
     local GREP_OPTIONS=
 
-    # bash: execute the old prompt hook
-    eval "$LP_OLD_PROMPT_COMMAND"
+    # bash: execute the old prompt hook,
+    # unless the old prompt hook is _lp_set_prompt
+    if ! [[ $LP_OLD_PROMPT_COMMAND =~ ^_lp_set_prompt ]]; then
+      eval "$LP_OLD_PROMPT_COMMAND"
+    fi
 
     # left of main prompt: space at right
     LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"

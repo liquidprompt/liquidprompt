@@ -311,6 +311,8 @@ _lp_source_config()
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
+    LP_PS1_PRETITLE=${LP_PS1_PRETITLE:-""}
+    LP_PS1_POSTTITLE=${LP_PS1_POSTTITLE:-""}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -1859,7 +1861,7 @@ _lp_set_prompt()
         LP_TITLE="$(_lp_title "$PS1")"
 
         # Insert it in the prompt
-        PS1="${LP_TITLE}${PS1}"
+        PS1="${LP_PS1_PRETITLE}${LP_TITLE}${PS1}${LP_PS1_POSTTITLE}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C

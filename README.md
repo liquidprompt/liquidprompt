@@ -64,7 +64,7 @@ Here is an overview of what Liquid Prompt is capable of displaying:
   * in yellow if there are pending commits to push
 * the number of added/deleted lines if changes have been made and the
   number of pending commits
-* a yellow `+` if there are stashed modifications
+* a yellow `:` if there are stashed modifications
 * a red `*` if there are untracked files in the repository
 * the runtime of the last command, if it has exceeded a certain threshold
 * the error code of the last command, if it has failed in some way

@@ -1396,6 +1396,9 @@ _lp_color_map() {
     scale=${2:-100}
     # Transform the value to a 0..${#COLOR_MAP} scale
     idx=_LP_FIRST_INDEX+100*$1/scale/${#LP_COLORMAP[*]}
+    if [[ "$idx" -ge "${#LP_COLORMAP[*]}" ]]; then
+        idx=-1
+    fi
     echo -nE "${LP_COLORMAP[idx]}"
 }
 

@@ -21,5 +21,9 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Use Liquid Prompt
-source ~/liquidprompt/liquidprompt
-
+#source ~/liquidprompt/liquidprompt
+# source only for bash and interactive shells
+test  -z "$BASH_VERSION" \
+	|| test -z "$TERM" -o "x$TERM" = xdumb \
+		|| test -f ~/.config/liquidprompt/liquidprompt \
+			&& source ~/.config/liquidprompt/liquidprompt

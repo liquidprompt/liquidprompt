@@ -1885,7 +1885,14 @@ prompt_on()
     if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
-            LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+            if [[ $PROMPT_COMMAND =~ _lp_set_prompt ]]; then
+                echo 'liquidprompt: liquidprompt is being called'\
+                'multiple times. Check your .bashrc file for'\
+                '$PROMPT_COMMAND misconfiguration.'
+                LP_OLD_PROMPT_COMMAND=""
+            else
+                LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+            fi
             _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND=""

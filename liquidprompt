@@ -286,12 +286,13 @@ _lp_source_config()
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
 
-    # compute the hash of the hostname
-    # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
-    # FIXME Add more formats (bold? 256 colors?)
-    # cksum is separated with tab on SunOS, space on others
-    local cksum="$(hostname | cksum)"
-    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $(( 1 + ${cksum%%[ 	]*} % 6 )) )${_LP_CLOSE_ESC}"
+    if (( LP_ENABLE_SSH_COLORS )); then
+        # compute the hash of the hostname
+        # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
+        # FIXME check portability of cksum and add more formats (bold? 256 colors?)
+        local hash=$(( 1 + $(hostname | cksum | cut -d " " -f 1) % 6 ))
+        LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $hash)${_LP_CLOSE_ESC}"
+    fi
 
     unset ti_sgr0 ti_bold
     unset -f ti_setaf ti_setab
@@ -634,7 +635,7 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     case "$(_lp_connection)" in
     lcl)
         if (( LP_HOSTNAME_ALWAYS )); then
-            LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
+            LP_HOST+="${LP_COLOR_HOST}${_LP_HOST_SYMBOL}${NO_COL}"
         else
             # FIXME do we want to display the chroot if local?
             LP_HOST="" # no hostname if local
@@ -643,16 +644,16 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
     ssh)
         # If we want a different color for each host
         (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-        LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SSH}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     su)
-        LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_SU}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     tel)
-        LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
+        LP_HOST+="${LP_COLOR_TELNET}${_LP_HOST_SYMBOL}${NO_COL}"
         ;;
     *)
-        LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
+        LP_HOST+="${_LP_HOST_SYMBOL}" # defaults to no color
         ;;
     esac
 
@@ -1145,20 +1146,7 @@ _lp_fossil_branch_color()
         local ret
         C2E=$(fossil changes | wc -l)
         C2A=$(fossil extras | wc -l)
-        ret=$(fossil diff -i -v | awk '
-            /^(\+[^+])|(\+$)/ { plus+=1 }
-            /^(-[^-])|(-$)/ { minus+=1 }
-            END {
-                total=""
-                if (plus>0) {
-                    total="+"plus
-                    if(minus>0) total=total"/"
-                }
-                if (minus>0) {
-                    total=total"-"minus
-                }
-                print total
-            }')
+        ret=$(fossil diff -i -v | awk "/^(+[^+])|(+$)/ { plus+=1; } /^(-[^-])|(-$)/ { minus+=1; } END { total=\"\"; if(plus>0){ total=\"+\"plus; if(minus>0) total=total\"/\"; } if(minus>0) total=total\"-\"minus; print total;}")
 
         if (( C2E > 0 )); then
             [[ -n "$ret" ]] && ret+=" in "
@@ -1908,16 +1896,6 @@ prompt_on()
         fi
     fi
     if $_LP_SHELL_bash; then
-        # Prevent some cases where the user shoots in his own foot.
-        # PROMPT_COMMAND is not exported by default, but some users
-        # incorrectly export it from their profile/bashrc (GitHub #450),
-        # so we preventively UNexport it.
-        # TODO: warn the user if it was exported
-        if (( ${BASH_VERSION%%.*} > 4 )) || [[ ${BASH_VERSION} > 4.2 ]]; then
-            # -g is only available since bash 4.2
-            declare -g +x PROMPT_COMMAND
-        fi
-
         # Disable parameter/command expansion from PS1
         shopt -u promptvars
         PROMPT_COMMAND=_lp_set_prompt

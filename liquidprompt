@@ -1590,7 +1590,8 @@ _lp_as_text()
 {
     # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
     # $_LP_CLOSE_ESC.
-    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
+    # chomp trailing newline, which is emitted by sed on macOS
+    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g" | tr -d '\n'
 }
 
 _lp_title()

@@ -55,7 +55,7 @@ test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
 if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
-    bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+    bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}; bminor=${bminor%%[^0-9]*}
     if (( bmajor < 3 || ( bmajor == 3 && bminor < 2 ) )); then
         unset bash bmajor bminor
         return

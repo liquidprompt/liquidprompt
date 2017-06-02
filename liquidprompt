@@ -896,11 +896,12 @@ _lp_git_branch_color()
         local end
         end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}"
 
-        if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -Eq '^\?\?'; then
+        if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -q '^??'; then
             end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
         fi
 
-        if [[ -n "$(\git stash list -n 1 2>/dev/null)" ]]; then
+        # Show if there is a git stash
+        if \git rev-parse --verify -q refs/stash >/dev/null; then
             end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
         fi
 
@@ -1023,7 +1024,7 @@ _lp_hg_branch_color()
 
         local has_untracked
         has_untracked=
-        if hg status -u 2>/dev/null | \grep -q '^\?' >/dev/null ; then
+        if hg status -u 2>/dev/null | \grep -q '^?' >/dev/null ; then
             has_untracked="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
         fi
 

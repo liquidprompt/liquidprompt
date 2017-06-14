@@ -923,13 +923,10 @@ _lp_git_branch_color()
             fi
         fi
 
-        local has_changes=0 # track if has uncommited changes
-
-        local has_diff # only to check for uncommitted changes
-        has_diff="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+        local has_changes="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
         local diff_details=""
-        if [[ -n "$has_diff" ]]; then
+        if [[ -n "$has_changes" ]]; then
             local u_stat # shorstat of *unstaged* changes
             u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
             u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
@@ -949,7 +946,6 @@ _lp_git_branch_color()
                 d_lines=0
             fi
 
-            has_changes=1
             diff_details+="+$i_lines/-$d_lines"
         fi
 
@@ -961,8 +957,6 @@ _lp_git_branch_color()
                 local staged="$(echo "${status_lines}" | \grep '^[^? ]. .*' | wc -l)"
                 local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l)"
                 local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l)"
-                
-                [[ "$unstaged" -gt 0 || "$staged" -gt 0 ]] && has_changes=1
 
                 [[ "$staged" -gt 0 ]] && status_details+=" $LP_MARK_STAGED$staged"
                 [[ "$unstaged" -gt 0 ]] && status_details+=" $LP_MARK_UNSTAGED$unstaged"
@@ -976,10 +970,8 @@ _lp_git_branch_color()
 
         local details="$diff_details$status_details"
 
-        local ret
-
         # set $branch color
-        if (( has_changes )); then
+        if [[ -n "$has_changes" ]]; then
             branch="${LP_COLOR_CHANGES}${branch}${NO_COL}"
         elif [[ -n "$has_commit" ]]; then
             if [[ "$commit_behind" -gt "0" ]]; then
@@ -999,8 +991,8 @@ _lp_git_branch_color()
             fi
         fi
 
-        # set git prompt $ret part
-        if [[ -n "$details" ]] || [[ -n "$has_commit" ]]; then
+        local ret
+        if [[ -n "$details$has_commit" ]]; then
             ret="${branch}($details$has_commit)"
         else
             ret="${branch}" # nothing to commit or push

@@ -923,11 +923,13 @@ _lp_git_branch_color()
             fi
         fi
 
-        local shortstat # only to check for uncommitted changes
-        shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+        local has_changes=0 # track if has uncommited changes
+
+        local has_diff # only to check for uncommitted changes
+        has_diff="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
         local diff_details=""
-        if [[ -n "$shortstat" ]]; then
+        if [[ -n "$has_diff" ]]; then
             local u_stat # shorstat of *unstaged* changes
             u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
             u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
@@ -947,6 +949,7 @@ _lp_git_branch_color()
                 d_lines=0
             fi
 
+            has_changes=1
             diff_details+="+$i_lines/-$d_lines"
         fi
 
@@ -958,6 +961,8 @@ _lp_git_branch_color()
                 local staged="$(echo "${status_lines}" | \grep '^[^? ]. .*' | wc -l)"
                 local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l)"
                 local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l)"
+                
+                [[ "$unstaged" -gt 0 || "$staged" -gt 0 ]] && has_changes=1
 
                 [[ "$staged" -gt 0 ]] && status_details+=" $LP_MARK_STAGED$staged"
                 [[ "$unstaged" -gt 0 ]] && status_details+=" $LP_MARK_UNSTAGED$unstaged"
@@ -973,22 +978,32 @@ _lp_git_branch_color()
 
         local ret
 
-        if [[ -n "$shortstat" ]]; then
-            if [[ -n "$has_commit" ]]; then
-                # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$details${NO_COL},$has_commit)"
-            else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$details${NO_COL})" # changes to commit
-            fi
+        # set $branch color
+        if (( has_changes )); then
+            branch="${LP_COLOR_CHANGES}${branch}${NO_COL}"
         elif [[ -n "$has_commit" ]]; then
-            # some commit(s) to push
             if [[ "$commit_behind" -gt "0" ]]; then
-                ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
+                branch="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}"
             else
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
+                branch="${LP_COLOR_COMMITS}${branch}${NO_COL}"
             fi
         else
-            ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
+            branch="${LP_COLOR_UP}${branch}${NO_COL}"
+        fi
+
+        # set $details color and $has_commit format
+        if [[ -n "$details" ]]; then
+            details="${LP_COLOR_DIFF}${details# }${NO_COL}"
+            if [[ -n "$has_commit" ]]; then
+                has_commit=",$has_commit"
+            fi
+        fi
+
+        # set git prompt $ret part
+        if [[ -n "$details" ]] || [[ -n "$has_commit" ]]; then
+            ret="${branch}($details$has_commit)"
+        else
+            ret="${branch}" # nothing to commit or push
         fi
         echo -nE "$ret$end"
     fi

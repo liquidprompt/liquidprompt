@@ -97,6 +97,9 @@ LP_ENABLE_VCS_ROOT=0
 # Recommended value is 1
 LP_ENABLE_GIT=1
 
+# Enable Git status details
+LP_ENABLE_GIT_STATUS=0
+
 # Enable the Subversion special features.
 # Recommended value is 1
 LP_ENABLE_SVN=1

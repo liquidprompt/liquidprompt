@@ -320,6 +320,7 @@ _lp_source_config()
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
+    LP_ENABLE_GIT_STATUS=${LP_ENABLE_GIT_STATUS:-0}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
@@ -352,6 +353,8 @@ _lp_source_config()
     LP_MARK_DISABLED="${LP_MARK_DISABLED:-"⌀"}"
     LP_MARK_UNTRACKED="${LP_MARK_UNTRACKED:-"*"}"
     LP_MARK_STASH="${LP_MARK_STASH:-"+"}"
+    LP_MARK_STAGED="${LP_MARK_STAGED:-"S"}"
+    LP_MARK_UNSTAGED="${LP_MARK_UNSTAGED:-"U"}"
     LP_MARK_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN:-"["}"
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
@@ -924,10 +927,10 @@ _lp_git_branch_color()
             fi
         fi
 
-        local ret
         local shortstat # only to check for uncommitted changes
         shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
+        local diff_details=""
         if [[ -n "$shortstat" ]]; then
             local u_stat # shorstat of *unstaged* changes
             u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
@@ -948,14 +951,34 @@ _lp_git_branch_color()
                 d_lines=0
             fi
 
-            local has_lines
-            has_lines="+$i_lines/-$d_lines"
+            diff_details+="+$i_lines/-$d_lines"
+        fi
 
+        local status_details=""
+        if (( LP_ENABLE_GIT_STATUS )); then
+            local status_lines="$(LC_ALL=C \git status --porcelain 2>/dev/null)"
+
+            if [[ -n "$status_lines" ]]; then
+                local staged="$(echo "${status_lines}" | \grep '^[^? ]. .*' | wc -l)"
+                local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l)"
+                local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l)"
+
+                [[ "$staged" -gt 0 ]] && status_details+=" $LP_MARK_STAGED$staged"
+                [[ "$unstaged" -gt 0 ]] && status_details+=" $LP_MARK_UNSTAGED$unstaged"
+                [[ "$untracked" -gt 0 ]] && status_details+=" ?$untracked"
+            fi
+        fi
+
+        local details="$diff_details$status_details"
+
+        local ret
+
+        if [[ -n "$shortstat" ]]; then
             if [[ -n "$has_commit" ]]; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$details${NO_COL},$has_commit)"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$details${NO_COL})" # changes to commit
             fi
         elif [[ -n "$has_commit" ]]; then
             # some commit(s) to push

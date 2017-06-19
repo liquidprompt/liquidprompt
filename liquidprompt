@@ -948,7 +948,7 @@ _lp_git_branch_color()
                     d_lines=0
                 fi
 
-                diff_details+="+$i_lines/-$d_lines"
+                diff_details+=" +$i_lines/-$d_lines"
             fi
         fi
 
@@ -971,7 +971,7 @@ _lp_git_branch_color()
             fi
         fi
 
-        local details="$diff_details$status_details"
+        local details="$status_details$diff_details"
 
         # set $branch color
         if [[ -n "$has_changes" ]]; then

@@ -164,6 +164,8 @@ prompt-building process:
 * `LP_ENABLE_LOAD`, if you want to have load information
 * `LP_ENABLE_BATT`, if you want to have battery information
 * `LP_ENABLE_GIT`, if you want to have Git information
+* `LP_ENABLE_GIT_DIFF`, if you want to display `git diff` details
+* `LP_ENABLE_GIT_STATUS`, if you want to display `git status` details
 * `LP_ENABLE_SVN`, if you want to have Subversion information
 * `LP_ENABLE_HG`, if you want to have Mercurial information
 * `LP_ENABLE_BZR`, if you want to have Bazaar information
@@ -306,6 +308,7 @@ Set the variable to a null string (`""`) if you do not want color.
 * VCS
     * `LP_COLOR_UP` repository is up-to-date / a push has been made
     * `LP_COLOR_COMMITS` some commits have not been pushed
+    * `LP_COLOR_COMMITS_BEHIND` some commits have not been pushed
     * `LP_COLOR_CHANGES` there are some changes to commit
     * `LP_COLOR_DIFF` number of lines or files impacted by current changes
 * Battery
@@ -332,6 +335,8 @@ Set the variable to a null string (`""`) if you do not want color.
   (see `LP_DISABLED_VCS_PATH`)
 * `LP_MARK_UNTRACKED` (default: "\*") if Git has untracked files
 * `LP_MARK_STASH` (default: "+") if Git has stashed modifications
+* `LP_MARK_STAGED` (default: "S") in front of staged changes count
+* `LP_MARK_UNSTAGED` (default: "U") in front of unstaged changes count
 * `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt
 * `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt
 * `LP_MARK_PERM` (default: ":") colored green red or green to indicate write

@@ -22,8 +22,8 @@ if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]
     LP_MARK_DISABLED="⌀"       # prompt mark in directory with disabled VCS info
     LP_MARK_UNTRACKED="*"      # if git has untracked files
     LP_MARK_STASH="+"          # if git has stashs
-    LP_MARK_STAGED="S"         # before staged changes count
-    LP_MARK_UNSTAGED="U"       # before unstaged changes count
+    LP_MARK_STAGED="S"         # in front of staged changes count
+    LP_MARK_UNSTAGED="U"       # in front of unstaged changes count
     LP_MARK_SHORTEN_PATH=" … " # prompt mark in shortened paths
     LP_MARK_PERM=":"           # separator between host and path
 else

@@ -898,7 +898,7 @@ _lp_git_branch_color()
 
         # Show if there is a git stash
         if \git rev-parse --verify -q refs/stash >/dev/null; then
-            end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
+            end="${LP_COLOR_COMMITS}${LP_MARK_STASH}${end}"
         fi
 
         local remote
@@ -924,7 +924,8 @@ _lp_git_branch_color()
             fi
         fi
 
-        local has_changes="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+        local has_changes # only to check for uncommitted changes
+        has_changes="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
 
         local diff_details=""
         if (( LP_ENABLE_GIT_DIFF )); then
@@ -961,46 +962,46 @@ _lp_git_branch_color()
                 local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l)"
                 local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l)"
 
-                [[ "$staged" -gt 0 ]] && status_details+=" $LP_MARK_STAGED$staged"
-                [[ "$unstaged" -gt 0 ]] && status_details+=" $LP_MARK_UNSTAGED$unstaged"
-                [[ "$untracked" -gt 0 ]] && status_details+=" ?$untracked"
+                [[ "$staged" -gt 0 ]] && status_details+=" ${LP_MARK_STAGED}${staged}"
+                [[ "$unstaged" -gt 0 ]] && status_details+=" ${LP_MARK_UNSTAGED}${unstaged}"
+                [[ "$untracked" -gt 0 ]] && status_details+=" ?${untracked}"
             fi
         else
             if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -q '^??'; then
-                end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
+                end="${LP_COLOR_CHANGES}${LP_MARK_UNTRACKED}${end}"
             fi
         fi
 
-        local details="$status_details$diff_details"
+        local details="${status_details}${diff_details}"
 
         # set $branch color
-        if [[ -n "$has_changes" ]]; then
+        if [[ -n "$has_changes" ]]; then # has uncomitted changes
             branch="${LP_COLOR_CHANGES}${branch}${NO_COL}"
-        elif [[ -n "$has_commit" ]]; then
+        elif [[ -n "$has_commit" ]]; then # has commited changes
             if [[ "$commit_behind" -gt "0" ]]; then
                 branch="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}"
             else
                 branch="${LP_COLOR_COMMITS}${branch}${NO_COL}"
             fi
-        else
+        else # no changes
             branch="${LP_COLOR_UP}${branch}${NO_COL}"
         fi
 
-        # set $details color and $has_commit format
+        # set $details color and tweak $has_commit format
         if [[ -n "$details" ]]; then
             details="${LP_COLOR_DIFF}${details# }${NO_COL}"
             if [[ -n "$has_commit" ]]; then
-                has_commit=",$has_commit"
+                has_commit=",${has_commit}"
             fi
         fi
 
         local ret
-        if [[ -n "$details$has_commit" ]]; then
-            ret="${branch}($details$has_commit)"
-        else
-            ret="${branch}" # nothing to commit or push
+        if [[ -n "${details}${has_commit}" ]]; then # has details and/or commit(s) to push
+            ret="${branch}(${details}${has_commit})"
+        else # nothing to commit or push
+            ret="${branch}"
         fi
-        echo -nE "$ret$end"
+        echo -nE "${ret}${end}"
     fi
 }
 

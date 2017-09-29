@@ -854,9 +854,14 @@ _lp_git_branch()
     if branch="$(\git symbolic-ref -q HEAD)"; then
         _lp_escape "${branch#refs/heads/}"
     else
-        # In detached head state, use commit instead
-        # No escape needed
-        \git rev-parse --short -q HEAD
+        if tag="$(\git describe --tags --exact-match 2>/dev/null)"; then
+            # At a tag
+            _lp_escape "tag: $tag"
+        else
+            # In detached head state, use commit instead
+            # No escape needed
+            \git rev-parse --short -q HEAD
+        fi
     fi
 }
 

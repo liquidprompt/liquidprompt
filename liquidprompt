@@ -958,9 +958,9 @@ _lp_git_branch_color()
             local status_lines="$(LC_ALL=C \git status --porcelain 2>/dev/null)"
 
             if [[ -n "$status_lines" ]]; then
-                local staged="$(echo "${status_lines}" | \grep '^[^? ]. .*' | wc -l)"
-                local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l)"
-                local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l)"
+                local staged="$(echo "${status_lines}" | \grep '^[^? ]. .*' | wc -l | tr -d ' ')"
+                local unstaged="$(echo "${status_lines}" | \grep '^.[^? ] .*' | wc -l | tr -d ' ')"
+                local untracked="$(echo "${status_lines}" | \grep '^?? .*' | wc -l | tr -d ' ')"
 
                 [[ "$staged" -gt 0 ]] && status_details+=" ${LP_MARK_STAGED}${staged}"
                 [[ "$unstaged" -gt 0 ]] && status_details+=" ${LP_MARK_UNSTAGED}${unstaged}"

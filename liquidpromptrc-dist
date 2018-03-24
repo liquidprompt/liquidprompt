@@ -118,6 +118,10 @@ LP_ENABLE_BZR=1
 # sourced.)
 LP_ENABLE_TIME=0
 
+# Show exit code of previous command if non-zero
+# Recommended value is 1
+LP_ENABLE_ERR=1
+
 # Show runtime of the previous command if over LP_RUNTIME_THRESHOLD
 # Recommended value is 0
 LP_ENABLE_RUNTIME=0

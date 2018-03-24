@@ -326,6 +326,7 @@ _lp_source_config()
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
+    LP_ENABLE_ERR=${LP_ENABLE_ERR:-1}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
@@ -1701,7 +1702,9 @@ _lp_set_prompt()
     # As this get the last returned code, it should be called first
     local -i err=$?
     if (( err != 0 )); then
-        LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
+        if (( LP_ENABLE_ERR )); then
+            LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
+        fi
     else
         LP_ERR=''     # Hidden
     fi

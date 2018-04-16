@@ -114,7 +114,9 @@ You can even theme Liquid Prompt and use a custom PS1 prompt. This is explained
 in the sections below.
 
 Check in your `.bashrc` that the `PROMPT_COMMAND` variable is not set, or else
-the prompt will not be available.
+the prompt will not be available. If you must set it or use a add-on that sets
+it, make sure to set `PROMPT_COMMAND` before you source Liquid Prompt to avoid
+history and timing issues. Do not export `PROMPT_COMMAND`.
 
 ### Installation via Antigen
 

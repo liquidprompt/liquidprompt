@@ -1314,7 +1314,7 @@ case "$LP_OS" in
             *)  # "charging", "AC attached"
                 echo -nE "$percent"
                 # under => 2, above => 3
-                return $(( 1 + ( percent > LP_BATTERY_THRESHOLD ) ))
+                return $(( 2 + ( percent > LP_BATTERY_THRESHOLD ) ))
             ;;
         esac
     }

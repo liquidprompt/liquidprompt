@@ -196,12 +196,12 @@ case "$LP_OS" in
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
-            read bol lp_cpu_load eol <<<"$( LANG=C sysctl -n vm.loadavg )"
+            read bol lp_cpu_load eol <<<"$( LC_ALL=C sysctl -n vm.loadavg )"
         }
         ;;
     SunOS)
         _lp_cpu_load () {
-            read lp_cpu_load <<<"$( LANG=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
+            read lp_cpu_load <<<"$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
         }
 esac
 
@@ -593,7 +593,7 @@ _lp_connection()
     else
         # tmux: see GH #304
         # TODO check on *BSD
-        local whoami="$(LANG=C who am i)"
+        local whoami="$(LC_ALL=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
         if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
             echo lcl  # Local
@@ -1066,7 +1066,7 @@ _lp_svn_branch()
 
     local root=
     local url=
-    eval "$(LANG=C LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
+    eval "$(LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
     [[ -z "${root-}" ]] && return
 
     # Make url relative to root
@@ -1522,7 +1522,7 @@ if (( LP_ENABLE_TEMP )); then
     {
         local -i i
         # Only the integer part is retained
-        for i in $(LANG=C acpi -t |
+        for i in $(LC_ALL=C acpi -t |
                 sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
             (( $i > ${temperature:-0} )) && temperature=i
         done

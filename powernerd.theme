@@ -1,0 +1,109 @@
+
+########################################
+# LIQUID PROMPT "POWERNERD" THEME FILE #
+########################################
+
+# WARNING: this require that your terminal use one of the "nerd-fonts":
+# https://github.com/ryanoasis/nerd-fonts
+
+LP_MARK_BATTERY=""        # in front of the battery charge
+LP_MARK_ADAPTER=""        # displayed when plugged
+LP_MARK_LOAD=""           # in front of the load
+LP_MARK_TEMP=""           # in front of the temp
+LP_MARK_PROXY=""          # indicate a proxy in use
+LP_MARK_HG=""             # prompt mark in hg repositories
+
+LP_MARK_SVN="‡"            # prompt mark in svn repositories
+LP_MARK_GIT="±"            # prompt mark in git repositories
+LP_MARK_FOSSIL="⌘"         # prompt mark in fossil repositories
+LP_MARK_DISABLED="⌀"       # prompt mark in directory with disabled VCS info
+LP_MARK_UNTRACKED="*"      # if git has untracked files
+LP_MARK_STASH=""          # if git has stashs
+LP_MARK_SHORTEN_PATH=" … " # prompt mark in shortened paths
+LP_MARK_PERM=""           # separator between host and path
+
+LP_MARK_BRACKET_OPEN=""  # open bracket
+LP_MARK_BRACKET_CLOSE="" # close bracket
+
+LP_MARK_SPACE=""
+
+#LP_MARK_DEFAULT=""        # default prompt mark
+LP_MARK_PREFIX=""        # prompt mark prefix
+LP_PS1_PREFIX=""
+LP_PS1_POSTFIX=""
+
+# You can use symbols within color tags,
+# at the end this is just a string substitution anyway.
+LP_MARK_VCS_OPEN="${LP_COLOR[WHITE_ON_PURPLE]}"
+LP_MARK_VCS_CLOSE="${LP_COLOR[PURPLE_ON_WHITE]}"
+
+LP_COLOR_PATH="${LP_COLOR[NONE_ON_BLUE]}"
+LP_COLOR_PATH_ROOT="${LP_COLOR[RED_ON_BLUE]}"
+LP_COLOR_PROXY="${LP_COLOR[WHITE_ON_BLACK]}"
+LP_COLOR_JOB_D="${LP_COLOR[BLACK_ON_GREEN]}"
+LP_COLOR_JOB_R="${LP_COLOR[BLACK_ON_GREEN]}"
+LP_COLOR_JOB_Z="${LP_COLOR[BLACK_ON_GREEN]}"
+LP_COLOR_ERR="${LP_COLOR[BOLD_RED_ON_BLACK]}"
+LP_COLOR_MARK="${LP_COLOR[BLACK_ON_WHITE]}"
+LP_COLOR_MARK_ROOT="${LP_COLOR[BOLD_RED_ON_WHITE]}"
+LP_COLOR_MARK_SUDO="${LP_COLOR[RED_ON_WHITE]}"
+LP_COLOR_USER_LOGGED="${LP_COLOR[BLACK_ON_GREEN]}"
+LP_COLOR_USER_ALT="${LP_COLOR[WHITE_ON_GREEN]}"
+LP_COLOR_USER_ROOT="${LP_COLOR[BOLD_RED_ON_GREEN]}"
+LP_COLOR_HOST="${LP_COLOR[BLACK_ON_YELLOW]}"
+LP_COLOR_SSH="${LP_COLOR[BLUE_ON_YELLOW]}"
+LP_COLOR_SU="${LP_COLOR[BOLD_RED_ON_WHITE]}"
+LP_COLOR_TELNET="${LP_COLOR[RED_ON_YELLOW]}"
+LP_COLOR_X11_ON="${LP_COLOR[BOLD_GREEN_ON_YELLOW]}"
+LP_COLOR_X11_OFF="${LP_COLOR[NONE_ON_YELLOW]}"
+LP_COLOR_WRITE="${LP_COLOR[GREEN_ON_BLACK]}"
+LP_COLOR_NOWRITE="${LP_COLOR[BOLD_RED_ON_BLACK]}"
+LP_COLOR_UP="${LP_COLOR[GREEN_ON_WHITE]}"
+LP_COLOR_COMMITS="${LP_COLOR[YELLOW_ON_WHITE]}"
+LP_COLOR_COMMITS_BEHIND="${LP_COLOR[MAGENTA_ON_WHITE]}"
+LP_COLOR_CHANGES="${LP_COLOR[RED_ON_WHITE]}"
+LP_COLOR_DIFF="${LP_COLOR[WHITE_ON_PURPLE]}"
+LP_COLOR_CHARGING_ABOVE="${LP_COLOR[GREEN_ON_PURPLE]}"
+LP_COLOR_CHARGING_UNDER="${LP_COLOR[YELLOW_ON_PURPLE]}"
+LP_COLOR_DISCHARGING_ABOVE="${LP_COLOR[BLUE_ON_PURPLE]}"
+LP_COLOR_DISCHARGING_UNDER="${LP_COLOR[RED_ON_PURPLE]}"
+LP_COLOR_TIME="${NO_COL}"
+# Note the use of symbols within the color tag,
+# only a n additional colored chevron will be visible when in a multiplexer.
+LP_COLOR_IN_MULTIPLEXER="${LP_COLOR[BLACK_ON_RED]}${LP_COLOR[RED_ON_BLUE]}"
+LP_COLOR_IN_LOCAL="${LP_COLOR[BLACK_ON_BLUE]}"
+
+LP_COLOR_RUNTIME="${LP_COLOR[WHITE_ON_BLACK]}"
+LP_COLOR_VIRTUALENV="${LP_COLOR[WHITE_ON_GREEN]}"
+
+# Remember that most features come with their corresponding colors,
+# see the README.
+
+# Segment separator
+s() { c=$1; echo -n -e ${LP_COLOR[$c]}${NO_COL}; }
+
+# add time, jobs, load and battery
+LP_PS1="\n${LP_PS1_PREFIX}${LP_TIME}$(s BLACK_ON_PURPLE)${LP_BATT}${LP_LOAD}$(s PURPLE_ON_GREEN)${LP_JOBS}"
+
+# add user, host and permissions colon
+LP_PS1="${LP_PS1}${LP_USER}$(s GREEN_ON_YELLOW)${LP_HOST}$(s YELLOW_ON_BLACK)${LP_PERM}${LP_BRACKET_CLOSE}"
+
+LP_PS1="${LP_PS1}${LP_PWD}$(s BLUE_ON_GREEN)${LP_VENV}$(s GREEN_ON_BLACK)${LP_PROXY}$(s BLACK_ON_WHITE)"
+
+# Add VCS infos
+# If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+# is set.
+LP_PS1="${LP_PS1}${LP_VCS}$(s WHITE_ON_BLACK)"
+
+# add return code and prompt mark
+LP_PS1="${LP_PS1}${LP_RUNTIME}${LP_ERR}$(s BLACK)\n$(s BLACK_ON_WHITE)${LP_MARK}$(s WHITE)"
+
+# "invisible" parts
+# Get the current prompt on the fly and make it a title.
+# Remove chevrons on the way.
+LP_TITLE="$(_lp_title "$(echo $LP_PS1|sed 's// /g')")"
+
+# Insert it in the prompt
+LP_PS1="${LP_TITLE}${LP_PS1}"
+
+# vim: set et sts=4 sw=4 tw=120 ft=sh:

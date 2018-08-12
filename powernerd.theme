@@ -104,6 +104,6 @@ LP_PS1="${LP_PS1}${LP_RUNTIME}${LP_ERR}$(s BLACK)\n$(s BLACK_ON_WHITE)${LP_MA
 LP_TITLE="$(_lp_title "$(echo $LP_PS1|sed 's// /g')")"
 
 # Insert it in the prompt
-LP_PS1="${LP_TITLE}${LP_PS1}"
+LP_PS1="${LP_TITLE}${LP_PS1}${LP_PS1_POSTFIX}"
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

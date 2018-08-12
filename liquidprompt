@@ -325,7 +325,7 @@ _lp_source_config()
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
-    LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1}
+    # LP_ENABLE_VCSH=${LP_ENABLE_VCSH:-1} # FIXME not used?
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
@@ -340,6 +340,7 @@ _lp_source_config()
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
+    # LP_ENABLE_ERR=${LP_ENABLE_ERR:-0} # FIXME add this
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -361,6 +362,9 @@ _lp_source_config()
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
     LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
+    LP_MARK_SPACE="${LP_MARK_SPACE:-" "}"
+    LP_MARK_VCS_OPEN="${LP_MARK_VCS_OPEN:-"("}"
+    LP_MARK_VCS_CLOSE="${LP_MARK_VCS_CLOSE:-")"}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -394,6 +398,7 @@ _lp_source_config()
     LP_COLOR_DISCHARGING_UNDER=${LP_COLOR_DISCHARGING_UNDER:-$RED}
     LP_COLOR_TIME=${LP_COLOR_TIME:-$BLUE}
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
+    LP_COLOR_IN_LOCAL=${LP_COLOR_IN_LOCAL:-$WHITE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
 
@@ -506,8 +511,8 @@ if [[ "$TERM" == screen* ]]; then
     # "\e\" but on bash \ must be escaped
     LP_TITLE_CLOSE="$(printf '\033%s' "$_LP_BACKSLASH")"
 else
-    LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
-    LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
+    LP_BRACKET_OPEN="${LP_COLOR_IN_LOCAL}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+    LP_BRACKET_CLOSE="${LP_COLOR_IN_LOCAL}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     LP_TITLE_OPEN="$(printf '\e]0;')"
     LP_TITLE_CLOSE="$(printf '\a')"
 fi
@@ -957,16 +962,16 @@ _lp_git_branch_color()
 
             if [[ -n "$has_commit" ]]; then
                 # Changes to commit and commits to push
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}${LP_MARK_VCS_OPEN}${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit${LP_MARK_VCS_CLOSE}"
             else
-                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
+                ret="${LP_COLOR_CHANGES}${branch}${NO_COL}${LP_MARK_VCS_OPEN}${LP_COLOR_DIFF}$has_lines${NO_COL}${LP_MARK_VCS_CLOSE}" # changes to commit
             fi
         elif [[ -n "$has_commit" ]]; then
             # some commit(s) to push
             if [[ "$commit_behind" -gt "0" ]]; then
-                ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
+                ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}${LP_MARK_VCS_OPEN}$has_commit${LP_MARK_VCS_CLOSE}"
             else
-                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
+                ret="${LP_COLOR_COMMITS}${branch}${NO_COL}${LP_MARK_VCS_OPEN}$has_commit${LP_MARK_VCS_CLOSE}"
             fi
         else
             ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
@@ -1623,25 +1628,25 @@ _lp_smart_mark()
     disabled) mark="$LP_MARK_DISABLED"        ;;
     *)        mark="$LP_MARK_DEFAULT"         ;;
     esac
-    echo -nE "${mark}${NO_COL}"
+    echo -nE "${mark}"
 }
 
 # insert a space on the right
 _lp_sr()
 {
-    [[ -n "$1" ]] && echo -nE "$1 "
+    [[ -n "$1" ]] && echo -nE "$1${LP_MARK_SPACE}"
 }
 
 # insert a space on the left
 _lp_sl()
 {
-    [[ -n "$1" ]] && echo -nE " $1"
+    [[ -n "$1" ]] && echo -nE "${LP_MARK_SPACE}$1"
 }
 
 # insert two space, before and after
 _lp_sb()
 {
-    [[ -n "$1" ]] && echo -nE " $1 "
+    [[ -n "$1" ]] && echo -nE "${LP_MARK_SPACE}$1${LP_MARK_SPACE}"
 }
 
 ###################
@@ -1821,7 +1826,8 @@ _lp_set_prompt()
         fi
 
         # end of the prompt line: double spaces
-        LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
+        # color around spaces to avoid background mismatch
+        LP_MARK="${LP_COLOR_MARK}$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")${NO_COL}"
 
         LP_OLD_PWD="LP:$PWD"
 
@@ -1856,7 +1862,7 @@ _lp_set_prompt()
         PS1+="${LP_VCS}"
 
         # add return code and prompt mark
-        PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title

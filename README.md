@@ -299,6 +299,7 @@ Set the variable to a null string (`""`) if you do not want color.
     * `LP_COLOR_JOB_R` Running (`xterm &`)
     * `LP_COLOR_JOB_Z` Sleeping (Ctrl-Z)
     * `LP_COLOR_IN_MULTIPLEXER` currently running in a terminal multiplexer
+    * `LP_COLOR_IN_LOCAL` currently running in a local terminal
 * Last error code
     * `LP_COLOR_ERR`
 * Prompt mark
@@ -348,10 +349,10 @@ Set the variable to a null string (`""`) if you do not want color.
   (see `LP_DISABLED_VCS_PATH`)
 * `LP_MARK_UNTRACKED` (default: "\*") if Git has untracked files
 * `LP_MARK_STASH` (default: "+") if Git has stashed modifications
-* `LP_MARK_BRACKET_OPEN` (default: "[") marks around the main part of the prompt
-* `LP_MARK_BRACKET_CLOSE` (default: "]") marks around the main part of the prompt
+* `LP_MARK_BRACKET_OPEN` and `LP_MARK_BRACKET_CLOSE` (default: "[" and "]") marks around the main part of the prompt
 * `LP_MARK_PERM` (default: ":") colored green red or green to indicate write
-  permissions of the current directory
+* `LP_MARK_SPACE` (default: " ") spacing mark used as a separator between segments
+* `LP_MARK_VCS_OPEN` and `LP_MARK_VCS_CLOSE` (default: "(" and ")") marks around VCS additional informations
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 

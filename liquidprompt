@@ -257,6 +257,7 @@ _lp_source_config()
     # with the same names defined by the user outside the config.
     local BOLD="${_LP_OPEN_ESC}${ti_bold}${_LP_CLOSE_ESC}"
 
+    # Foreground colors
     local BLACK="${_LP_OPEN_ESC}$(ti_setaf 0)${_LP_CLOSE_ESC}"
     local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 0)${_LP_CLOSE_ESC}"
     local WHITE="${_LP_OPEN_ESC}$(ti_setaf 7)${_LP_CLOSE_ESC}"
@@ -278,7 +279,10 @@ _lp_source_config()
     local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 4)${_LP_CLOSE_ESC}"
 
     local PURPLE="${_LP_OPEN_ESC}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    local MAGENTA="${PURPLE}"
     local PINK="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    local BOLD_PURPLE="${PINK}"
+    local BOLD_MAGENTA="${PINK}"
 
     local CYAN="${_LP_OPEN_ESC}$(ti_setaf 6)${_LP_CLOSE_ESC}"
     local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 6)${_LP_CLOSE_ESC}"

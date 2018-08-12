@@ -284,6 +284,21 @@ as a bold and blue over the default background of your terminal:
 To ease the creation of colormaps indicating warnings, you can use:
 `WARN_RED`, `CRIT_RED`, `DANGER_RED`.
 
+#### Background colors
+
+Additionally, you can have access to simple colors as background colors, using the
+`LP_COLOR` associative array, in which keys have the form "FOREGROUND_ON_BACKGROUND",
+for example, for bold and white over a blue background:
+`${LP_COLOR[BOLD_WHITE_ON_BLUE]}`.
+The special foreground color `NONE` indicate that only the background is set,
+for example, for the default color of your terminal
+over a blue background: `${LP_COLOR[NONE_ON_BLUE]}`.
+For your convenience, foreground colors withtout background are also keys,
+for example: `"${LP_COLOR[BOLD_GREEN]}"`.
+
+The special variable `NO_COL` can be used to reset all color formatting
+after its use, for instance, to suppress a prior background:
+`${LP_COLOR[WHITE_ON_BLUE]}§${NO_COL}${GREEN}>`.
 
 #### Colored parts
 

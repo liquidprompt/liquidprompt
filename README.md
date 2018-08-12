@@ -265,11 +265,27 @@ by sourcing your favorite theme file (`*.theme`) in the configuration file. See
 
 ### Colors
 
+#### Simple colors
+
 The available colours available for use are:
 
 `BOLD`, `BLACK`, `BOLD_GRAY`, `WHITE`, `BOLD_WHITE`, `GREEN`, `BOLD_GREEN`,
-`YELLOW`, `BOLD_YELLOW`, `BLUE`, `BOLD_BLUE`, `PINK`, `CYAN`, `BOLD_CYAN,`,
-`RED`, `BOLD_RED`, `WARN_RED`, `CRIT_RED`, `DANGER_RED`, and `NO_COL`.
+`YELLOW`, `BOLD_YELLOW`, `BLUE`, `BOLD_BLUE`, `PURPLE` (or `MAGENTA`),
+`PINK` (or `BOLD_PURPLE`, or `BOLD_MAGENTA`), `CYAN`, `BOLD_CYAN,`,
+`RED`, `BOLD_RED`
+
+You can directly use them in your configuration files to change some
+foreground color in your own prompt, for example, to set the path segment
+as a bold and blue over the default background of your terminal:
+`LP_COLOR_PATH="${BOLD_BLUE]}"`.
+
+#### Colors with semantic
+
+To ease the creation of colormaps indicating warnings, you can use:
+`WARN_RED`, `CRIT_RED`, `DANGER_RED`.
+
+
+#### Colored parts
 
 Set the variable to a null string (`""`) if you do not want color.
 

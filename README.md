@@ -55,7 +55,7 @@ Here is an overview of what Liquid Prompt is capable of displaying:
   a red one if not
 * the current directory in bold, shortened if it takes too much space while always
   preserving the first two directory names
-* the current Python virtual environment
+* the current Python (or Conda) virtual environment
 * an up arrow if an HTTP proxy is in use
 * the name of the current branch if you are in a version control repository
   (Git, Mercurial, Subversion, Bazaar, or Fossil):
@@ -149,8 +149,8 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
 * `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened path
-* `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname or
-  showing it only when connected via a remote shell
+* `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname (1) or
+  showing it only when connected via a remote shell (0) or never showing it (-1).
 * `LP_USER_ALWAYS`, a choice between always displaying the user or showing
   it only when he is different from the one that logged in
 
@@ -228,6 +228,8 @@ Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
 
 Available features:
+* `LP_PS1_PREFIX` and `LP_PS1_PREFIX` the tag that pre/postfix the prompt (see the previous section)
+* `LP_TIME` current time
 * `LP_BATT` battery
 * `LP_LOAD` load
 * `LP_TEMP` temperature
@@ -239,10 +241,12 @@ Available features:
 * `LP_PROXY` HTTP proxy
 * `LP_VCS` informations concerning the current working repository
 * `LP_ERR` last error code
-* `LP_MARK` prompt mark
+* `LP_MARK` smart prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequences
-*  LP_TTYN  the terminal basename
+* `LP_TTYN` the terminal basename
+* `LP_VENV` the current virtual environment (Python or Conda)
 * `LP_BRACKET_OPEN` and `LP_BRACKET_CLOSE`, brackets enclosing the user+path part
+* `LP_RUNTIME` running time of the last command
 
 For example, if you just want to have a prompt displaying the user and the
 host, with a normal full path in blue and Git support only:
@@ -261,7 +265,9 @@ To erase your new formatting, just bind `LP_PS1` to a null string:
 
 You can change the colors and special characters of some parts of Liquid Prompt
 by sourcing your favorite theme file (`*.theme`) in the configuration file. See
-[`liquid.theme`](liquid.theme) for an example of the default Liquid Prompt theme.
+[`liquid.theme`](liquid.theme) for an example of the default Liquid Prompt theme
+or [`powernerd.theme`](powernerd.theme) for a theme inspired by powerline
+(i.e. with background colors and chevrons).
 
 ### Colors
 
@@ -389,6 +395,9 @@ version 3](LICENSE).
   sufficiently complete font on your system. The [Symbola](http://users.teilar.gr/~g1951d/)
   font, designed by Georges Douros, is known to work well. On Debian or Ubuntu
   install try the `fonts-symbola` or `ttf-ancient-fonts` package.
+* The "sudo" feature is disabled by default as there is no way to detect
+  if the user has sudo rights without triggering a security alert
+  that will annoy the sysadmin.
 
 
 ## Authors

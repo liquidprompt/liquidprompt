@@ -349,6 +349,7 @@ _lp_source_config()
 
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
+    LP_USER_HOST_SEP="@"
 
     # compute the hash of the hostname
     # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
@@ -695,9 +696,9 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
 
     # If we are connected with a X11 support
     if [[ -n "$DISPLAY" ]]; then
-        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}${LP_USER_HOST_SEP}${NO_COL}"
     else
-        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}${LP_USER_HOST_SEP}${NO_COL}"
     fi
 
     case "$(_lp_connection)" in

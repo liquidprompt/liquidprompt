@@ -5,11 +5,11 @@
 # LP_PS1_FILE=~/code/liquidprompt/powernerd.ps1
 # source ~/code/liquidprompt/powernerd.colors
 
-LP_MARK_BATTERY=""        # in front of the battery charge
+LP_MARK_BATTERY=""        # in front of the battery charge
 LP_MARK_ADAPTER=""        # displayed when plugged
-LP_MARK_LOAD=""           # in front of the load
-LP_MARK_TEMP=""           # in front of the temp
-LP_MARK_PROXY=""          # indicate a proxy in use
+LP_MARK_LOAD=""           # in front of the load
+LP_MARK_TEMP=""           # in front of the temp
+LP_MARK_PROXY="✔"          # indicate a proxy in use
 LP_MARK_HG=""             # prompt mark in hg repositories
 
 LP_MARK_SVN="‡"            # prompt mark in svn repositories
@@ -26,6 +26,8 @@ LP_MARK_BRACKET_CLOSE="" # close bracket
 
 LP_MARK_SPACE=""
 
+LP_MARK_X11="🖳 "
+
 #LP_MARK_DEFAULT=""        # default prompt mark
 LP_MARK_PREFIX=""        # prompt mark prefix
 LP_PS1_PREFIX=""
@@ -38,7 +40,7 @@ LP_MARK_VCS_CLOSE="${LP_COLOR[PURPLE_ON_WHITE]}"
 
 LP_COLOR_PATH="${LP_COLOR[NONE_ON_BLUE]}"
 LP_COLOR_PATH_ROOT="${LP_COLOR[RED_ON_BLUE]}"
-LP_COLOR_PROXY="${LP_COLOR[WHITE_ON_BLACK]}"
+LP_COLOR_PROXY="${LP_COLOR[GREEN_ON_BLACK]}"
 LP_COLOR_JOB_D="${LP_COLOR[BLACK_ON_GREEN]}"
 LP_COLOR_JOB_R="${LP_COLOR[BLACK_ON_GREEN]}"
 LP_COLOR_JOB_Z="${LP_COLOR[BLACK_ON_GREEN]}"
@@ -53,8 +55,8 @@ LP_COLOR_HOST="${LP_COLOR[BLACK_ON_YELLOW]}"
 LP_COLOR_SSH="${LP_COLOR[BLUE_ON_YELLOW]}"
 LP_COLOR_SU="${LP_COLOR[BOLD_RED_ON_WHITE]}"
 LP_COLOR_TELNET="${LP_COLOR[RED_ON_YELLOW]}"
-LP_COLOR_X11_ON="${LP_COLOR[BOLD_GREEN_ON_YELLOW]}"
-LP_COLOR_X11_OFF="${LP_COLOR[NONE_ON_YELLOW]}"
+LP_COLOR_X11_ON="${LP_COLOR[BLUE_ON_YELLOW]}"
+LP_COLOR_X11_OFF="${LP_COLOR[RED_ON_YELLOW]}"
 LP_COLOR_WRITE="${LP_COLOR[GREEN_ON_BLACK]}"
 LP_COLOR_NOWRITE="${LP_COLOR[BOLD_RED_ON_BLACK]}"
 LP_COLOR_UP="${LP_COLOR[GREEN_ON_WHITE]}"

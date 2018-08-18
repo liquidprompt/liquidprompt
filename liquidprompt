@@ -404,7 +404,7 @@ _lp_source_config()
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
-    # LP_ENABLE_ERR=${LP_ENABLE_ERR:-0} # FIXME add this
+    LP_ENABLE_ERR=${LP_ENABLE_ERR:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -429,6 +429,7 @@ _lp_source_config()
     LP_MARK_SPACE="${LP_MARK_SPACE:-" "}"
     LP_MARK_VCS_OPEN="${LP_MARK_VCS_OPEN:-"("}"
     LP_MARK_VCS_CLOSE="${LP_MARK_VCS_CLOSE:-")"}"
+    LP_MARK_X11="${LP_MARK_X11:-"@"}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -699,9 +700,9 @@ if (( LP_HOSTNAME_ALWAYS != -1 )); then
 
     # If we are connected with a X11 support
     if [[ -n "$DISPLAY" ]]; then
-        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}${LP_MARK_X11}${NO_COL}"
     else
-        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}${LP_MARK_X11}${NO_COL}"
     fi
 
     case "$(_lp_connection)" in
@@ -1773,10 +1774,13 @@ _lp_set_prompt()
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
     local -i err=$?
-    if (( err != 0 )); then
-        LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
-    else
-        LP_ERR=''     # Hidden
+
+    if (( LP_ENABLE_ERR )) ; then
+        if (( err != 0 )); then
+            LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
+        else
+            LP_ERR=''     # Hidden
+        fi
     fi
 
     # Reset IFS to its default value to avoid strange behaviors

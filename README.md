@@ -176,6 +176,7 @@ prompt-building process:
 * `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
 * `LP_ENABLE_FQDN`, if you want the display of the fully qualified domain name
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
+* `LP_ENABLE_ERR`, if you want to display the error code of the last command (if any)
 * `LP_TIME_ANALOG`, if you want to show the time using an analog clock instead of numeric values
 
 Note that if required commands are not installed, enabling the corresponding
@@ -385,6 +386,7 @@ Set the variable to a null string (`""`) if you do not want color.
 * `LP_MARK_PERM` (default: ":") colored green red or green to indicate write
 * `LP_MARK_SPACE` (default: " ") spacing mark used as a separator between segments
 * `LP_MARK_VCS_OPEN` and `LP_MARK_VCS_CLOSE` (default: "(" and ")") marks around VCS additional informations
+* `LP_MARK_X11` (default: "@") mark before the hostname, colored if you're connected through an X window
 * `LP_TITLE_OPEN` (default: "\e]0;") escape character opening a window's title
 * `LP_TITLE_CLOSE` (default: "\a") escape character closing a window's title
 

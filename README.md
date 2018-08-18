@@ -84,6 +84,10 @@ by typing `prompt_off`. Use `prompt_on` to bring it back. You can disable
 *all* prompts and simply use a single mark sign (`$ ` for user and `# ` for root)
 by using the `prompt_OFF` command.
 
+Liquidprompt's appearance is fully customizable and comes with various themes,
+for example one inspired by the famous "powerline":
+![Powernerd Theme](https://raw.github.com/nojhan/liquidprompt/master/theme.png)
+
 
 ## Test Drive and Installation
 

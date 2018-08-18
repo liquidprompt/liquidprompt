@@ -227,6 +227,9 @@ your `~/.liquidpromptrc` and you're done.
 Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
 
+Note that within `*.ps1` files, you can (only) access colors definition by using the
+`LP_COLOR` associative array (cf. the "background color" section below).
+
 Available features:
 * `LP_PS1_PREFIX` and `LP_PS1_PREFIX` the tag that pre/postfix the prompt (see the previous section)
 * `LP_TIME` current time
@@ -264,10 +267,15 @@ To erase your new formatting, just bind `LP_PS1` to a null string:
 ## Themes
 
 You can change the colors and special characters of some parts of Liquid Prompt
-by sourcing your favorite theme file (`*.theme`) in the configuration file. See
-[`liquid.theme`](liquid.theme) for an example of the default Liquid Prompt theme
-or [`powernerd.theme`](powernerd.theme) for a theme inspired by powerline
-(i.e. with background colors and chevrons).
+by sourcing your favorite theme file (`*.theme`) in the configuration file.
+See [`liquid.theme`](liquid.theme).
+
+For an an advanced example of a complete theme, see the "powernerd"
+theme files, inspired by powerline (i.e. with background colors and chevrons):
+[`powernerd.theme`](powernerd.theme) and [`powernerd.ps1`](powernerd.ps1)
+(note: this require that your terminal use one of the
+["nerd-fonts"](https://github.com/ryanoasis/nerd-fonts)).
+
 
 ### Colors
 
@@ -293,7 +301,7 @@ To ease the creation of colormaps indicating warnings, you can use:
 #### Background colors
 
 Additionally, you can have access to simple colors as background colors, using the
-`LP_COLOR` associative array, in which keys have the form "FOREGROUND_ON_BACKGROUND",
+`LP_COLOR` associative array, in which keys have the form `FOREGROUND_ON_BACKGROUND`,
 for example, for bold and white over a blue background:
 `${LP_COLOR[BOLD_WHITE_ON_BLUE]}`.
 The special foreground color `NONE` indicate that only the background is set,
@@ -305,6 +313,9 @@ for example: `"${LP_COLOR[BOLD_GREEN]}"`.
 The special variable `NO_COL` can be used to reset all color formatting
 after its use, for instance, to suppress a prior background:
 `${LP_COLOR[WHITE_ON_BLUE]}§${NO_COL}${GREEN}>`.
+
+Note: `LP_COLOR` is the only color variable available from `*.ps1` files.
+
 
 #### Colored parts
 

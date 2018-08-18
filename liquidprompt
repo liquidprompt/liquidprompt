@@ -219,9 +219,14 @@ esac
 #    In practice, this is only color variables.
 # 2. Setup default values
 # 3. Load the configuration
+
+# LP_COLOR is a global associative array of all available colors,
+# it is global so that you can use it within LP_PS1_FILE to add colors here,
+# the syntax is: ${LP_COLOR['FOREGROUND_ON_BACKGROUND']}
+declare -A LP_COLOR=()
+
 _lp_source_config()
 {
-
     # TermInfo feature detection
     local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
     local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
@@ -305,7 +310,6 @@ _lp_source_config()
     back_colors+=("NONE")
     local back_none=$((${#back_colors[@]}-1))
 
-    declare -A LP_COLOR=()
     local name
     for f_i in $(seq 0 ${fore_none} ); do
         local f=${fore_colors[f_i]}

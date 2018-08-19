@@ -299,6 +299,7 @@ _lp_source_config()
 
     # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
+    LP_LOAD_SCALE_MAX=${LP_LOAD_SCALE_MAX:-100}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
@@ -1486,7 +1487,7 @@ _lp_load_color()
     local -i load=${lp_cpu_load:-0}/$_lp_CPUNUM
 
     if (( load > LP_LOAD_THRESHOLD )); then
-        local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
+        local ret="$(_lp_color_map $load $LP_LOAD_SCALE_MAX)${LP_MARK_LOAD}"
 
         if (( LP_PERCENTS_ALWAYS )); then
             ret+="${load}${_LP_PERCENT}"

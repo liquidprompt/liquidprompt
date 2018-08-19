@@ -73,8 +73,8 @@ LP_ENABLE_PERM=1
 LP_ENABLE_PROXY=1
 
 # Enable the jobs feature.
-# Recommended value is 1
-LP_ENABLE_JOBS=1
+# Recommended value is 0 (may be slow on some systems)
+LP_ENABLE_JOBS=0
 
 # Enable the load feature.
 # Recommended value is 1

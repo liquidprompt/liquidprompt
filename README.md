@@ -321,6 +321,7 @@ Set the variable to a null string (`""`) if you do not want color.
   (leave empty to use your shell's default mark)
 * `LP_MARK_BATTERY` (default: "⌁") in front of the battery charge
 * `LP_MARK_ADAPTER` (default: "⏚") displayed when plugged-in
+* `LP_MARK_TEMP` (default: "θ") in front of the temperature
 * `LP_MARK_LOAD` (default: "⌂") in front of the load
 * `LP_MARK_PROXY` (default: "↥") indicate a proxy in use
 * `LP_MARK_HG` (default: "☿") prompt mark in Mercurial repositories

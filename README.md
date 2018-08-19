@@ -419,6 +419,9 @@ version 3](LICENSE).
 * The "sudo" feature is disabled by default as there is no way to detect
   if the user has sudo rights without triggering a security alert
   that will annoy the sysadmin.
+* When creating a new VCS repository, the related information will not appear
+  until a directory update: either by reloading the prompt (e.g. `source ~/.bashrc`)
+  or by changing the current directory out and back (e.g. `cd .. ; cd -`).
 
 
 ## Authors

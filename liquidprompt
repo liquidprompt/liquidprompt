@@ -1160,7 +1160,7 @@ _lp_fossil_branch_color()
             C2A=""
         fi
 
-        if [[ "$branch" = "no-tag" ]]; then
+        if [[ "$branch" = "no-tag" || "$branch" = "no-branch" ]]; then
             # Warning, your branch has no tag name !
             branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
         elif (( C2E == 0 )); then

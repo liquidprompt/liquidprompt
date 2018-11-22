@@ -1132,11 +1132,7 @@ _lp_fossil_branch_color()
     branch="$(_lp_fossil_branch)"
 
     if [[ -n "$branch" ]]; then
-        local -i C2E # Modified files (added or edited)
-        local C2A # Extras files
         local ret
-        C2E=$(fossil changes | wc -l)
-        C2A=$(fossil extras | wc -l)
         ret=$(fossil diff -i --numstat | awk '
             { plus+=$1; minus+=$2 }
             END {
@@ -1151,26 +1147,28 @@ _lp_fossil_branch_color()
                 print total
             }')
 
+        local -i C2E # Modified files (added or edited)
+        C2E=$(fossil changes | wc -l)
         if (( C2E > 0 )); then
             [[ -n "$ret" ]] && ret+=" in "
             ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
         fi
 
+        local -i C2A # Extras files
+        C2A=$(fossil extras | wc -l)
         if (( C2A > 0 )); then
-            C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
-        else
-            C2A=""
+            ret="${ret}${LP_COLOR_CHANGES}${LP_MARK_UNTRACKED}"
         fi
 
         if [[ "$branch" = "no-tag" || "$branch" = "no-branch" ]]; then
             # Warning, your branch has no tag name !
-            branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
+            branch="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${NO_COL}"
         elif (( C2E == 0 )); then
             # All is up-to-date
-            branch="${LP_COLOR_UP}$branch$C2A${NO_COL}"
+            branch="${LP_COLOR_UP}$branch$ret${NO_COL}"
         else
             # There're some changes to commit
-            branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
+            branch="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${NO_COL}"
         fi
         echo -nE "$branch"
     fi

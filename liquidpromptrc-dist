@@ -130,6 +130,10 @@ LP_RUNTIME_THRESHOLD=2
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1
 
+# Display Node version that is currently selected with NVM, if any
+# Recommended value is 1
+LP_ENABLE_NVM=1
+
 # Display the enabled software collections, if any
 # Recommended value is 1
 LP_ENABLE_SCLS=1

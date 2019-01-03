@@ -595,7 +595,8 @@ _lp_connection()
         # TODO check on *BSD
         local whoami="$(LC_ALL=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
-        if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
+        # Don't identify guake as telnet (GH #483)
+        if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* || "$sess_parent" = "guake" ]]; then
             echo lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
             echo su   # Remote su/sudo

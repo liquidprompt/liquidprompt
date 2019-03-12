@@ -357,6 +357,7 @@ _lp_source_config()
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
     LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
+    LP_MARK_VCS_TAG="${LP_MARK_VCS_TAG:-"⚑"}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -850,7 +851,7 @@ _lp_git_branch()
 
     local branch tag
     if tag="$(\git describe --exact-match --tags 2>/dev/null)"; then
-        tag="($tag)"
+        tag="$LP_MARK_VCS_TAG$tag"
     fi
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)

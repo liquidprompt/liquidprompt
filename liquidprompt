@@ -849,10 +849,7 @@ _lp_git_branch()
 
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 
-    local branch tag
-    if tag="$(\git describe --exact-match --tags 2>/dev/null)"; then
-        tag="$LP_MARK_VCS_TAG$tag"
-    fi
+    local branch
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
     if branch="$(\git symbolic-ref -q HEAD)"; then
@@ -931,6 +928,11 @@ _lp_git_branch_color()
         local ret
         local shortstat # only to check for uncommitted changes
         shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+
+        local tag
+        if tag="$(\git describe --exact-match --tags 2>/dev/null)"; then
+            branch="${branch}$LP_MARK_VCS_TAG$tag"
+        fi
 
         if [[ -n "$shortstat" ]]; then
             local u_stat # shorstat of *unstaged* changes

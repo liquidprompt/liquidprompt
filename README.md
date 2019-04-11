@@ -174,6 +174,7 @@ prompt-building process:
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH into
 * `LP_ENABLE_RUNTIME`, if you want to display the runtime of the last command
 * `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
+* `LP_ENABLE_CONTAINER`, if you want to show whether or not the prompt is running in a container
 * `LP_ENABLE_FQDN`, if you want the display of the fully qualified domain name
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
 * `LP_TIME_ANALOG`, if you want to show the time using an analog clock instead of numeric values
@@ -232,6 +233,7 @@ Available features:
 * `LP_LOAD` load
 * `LP_TEMP` temperature
 * `LP_JOBS` detached `screen` or `tmux` sessions/running jobs/suspended jobs
+* `LP_CONTAINER` shell container status (singularity, Docker LXC)
 * `LP_USER` user
 * `LP_HOST` hostname
 * `LP_PERM` a colon (`:`)
@@ -241,7 +243,7 @@ Available features:
 * `LP_ERR` last error code
 * `LP_MARK` prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequences
-*  LP_TTYN  the terminal basename
+* `LP_TTYN`  the terminal basename
 * `LP_BRACKET_OPEN` and `LP_BRACKET_CLOSE`, brackets enclosing the user+path part
 
 For example, if you just want to have a prompt displaying the user and the
@@ -294,6 +296,8 @@ Set the variable to a null string (`""`) if you do not want color.
     * `LP_COLOR_USER_LOGGED` user who logged in
     * `LP_COLOR_USER_ALT` user but not the one who logged in
     * `LP_COLOR_USER_ROOT` root
+* Container status
+    * `LP_COLOR_CONTAINER` 
 * Hostname
     * `LP_COLOR_HOST` local host
     * `LP_COLOR_SSH` connected via SSH

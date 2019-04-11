@@ -336,6 +336,7 @@ _lp_source_config()
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
+    LP_ENABLE_CONTAINER=${LP_ENABLE_CONTAINER:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -392,6 +393,7 @@ _lp_source_config()
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
+    LP_COLOR_CONTAINER=${LP_COLOR_CONTAINER:-$BOLD_BLUE}
 
     if [[ -z "${LP_COLORMAP-}" ]]; then
         LP_COLORMAP=(
@@ -1695,6 +1697,36 @@ else
     _lp_time() { : ; }
 fi
 
+##################################
+# Detect if we're in a container #
+##################################
+
+_lp_container()
+{
+    (( LP_ENABLE_CONTAINER )) ||  return
+
+    _lp_container=""   
+
+    if test -e /.dockerenv ||  grep -q "docker" /proc/1/cgroup  ; then
+	_lp_container="Docker"
+	
+    elif  grep -q "lxc" /proc/1/cgroup  ; then
+	_lp_container="LXC"
+
+    fi
+
+    if test -z ${SINGULARITY_CONTAINER+x} || test -z ${SINGULARITY_NAME+x}  ; then
+    	 :
+    else
+	_lp_container="Singularity"
+    fi
+    
+    if test -n "$_lp_container" ; then 
+	echo -nE "«$LP_COLOR_CONTAINER$_lp_container$NO_COL»"
+    fi
+
+}
+     
 
 ########################
 # Construct the prompt #
@@ -1725,6 +1757,8 @@ _lp_set_prompt()
     LP_TEMP="$(_lp_sr "$(_lp_temperature)")"
     LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
     LP_BATT="$(_lp_sr "$(_lp_battery_color)")"
+    LP_CONTAINER="$(_lp_sr "$(_lp_container)")"
+
     _lp_time
     _lp_sudo_check
 
@@ -1846,7 +1880,7 @@ _lp_set_prompt()
 
     if [[ -z "$LP_PS1" ]]; then
         # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_CONTAINER}${LP_JOBS}"
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 

@@ -1707,22 +1707,24 @@ _lp_container()
 
     _lp_container=""   
 
-    if test -e /.dockerenv ||  grep -q "docker" /proc/1/cgroup  ; then
-	_lp_container="Docker"
+    if [[ "$OSTYPE" == "linux-gnu" ]] ; then 
+        if test -e /.dockerenv ||  grep -q "docker" /proc/1/cgroup  ; then
+	    _lp_container="Docker"
+	    
+	elif  grep -q "lxc" /proc/1/cgroup  ; then
+	    _lp_container="LXC"
+	    
+	fi
 	
-    elif  grep -q "lxc" /proc/1/cgroup  ; then
-	_lp_container="LXC"
-
-    fi
-
-    if test -z ${SINGULARITY_CONTAINER+x} || test -z ${SINGULARITY_NAME+x}  ; then
-    	 :
-    else
-	_lp_container="Singularity"
-    fi
-    
-    if test -n "$_lp_container" ; then 
-	echo -nE "«$LP_COLOR_CONTAINER$_lp_container$NO_COL»"
+	if test -z ${SINGULARITY_CONTAINER+x} || test -z ${SINGULARITY_NAME+x}  ; then
+    	    :
+	else
+	    _lp_container="Singularity"
+	fi
+	
+	if test -n "$_lp_container" ; then 
+	    echo -nE "«$LP_COLOR_CONTAINER$_lp_container$NO_COL»"
+	fi
     fi
 
 }

@@ -23,6 +23,7 @@
 # AUTHORS #
 ###########
 
+# Alan Hoyle        <alan@alanhoyle.com>          # Containerization status
 # Alex Prengère     <alexprengere@gmail.com>      # Untracked git files
 # Anthony Gelibert  <anthony.gelibert@me.com>     # Several fix
 # Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.

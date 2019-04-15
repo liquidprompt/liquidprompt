@@ -40,6 +40,8 @@ Here is an overview of what Liquid Prompt is capable of displaying:
 * the average of the processors load if it is over a given limit, displayed with
   an intensity color map as load increases
 * the average temperature of the available system sensors (generally CPU and MB)
+* a pair of guillemets `«»` surrounding the container type in blue if your current
+  shell is running in a linux container (`docker`, `singularity`, or `LXC`)
 * the number of detached sessions (`screen` or `tmux`)
 * the number of attached sleeping jobs (when you interrupt a command with Ctrl-Z
   and bring it back with `fg`)

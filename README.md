@@ -23,7 +23,7 @@ of a Git repository on a server:
 
 When Liquid Prompt is displaying everything (a rare event!), it may look like this:
 
-`code 🕤  ⌁24% ⌂42% 3d/2&/1z [user@server:~/ … /code/liquidprompt][pyenv]↥ master(+10/-5,3)*+ 125 ± `
+`code 🕤  ⌁24% ⌂42% 70° «Singularity» 3d/2&/1z [user@server:~/ … /code/liquidprompt][pyenv]↥ master(+10/-5,3)*+ 125 ± `
 
 Here is an overview of what Liquid Prompt is capable of displaying:
 

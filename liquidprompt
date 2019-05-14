@@ -302,6 +302,7 @@ _lp_source_config()
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
+    LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
@@ -327,6 +328,7 @@ _lp_source_config()
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
+    LP_ENABLE_RUNTIME_BELL=${LP_ENABLE_RUNTIME_BELL:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -1419,10 +1421,16 @@ _lp_runtime()
         (( _LP_RUNTIME_SECONDS >= 60 )) && echo -n $((_LP_RUNTIME_SECONDS % 3600 / 60))m
         echo -n $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
     fi
+    if (( LP_ENABLE_RUNTIME_BELL && _LP_RUNTIME_SECONDS >= LP_RUNTIME_BELL_THRESHOLD ))
+    then
+        #bash reprints $PS1 on every SIGWINCH, so we tput to stderr here so the bell is not
+        #captured in PS1.  This way the bell only rings once, not on every terminal resize.
+        { tput bel || tput bl ; } >&2 2>/dev/null
+    fi
     :
 }
 
-if (( LP_ENABLE_RUNTIME )); then
+if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
     if $_LP_SHELL_zsh; then
         _lp_runtime_before() {
           _LP_RUNTIME_LAST_SECONDS=$SECONDS

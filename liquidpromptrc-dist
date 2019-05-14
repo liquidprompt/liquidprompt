@@ -126,6 +126,11 @@ LP_ENABLE_RUNTIME=0
 # Recommended value is 2
 LP_RUNTIME_THRESHOLD=2
 
+# Ring the terminal bell if the runtime of the previous command exceeded
+# LP_ENABLE_RUNTIME_THRESHOLD
+# Recommended value is 0
+LP_RUNTIME_BELL=0
+
 # Display the virtualenv that is currently activated, if any
 # Recommended value is 1
 LP_ENABLE_VIRTUALENV=1

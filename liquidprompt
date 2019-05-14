@@ -302,6 +302,7 @@ _lp_source_config()
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
+    LP_RUNTIME_BELL=${LP_RUNTIME_BELL:-0}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
@@ -1418,6 +1419,11 @@ _lp_runtime()
         (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -n $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
         (( _LP_RUNTIME_SECONDS >= 60 )) && echo -n $((_LP_RUNTIME_SECONDS % 3600 / 60))m
         echo -n $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
+        # if enabled, ring the bell
+        if (( LP_RUNTIME_BELL ))
+        then
+            tput bel
+        fi
     fi
     :
 }

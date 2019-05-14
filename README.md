@@ -147,6 +147,7 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
 * `LP_LOAD_THRESHOLD`, the minimal value after which the load average is displayed
 * `LP_TEMP_THRESHOLD`, the minimal value after which the average temperature is displayed
 * `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
+*  LP_RUNTIME_BELL , ring the bell when LP_RUNTIME_THRESHOLD is exceeded.
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened path
 * `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname or

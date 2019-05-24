@@ -1422,7 +1422,9 @@ _lp_runtime()
         # if enabled, ring the bell
         if (( LP_RUNTIME_BELL ))
         then
-            tput bel
+            #bash reprints $PS1 on every SIGWINCH, so we tput to stderr here so the bell is not
+            #captured in PS1.  This way the bell only rings once, not on every terminal resize.
+            tput bel >&2
         fi
     fi
     :

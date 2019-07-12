@@ -990,8 +990,12 @@ _lp_hg_branch()
 
     local branch
     branch="$(hg branch 2>/dev/null)"
-
-    (( $? == 0 )) && _lp_escape "$branch"
+    if [ $? -eq 0 ]; then
+        local bookmark
+        bookmark="$(hg bookmarks -ql . 2>/dev/null)"
+        [ "z$bookmark" != 'z' ] && branch="$branch/$bookmark"
+    fi
+    _lp_escape "$branch"
 }
 
 # Set a color depending on the branch state:

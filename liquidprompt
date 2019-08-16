@@ -1267,12 +1267,13 @@ _lp_wifi()
 # returns 1 (and battery level) if battery is discharging and above threshold
 # returns 2 (and battery level) if battery is charging but under threshold
 # returns 3 (and battery level) if battery is charging and above threshold
-# returns 4 if no battery support
+# returns 4 (and battery level) if battery is neither charging nor discharging
+# returns 5 if no battery support
 case "$LP_OS" in
     Linux)
     _lp_battery()
     {
-        (( LP_ENABLE_BATT )) || return 4
+        (( LP_ENABLE_BATT )) || return 5
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
         # Extract the battery load value in percent
@@ -1282,13 +1283,16 @@ case "$LP_OS" in
 
         if [[ -z "${bat}" ]]; then
             # no battery level found
-            return 4
+            return 5
         fi
         echo -nE "$bat"
         # discharging
         if [[ "$acpi" == *"Discharging"* ]]; then
             # under => 0, above => 1
             return $(( bat > LP_BATTERY_THRESHOLD ))
+        # not charging
+        elif [[ "$acpi" == *"Not charging"* ]]; then
+            return 4
         # charging
         else
             # under => 2, above => 3
@@ -1299,12 +1303,12 @@ case "$LP_OS" in
     Darwin)
     _lp_battery()
     {
-        (( LP_ENABLE_BATT )) || return 4
+        (( LP_ENABLE_BATT )) || return 5
         local percent batt_status
         eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
         case "$batt_status" in
             charged | "")
-            return 4
+            return 5
             ;;
             discharging)
                 echo -nE "$percent"
@@ -1337,8 +1341,8 @@ _lp_battery_color()
     bat="$(_lp_battery)"
     ret=$?
 
-    if (( ret == 4 || bat == 100 )); then
-        # no battery support or battery full: nothing displayed
+    if (( ret == 5 || ret == 4 || bat == 100 )); then
+        # no battery support or not charging or battery full: nothing displayed
         :
     elif (( ret == 3 && bat != 100 )); then
         # charging and above threshold and not 100%

@@ -1289,6 +1289,9 @@ case "$LP_OS" in
         if [[ "$acpi" == *"Discharging"* ]]; then
             # under => 0, above => 1
             return $(( bat > LP_BATTERY_THRESHOLD ))
+        # not charging
+        elif [[ "$acpi" == *"Not charging"* ]]; then
+            return 4
         # charging
         else
             # under => 2, above => 3

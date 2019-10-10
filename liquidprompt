@@ -185,10 +185,16 @@ _LP_SED_EXTENDED=r
 # get current load
 case "$LP_OS" in
     Linux)
-        _lp_cpu_load () {
-            local eol
-            read lp_cpu_load eol < /proc/loadavg
-        }
+        if [ ! -r '/proc/loadavg' ] && command -v >/dev/null 'uptime'; then
+            _lp_cpu_load () {
+                lp_cpu_load="$(uptime | sed 's/.*load average: \([0-9.]*\).*/\1/')"
+            }
+        else
+            _lp_cpu_load () {
+                local eol
+                read lp_cpu_load eol < /proc/loadavg
+            }
+        fi
         ;;
     FreeBSD|Darwin|OpenBSD)
         _lp_cpu_load () {

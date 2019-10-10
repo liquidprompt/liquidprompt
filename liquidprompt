@@ -3792,10 +3792,18 @@ case "$LP_OS" in
         __lp_cpu_count() {
             _lp_CPUNUM=$( nproc 2>/dev/null || GREP_OPTIONS='' \grep -c '^[Pp]rocessor' /proc/cpuinfo )
         }
-        _lp_cpu_load () {
-            local _ IFS=$' \t'
-            read -r lp_cpu_load _ < /proc/loadavg
-        }
+        if [[ -r '/proc/loadavg' ]]; then
+            _lp_cpu_load () {
+                local _ IFS=$' \t'
+                read -r lp_cpu_load _ < /proc/loadavg
+            }
+        elif command -v uptime >/dev/null; then
+            _lp_cpu_load () {
+                lp_cpu_load="$( LP_ALL=C uptime | sed 's/.*load average: \([0-9.]*\).*/\1/' )"
+            }
+        else
+            LP_ENABLE_LOAD=0
+        fi
         ;;
     FreeBSD|Darwin|OpenBSD)
         __lp_cpu_count() {

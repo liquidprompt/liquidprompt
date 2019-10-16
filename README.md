@@ -116,6 +116,11 @@ in the sections below.
 Check in your `.bashrc` that the `PROMPT_COMMAND` variable is not set, or else
 the prompt will not be available.
 
+### Installation on Ubuntu/Debian
+
+    sudo apt-get install liquidprompt
+    liquidprompt_activate
+    
 ### Installation via Antigen
 
 To install via antigen, simply add the following line in your `.zshrc` after activating antigen:

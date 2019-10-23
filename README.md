@@ -207,6 +207,10 @@ To postfix the prompt, use the `LP_PS1_POSTFIX` variable. For example, to add a
 newline and a single character:
 
     LP_PS1_POSTFIX="\n>"
+    
+With ZSH, this example would be:
+
+    LP_PS1_POSTFIX=$'\n'">"
 
 Note: the `prompt_tag` function is a convenient way to add a prefix. You can use
 it to add a keyword to each of your different terminals:

@@ -122,6 +122,15 @@ To install via antigen, simply add the following line in your `.zshrc` after act
 
     antigen bundle nojhan/liquidprompt
 
+### Installation via zinit
+
+To install via zinit, simply add the following lines to your `.zshrc` after activating zinit:
+
+    zinit ice load'[[ $- = *i* ]]' \
+	            wait'!' \
+	            lucid nocd \
+	            atload'!_lp_set_prompt'
+    zinit load nojhan/liquidprompt
 
 ## Dependencies
 

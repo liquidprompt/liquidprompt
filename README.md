@@ -361,8 +361,9 @@ version 3](LICENSE).
 
 ## Authors
 
-Current Maintainer: [![endorse](https://api.coderwall.com/dolmen/endorsecount.png)](https://coderwall.com/dolmen)
+Current Maintainer: [Rycieos](https://github.com/Rycieos)
 
+Previous Maintainer: [![endorse](https://api.coderwall.com/dolmen/endorsecount.png)](https://coderwall.com/dolmen)
 Original Author: [![endorse](https://api.coderwall.com/nojhan/endorsecount.png)](https://coderwall.com/nojhan)
 
-And many contributors!
+And many [contributors](https://github.com/nojhan/liquidprompt/graphs/contributors)!

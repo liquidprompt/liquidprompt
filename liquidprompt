@@ -1490,7 +1490,7 @@ _lp_load_color()
         local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if (( LP_PERCENTS_ALWAYS )); then
-            ret+="${load}${_LP_PERCENT}"
+            ret+="${load}"
         fi
         echo -nE "${ret}${NO_COL}"
     fi

@@ -1448,7 +1448,10 @@ if (( LP_ENABLE_RUNTIME )); then
                 _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
             else
                 # Compute number of seconds since program was started
-                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+                if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]] ; then
+                    (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+                    unset _LP_RUNTIME_LAST_SECONDS
+                fi
             fi
 
             # If the command to run is the prompt, we'll have to ignore it

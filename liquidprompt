@@ -1480,6 +1480,7 @@ _lp_load_color()
     local lp_cpu_load
     # Get value (OS-specific) into lp_cpu_load
     _lp_cpu_load
+    local true_load=$lp_cpu_load
 
     lp_cpu_load=${lp_cpu_load/./}   # Remove '.'
     lp_cpu_load=${lp_cpu_load#0}    # Remove leading '0'
@@ -1490,7 +1491,7 @@ _lp_load_color()
         local ret="$(_lp_color_map $load)${LP_MARK_LOAD}"
 
         if (( LP_PERCENTS_ALWAYS )); then
-            ret+="${load}"
+            ret+="${true_load}"
         fi
         echo -nE "${ret}${NO_COL}"
     fi

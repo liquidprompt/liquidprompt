@@ -220,33 +220,33 @@ _lp_source_config()
 {
 
     # TermInfo feature detection
+    typeset -a af_colors ab_colors
+
     local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
     local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
-    local ti_setaf
-    local ti_setab
     if tput setaf 0 >/dev/null 2>&1; then
-        ti_setaf() { tput setaf "$1" ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput setaf $1)}"; }
     elif tput AF 0 >/dev/null 2>&1; then
         # FreeBSD
-        ti_setaf() { tput AF "$1" ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput AF $1)}"; }
     elif tput AF 0 0 0 >/dev/null 2>&1; then
         # OpenBSD
-        ti_setaf() { tput AF "$1" 0 0 ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput AF $1 0 0)}"; }
     else
-        echo "liquidprompt: terminal $TERM not supported" >&2
-        ti_setaf () { : ; }
+        echo "liquidprompt: terminal $TERM does not support foreground colors" >&2
+        foreground_color() { : ; }
     fi
     if tput setab 0 >/dev/null 2>&1; then
-        ti_setab() { tput setab "$1" ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput setab $1)}"; }
     elif tput AB 0 >/dev/null 2>&1; then
         # FreeBSD
-        ti_setab() { tput AB "$1" ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput AB $1)}"; }
     elif tput AB 0 0 0 >/dev/null 2>&1; then
         # OpenBSD
-        ti_setab() { tput AB "$1" 0 0 ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput AB $1 0 0)}"; }
     else
-        echo "liquidprompt: terminal $TERM not supported" >&2
-        ti_setab() { : ; }
+        echo "liquidprompt: terminal $TERM does not support background colors" >&2
+        background_color() { : ; }
     fi
 
     # Colors: variables are local so they will have a value only
@@ -255,34 +255,47 @@ _lp_source_config()
     local BOLD="${_LP_OPEN_ESC}${ti_bold}${_LP_CLOSE_ESC}"
 
     # Foreground colors
-    local BLACK="${_LP_OPEN_ESC}$(ti_setaf 0)${_LP_CLOSE_ESC}"
-    local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 0)${_LP_CLOSE_ESC}"
-    local WHITE="${_LP_OPEN_ESC}$(ti_setaf 7)${_LP_CLOSE_ESC}"
-    local BOLD_WHITE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7)${_LP_CLOSE_ESC}"
+    foreground_color 0
+    local BLACK="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local RED="${_LP_OPEN_ESC}$(ti_setaf 1)${_LP_CLOSE_ESC}"
-    local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 1)${_LP_CLOSE_ESC}"
-    local WARN_RED="${_LP_OPEN_ESC}$(ti_setaf 0 ; ti_setab 1)${_LP_CLOSE_ESC}"
-    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7 ; ti_setab 1)${_LP_CLOSE_ESC}"
-    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3 ; ti_setab 1)${_LP_CLOSE_ESC}"
+    foreground_color 1
+    local RED="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
+    foreground_color 0
+    background_color 1
+    local WARN_RED="${_LP_OPEN_ESC}${af_color}${ab_color}${_LP_CLOSE_ESC}"
+    foreground_color 7
+    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${ab_color}${_LP_CLOSE_ESC}"
+    foreground_color 3
+    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${ab_color}${_LP_CLOSE_ESC}"
 
-    local GREEN="${_LP_OPEN_ESC}$(ti_setaf 2)${_LP_CLOSE_ESC}"
-    local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 2)${_LP_CLOSE_ESC}"
+    foreground_color 2
+    local GREEN="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local YELLOW="${_LP_OPEN_ESC}$(ti_setaf 3)${_LP_CLOSE_ESC}"
-    local BOLD_YELLOW="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3)${_LP_CLOSE_ESC}"
+    foreground_color 3
+    local YELLOW="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_YELLOW="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local BLUE="${_LP_OPEN_ESC}$(ti_setaf 4)${_LP_CLOSE_ESC}"
-    local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 4)${_LP_CLOSE_ESC}"
+    foreground_color 4
+    local BLUE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local PURPLE="${_LP_OPEN_ESC}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    foreground_color 5
+    local PURPLE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
     local MAGENTA="${PURPLE}"
-    local PINK="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    local PINK="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
     local BOLD_PURPLE="${PINK}"
     local BOLD_MAGENTA="${PINK}"
 
-    local CYAN="${_LP_OPEN_ESC}$(ti_setaf 6)${_LP_CLOSE_ESC}"
-    local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 6)${_LP_CLOSE_ESC}"
+    foreground_color 6
+    local CYAN="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
+
+    foreground_color 7
+    local WHITE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_WHITE="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
@@ -292,10 +305,11 @@ _lp_source_config()
     # FIXME Add more formats (bold? 256 colors?)
     # cksum is separated with tab on SunOS, space on others
     local cksum="$(hostname | cksum)"
-    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $(( 1 + ${cksum%%[ 	]*} % 6 )) )${_LP_CLOSE_ESC}"
+    foreground_color $(( 1 + ${cksum%%[ 	]*} % 6 ))
+    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
 
     unset ti_sgr0 ti_bold
-    unset -f ti_setaf ti_setab
+    unset -f foreground_color background_color
 
 
     # Default values (globals)

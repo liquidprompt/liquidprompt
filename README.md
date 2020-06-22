@@ -147,6 +147,7 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
 * `LP_LOAD_THRESHOLD`, the minimal value after which the load average is displayed
 * `LP_TEMP_THRESHOLD`, the minimal value after which the average temperature is displayed
 * `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
+* `LP_RUNTIME_BELL_THRESHOLD`, the minimal value after which the bell is rung. See LP_ENABLE_RUNTIME_BELL.
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened path
 * `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname or
@@ -173,6 +174,7 @@ prompt-building process:
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH into
 * `LP_ENABLE_RUNTIME`, if you want to display the runtime of the last command
+* `LP_ENABLE_RUNTIME_BELL`, if you want to ring the bell when a runtime threshold is exceeded.
 * `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
 * `LP_ENABLE_FQDN`, if you want the display of the fully qualified domain name
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown

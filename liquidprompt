@@ -55,13 +55,10 @@ test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
 if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
-    bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-    if (( bmajor < 3 || ( bmajor == 3 && bminor < 2 ) )); then
-        unset bash bmajor bminor
+    if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
+        echo "liquidprompt: Bash version $BASH_VERSION not supported" 2>&1
         return
     fi
-
-    unset bash bmajor bminor
 
     _LP_SHELL_bash=true
     _LP_SHELL_zsh=false
@@ -1931,7 +1928,7 @@ prompt_on()
         # incorrectly export it from their profile/bashrc (GitHub #450),
         # so we preventively UNexport it.
         # TODO: warn the user if it was exported
-        if (( ${BASH_VERSION%%.*} > 4 )) || [[ ${BASH_VERSION} > 4.2 ]]; then
+        if (( ${BASH_VERSINFO[0]:-0} > 4 || ( ${BASH_VERSINFO[0]:-0} == 4 && ${BASH_VERSINFO[1]:-0} >= 2 ) )); then
             # -g is only available since bash 4.2
             declare -g +x PROMPT_COMMAND
         fi

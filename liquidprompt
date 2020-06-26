@@ -3,7 +3,6 @@
 # An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
-
 # Licensed under the AGPL version 3
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,35 +17,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-###########
-# AUTHORS #
-###########
-
-# Alex Prengère     <alexprengere@gmail.com>      # Untracked git files
-# Anthony Gelibert  <anthony.gelibert@me.com>     # Several fix
-# Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
-# Brendan Fahy      <bmfahy@gmail.com>            # Postfix variable
-# Clément Mathieu   <clement@unportant.info>      # Bazaar support
-# David Loureiro    <david.loureiro@sysfera.com>  # Small portability fix
-# Étienne Deparis   <etienne@depar.is>            # Fossil support
-# Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
-# François Schmidts <francois.schmidts@gmail.com> # Initial PROMPT_DIRTRIM support
-# Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
-# Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
-# Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
-# Joris Vaillant    <joris.vaillant@gmail.com>    # Small git fix
-# Luc Didry         <luc@fiat-tux.fr>             # ZSH port, several fix
-# Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
-# Markus Dreseler   <github@dreseler.de>          # Runtime of last command
-# Nicolas Lacourte  <nicolas@dotinfra.fr>         # Screen title
-# nojhan            <nojhan@gmail.com>            # Original author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations, refactorings everywhere; current maintainer
-# Poil              <poil@quake.fr>               # Speed improvements
-# Rolf Morel        <rolfmorel@gmail.com>         # "Shorten path" refactoring and fixes
-# Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
-# Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
-# Austen Adler      <stonewareslord@gmail.com>    # ZSH runtime
 
 # See the README.md file for a summary of features.
 

@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **fossil**: improve branch name detection, don't match tags ([#497])
 - **git**: remove `-E` from grep check for portablility ([#508])
 - **git**: modifications incorrectly showing as untracked files ([#509])
+- **git**: changed line check failing if file named "HEAD" existed ([#517])
 - **hg**: modifications incorrectly showing as untracked files ([#509])
 - **hostname**: regression in `$LP_ENABLE_FQDN` implementation ([#472])
 - **hostname/SunOS**: `$LP_COLOR_HOST_HASH` erroring ([#461], [#462], [9c1c8a3])
@@ -287,6 +288,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#503]: https://github.com/nojhan/liquidprompt/pull/503
 [#508]: https://github.com/nojhan/liquidprompt/pull/508
 [#509]: https://github.com/nojhan/liquidprompt/pull/509
+[#517]: https://github.com/nojhan/liquidprompt/issues/517
 [#522]: https://github.com/nojhan/liquidprompt/issues/522
 [#523]: https://github.com/nojhan/liquidprompt/pull/523
 [#548]: https://github.com/nojhan/liquidprompt/issues/548

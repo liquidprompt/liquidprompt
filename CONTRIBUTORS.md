@@ -183,3 +183,4 @@ Thanks again to everyone for all of the help and support!
 * Mathias Picker (@mathiasp)
 * Joey Liu (@liujoey)
 * Florian Pigorsch (@flopp)
+* Daniel Pinyol (@dpinol)

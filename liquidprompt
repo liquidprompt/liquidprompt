@@ -913,7 +913,7 @@ _lp_git_branch_color()
 
         local ret
         local shortstat # only to check for uncommitted changes
-        shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+        shortstat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
 
         if [[ -n "$shortstat" ]]; then
             local u_stat # shorstat of *unstaged* changes

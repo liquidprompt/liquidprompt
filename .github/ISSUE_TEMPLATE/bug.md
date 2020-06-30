@@ -27,22 +27,13 @@ Shell:
 -->
 Operating system: 
 <!---
-  Liquidprompt version, tag and/or commit.
-  Find with
-  `git rev-parse HEAD` in the liquidprompt repo.
+  Liquidprompt version, tag, or commit.
+  Find with `git describe --tags --exact-match`
+  or `git rev-parse HEAD` in the liquidprompt repo.
   Please only report bugs that you have tested against the master branch
-  Example: "aece92c2bffdb90e28cd0aa552ea4dfad5d96643"
+  Example: "v1.12"
 -->
-Liquid Prompt version: 
-
-### Expected Behavior
-<!--- Tell us what should happen -->
-
-### Current Behavior
-<!--- Tell us what happens instead of the expected behavior -->
-
-### Possible Solution
-<!--- Optional, suggest a fix for the bug, -->
+Liquidprompt version: 
 
 ### Steps to Reproduce
 <!--- Provide an unambiguous set of steps to reproduce this bug.
@@ -51,6 +42,12 @@ Liquid Prompt version:
 2.
 3.
 
-### Possible Implementation
+### Expected Behavior
+<!--- Tell us what should happen -->
+
+### Current Behavior
+<!--- Tell us what happens instead of the expected behavior -->
+
+### Possible Solution
 <!--- Optional, suggest an idea for fixing the bug -->
 

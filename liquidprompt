@@ -1382,11 +1382,17 @@ _lp_battery_color()
 _lp_color_map() {
     # Default scale: 0..100
     # Custom scale: 0..$2
-    local -i scale idx
+    local -i scale value
     scale=${2:-100}
+    if (( $1 >= scale )); then
+      value=scale-1
+    elif (( $1 < 0 )); then
+      value=0
+    else
+      value=$1
+    fi
     # Transform the value to a 0..${#COLOR_MAP} scale
-    idx=_LP_FIRST_INDEX+100*$1/scale/${#LP_COLORMAP[*]}
-    echo -nE "${LP_COLORMAP[idx]}"
+    echo -nE "${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
 }
 
 ###########################

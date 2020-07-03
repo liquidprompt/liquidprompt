@@ -94,6 +94,8 @@ Thanks again to everyone for all of the help and support!
 * Nolan Leake (@nolanl)
 * Dmitry V. Drozdovich (@thrushcat)
 * Tristan Miller (@logological)
+* Markus Gebert (@mgeb)
+* Tore Anderson (@toreanderson)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -184,3 +186,4 @@ Thanks again to everyone for all of the help and support!
 * Joey Liu (@liujoey)
 * Florian Pigorsch (@flopp)
 * Daniel Pinyol (@dpinol)
+* Alyssa Ross (@alyssais)

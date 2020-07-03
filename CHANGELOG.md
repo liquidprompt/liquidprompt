@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **bash**: use `$BASH_VERSINFO` for when there is a non-numeric
   suffix ([#522], [0234a58])
 - **battery/OS X**: newer versions of OS X failing to parse ([#476], [fefbe01])
+- **color**: `$LP_COLORMAP` would break if customized with a different sized
+  array ([a70e80f])
+- **color**: `_lp_color_map()` would return nothing if the passed in value was
+  outside the scale range ([a70e80f], [#455], [#499], [#604])
 - **cpu/SunOS**: failing math operation on load average ([#479], [#480])
 - **fossil**: improve branch name detection, don't match tags ([#497])
 - **git**: remove `-E` from grep check for portablility ([#508])
@@ -275,6 +279,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#443]: https://github.com/nojhan/liquidprompt/pull/443
 [#444]: https://github.com/nojhan/liquidprompt/pull/444
 [#450]: https://github.com/nojhan/liquidprompt/issues/450
+[#455]: https://github.com/nojhan/liquidprompt/pull/455
 [#461]: https://github.com/nojhan/liquidprompt/issues/461
 [#462]: https://github.com/nojhan/liquidprompt/pull/462
 [#463]: https://github.com/nojhan/liquidprompt/issues/463
@@ -284,6 +289,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#479]: https://github.com/nojhan/liquidprompt/issues/479
 [#480]: https://github.com/nojhan/liquidprompt/pull/480
 [#497]: https://github.com/nojhan/liquidprompt/pull/497
+[#499]: https://github.com/nojhan/liquidprompt/issues/499
 [#501]: https://github.com/nojhan/liquidprompt/issues/501
 [#503]: https://github.com/nojhan/liquidprompt/pull/503
 [#508]: https://github.com/nojhan/liquidprompt/pull/508
@@ -296,6 +302,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#564]: https://github.com/nojhan/liquidprompt/issues/564
 [#571]: https://github.com/nojhan/liquidprompt/pull/571
 [#582]: https://github.com/nojhan/liquidprompt/pull/582
+[#604]: https://github.com/nojhan/liquidprompt/pull/604
 [#605]: https://github.com/nojhan/liquidprompt/pull/605
 
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -336,6 +343,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [93df016]: https://github.com/nojhan/liquidprompt/commit/93df0169499c4ca8563add267e95dcd343d95f12
 [9633ac8]: https://github.com/nojhan/liquidprompt/commit/9633ac83cad5f5702c1e853940c0ab2e166961bf
 [9c1c8a3]: https://github.com/nojhan/liquidprompt/commit/9c1c8a378846c23e0a39be2aadd11531c2ecf196
+[a70e80f]: https://github.com/nojhan/liquidprompt/commit/a70e80f0f501031ef97ea8baf88ca6d7ef56ad8a
 [a8114dd]: https://github.com/nojhan/liquidprompt/commit/a8114dd9550e2e7fd33b93eb7885de08b3e64933
 [a8571bb]: https://github.com/nojhan/liquidprompt/commit/a8571bb2920d9f11006754e634304242d929db57
 [a97c0da]: https://github.com/nojhan/liquidprompt/commit/a97c0da0e6a6f037a6038c427a51a9ee840b45f2

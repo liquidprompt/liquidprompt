@@ -187,3 +187,4 @@ Thanks again to everyone for all of the help and support!
 * Florian Pigorsch (@flopp)
 * Daniel Pinyol (@dpinol)
 * Alyssa Ross (@alyssais)
+* Gergo Szonyi (@gex)

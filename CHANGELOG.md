@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **hostname/SunOS**: `$LP_COLOR_HOST_HASH` erroring ([#461], [#462], [9c1c8a3])
 - **jobs**: mispelled variable local declaration ([#564])
 - **root**: `$LP_MARK_DEFAULT` being ignored if root ([#501], [5ee3c53])
+- **runtime**: when runtime enabled, `$_` would evaluate as
+  `_lp_runtime_before` ([#451])
 
 ### Changed
 - **battery**: hide battery symbol when neither charging nor discharging ([#582])
@@ -279,6 +281,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#443]: https://github.com/nojhan/liquidprompt/pull/443
 [#444]: https://github.com/nojhan/liquidprompt/pull/444
 [#450]: https://github.com/nojhan/liquidprompt/issues/450
+[#451]: https://github.com/nojhan/liquidprompt/issues/451
 [#455]: https://github.com/nojhan/liquidprompt/pull/455
 [#461]: https://github.com/nojhan/liquidprompt/issues/461
 [#462]: https://github.com/nojhan/liquidprompt/pull/462

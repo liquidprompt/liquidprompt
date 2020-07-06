@@ -1461,7 +1461,8 @@ if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
         _LP_RUNTIME_SKIP=0
         # _lp_runtime_before gets called just before bash executes a command,
         # including $PROMPT_COMMAND
-        trap _lp_runtime_before DEBUG
+        # Pass $_ to this call, because it sets $_ to what it already was
+        trap '_lp_runtime_before "$_"' DEBUG
     fi
 fi
 

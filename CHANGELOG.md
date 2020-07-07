@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **general**: use `LC_ALL=C` everywhere parsable output is needed ([#548], [#549])
+- **general**: set specific `IFS` everywhere it is used ([#613])
 - **bash**: workaround broken .bashrc that export `$PROMPT_COMMAND`, we now
   unexport it on startup ([#450], [#463], [#474])
 - **bash**: handle unset `$_LP_RUNTIME_LAST_SECONDS` when `set -u` is set ([#605])
@@ -309,6 +310,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#582]: https://github.com/nojhan/liquidprompt/pull/582
 [#604]: https://github.com/nojhan/liquidprompt/pull/604
 [#605]: https://github.com/nojhan/liquidprompt/pull/605
+[#613]: https://github.com/nojhan/liquidprompt/issues/613
 
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
 [02bc49e]: https://github.com/nojhan/liquidprompt/commit/02bc49edf306749c47d7a389dc916cb68e992cc8

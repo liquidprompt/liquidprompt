@@ -1427,11 +1427,15 @@ if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
             # For debugging
             #echo "XXX $BASH_COMMAND"
 
-            # If the previous command was just the refresh of the prompt,
-            # reset the counter
+            # If this is the first time after the user submitted the command,
+            # record the time
             if (( _LP_AT_PROMPT )); then
                 _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
-            elif [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
+            fi
+            # If this is when the prompt is being drawn, the command is done,
+            # so calculate the time. Note these two events could be at the same
+            # time, so no elif is used
+            if [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
                 _LP_AT_PROMPT=1
                 # Compute number of seconds since program was started
                 if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then

@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **root**: `$LP_MARK_DEFAULT` being ignored if root ([#501], [5ee3c53])
 - **runtime**: when runtime enabled, `$_` would evaluate as
   `_lp_runtime_before` ([#451])
+- **tmux**: tmux not showing as multiplexer if custom `$TERM` set ([#563])
 
 ### Changed
 - **battery**: hide battery symbol when neither charging nor discharging ([#582])
@@ -302,6 +303,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#523]: https://github.com/nojhan/liquidprompt/pull/523
 [#548]: https://github.com/nojhan/liquidprompt/issues/548
 [#549]: https://github.com/nojhan/liquidprompt/pull/549
+[#563]: https://github.com/nojhan/liquidprompt/issues/563
 [#564]: https://github.com/nojhan/liquidprompt/issues/564
 [#571]: https://github.com/nojhan/liquidprompt/pull/571
 [#582]: https://github.com/nojhan/liquidprompt/pull/582

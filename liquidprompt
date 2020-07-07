@@ -481,7 +481,7 @@ fi
 [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
 # If we are running in a terminal multiplexer, brackets are colored
-if [[ "$TERM" == screen* ]]; then
+if [[ "$TERM" == screen* || -n ${TMUX-} ]]; then
     LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
     LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))

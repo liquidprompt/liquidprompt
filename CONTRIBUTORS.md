@@ -188,3 +188,4 @@ Thanks again to everyone for all of the help and support!
 * Daniel Pinyol (@dpinol)
 * Alyssa Ross (@alyssais)
 * Gergo Szonyi (@gex)
+* Nolan Leake (@nolanl)

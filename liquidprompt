@@ -1429,22 +1429,19 @@ if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
 
             # If the previous command was just the refresh of the prompt,
             # reset the counter
-            if (( _LP_RUNTIME_SKIP )); then
-                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
-            else
+            if (( _LP_AT_PROMPT )); then
+                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
+            elif [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
+                _LP_AT_PROMPT=1
                 # Compute number of seconds since program was started
-                if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]] ; then
+                if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
                     (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
                     unset _LP_RUNTIME_LAST_SECONDS
                 fi
             fi
-
-            # If the command to run is the prompt, we'll have to ignore it
-            [[ "$BASH_COMMAND" != "$PROMPT_COMMAND" ]]
-            _LP_RUNTIME_SKIP=$?
         }
 
-        _LP_RUNTIME_SKIP=0
+        _LP_AT_PROMPT=0
         # _lp_runtime_before gets called just before bash executes a command,
         # including $PROMPT_COMMAND
         # Pass $_ to this call, because it sets $_ to what it already was

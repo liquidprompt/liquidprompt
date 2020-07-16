@@ -187,6 +187,12 @@ _lp_source_config()
 
     # TermInfo feature detection
     typeset -a af_colors ab_colors
+    local af_color ab_color
+
+    # TODO handle this case better. With no colors, no need for any escaping
+    if ! command -v tput >/dev/null; then
+        echo "liquidprompt: 'tput' not available; will not be able to format terminal" >&2
+    fi
 
     local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
     local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"

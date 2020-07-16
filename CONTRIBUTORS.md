@@ -189,3 +189,4 @@ Thanks again to everyone for all of the help and support!
 * Alyssa Ross (@alyssais)
 * Gergo Szonyi (@gex)
 * Nolan Leake (@nolanl)
+* Éloi Rivard (@azmeuk)

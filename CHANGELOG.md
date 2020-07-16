@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - **color**: Add `$MAGENTA`, `$BOLD_PURPLE`, and `$BOLD_MAGENTA` ([3fadce9])
+- **color**: Add warning when `tput` is not available ([#615])
 - **path**: Allow to customize the symbol before the path that shows if the
   directory is writable: `$LP_MARK_PERM` ([#430])
 - **runtime**: `$LP_RUNTIME_BELL` and `$LP_RUNTIME_BELL_THRESHOLD` to ring bell
@@ -314,6 +315,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#605]: https://github.com/nojhan/liquidprompt/pull/605
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
+[#615]: https://github.com/nojhan/liquidprompt/issues/615
 
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
 [02bc49e]: https://github.com/nojhan/liquidprompt/commit/02bc49edf306749c47d7a389dc916cb68e992cc8

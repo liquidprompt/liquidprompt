@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.12.0] - 2020-07-17
 ### Added
 - **color**: Add `$MAGENTA`, `$BOLD_PURPLE`, and `$BOLD_MAGENTA` ([3fadce9])
 - **color**: Add warning when `tput` is not available ([#615])

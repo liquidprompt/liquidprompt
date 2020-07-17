@@ -138,7 +138,7 @@ will be displayed.
   probably already knew that.
 
 For other features, the script uses commands that should be available on a large
-variety of Unix systems: `tput`, `grep`, `awk`, `sed`, `ps`, `who`, and `expr`.
+variety of Unix systems: `tput`, `grep`, `awk`, `sed`, `ps`, and `who`.
 
 
 ## Feature Configuration

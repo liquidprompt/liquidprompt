@@ -657,6 +657,32 @@ _lp_get_home_tilde_collapsed()
     echo "${PWD/#$HOME/$tilde}"
 }
 
+# Shorten the path of the current working directory by making it relative
+# to the VCS root, if in a VCS tracked directory
+# * Show directory name (as repo "name")
+# * Show the relative path from the root to "$PWD" in a different color
+_lp_shorten_vcs_path ()
+{
+    local root
+    case "$LP_VCS_TYPE" in
+        git*)   root="$(git rev-parse --show-toplevel)" ;;
+        hg)     root="$(hg root)" ;;
+        svn)    LANG=C root="$(svn info | grep 'Working Copy Root Path' | cut -d' ' -f5- | xargs)" ;;
+        bzr)    root="$(bzr root)" ;;
+        fossil) root="$(fossil status | grep local-root | cut -d' ' -f2- | xargs)" ;;
+    esac
+
+    # trim leading and trailing whitespace, as well as a potentially trailing slash
+    if [[ -n "$root" ]]; then
+        local name="${root##*/}"
+        local relpath="${${PWD#$root}%/}"
+        LP_PWD="${LP_COLOR_PATH_ROOT}$(_lp_escape "$name")$NO_COL"
+        LP_PWD="${LP_PWD}${LP_COLOR_PATH}$(_lp_escape "$relpath")$NO_COL"
+    else
+        _lp_shorten_path
+    fi
+}
+
 # Shorten the path of the current working directory
 # * Show only the current directory
 # * Show as much of the cwd path as possible, if shortened display a
@@ -1768,8 +1794,6 @@ _lp_set_prompt()
             fi
         fi
 
-        _lp_shorten_path   # set LP_PWD
-
         if _lp_are_vcs_enabled; then
             LP_VCS="$(_lp_git_branch_color)"
             LP_VCS_TYPE="git"
@@ -1816,6 +1840,12 @@ _lp_set_prompt()
 
         # end of the prompt line: double spaces
         LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
+
+        if [[ -n "$LP_VCS" ]]; then
+            _lp_shorten_vcs_path
+        else
+            _lp_shorten_path
+        fi
 
         LP_OLD_PWD="LP:$PWD"
 

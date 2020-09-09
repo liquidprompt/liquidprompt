@@ -299,6 +299,7 @@ _lp_source_config()
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
+    LP_MINIMUM_SPACE_AFTER_PROMPT=${LP_MINIMUM_SPACE_AFTER_PROMPT:-0}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -1594,6 +1595,23 @@ _lp_as_text()
     echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
+# Get length of a given string, after evaluating escape codes (\u for user, etc)
+_lp_length()
+{
+    typeset len evaluated_ps1
+    typeset printable_ps1=$(_lp_as_text "$1")
+
+    if $_LP_SHELL_bash; then
+        evaluated_ps1=$(printf '%s' "${printable_ps1@P}")
+    else # zsh
+        evaluated_ps1=$(print -P $printable_ps1)
+    fi
+
+    len=${#evaluated_ps1}
+
+    echo $len
+}
+
 _lp_title()
 {
     (( LP_ENABLE_TITLE )) || return
@@ -1849,8 +1867,18 @@ _lp_set_prompt()
         # is set.
         PS1+="${LP_VCS}"
 
-        # add return code and prompt mark
-        PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+        # add return code
+        PS1+="${LP_RUNTIME}${LP_ERR}"
+
+        # determine if we need to add new line before prompt mark
+        if (( LP_MINIMUM_SPACE_AFTER_PROMPT )); then
+            if [[ $(_remaining_space) -lt "$LP_MINIMUM_SPACE_AFTER_PROMPT" ]]; then
+                PS1+=$'\n'
+            fi
+        fi
+
+        # add prompt mark
+        PS1+="${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # "invisible" parts
         # Get the current prompt on the fly and make it a title
@@ -1866,6 +1894,17 @@ _lp_set_prompt()
     else
         PS1=$LP_PS1
     fi
+}
+
+# Calculates the remaining space on a terminal line after prompt has been printed
+_remaining_space()
+{
+    typeset len=$(_lp_length "$PS1")
+
+    # Modulo terminal width, so we handle the case where prompt is already on a new line
+    remaining_space=$(( $COLUMNS - ( $len % $COLUMNS ) ))
+
+    echo $remaining_space
 }
 
 prompt_tag()

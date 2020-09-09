@@ -96,6 +96,7 @@ Thanks again to everyone for all of the help and support!
 * Tristan Miller (@logological)
 * Markus Gebert (@mgeb)
 * Tore Anderson (@toreanderson)
+* William S. (@PandaWill)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)

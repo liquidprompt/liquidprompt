@@ -1504,6 +1504,17 @@ if (( LP_ENABLE_TEMP )); then
 
     # Backends for TEMP. Each backend must return the result in $temperature.
 
+    # Implementation directly accessing sysfs
+    _lp_temp_hwmon() {
+      [ "$LP_TEMP_HWMON" ] || return 0
+      [ -e "/sys/class/hwmon/$LP_TEMP_HWMON" ] || return 0
+
+      local -i temp
+      read temp < /sys/class/hwmon/$LP_TEMP_HWMON
+      [ "$temp" ] || return 0
+      temperature=$((temp / 1000))
+    }
+
     # Implementation using lm-sensors
     _lp_temp_sensors()
     {
@@ -1555,7 +1566,7 @@ if (( LP_ENABLE_TEMP )); then
 
     # Try each _lp_temp method
     # If no function worked, disable the feature
-    _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
+    _lp_temp_detect hwmon acpi sensors || LP_ENABLE_TEMP=0
     unset -f _lp_temp_detect
 fi
 

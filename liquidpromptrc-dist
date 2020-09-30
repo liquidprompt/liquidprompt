@@ -30,6 +30,10 @@ LP_LOAD_THRESHOLD=60
 # Recommended value is 60
 LP_TEMP_THRESHOLD=60
 
+# The path to a file relative to /sys/class/hwmon/, containing a
+# temperature reading expressed in 1/1000 degrees.
+LP_TEMP_HWMON=""
+
 # Use the shorten path feature if the path is too long to fit in the prompt
 # line.
 # Recommended value is 1

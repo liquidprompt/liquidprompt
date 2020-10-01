@@ -3,7 +3,6 @@
 # An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
-
 # Licensed under the AGPL version 3
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,35 +18,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-###########
-# AUTHORS #
-###########
-
-# Alex Prengère     <alexprengere@gmail.com>      # Untracked git files
-# Anthony Gelibert  <anthony.gelibert@me.com>     # Several fix
-# Aurelien Requiem  <aurelien@requiem.fr>         # Major clean refactoring, variable path length, error codes, several bugfixes.
-# Brendan Fahy      <bmfahy@gmail.com>            # Postfix variable
-# Clément Mathieu   <clement@unportant.info>      # Bazaar support
-# David Loureiro    <david.loureiro@sysfera.com>  # Small portability fix
-# Étienne Deparis   <etienne@depar.is>            # Fossil support
-# Florian Le Frioux <florian@lefrioux.fr>         # Use ± mark when root in VCS dir.
-# François Schmidts <francois.schmidts@gmail.com> # Initial PROMPT_DIRTRIM support
-# Frédéric Lepied   <flepied@gmail.com>           # Python virtual env
-# Jonas Bengtsson   <jonas.b@gmail.com>           # Git remotes fix
-# Joris Dedieu      <joris@pontiac3.nfrance.com>  # Portability framework, FreeBSD support, bugfixes.
-# Joris Vaillant    <joris.vaillant@gmail.com>    # Small git fix
-# Luc Didry         <luc@fiat-tux.fr>             # ZSH port, several fix
-# Ludovic Rousseau  <ludovic.rousseau@gmail.com>  # Lot of bugfixes.
-# Markus Dreseler   <github@dreseler.de>          # Runtime of last command
-# Nicolas Lacourte  <nicolas@dotinfra.fr>         # Screen title
-# nojhan            <nojhan@gmail.com>            # Original author.
-# Olivier Mengué    <dolmen@cpan.org>             # Major optimizations, refactorings everywhere; current maintainer
-# Poil              <poil@quake.fr>               # Speed improvements
-# Rolf Morel        <rolfmorel@gmail.com>         # "Shorten path" refactoring and fixes
-# Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
-# Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
-# Austen Adler      <stonewareslord@gmail.com>    # ZSH runtime
-
 # See the README.md file for a summary of features.
 
 # Issue #161: do not load if not an interactive shell
@@ -55,13 +25,10 @@ test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
 if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
-    bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
-    if (( bmajor < 3 || ( bmajor == 3 && bminor < 2 ) )); then
-        unset bash bmajor bminor
+    if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
+        echo "liquidprompt: Bash version $BASH_VERSION not supported" 2>&1
         return
     fi
-
-    unset bash bmajor bminor
 
     _LP_SHELL_bash=true
     _LP_SHELL_zsh=false
@@ -150,10 +117,6 @@ _lp_bool()
     return $res
 }
 
-# Save $IFS as we want to restore the default value at the beginning of the
-# prompt function
-_LP_IFS="$IFS"
-
 
 ###############
 # OS specific #
@@ -186,13 +149,13 @@ _LP_SED_EXTENDED=r
 case "$LP_OS" in
     Linux)
         _lp_cpu_load () {
-            local eol
+            local eol IFS=$' \t'
             read lp_cpu_load eol < /proc/loadavg
         }
         ;;
     FreeBSD|Darwin|OpenBSD)
         _lp_cpu_load () {
-            local bol eol
+            local bol eol IFS=$' \t'
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
@@ -201,7 +164,7 @@ case "$LP_OS" in
         ;;
     SunOS)
         _lp_cpu_load () {
-            read lp_cpu_load <<<"$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
+            lp_cpu_load="$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
         }
 esac
 
@@ -223,33 +186,39 @@ _lp_source_config()
 {
 
     # TermInfo feature detection
+    typeset -a af_colors ab_colors
+    local af_color ab_color
+
+    # TODO handle this case better. With no colors, no need for any escaping
+    if ! command -v tput >/dev/null; then
+        echo "liquidprompt: 'tput' not available; will not be able to format terminal" >&2
+    fi
+
     local ti_sgr0="$( { tput sgr0 || tput me ; } 2>/dev/null )"
     local ti_bold="$( { tput bold || tput md ; } 2>/dev/null )"
-    local ti_setaf
-    local ti_setab
     if tput setaf 0 >/dev/null 2>&1; then
-        ti_setaf() { tput setaf "$1" ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput setaf $1)}"; }
     elif tput AF 0 >/dev/null 2>&1; then
         # FreeBSD
-        ti_setaf() { tput AF "$1" ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput AF $1)}"; }
     elif tput AF 0 0 0 >/dev/null 2>&1; then
         # OpenBSD
-        ti_setaf() { tput AF "$1" 0 0 ; }
+        foreground_color() { af_color="${af_colors[$1+1]:=$(tput AF $1 0 0)}"; }
     else
-        echo "liquidprompt: terminal $TERM not supported" >&2
-        ti_setaf () { : ; }
+        echo "liquidprompt: terminal $TERM does not support foreground colors" >&2
+        foreground_color() { : ; }
     fi
     if tput setab 0 >/dev/null 2>&1; then
-        ti_setab() { tput setab "$1" ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput setab $1)}"; }
     elif tput AB 0 >/dev/null 2>&1; then
         # FreeBSD
-        ti_setab() { tput AB "$1" ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput AB $1)}"; }
     elif tput AB 0 0 0 >/dev/null 2>&1; then
         # OpenBSD
-        ti_setab() { tput AB "$1" 0 0 ; }
+        background_color() { ab_color="${ab_colors[$1+1]:=$(tput AB $1 0 0)}"; }
     else
-        echo "liquidprompt: terminal $TERM not supported" >&2
-        ti_setab() { : ; }
+        echo "liquidprompt: terminal $TERM does not support background colors" >&2
+        background_color() { : ; }
     fi
 
     # Colors: variables are local so they will have a value only
@@ -257,31 +226,48 @@ _lp_source_config()
     # with the same names defined by the user outside the config.
     local BOLD="${_LP_OPEN_ESC}${ti_bold}${_LP_CLOSE_ESC}"
 
-    local BLACK="${_LP_OPEN_ESC}$(ti_setaf 0)${_LP_CLOSE_ESC}"
-    local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 0)${_LP_CLOSE_ESC}"
-    local WHITE="${_LP_OPEN_ESC}$(ti_setaf 7)${_LP_CLOSE_ESC}"
-    local BOLD_WHITE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7)${_LP_CLOSE_ESC}"
+    # Foreground colors
+    foreground_color 0
+    local BLACK="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_GRAY="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local RED="${_LP_OPEN_ESC}$(ti_setaf 1)${_LP_CLOSE_ESC}"
-    local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 1)${_LP_CLOSE_ESC}"
-    local WARN_RED="${_LP_OPEN_ESC}$(ti_setaf 0 ; ti_setab 1)${_LP_CLOSE_ESC}"
-    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 7 ; ti_setab 1)${_LP_CLOSE_ESC}"
-    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3 ; ti_setab 1)${_LP_CLOSE_ESC}"
+    foreground_color 1
+    local RED="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
+    foreground_color 0
+    background_color 1
+    local WARN_RED="${_LP_OPEN_ESC}${af_color}${ab_color}${_LP_CLOSE_ESC}"
+    foreground_color 7
+    local CRIT_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${ab_color}${_LP_CLOSE_ESC}"
+    foreground_color 3
+    local DANGER_RED="${_LP_OPEN_ESC}${ti_bold}${af_color}${ab_color}${_LP_CLOSE_ESC}"
 
-    local GREEN="${_LP_OPEN_ESC}$(ti_setaf 2)${_LP_CLOSE_ESC}"
-    local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 2)${_LP_CLOSE_ESC}"
+    foreground_color 2
+    local GREEN="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_GREEN="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local YELLOW="${_LP_OPEN_ESC}$(ti_setaf 3)${_LP_CLOSE_ESC}"
-    local BOLD_YELLOW="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 3)${_LP_CLOSE_ESC}"
+    foreground_color 3
+    local YELLOW="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_YELLOW="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local BLUE="${_LP_OPEN_ESC}$(ti_setaf 4)${_LP_CLOSE_ESC}"
-    local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 4)${_LP_CLOSE_ESC}"
+    foreground_color 4
+    local BLUE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_BLUE="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
-    local PURPLE="${_LP_OPEN_ESC}$(ti_setaf 5)${_LP_CLOSE_ESC}"
-    local PINK="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 5)${_LP_CLOSE_ESC}"
+    foreground_color 5
+    local PURPLE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local MAGENTA="${PURPLE}"
+    local PINK="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_PURPLE="${PINK}"
+    local BOLD_MAGENTA="${PINK}"
 
-    local CYAN="${_LP_OPEN_ESC}$(ti_setaf 6)${_LP_CLOSE_ESC}"
-    local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}$(ti_setaf 6)${_LP_CLOSE_ESC}"
+    foreground_color 6
+    local CYAN="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_CYAN="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
+
+    foreground_color 7
+    local WHITE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
+    local BOLD_WHITE="${_LP_OPEN_ESC}${ti_bold}${af_color}${_LP_CLOSE_ESC}"
 
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${ti_sgr0}${_LP_CLOSE_ESC}"
@@ -291,10 +277,11 @@ _lp_source_config()
     # FIXME Add more formats (bold? 256 colors?)
     # cksum is separated with tab on SunOS, space on others
     local cksum="$(hostname | cksum)"
-    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}$(ti_setaf $(( 1 + ${cksum%%[ 	]*} % 6 )) )${_LP_CLOSE_ESC}"
+    foreground_color $(( 1 + ${cksum%%[$' \t']*} % 6 ))
+    LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
 
     unset ti_sgr0 ti_bold
-    unset -f ti_setaf ti_setab
+    unset -f foreground_color background_color
 
 
     # Default values (globals)
@@ -302,6 +289,7 @@ _lp_source_config()
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
+    LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
@@ -327,6 +315,7 @@ _lp_source_config()
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
+    LP_ENABLE_RUNTIME_BELL=${LP_ENABLE_RUNTIME_BELL:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -484,7 +473,7 @@ fi
 unset -f _lp_require_tool
 
 if (( LP_ENABLE_JOBS )); then
-    typeset -i _LP_ENABLE_DETACHED_SESSION _LP_ENABLE_SCREEN _LP_ENABLE_TMUX
+    typeset -i _LP_ENABLE_DETACHED_SESSIONS _LP_ENABLE_SCREEN _LP_ENABLE_TMUX
     command -v screen >/dev/null ; _LP_ENABLE_SCREEN=!$?
     command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=!$?
     (( _LP_ENABLE_DETACHED_SESSIONS = ( _LP_ENABLE_SCREEN || _LP_ENABLE_TMUX ) ))
@@ -494,7 +483,7 @@ fi
 [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
 # If we are running in a terminal multiplexer, brackets are colored
-if [[ "$TERM" == screen* ]]; then
+if [[ "$TERM" == screen* || -n ${TMUX-} ]]; then
     LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
     LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
     (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
@@ -926,7 +915,7 @@ _lp_git_branch_color()
 
         local ret
         local shortstat # only to check for uncommitted changes
-        shortstat="$(LC_ALL=C \git diff --shortstat HEAD 2>/dev/null)"
+        shortstat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
 
         if [[ -n "$shortstat" ]]; then
             local u_stat # shorstat of *unstaged* changes
@@ -1225,27 +1214,17 @@ _lp_bzr_branch_color()
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
 
-    local output
-    output="$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2> /dev/null)"
+    local branch revno clean IFS=' '
+    read branch revno clean <<<"$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2>/dev/null)"
     (( $? != 0 )) && return
-    $_LP_SHELL_zsh && setopt local_options && setopt sh_word_split
-    local tuple
-    tuple=($output)
-    $_LP_SHELL_zsh && unsetopt sh_word_split
-    local branch=${tuple[_LP_FIRST_INDEX+0]}
-    local revno=${tuple[_LP_FIRST_INDEX+1]}
-    local clean=${tuple[_LP_FIRST_INDEX+2]}
-    local ret=
 
     if [[ -n "$branch" ]]; then
         if (( clean == 0 )); then
-            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+            echo -nE "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else
-            ret="${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+            echo -nE "${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         fi
-
     fi
-    echo -nE "$ret"
 }
 
 
@@ -1289,10 +1268,13 @@ case "$LP_OS" in
         if [[ "$acpi" == *"Discharging"* ]]; then
             # under => 0, above => 1
             return $(( bat > LP_BATTERY_THRESHOLD ))
+        # not charging
+        elif [[ "$acpi" == *"Not charging"* ]]; then
+            return 4
         # charging
         else
             # under => 2, above => 3
-            return $(( 1 + ( bat > LP_BATTERY_THRESHOLD ) ))
+            return $(( 2 + ( bat > LP_BATTERY_THRESHOLD ) ))
         fi
     }
     ;;
@@ -1301,7 +1283,7 @@ case "$LP_OS" in
     {
         (( LP_ENABLE_BATT )) || return 4
         local percent batt_status
-        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery[^	 ]*[	 ]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
+        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery.*[[:space:]]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
         case "$batt_status" in
             charged | "")
             return 4
@@ -1314,7 +1296,7 @@ case "$LP_OS" in
             *)  # "charging", "AC attached"
                 echo -nE "$percent"
                 # under => 2, above => 3
-                return $(( 1 + ( percent > LP_BATTERY_THRESHOLD ) ))
+                return $(( 2 + ( percent > LP_BATTERY_THRESHOLD ) ))
             ;;
         esac
     }
@@ -1392,11 +1374,17 @@ _lp_battery_color()
 _lp_color_map() {
     # Default scale: 0..100
     # Custom scale: 0..$2
-    local -i scale idx
+    local -i scale value
     scale=${2:-100}
+    if (( $1 >= scale )); then
+      value=scale-1
+    elif (( $1 < 0 )); then
+      value=0
+    else
+      value=$1
+    fi
     # Transform the value to a 0..${#COLOR_MAP} scale
-    idx=_LP_FIRST_INDEX+100*$1/scale/${#LP_COLORMAP[*]}
-    echo -nE "${LP_COLORMAP[idx]}"
+    echo -nE "${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
 }
 
 ###########################
@@ -1416,10 +1404,16 @@ _lp_runtime()
         (( _LP_RUNTIME_SECONDS >= 60 )) && echo -n $((_LP_RUNTIME_SECONDS % 3600 / 60))m
         echo -n $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
     fi
+    if (( LP_ENABLE_RUNTIME_BELL && _LP_RUNTIME_SECONDS >= LP_RUNTIME_BELL_THRESHOLD ))
+    then
+        #bash reprints $PS1 on every SIGWINCH, so we tput to stderr here so the bell is not
+        #captured in PS1.  This way the bell only rings once, not on every terminal resize.
+        { tput bel || tput bl ; } >&2 2>/dev/null
+    fi
     :
 }
 
-if (( LP_ENABLE_RUNTIME )); then
+if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
     if $_LP_SHELL_zsh; then
         _lp_runtime_before() {
           _LP_RUNTIME_LAST_SECONDS=$SECONDS
@@ -1439,24 +1433,29 @@ if (( LP_ENABLE_RUNTIME )); then
             # For debugging
             #echo "XXX $BASH_COMMAND"
 
-            # If the previous command was just the refresh of the prompt,
-            # reset the counter
-            if (( _LP_RUNTIME_SKIP )); then
-                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS
-            else
-                # Compute number of seconds since program was started
-                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+            # If this is the first time after the user submitted the command,
+            # record the time
+            if (( _LP_AT_PROMPT )); then
+                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
             fi
-
-            # If the command to run is the prompt, we'll have to ignore it
-            [[ "$BASH_COMMAND" != "$PROMPT_COMMAND" ]]
-            _LP_RUNTIME_SKIP=$?
+            # If this is when the prompt is being drawn, the command is done,
+            # so calculate the time. Note these two events could be at the same
+            # time, so no elif is used
+            if [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
+                _LP_AT_PROMPT=1
+                # Compute number of seconds since program was started
+                if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
+                    (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+                    unset _LP_RUNTIME_LAST_SECONDS
+                fi
+            fi
         }
 
-        _LP_RUNTIME_SKIP=0
+        _LP_AT_PROMPT=0
         # _lp_runtime_before gets called just before bash executes a command,
         # including $PROMPT_COMMAND
-        trap _lp_runtime_before DEBUG
+        # Pass $_ to this call, because it sets $_ to what it already was
+        trap '_lp_runtime_before "$_"' DEBUG
     fi
 fi
 
@@ -1511,6 +1510,7 @@ if (( LP_ENABLE_TEMP )); then
         # Return the hottest system temperature we get through the sensors command
         # Only the integer part is retained
         local -i i
+        local IFS=$' \t\n'
         for i in $(sensors -u |
                 sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
             (( $i > ${temperature:-0} )) && temperature=i
@@ -1521,6 +1521,7 @@ if (( LP_ENABLE_TEMP )); then
     _lp_temp_acpi()
     {
         local -i i
+        local IFS=$' \t\n'
         # Only the integer part is retained
         for i in $(LC_ALL=C acpi -t |
                 sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
@@ -1661,7 +1662,7 @@ if (( LP_ENABLE_TIME )); then
             # %I: "00".."12"  %M: "00".."59"
             # Bash interprets a '0' prefix as octal
             # so we have to clean that
-            local hhmm="$(date "+hh=%I mm=%M")"
+            local hhmm="$(date "+hh=%I mm=%M")" IFS=' '
             # hh:  1..12  mm: 0..59
             local -i hh mm clock
             eval ${hhmm//=0/=}  # Line split for zsh
@@ -1706,9 +1707,6 @@ _lp_set_prompt()
         LP_ERR=''     # Hidden
     fi
 
-    # Reset IFS to its default value to avoid strange behaviors
-    # (in case the user is playing with the value at the prompt)
-    local IFS="$_LP_IFS"
     local GREP_OPTIONS=
 
     # bash: execute the old prompt hook
@@ -1913,7 +1911,7 @@ prompt_on()
         # incorrectly export it from their profile/bashrc (GitHub #450),
         # so we preventively UNexport it.
         # TODO: warn the user if it was exported
-        if (( ${BASH_VERSION%%.*} > 4 )) || [[ ${BASH_VERSION} > 4.2 ]]; then
+        if (( ${BASH_VERSINFO[0]:-0} > 4 || ( ${BASH_VERSINFO[0]:-0} == 4 && ${BASH_VERSINFO[1]:-0} >= 2 ) )); then
             # -g is only available since bash 4.2
             declare -g +x PROMPT_COMMAND
         fi

@@ -16,7 +16,12 @@
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 
-# Display the load average when the load is above this threshold.
+# Display the load average over the past minute when above this threshold.
+# The value is expressed in centiload per CPU. For example, when using the
+# default value of 60, the load average will be displayed starting at:
+# * 0.61 on a single-core machine, or
+# * 1.22 on a dual-core machine, or
+# * 2.44 on a quad-core machine, and so on.
 # Recommended value is 60
 LP_LOAD_THRESHOLD=60
 
@@ -125,6 +130,15 @@ LP_ENABLE_RUNTIME=0
 # Minimal runtime (in seconds) before the runtime will be displayed
 # Recommended value is 2
 LP_RUNTIME_THRESHOLD=2
+
+# Ring the terminal bell if the runtime of the previous command exceeded
+# LP_RUNTIME_BELL_THRESHOLD
+# Recommended value is 0
+LP_ENABLE_RUNTIME_BELL=0
+
+# Minimal runtime (in seconds) before the terminal bell will be rung.
+# Recommended value is 10
+LP_RUNTIME_BELL_THRESHOLD=10
 
 # Display the virtualenv that is currently activated, if any
 # Recommended value is 1

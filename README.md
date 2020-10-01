@@ -55,7 +55,7 @@ Here is an overview of what Liquid Prompt is capable of displaying:
   a red one if not
 * the current directory in bold, shortened if it takes too much space while always
   preserving the first two directory names
-* the current Python virtual environment
+* the current Python (or Conda) virtual environment
 * an up arrow if an HTTP proxy is in use
 * the name of the current branch if you are in a version control repository
   (Git, Mercurial, Subversion, Bazaar, or Fossil):
@@ -114,7 +114,9 @@ You can even theme Liquid Prompt and use a custom PS1 prompt. This is explained
 in the sections below.
 
 Check in your `.bashrc` that the `PROMPT_COMMAND` variable is not set, or else
-the prompt will not be available.
+the prompt will not be available. If you must set it or use a add-on that sets
+it, make sure to set `PROMPT_COMMAND` before you source Liquid Prompt to avoid
+history and timing issues. Do not export `PROMPT_COMMAND`.
 
 ### Installation via Antigen
 
@@ -136,7 +138,7 @@ will be displayed.
   probably already knew that.
 
 For other features, the script uses commands that should be available on a large
-variety of Unix systems: `tput`, `grep`, `awk`, `sed`, `ps`, `who`, and `expr`.
+variety of Unix systems: `tput`, `grep`, `awk`, `sed`, `ps`, and `who`.
 
 
 ## Feature Configuration
@@ -144,13 +146,14 @@ variety of Unix systems: `tput`, `grep`, `awk`, `sed`, `ps`, `who`, and `expr`.
 You can configure some variables in the `~/.config/liquidpromptrc` file:
 
 * `LP_BATTERY_THRESHOLD`, the maximal value under which the battery level is displayed
-* `LP_LOAD_THRESHOLD`, the minimal value after which the load average is displayed
+* `LP_LOAD_THRESHOLD`, the minimal value (centiload per cpu) after which the load average is displayed
 * `LP_TEMP_THRESHOLD`, the minimal value after which the average temperature is displayed
 * `LP_RUNTIME_THRESHOLD`, the minimal value after which the runtime is displayed
+* `LP_RUNTIME_BELL_THRESHOLD`, the minimal value after which the bell is rung. See LP_ENABLE_RUNTIME_BELL.
 * `LP_PATH_LENGTH`, the maximum percentage of the screen width used to display the path
 * `LP_PATH_KEEP`, how many directories to keep at the beginning of a shortened path
-* `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname or
-  showing it only when connected via a remote shell
+* `LP_HOSTNAME_ALWAYS`, a choice between always displaying the hostname (1) or
+  showing it only when connected via a remote shell (0) or never showing it (-1).
 * `LP_USER_ALWAYS`, a choice between always displaying the user or showing
   it only when he is different from the one that logged in
 
@@ -173,6 +176,7 @@ prompt-building process:
 * `LP_ENABLE_SCREEN_TITLE`, if you want to use the prompt as your screen window's title
 * `LP_ENABLE_SSH_COLORS`, if you want different colors for hosts you SSH into
 * `LP_ENABLE_RUNTIME`, if you want to display the runtime of the last command
+* `LP_ENABLE_RUNTIME_BELL`, if you want to ring the bell when a runtime threshold is exceeded.
 * `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
 * `LP_ENABLE_FQDN`, if you want the display of the fully qualified domain name
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
@@ -228,6 +232,8 @@ Those scripts basically export the `LP_PS1` variable, by appending features and
 theme colors.
 
 Available features:
+* `LP_PS1_PREFIX` and `LP_PS1_POSTFIX` the tag that pre/postfix the prompt (see the previous section)
+* `LP_TIME` current time
 * `LP_BATT` battery
 * `LP_LOAD` load
 * `LP_TEMP` temperature
@@ -239,10 +245,12 @@ Available features:
 * `LP_PROXY` HTTP proxy
 * `LP_VCS` informations concerning the current working repository
 * `LP_ERR` last error code
-* `LP_MARK` prompt mark
+* `LP_MARK` smart prompt mark
 * `LP_TITLE` the prompt as a window's title escaped sequences
-*  LP_TTYN  the terminal basename
+* `LP_TTYN` the terminal basename
+* `LP_VENV` the current virtual environment (Python or Conda)
 * `LP_BRACKET_OPEN` and `LP_BRACKET_CLOSE`, brackets enclosing the user+path part
+* `LP_RUNTIME` running time of the last command
 
 For example, if you just want to have a prompt displaying the user and the
 host, with a normal full path in blue and Git support only:
@@ -265,11 +273,27 @@ by sourcing your favorite theme file (`*.theme`) in the configuration file. See
 
 ### Colors
 
+#### Simple colors
+
 The available colours available for use are:
 
 `BOLD`, `BLACK`, `BOLD_GRAY`, `WHITE`, `BOLD_WHITE`, `GREEN`, `BOLD_GREEN`,
-`YELLOW`, `BOLD_YELLOW`, `BLUE`, `BOLD_BLUE`, `PINK`, `CYAN`, `BOLD_CYAN,`,
-`RED`, `BOLD_RED`, `WARN_RED`, `CRIT_RED`, `DANGER_RED`, and `NO_COL`.
+`YELLOW`, `BOLD_YELLOW`, `BLUE`, `BOLD_BLUE`, `PURPLE` (or `MAGENTA`),
+`PINK` (or `BOLD_PURPLE`, or `BOLD_MAGENTA`), `CYAN`, `BOLD_CYAN,`,
+`RED`, `BOLD_RED`
+
+You can directly use them in your configuration files to change some
+foreground color in your own prompt, for example, to set the path segment
+as a bold and blue over the default background of your terminal:
+`LP_COLOR_PATH="${BOLD_BLUE]}"`.
+
+#### Colors with semantic
+
+To ease the creation of colormaps indicating warnings, you can use:
+`WARN_RED`, `CRIT_RED`, `DANGER_RED`.
+
+
+#### Colored parts
 
 Set the variable to a null string (`""`) if you do not want color.
 
@@ -321,6 +345,7 @@ Set the variable to a null string (`""`) if you do not want color.
   (leave empty to use your shell's default mark)
 * `LP_MARK_BATTERY` (default: "⌁") in front of the battery charge
 * `LP_MARK_ADAPTER` (default: "⏚") displayed when plugged-in
+* `LP_MARK_TEMP` (default: "θ") in front of the temperature
 * `LP_MARK_LOAD` (default: "⌂") in front of the load
 * `LP_MARK_PROXY` (default: "↥") indicate a proxy in use
 * `LP_MARK_HG` (default: "☿") prompt mark in Mercurial repositories
@@ -357,12 +382,13 @@ version 3](LICENSE).
   sufficiently complete font on your system. The [Symbola](http://users.teilar.gr/~g1951d/)
   font, designed by Georges Douros, is known to work well. On Debian or Ubuntu
   install try the `fonts-symbola` or `ttf-ancient-fonts` package.
+* The "sudo" feature is disabled by default as there is no way to detect
+  if the user has sudo rights without triggering a security alert
+  that will annoy the sysadmin.
 
 
 ## Authors
 
-Current Maintainer: [![endorse](https://api.coderwall.com/dolmen/endorsecount.png)](https://coderwall.com/dolmen)
+Current Maintainer: [Rycieos](https://github.com/Rycieos)
 
-Original Author: [![endorse](https://api.coderwall.com/nojhan/endorsecount.png)](https://coderwall.com/nojhan)
-
-And many contributors!
+And many [contributors](CONTRIBUTORS.md)!

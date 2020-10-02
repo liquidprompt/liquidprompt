@@ -467,6 +467,7 @@ _lp_require_tool BZR bzr
 if [[ "$LP_OS" = Darwin ]]; then
     _lp_require_tool BATT pmset
 else
+    false && \
     _lp_require_tool BATT acpi
 fi
 
@@ -1249,7 +1250,34 @@ _lp_wifi()
 # returns 4 if no battery support
 case "$LP_OS" in
     Linux)
-    _lp_battery()
+    _lp_sysfs_battery() {
+      (( LP_ENABLE_BATT )) || return 4
+      [ -e /sys/class/power_supply/BAT0/status ] || return 4
+      [ -e /sys/class/power_supply/BAT0/charge_full ] || return 4
+      [ -e /sys/class/power_supply/BAT0/charge_now ] || return 4
+
+      local bat_status
+      read bat_status < /sys/class/power_supply/BAT0/status
+      [ "$bat_status" ] || return 4
+
+      local charge_full
+      read charge_full < /sys/class/power_supply/BAT0/charge_full
+      local charge_now
+      read charge_now < /sys/class/power_supply/BAT0/charge_now
+      echo -n "$(($charge_now * 100 / $charge_full))"
+
+      if [ "$bat_status" = 'Discharging' ]; then
+        # under => 0, above => 1
+        return $(( bat > LP_BATTERY_THRESHOLD ))
+      else
+        # under => 2, above => 3
+        return $(( 2 + ( bat > LP_BATTERY_THRESHOLD ) ))
+      fi
+    }
+
+    _lp_battery() { _lp_sysfs_battery; }
+
+    _lp_acpi_battery()
     {
         (( LP_ENABLE_BATT )) || return 4
         local acpi

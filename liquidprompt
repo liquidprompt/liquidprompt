@@ -219,6 +219,7 @@ __lp_source_config() {
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
+    LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -240,6 +241,7 @@ __lp_source_config() {
     LP_MARK_SHORTEN_PATH="${LP_MARK_SHORTEN_PATH:-" … "}"
     LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
+    LP_MARK_DIRSTACK="${LP_MARK_DIRSTACK:-"⚞"}"     # alternatives: ⚟ = ≡ ≣
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
@@ -275,6 +277,7 @@ __lp_source_config() {
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
+    LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
 
     if [[ -z "${LP_COLORMAP-}" ]]; then
         LP_COLORMAP=(
@@ -1135,6 +1138,27 @@ _lp_jobcount_color() {
     fi
 
     [[ -n "$lp_jobcount_color" ]]
+}
+
+###################
+# Directory stack #
+###################
+
+_lp_dirstack() {
+    (( LP_ENABLE_DIRSTACK )) || return 2
+
+    lp_dirstack=
+
+    local -i ds
+    (( ds = $(dirs -p | wc -l) ))
+
+    if (( ds > 1 )); then
+        lp_dirstack+="${LP_COLOR_DIRSTACK}${LP_MARK_DIRSTACK}${ds}${NO_COL}"
+    else
+        return 1
+    fi
+
+    return 0
 }
 
 ######################
@@ -2432,6 +2456,12 @@ _lp_default_theme_prompt() {
         LP_VCS=
     fi
 
+    if _lp_dirstack; then
+        LP_STCK=" $lp_dirstack"
+    else
+        LP_STCK=
+    fi
+
     _lp_smart_mark
     LP_MARK="${lp_smart_mark}${NO_COL} "
 
@@ -2445,7 +2475,7 @@ _lp_default_theme_prompt() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_STCK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

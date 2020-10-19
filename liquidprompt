@@ -24,7 +24,7 @@
 test -z "$TERM" -o "x$TERM" = xdumb && return
 
 # Check for recent enough version of bash.
-if test -n "${BASH_VERSION-}" -a -n "$PS1" ; then
+if test -n "${BASH_VERSION-}"; then
     if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
         echo "liquidprompt: Bash version $BASH_VERSION not supported" 2>&1
         return
@@ -1967,6 +1967,8 @@ prompt_OFF()
 }
 
 # By default, sourcing liquidprompt will activate Liquid Prompt
-prompt_on
+if [ "${1-}" != "--no-activate" ]; then
+    prompt_on
+fi
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

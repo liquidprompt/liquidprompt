@@ -214,7 +214,7 @@ function test_parameter_expansion_replace {
   assertEquals "Parameter expansion replace start" cdabcd "${var/#ab}"
   assertEquals "Parameter expansion replace start no match" $var "${var/#b}"
 
-  assertEquals "Parame'ter expansion replace end" abcdab "${var/%cd}"
+  assertEquals "Parameter expansion replace end" abcdab "${var/%cd}"
   assertEquals "Parameter expansion replace end no match" $var "${var/%c}"
 }
 

@@ -1,0 +1,19 @@
+language: shell
+
+script:
+  - ./tests.sh
+
+addons:
+  apt:
+    packages:
+      - zsh
+
+matrix:
+  include:
+    - os: linux
+      # Support Ubuntu Bionic 18.04 through at least Apr 2023.
+      dist: bionic
+    - os: linux
+      # Support Ubuntu Xenial 16.04 through at least Apr 2021.
+      dist: xenial
+    - os: osx

@@ -23,8 +23,8 @@
 # Issue #161: do not load if not an interactive shell
 test -z "$TERM" -o "x$TERM" = xdumb && return
 
-# Check for recent enough version of bash.
 if test -n "${BASH_VERSION-}"; then
+    # Check for recent enough version of bash.
     if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
         echo "liquidprompt: Bash version $BASH_VERSION not supported" 2>&1
         return
@@ -47,6 +47,10 @@ if test -n "${BASH_VERSION-}"; then
     _LP_PERCENT='%'    # must be escaped on zsh
     _LP_BACKSLASH='\\' # must be escaped on bash
 
+    # Sed expression using extended regexp to match terminal
+    # escape sequences with their wrappers
+    _LP_CLEAN_ESC='\\\[([^\]+|\\[^]])*\\\]'
+
     # Escape the given strings
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
@@ -54,12 +58,6 @@ if test -n "${BASH_VERSION-}"; then
     {
         echo -nE "${1//\\/\\\\}"
     }
-
-    # Disable the DEBUG trap used by the RUNTIME feature
-    # (in case we are reloading LP in the same shell after disabling
-    # the feature in .liquidpromptrc)
-    # FIXME this doesn't seem to work :(
-    [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
 elif test -n "${ZSH_VERSION-}" ; then
     _LP_SHELL_bash=false
     _LP_SHELL_zsh=true
@@ -78,22 +76,13 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_PERCENT='%%'
     _LP_BACKSLASH="\\"
 
+    _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
+
     _lp_escape()
     {
         arg="${1//\\/\\\\}"
         echo -nE "${arg//\%/$_LP_PERCENT}"
     }
-
-    # For ZSH, autoload required functions
-    autoload -Uz add-zsh-hook
-
-    # Disable previous hooks as options that set them
-    # may have changed
-    {
-        add-zsh-hook -d precmd  _lp_set_prompt
-        add-zsh-hook -d preexec _lp_runtime_before
-        add-zsh-hook -d precmd  _lp_runtime_after
-    } >/dev/null
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -287,7 +276,6 @@ _lp_source_config()
     foreground_color $(( 1 + ${cksum%%[$' \t']*} % 6 ))
     LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
 
-    unset ti_sgr0 ti_bold
     unset -f foreground_color background_color
 
 
@@ -455,132 +443,192 @@ _lp_source_config()
               LP_COLORMAP_5 LP_COLORMAP_6 LP_COLORMAP_7 LP_COLORMAP_8 LP_COLORMAP_9
     fi
 }
-# do source config files
-_lp_source_config
-unset -f _lp_source_config
 
-# Disable feature if the tool is not installed
-_lp_require_tool()
-{
-    (( LP_ENABLE_$1 )) && { command -v $2 >/dev/null || eval LP_ENABLE_$1=0 ; }
-}
+lp_activate() {
+    if $_LP_SHELL_bash; then
+        # Disable the DEBUG trap used by the RUNTIME feature
+        # (in case we are reloading LP in the same shell after disabling
+        # the feature in .liquidpromptrc)
+        [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
+    else # zsh
+        # For ZSH, autoload required functions
+        autoload -Uz add-zsh-hook
 
-_lp_require_tool GIT git
-_lp_require_tool SVN svn
-_lp_require_tool FOSSIL fossil
-_lp_require_tool HG hg
-_lp_require_tool BZR bzr
-
-if [[ "$LP_OS" = Darwin ]]; then
-    _lp_require_tool BATT pmset
-else
-    _lp_require_tool BATT acpi
-fi
-
-unset -f _lp_require_tool
-
-if (( LP_ENABLE_JOBS )); then
-    typeset -i _LP_ENABLE_DETACHED_SESSIONS _LP_ENABLE_SCREEN _LP_ENABLE_TMUX
-    command -v screen >/dev/null ; _LP_ENABLE_SCREEN=!$?
-    command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=!$?
-    (( _LP_ENABLE_DETACHED_SESSIONS = ( _LP_ENABLE_SCREEN || _LP_ENABLE_TMUX ) ))
-fi
-
-# Use standard path symbols inside Midnight Commander
-[[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
-
-# If we are running in a terminal multiplexer, brackets are colored
-if [[ "$TERM" == screen* || -n ${TMUX-} ]]; then
-    LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
-    LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
-    (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
-    LP_TITLE_OPEN="$(printf '\033k')"
-    # "\e\" but on bash \ must be escaped
-    LP_TITLE_CLOSE="$(printf '\033%s' "$_LP_BACKSLASH")"
-else
-    LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
-    LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
-    LP_TITLE_OPEN="$(printf '\e]0;')"
-    LP_TITLE_CLOSE="$(printf '\a')"
-fi
-
-[[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
-
-# update_terminal_cwd is a shell function available on MacOS X Lion that
-# will update an icon of the directory displayed in the title of the terminal
-# window.
-# See http://hints.macworld.com/article.php?story=20110722211753852
-if [[ "${TERM_PROGRAM-}" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
-    _LP_TERM_UPDATE_DIR=update_terminal_cwd
-    # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
-    # See issue #196
-    PROMPT_COMMAND="${PROMPT_COMMAND//update_terminal_cwd; /}"
-else
-    _LP_TERM_UPDATE_DIR=:
-fi
-
-# Default value for LP_PERM when LP_ENABLE_PERM is 0
-LP_PERM=${LP_MARK_PERM}   # without color
-
-# Same as bash '\l', but inlined as a constant as the value will not change
-# during the shell's life
-LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
-
-
-
-###############
-# Who are we? #
-###############
-command -v _lp_sudo_check >/dev/null && unset -f _lp_sudo_check
-
-# Yellow for root, bold if the user is not the login one, else no color.
-if (( EUID != 0 )); then  # if user is not root
-    # if user is not login user
-    if [[ "${USER}" != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
-        LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-    elif (( LP_USER_ALWAYS )); then
-        LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
-    else
-        LP_USER=""
-    fi
-    # "sudo -n" is only supported from sudo 1.7.0
-    if (( LP_ENABLE_SUDO )) \
-            && command -v sudo >/dev/null \
-            && LC_MESSAGES=C sudo -V | GREP_OPTIONS= \grep -qE '^Sudo version (1(\.([789]\.|[1-9][0-9])|[0-9])|[2-9])'
-    then
-        LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
-        # Test the code with the commands:
-        #   sudo id   # sudo, enter your credentials
-        #   sudo -K   # revoke your credentials
-        _lp_sudo_check()
+        # Disable previous hooks as options that set them
+        # may have changed
         {
-            if sudo -n true 2>/dev/null; then
-                LP_COLOR_MARK=$LP_COLOR_MARK_SUDO
-            else
-                LP_COLOR_MARK=$LP_COLOR_MARK_NO_SUDO
-            fi
-        }
+            add-zsh-hook -d precmd  _lp_set_prompt
+            add-zsh-hook -d preexec _lp_runtime_before
+            add-zsh-hook -d precmd  _lp_runtime_after
+        } >/dev/null
     fi
-else # root!
-    LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
-    LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
-    LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
-    # Disable VCS info for all paths
-    if (( ! LP_ENABLE_VCS_ROOT )); then
-        LP_DISABLED_VCS_PATH=/
-        LP_MARK_DISABLED="$LP_MARK_DEFAULT"
+
+    _lp_source_config
+
+    # Disable feature if the tool is not installed
+    _lp_require_tool()
+    {
+        (( LP_ENABLE_$1 )) && { command -v $2 >/dev/null || eval LP_ENABLE_$1=0 ; }
+    }
+
+    _lp_require_tool GIT git
+    _lp_require_tool SVN svn
+    _lp_require_tool FOSSIL fossil
+    _lp_require_tool HG hg
+    _lp_require_tool BZR bzr
+
+    if [[ "$LP_OS" = Darwin ]]; then
+        _lp_require_tool BATT pmset
+    else
+        _lp_require_tool BATT acpi
     fi
-fi
 
-# Empty _lp_sudo_check if root or sudo disabled
-if ! command -v _lp_sudo_check >/dev/null; then
-    _lp_sudo_check() { :; }
-fi
+    unset -f _lp_require_tool
+
+    if (( LP_ENABLE_JOBS )); then
+        command -v screen >/dev/null ; _LP_ENABLE_SCREEN=!$?
+        command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=!$?
+        (( _LP_ENABLE_DETACHED_SESSIONS = ( _LP_ENABLE_SCREEN || _LP_ENABLE_TMUX ) ))
+    fi
+
+    # Use standard path symbols inside Midnight Commander
+    [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
+
+    # If we are running in a terminal multiplexer, brackets are colored
+    if [[ "$TERM" == screen* || -n ${TMUX-} ]]; then
+        LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+        LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+        (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
+        LP_TITLE_OPEN="$(printf '\033k')"
+        # "\e\" but on bash \ must be escaped
+        LP_TITLE_CLOSE="$(printf '\033%s' "$_LP_BACKSLASH")"
+    else
+        LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
+        LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
+        LP_TITLE_OPEN="$(printf '\e]0;')"
+        LP_TITLE_CLOSE="$(printf '\a')"
+    fi
+
+    [[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
+
+    # update_terminal_cwd is a shell function available on MacOS X Lion that
+    # will update an icon of the directory displayed in the title of the terminal
+    # window.
+    # See http://hints.macworld.com/article.php?story=20110722211753852
+    if [[ "${TERM_PROGRAM-}" == Apple_Terminal ]] && command -v update_terminal_cwd >/dev/null; then
+        _LP_TERM_UPDATE_DIR=update_terminal_cwd
+        # Remove "update_terminal_cwd; " that has been add by Apple in /et/bashrc.
+        # See issue #196
+        PROMPT_COMMAND="${PROMPT_COMMAND//update_terminal_cwd; /}"
+    else
+        _LP_TERM_UPDATE_DIR=:
+    fi
+
+    # Default value for LP_PERM when LP_ENABLE_PERM is 0
+    LP_PERM=${LP_MARK_PERM}   # without color
+
+    # Same as bash '\l', but inlined as a constant as the value will not change
+    # during the shell's life
+    LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
 
 
-#################
-# Where are we? #
-#################
+    ###############
+    # Who are we? #
+    ###############
+    command -v _lp_sudo_check >/dev/null && unset -f _lp_sudo_check
+
+    # Yellow for root, bold if the user is not the login one, else no color.
+    if (( EUID != 0 )); then  # if user is not root
+        # if user is not login user
+        if [[ "${USER}" != "$(logname 2>/dev/null || echo "$LOGNAME")" ]]; then
+            LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
+        elif (( LP_USER_ALWAYS )); then
+            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+        else
+            LP_USER=""
+        fi
+        # "sudo -n" is only supported from sudo 1.7.0
+        if (( LP_ENABLE_SUDO )) \
+                && command -v sudo >/dev/null \
+                && LC_MESSAGES=C sudo -V | GREP_OPTIONS= \grep -qE '^Sudo version (1(\.([789]\.|[1-9][0-9])|[0-9])|[2-9])'
+        then
+            LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
+            # Test the code with the commands:
+            #   sudo id   # sudo, enter your credentials
+            #   sudo -K   # revoke your credentials
+            _lp_sudo_check()
+            {
+                if sudo -n true 2>/dev/null; then
+                    LP_COLOR_MARK=$LP_COLOR_MARK_SUDO
+                else
+                    LP_COLOR_MARK=$LP_COLOR_MARK_NO_SUDO
+                fi
+            }
+        fi
+    else # root!
+        LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
+        LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
+        LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
+        # Disable VCS info for all paths
+        if (( ! LP_ENABLE_VCS_ROOT )); then
+            LP_DISABLED_VCS_PATH=/
+            LP_MARK_DISABLED="$LP_MARK_DEFAULT"
+        fi
+    fi
+
+    # Empty _lp_sudo_check if root or sudo disabled
+    if ! command -v _lp_sudo_check >/dev/null; then
+        _lp_sudo_check() { :; }
+    fi
+
+
+    #################
+    # Where are we? #
+    #################
+
+    _lp_hostname
+
+    if (( LP_ENABLE_SHORTEN_PATH )); then
+        if (( LP_PATH_KEEP == -1 )); then
+            # _lp_shorten_path becomes a noop
+            _lp_shorten_path()
+            {
+                :
+            }
+            # Will never change
+            LP_PWD="${LP_COLOR_PATH}${_LP_DIR_SYMBOL}$NO_COL"
+        fi
+    else
+        # Will never change
+        LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NO_COL"
+
+        if $_LP_SHELL_bash && [[ -n "$PROMPT_DIRTRIM" ]]; then
+            unset -f _lp_shorten_path
+            alias _lp_shorten_path=_lp_set_dirtrim
+        fi
+    fi
+
+    _LP_RUNTIME_LAST_SECONDS=$SECONDS
+
+    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
+        if $_LP_SHELL_zsh; then
+            add-zsh-hook preexec _lp_runtime_before
+            add-zsh-hook precmd  _lp_runtime_after
+        else
+            _LP_AT_PROMPT=0
+            # _lp_runtime_before gets called just before bash executes a command,
+            # including $PROMPT_COMMAND
+            # Pass $_ to this call, because it sets $_ to what it already was
+            trap '_lp_runtime_before "$_"' DEBUG
+        fi
+    fi
+
+    if (( LP_ENABLE_TEMP )); then
+        # Try each _lp_temp method
+        # If no function worked, disable the feature
+        _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
+    fi
+}
 
 _lp_connection()
 {
@@ -601,62 +649,59 @@ _lp_connection()
     fi
 }
 
-# Put the hostname if not locally connected
-# color it in cyan within SSH, and a warning red if within telnet
-# else display the host without color
-# The connection is not expected to change from inside the shell, so we
-# build this just once
-LP_HOST=""
+_lp_hostname() {
+    # Put the hostname if not locally connected
+    # color it in cyan within SSH, and a warning red if within telnet
+    # else display the host without color
+    # The connection is not expected to change from inside the shell, so we
+    # build this just once
+    LP_HOST=""
 
-# Only process hostname elements if we haven't turned them off
-if (( LP_HOSTNAME_ALWAYS != -1 )); then
+    # Only process hostname elements if we haven't turned them off
+    if (( LP_HOSTNAME_ALWAYS != -1 )); then
 
-    [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
+        [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
 
-    # Which host symbol should we use?
-    if (( LP_ENABLE_FQDN )); then
-        LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
-    else
-        LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
-    fi
-
-    # If we are connected with a X11 support
-    if [[ -n "$DISPLAY" ]]; then
-        LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
-    else
-        LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
-    fi
-
-    case "$(_lp_connection)" in
-    lcl)
-        if (( LP_HOSTNAME_ALWAYS )); then
-            LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
+        # Which host symbol should we use?
+        if (( LP_ENABLE_FQDN )); then
+            LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
         else
-            # FIXME do we want to display the chroot if local?
-            LP_HOST="" # no hostname if local
+            LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
         fi
-        ;;
-    ssh)
-        # If we want a different color for each host
-        (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-        LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
-        ;;
-    su)
-        LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
-        ;;
-    tel)
-        LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
-        ;;
-    *)
-        LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
-        ;;
-    esac
 
-fi
+        # If we are connected with a X11 support
+        if [[ -n "$DISPLAY" ]]; then
+            LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+        else
+            LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+        fi
 
-# Useless now, so undefine
-unset -f _lp_connection
-
+        case "$(_lp_connection)" in
+        lcl)
+            if (( LP_HOSTNAME_ALWAYS )); then
+                LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
+            else
+                # FIXME do we want to display the chroot if local?
+                LP_HOST="" # no hostname if local
+            fi
+            ;;
+        ssh)
+            # If we want a different color for each host
+            (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+            LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        su)
+            LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        tel)
+            LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        *)
+            LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
+            ;;
+        esac
+    fi
+}
 
 _lp_get_home_tilde_collapsed()
 {
@@ -729,27 +774,6 @@ _lp_shorten_path()
     # Escape special chars
     LP_PWD="${LP_COLOR_PATH}$(_lp_escape "$ret")$NO_COL"
 }
-
-if (( LP_ENABLE_SHORTEN_PATH )); then
-    if (( LP_PATH_KEEP == -1 )); then
-        # _lp_shorten_path becomes a noop
-        _lp_shorten_path()
-        {
-            :
-        }
-        # Will never change
-        LP_PWD="${LP_COLOR_PATH}${_LP_DIR_SYMBOL}$NO_COL"
-    fi
-else
-    # Will never change
-    LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NO_COL"
-
-    if $_LP_SHELL_bash && [[ -n "$PROMPT_DIRTRIM" ]]; then
-        unset -f _lp_shorten_path
-        alias _lp_shorten_path=_lp_set_dirtrim
-    fi
-fi
-
 
 # In Bash shells, PROMPT_DIRTRIM is the number of directories to keep at the end
 # of the displayed path (if "\w" is present in the PS1 var).
@@ -1398,8 +1422,6 @@ _lp_color_map() {
 # runtime of last command #
 ###########################
 
-_LP_RUNTIME_LAST_SECONDS=$SECONDS
-
 _lp_runtime()
 {
     if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
@@ -1420,50 +1442,39 @@ _lp_runtime()
     :
 }
 
-if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
-    if $_LP_SHELL_zsh; then
-        _lp_runtime_before() {
-          _LP_RUNTIME_LAST_SECONDS=$SECONDS
-        }
-        _lp_runtime_after() {
-            if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
+if $_LP_SHELL_zsh; then
+    _lp_runtime_before() {
+      _LP_RUNTIME_LAST_SECONDS=$SECONDS
+    }
+    _lp_runtime_after() {
+        if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
+            (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+            unset _LP_RUNTIME_LAST_SECONDS
+        fi
+    }
+else
+    _lp_runtime_before()
+    {
+        # For debugging
+        #echo "XXX $BASH_COMMAND"
+
+        # If this is the first time after the user submitted the command,
+        # record the time
+        if (( _LP_AT_PROMPT )); then
+            _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
+        fi
+        # If this is when the prompt is being drawn, the command is done,
+        # so calculate the time. Note these two events could be at the same
+        # time, so no elif is used
+        if [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
+            _LP_AT_PROMPT=1
+            # Compute number of seconds since program was started
+            if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
                 (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
                 unset _LP_RUNTIME_LAST_SECONDS
             fi
-        }
-
-        add-zsh-hook preexec _lp_runtime_before
-        add-zsh-hook precmd  _lp_runtime_after
-    else
-        _lp_runtime_before()
-        {
-            # For debugging
-            #echo "XXX $BASH_COMMAND"
-
-            # If this is the first time after the user submitted the command,
-            # record the time
-            if (( _LP_AT_PROMPT )); then
-                _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
-            fi
-            # If this is when the prompt is being drawn, the command is done,
-            # so calculate the time. Note these two events could be at the same
-            # time, so no elif is used
-            if [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
-                _LP_AT_PROMPT=1
-                # Compute number of seconds since program was started
-                if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
-                    (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
-                    unset _LP_RUNTIME_LAST_SECONDS
-                fi
-            fi
-        }
-
-        _LP_AT_PROMPT=0
-        # _lp_runtime_before gets called just before bash executes a command,
-        # including $PROMPT_COMMAND
-        # Pass $_ to this call, because it sets $_ to what it already was
-        trap '_lp_runtime_before "$_"' DEBUG
-    fi
+        fi
+    }
 fi
 
 ###############
@@ -1507,64 +1518,55 @@ _lp_load_color()
 
 # Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
 # available command.
-if (( LP_ENABLE_TEMP )); then
+# Backends for TEMP. Each backend must return the result in $temperature.
 
-    # Backends for TEMP. Each backend must return the result in $temperature.
+# Implementation using lm-sensors
+_lp_temp_sensors()
+{
+    # Return the hottest system temperature we get through the sensors command
+    # Only the integer part is retained
+    local -i i
+    local IFS=$' \t\n'
+    for i in $(sensors -u |
+            sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
+        (( $i > ${temperature:-0} )) && temperature=i
+    done
+}
 
-    # Implementation using lm-sensors
-    _lp_temp_sensors()
-    {
-        # Return the hottest system temperature we get through the sensors command
-        # Only the integer part is retained
-        local -i i
-        local IFS=$' \t\n'
-        for i in $(sensors -u |
-                sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-            (( $i > ${temperature:-0} )) && temperature=i
-        done
-    }
+# Implementation using 'acpi -t'
+_lp_temp_acpi()
+{
+    local -i i
+    local IFS=$' \t\n'
+    # Only the integer part is retained
+    for i in $(LC_ALL=C acpi -t |
+            sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
+        (( $i > ${temperature:-0} )) && temperature=i
+    done
+}
 
-    # Implementation using 'acpi -t'
-    _lp_temp_acpi()
-    {
-        local -i i
-        local IFS=$' \t\n'
-        # Only the integer part is retained
-        for i in $(LC_ALL=C acpi -t |
-                sed 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-            (( $i > ${temperature:-0} )) && temperature=i
-        done
-    }
+# Dynamic selection of backend
+_lp_temp_detect()
+{
+    local -i temperature
+    local cmd
 
-    # Dynamic selection of backend
-    _lp_temp_detect()
-    {
-        local -i temperature
-        local cmd
+    # Global variable
+    unset _LP_TEMP_FUNCTION
 
-        # Global variable
+    for cmd
+    do
+        command -v $cmd >/dev/null || continue
+
+        _LP_TEMP_FUNCTION=_lp_temp_$cmd
+        # Check that we can retrieve temperature at least once
+        $_LP_TEMP_FUNCTION 2>/dev/null
+        # If $temperature is set, success!
+        [[ -n "$temperature" ]] && return 0
         unset _LP_TEMP_FUNCTION
-
-        for cmd
-        do
-            command -v $cmd >/dev/null || continue
-
-            _LP_TEMP_FUNCTION=_lp_temp_$cmd
-            # Check that we can retrieve temperature at least once
-            $_LP_TEMP_FUNCTION 2>/dev/null
-            # If $temperature is set, success!
-            [[ -n "$temperature" ]] && return 0
-            unset -f $_LP_TEMP_FUNCTION
-            unset _LP_TEMP_FUNCTION
-        done
-        return 1
-    }
-
-    # Try each _lp_temp method
-    # If no function worked, disable the feature
-    _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
-    unset -f _lp_temp_detect
-fi
+    done
+    return 1
+}
 
 
 # Will display the numeric value as we get through the _LP_TEMP_FUNCTION
@@ -1583,15 +1585,6 @@ _lp_temperature()
 ##########
 # DESIGN #
 ##########
-
-
-# Sed expression using extended regexp to match terminal
-# escape sequences with their wrappers
-if $_LP_SHELL_bash; then
-    _LP_CLEAN_ESC='\\\[([^\]+|\\[^]])*\\\]'
-else
-    _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
-fi
 
 # Remove all colors and escape characters of the given string and return a pure text
 _lp_as_text()
@@ -1975,6 +1968,7 @@ prompt_OFF()
 
 # By default, sourcing liquidprompt will activate Liquid Prompt
 if [ "${1-}" != "--no-activate" ]; then
+    lp_activate
     prompt_on
 fi
 

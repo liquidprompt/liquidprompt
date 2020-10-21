@@ -816,27 +816,32 @@ _lp_jobcount_color()
 {
     (( LP_ENABLE_JOBS )) || return
 
-    local ret=""
-    local -i r s
+    local ret="" jobs
+    local -i count=0
 
     # Count detached sessions
     if (( _LP_ENABLE_DETACHED_SESSIONS )); then
-        local -i detached=0
-        (( _LP_ENABLE_SCREEN )) && detached=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
-        (( _LP_ENABLE_TMUX )) && detached+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
-        (( detached > 0 )) && ret+="${LP_COLOR_JOB_D}${detached}d${NO_COL}"
+        (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
+        (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
+        (( count > 0 )) && ret+="${LP_COLOR_JOB_D}${count}d${NO_COL}"
     fi
 
     # Count running jobs
-    if (( r = $(jobs -r | wc -l) )); then
+    # The $(...) syntax strips trailing newlines, so add a character to the end
+    # then remove it to prevent that. Otherwise 0 and 1 jobs look the same.
+    jobs="$(jobs -r; printf x)"
+    __lp_line_count "${jobs%x}"
+    if (( count > 0 )); then
         [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_R}${r}&${NO_COL}"
+        ret+="${LP_COLOR_JOB_R}${count}&${NO_COL}"
     fi
 
     # Count stopped jobs
-    if (( s = $(jobs -s | wc -l) )); then
+    jobs="$(jobs -s; printf x)"
+    __lp_line_count "${jobs%x}"
+    if (( count > 0 )); then
         [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_Z}${s}z${NO_COL}"
+        ret+="${LP_COLOR_JOB_Z}${count}z${NO_COL}"
     fi
 
     echo -nE "$ret"

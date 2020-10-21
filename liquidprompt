@@ -807,43 +807,62 @@ _lp_set_dirtrim() {
 # Related jobs #
 ################
 
-# Display the count of each if non-zero:
-# - detached screens sessions and/or tmux sessions running on the host
-# - attached running jobs (started with $ myjob &)
-# - attached stopped jobs (suspended with Ctrl-Z)
-_lp_jobcount_color()
-{
-    (( LP_ENABLE_JOBS )) || return
-
-    local ret="" jobs
+# Return the count of detached screens sessions and/or tmux sessions running
+# on the host
+# return: lp_detached_sessions; the number of detached sessions
+_lp_detached_sessions() {
     local -i count=0
-
-    # Count detached sessions
     if (( _LP_ENABLE_DETACHED_SESSIONS )); then
         (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
         (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
-        (( count > 0 )) && ret+="${LP_COLOR_JOB_D}${count}d${NO_COL}"
     fi
+    lp_detached_sessions=$count
+    (( lp_detached_sessions ))
+}
 
+# Return the count of attached running jobs (started with $ myjob &) and/or
+# stopped jobs (suspended with Ctrl-Z)
+# return: lp_running_jobs; the number of running shell jobs
+#         lp_stopped_jobs; the number of stopped shell jobs
+_lp_jobcount() {
+    local -i count
     # Count running jobs
     # The $(...) syntax strips trailing newlines, so add a character to the end
     # then remove it to prevent that. Otherwise 0 and 1 jobs look the same.
     jobs="$(jobs -r; printf x)"
     __lp_line_count "${jobs%x}"
-    if (( count > 0 )); then
-        [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_R}${count}&${NO_COL}"
-    fi
+    lp_running_jobs=$count
 
     # Count stopped jobs
     jobs="$(jobs -s; printf x)"
     __lp_line_count "${jobs%x}"
-    if (( count > 0 )); then
-        [[ -n "$ret" ]] && ret+='/'
-        ret+="${LP_COLOR_JOB_Z}${count}z${NO_COL}"
+    lp_stopped_jobs=$count
+
+    (( lp_running_jobs || lp_stopped_jobs ))
+}
+
+# Display the count of each if non-zero:
+# - detached screens sessions and/or tmux sessions running on the host
+# - attached running jobs (started with $ myjob &)
+# - attached stopped jobs (suspended with Ctrl-Z)
+_lp_jobcount_color() {
+    (( LP_ENABLE_JOBS )) || return 2
+
+    lp_jobcount_color=
+
+    _lp_detached_sessions && lp_jobcount_color="${LP_COLOR_JOB_D}${lp_detached_sessions}d${NO_COL}"
+
+    _lp_jobcount
+    if (( lp_running_jobs > 0 )); then
+        [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+        lp_jobcount_color+="${LP_COLOR_JOB_R}${lp_running_jobs}&${NO_COL}"
+    fi
+    if (( lp_stopped_jobs > 0 )); then
+        [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+        lp_jobcount_color+="${LP_COLOR_JOB_Z}${lp_stopped_jobs}z${NO_COL}"
     fi
 
-    echo -nE "$ret"
+    [[ -n "$lp_jobcount_color" ]]
 }
 
 
@@ -1718,7 +1737,11 @@ _lp_set_prompt()
     eval "$LP_OLD_PROMPT_COMMAND"
 
     # left of main prompt: space at right
-    LP_JOBS="$(_lp_sr "$(_lp_jobcount_color)")"
+    if _lp_jobcount_color; then
+        LP_JOBS="$lp_jobcount_color "
+    else
+        LP_JOBS=
+    fi
     LP_TEMP="$(_lp_sr "$(_lp_temperature)")"
     LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
     LP_BATT="$(_lp_sr "$(_lp_battery_color)")"

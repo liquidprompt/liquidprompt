@@ -397,33 +397,25 @@ _lp_source_config()
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
 
 
-    local configfile
-
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
+    local -a configfiles=("$HOME/.liquidpromptrc" "${XDG_CONFIG_HOME:-"$HOME/.config"}/liquidpromptrc")
 
-    if [[ -f "$HOME/.liquidpromptrc" ]]; then
-        configfile="$HOME/.liquidpromptrc"
-    else
-        local first
-        local search
-        # trailing ":" is so that ${search#*:} always removes something
-        search="${XDG_CONFIG_HOME:-"$HOME/.config"}:${XDG_CONFIG_DIRS:-/etc/xdg}:"
-        while [[ -n "$search" ]]; do
-            first="${search%%:*}"
-            search="${search#*:}"
-            if [[ -f "$first/liquidpromptrc" ]]; then
-                configfile="$first/liquidpromptrc"
-                break
-            fi
-        done
-    fi
+    # trailing ":" is so that ${search#*:} always removes something
+    local configfile search="${XDG_CONFIG_DIRS:-/etc/xdg}:"
+    while [[ -n "$search" ]]; do
+        configfiles+=("${search%%:*}/liquidpromptrc")
+        search="${search#*:}"
+    done
 
-    if [[ -n "$configfile" ]]; then
-        source "$configfile"
-    elif [[ -f "/etc/liquidpromptrc" ]]; then
-        source "/etc/liquidpromptrc"
-    fi
+    configfiles+=("/etc/liquidpromptrc")
+
+    for configfile in "${configfiles[@]}"; do
+        if [[ -f "$configfile" ]]; then
+            source "$configfile"
+            break
+        fi
+    done
 
     # Delete this code in version 1.11
     if [[ -n "${LP_COLORMAP_1-}" ]]; then

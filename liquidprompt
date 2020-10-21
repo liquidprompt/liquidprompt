@@ -696,10 +696,11 @@ _lp_hostname() {
     fi
 }
 
-_lp_get_home_tilde_collapsed()
-{
+__lp_pwd_tilde() {
+    # Needs to be in a variable, as different versions of Bash treat '~' in a
+    # substitution differently
     local tilde="~"
-    echo "${PWD/#$HOME/$tilde}"
+    lp_pwd_tilde="${PWD/#$HOME/$tilde}"
 }
 
 # Shorten the path of the current working directory
@@ -719,7 +720,10 @@ _lp_shorten_path()
 
     local ret=
 
-    local p="$(_lp_get_home_tilde_collapsed)"
+    local lp_pwd_tilde p
+    __lp_pwd_tilde
+    p="$lp_pwd_tilde"
+
     local mask="${LP_MARK_SHORTEN_PATH}"
     local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 ))
 
@@ -773,7 +777,10 @@ _lp_shorten_path()
 # Liquid Prompt can calculate this number under two conditions, path shortening
 # must be disabled and PROMPT_DIRTRIM must be already set.
 _lp_set_dirtrim() {
-    local p="$(_lp_get_home_tilde_collapsed)"
+    local lp_pwd_tilde p
+    __lp_pwd_tilde
+    p="$lp_pwd_tilde"
+
     local -i max_len="${COLUMNS:-80}*$LP_PATH_LENGTH/100"
     local -i dt=0
 

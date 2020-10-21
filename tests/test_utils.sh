@@ -30,6 +30,17 @@ function test_line_count {
   assertEquals "null string" $(printf %s "$test_string" | wc -l) $count
 }
 
+function test_pwd_tilde {
+  typeset HOME="/home/user"
+  typeset PWD="/a/test/path"
+  __lp_pwd_tilde
+  assertEquals "unchanged path" "$PWD" "$lp_pwd_tilde"
+
+  PWD="/home/user/a/test/path"
+  __lp_pwd_tilde
+  assertEquals "shorted home path" "~/a/test/path" "$lp_pwd_tilde"
+}
+
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit

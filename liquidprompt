@@ -470,6 +470,12 @@ lp_activate() {
     _lp_require_tool HG hg
     _lp_require_tool BZR bzr
 
+    _LP_ENABLED_VCSS=()
+    (( LP_ENABLE_GIT )) && _LP_ENABLED_VCSS+=(git)
+    (( LP_ENABLE_SVN )) && _LP_ENABLED_VCSS+=(svn)
+    (( LP_ENABLE_HG )) && _LP_ENABLED_VCSS+=(hg)
+    (( LP_ENABLE_BZR )) && _LP_ENABLED_VCSS+=(bzr)
+
     if [[ "$LP_OS" = Darwin ]]; then
         _lp_require_tool BATT pmset
     else
@@ -1010,16 +1016,48 @@ _lp_git_branch_color()
     fi
 }
 
-# Search upwards through a directory structure looking for a file/folder with
-# the given name.  Used to avoid invoking 'hg' and 'bzr'.
-_lp_upwards_find()
-{
-    local dir
-    dir="$PWD"
-    while [[ -n "$dir" ]]; do
-        [[ -d "$dir/$1" ]] && return 0
-        dir="${dir%/*}"
+# Search upwards through a directory structure looking for a sign of a VCS
+# repository. Used to avoid invoking VCS binaries to discover if in a repo.
+# Checks $LP_DISABLED_VCS_PATH and returns false if a match is found.
+# Otherwise returns the first matching repository.
+# return: true if in repo, false if not (1) or path disabled (2)
+#         lp_vcs_type; the string ID of the VCS controlling this directory.
+#         lp_vcs_root; the path to the root of the found repository.
+_lp_find_vcs() {
+    if ! _lp_are_vcs_enabled; then
+        lp_vcs_type="disabled"
+        lp_vcs_root=""
+        return 2
+    fi
+
+    lp_vcs_root="$PWD"
+    while [[ -n "$lp_vcs_root" ]]; do
+        for vcs in "${_LP_ENABLED_VCSS[@]}"; do
+            if [[ -d "$lp_vcs_root/.$vcs" ]]; then
+                lp_vcs_type="$vcs"
+
+                if [[ "$lp_vcs_type" == git ]]; then
+                    if [[ -n "${VCSH_DIRECTORY-}" ]]; then
+                        lp_vcs_type="git-vcsh"
+                    elif [[ -d "$lp_vcs_root/.git/svn" ]]; then
+                        lp_vcs_type="git-svn"
+                    fi
+                fi
+
+                return 0
+            fi
+        done
+
+        if (( LP_ENABLE_FOSSIL)) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
+            lp_vcs_type="fossil"
+            return 0
+        fi
+
+        lp_vcs_root="${lp_vcs_root%/*}"
     done
+
+    lp_vcs_type=""
+    lp_vcs_root=""
     return 1
 }
 
@@ -1029,11 +1067,6 @@ _lp_upwards_find()
 _lp_hg_branch()
 {
     (( LP_ENABLE_HG )) || return
-
-    # First do a simple search to avoid having to invoke hg -- at least on my
-    # machine, the python startup causes a noticeable hitch when changing
-    # directories.
-    _lp_upwards_find .hg || return
 
     # We found an .hg folder, so we need to invoke hg and see if we're actually
     # in a repository.
@@ -1231,11 +1264,6 @@ _lp_bzr_branch()
 {
     (( LP_ENABLE_BZR )) || return
 
-    # First do a simple search to avoid having to invoke bzr -- at least on my
-    # machine, the python startup causes a noticeable hitch when changing
-    # directories.
-    _lp_upwards_find .bzr || return
-
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
 
@@ -1255,11 +1283,6 @@ _lp_bzr_branch()
 _lp_bzr_branch_color()
 {
     (( LP_ENABLE_BZR )) || return
-
-    # First do a simple search to avoid having to invoke bzr -- at least on my
-    # machine, the python startup causes a noticeable hitch when changing
-    # directories.
-    _lp_upwards_find .bzr || return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
@@ -1775,10 +1798,6 @@ _lp_set_prompt()
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
-        LP_VCS=""
-        LP_VCS_TYPE=""
-        # LP_HOST is a global set at load time
-
         # LP_PERM: shows a ":"
         # - colored in green if user has write permission on the current dir
         # - colored in red if not
@@ -1793,67 +1812,25 @@ _lp_set_prompt()
 
         _lp_shorten_path   # set LP_PWD
 
-        if _lp_are_vcs_enabled; then
-            LP_VCS="$(_lp_git_branch_color)"
-            LP_VCS_TYPE="git"
-            if [[ -n "$LP_VCS" ]]; then
-                # If this is a vcsh repository
-                if [[ -n "${VCSH_DIRECTORY-}" ]]; then
-                    LP_VCS_TYPE="git-vcsh"
-                fi
-                # If this is a git-svn repository
-                if [[ -d "$(\git rev-parse --git-dir 2>/dev/null)/svn" ]]; then
-                    LP_VCS_TYPE="git-svn"
-                fi # git-svn
-            else
-                LP_VCS="$(_lp_hg_branch_color)"
-                LP_VCS_TYPE="hg"
-                if [[ -z "$LP_VCS" ]]; then
-                    LP_VCS="$(_lp_svn_branch_color)"
-                    LP_VCS_TYPE="svn"
-                    if [[ -z "$LP_VCS" ]]; then
-                        LP_VCS="$(_lp_fossil_branch_color)"
-                        LP_VCS_TYPE="fossil"
-                        if [[ -z "$LP_VCS" ]]; then
-                            LP_VCS="$(_lp_bzr_branch_color)"
-                            LP_VCS_TYPE="bzr"
-                            if [[ -z "$LP_VCS" ]]; then
-                                LP_VCS=""
-                                LP_VCS_TYPE=""
-                            fi # nothing
-                        fi # bzr
-                    fi # fossil
-                fi # svn
-            fi # hg
-
-        else # if this vcs rep is disabled
-            LP_VCS="" # not necessary, but more readable
-            LP_VCS_TYPE="disabled"
-        fi
-
-        if [[ -z "$LP_VCS_TYPE" ]]; then
-            LP_VCS=""
-        else
-            LP_VCS="$(_lp_sl "${LP_VCS}")"
-        fi
-
-        # end of the prompt line: double spaces
-        LP_MARK="$(_lp_sr "$(_lp_smart_mark $LP_VCS_TYPE)")"
-
         LP_OLD_PWD="LP:$PWD"
+    fi
 
-    # if do not change of working directory but...
-    elif [[ -n "$LP_VCS_TYPE" ]]; then # we are still in a VCS dir
-        case "$LP_VCS_TYPE" in
-            # git, git-svn
+    if _lp_find_vcs; then
+        case "$lp_vcs_type" in
+            # git, git-svn, git-vcsh
             git*)    LP_VCS="$(_lp_sl "$(_lp_git_branch_color)")";;
             hg)      LP_VCS="$(_lp_sl "$(_lp_hg_branch_color)")";;
             svn)     LP_VCS="$(_lp_sl "$(_lp_svn_branch_color)")";;
             fossil)  LP_VCS="$(_lp_sl "$(_lp_fossil_branch_color)")";;
             bzr)     LP_VCS="$(_lp_sl "$(_lp_bzr_branch_color)")";;
-            disabled)LP_VCS="";;
+            *)       LP_VCS="";;
         esac
+    else
+        LP_VCS=""
     fi
+
+    # end of the prompt line: double spaces
+    LP_MARK="$(_lp_sr "$(_lp_smart_mark $lp_vcs_type)")"
 
     if [[ -f "${LP_PS1_FILE-}" ]]; then
         source "$LP_PS1_FILE"

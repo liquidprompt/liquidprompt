@@ -55,9 +55,9 @@ if test -n "${BASH_VERSION-}"; then
     # Escape the given strings
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
-    _lp_escape()
+    __lp_escape()
     {
-        echo -nE "${1//\\/\\\\}"
+        ret="${1//\\/\\\\}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
     _LP_SHELL_bash=false
@@ -79,10 +79,10 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
-    _lp_escape()
+    __lp_escape()
     {
-        arg="${1//\\/\\\\}"
-        echo -nE "${arg//\%/$_LP_PERCENT}"
+        local arg="${1//\\/\\\\}"
+        ret="${arg//\%/$_LP_PERCENT}"
     }
 else
     echo "liquidprompt: shell not supported" >&2
@@ -782,7 +782,8 @@ _lp_shorten_path()
         fi
     fi
     # Escape special chars
-    LP_PWD="${LP_COLOR_PATH}$(_lp_escape "$ret")$NO_COL"
+    __lp_escape "$ret"
+    LP_PWD="${LP_COLOR_PATH}${ret}$NO_COL"
 }
 
 # In Bash shells, PROMPT_DIRTRIM is the number of directories to keep at the end
@@ -902,15 +903,16 @@ _lp_git_branch()
 
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 
-    local branch
+    local branch ret
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
     if branch="$(\git symbolic-ref -q HEAD)"; then
-        _lp_escape "${branch#refs/heads/}"
+        __lp_escape "${branch#refs/heads/}"
+        lp_vcs_branch="$ret"
     else
         # In detached head state, use commit instead
         # No escape needed
-        \git rev-parse --short -q HEAD
+        lp_vcs_branch="$(\git rev-parse --short -q HEAD)"
     fi
 }
 
@@ -939,8 +941,8 @@ _lp_git_branch_color()
 {
     (( LP_ENABLE_GIT )) || return
 
-    local branch
-    branch="$(_lp_git_branch)"
+    _lp_git_branch || return $?
+    local branch="$lp_vcs_branch"
     if [[ -n "$branch" ]]; then
 
         local end
@@ -1080,10 +1082,13 @@ _lp_hg_branch()
     # We found an .hg folder, so we need to invoke hg and see if we're actually
     # in a repository.
 
-    local branch
-    branch="$(hg branch 2>/dev/null)"
-
-    (( $? == 0 )) && _lp_escape "$branch"
+    local branch ret
+    if branch="$(hg branch 2>/dev/null)"; then
+        __lp_escape "$branch"
+        lp_vcs_branch="$ret"
+    else
+        return 1
+    fi
 }
 
 # Set a color depending on the branch state:
@@ -1094,9 +1099,9 @@ _lp_hg_branch_color()
 {
     (( LP_ENABLE_HG )) || return
 
-    local branch
-    local ret
-    branch="$(_lp_hg_branch)"
+    _lp_hg_branch || return $?
+    local ret branch="$lp_vcs_branch"
+
     if [[ -n "$branch" ]]; then
 
         local has_untracked
@@ -1147,21 +1152,25 @@ _lp_svn_branch()
 
     local root=
     local url=
+    local ret
     eval "$(LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
     [[ -z "${root-}" ]] && return
 
     # Make url relative to root
     url="${url:${#root}}"
     if [[ "$url" == */trunk* ]]; then
-        echo -n trunk
+        lp_vcs_branch=trunk
     elif [[ "$url" == */branches/?* ]]; then
         url="${url##*/branches/}"
-        _lp_escape "${url%/*}"
+        __lp_escape "${url%/*}"
+        lp_vcs_branch="$ret"
     elif [[ "$url" == */tags/?* ]]; then
         url="${url##*/tags/}"
-        _lp_escape "${url%/*}"
+        __lp_escape "${url%/*}"
+        lp_vcs_branch="$ret"
     else
-        _lp_escape "${root##*/}"
+        __lp_escape "${root##*/}"
+        lp_vcs_branch="$ret"
     fi
 }
 
@@ -1176,8 +1185,9 @@ _lp_svn_branch_color()
 {
     (( LP_ENABLE_SVN )) || return
 
-    local branch
-    branch="$(_lp_svn_branch)"
+    _lp_svn_branch || return $?
+    local branch="$lp_vcs_branch"
+
     if [[ -n "$branch" ]]; then
         local changes
         changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
@@ -1196,12 +1206,24 @@ _lp_svn_branch_color()
 _lp_fossil_branch()
 {
     (( LP_ENABLE_FOSSIL )) || return
-    local branch
-    branch=$(fossil branch list 2>/dev/null | sed -n -$_LP_SED_EXTENDED 's/^\*\s+(\w*)$/\1/p')
+
+    local branch ret
+
+    # branch current command added in fossil 2.7
+    if branch="$(fossil branch current)"; then
+        __lp_escape "$branch"
+        lp_vcs_branch="$ret"
+        return 0
+    fi
+
+    branch=$(fossil branch list 2>/dev/null | sed -n 's/^\*\s\s*\(\w*\)$/\1/p')
     if [[ -n "$branch" ]]; then
-        echo -nE "$branch"
+        __lp_escape "$branch"
+        lp_vcs_branch="$ret"
     elif fossil status &>/dev/null ; then
-        echo -n "no-branch"
+        lp_vcs_branch="no-branch"
+    else
+        return 1
     fi
 }
 
@@ -1217,8 +1239,8 @@ _lp_fossil_branch_color()
 {
     (( LP_ENABLE_FOSSIL )) || return
 
-    local branch
-    branch="$(_lp_fossil_branch)"
+    _lp_fossil_branch || return $?
+    local branch="$lp_vcs_branch"
 
     if [[ -n "$branch" ]]; then
         local -i C2E # Modified files (added or edited)
@@ -1276,10 +1298,13 @@ _lp_bzr_branch()
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
 
-    local branch
-    branch="$(bzr nick 2> /dev/null)"
-    (( $? != 0 )) && return
-    _lp_escape "$branch"
+    local branch ret
+    if branch="$(bzr nick 2> /dev/null)"; then
+        __lp_escape "$branch"
+        lp_vcs_branch="$ret"
+    else
+        return 1
+    fi
 }
 
 
@@ -1296,15 +1321,16 @@ _lp_bzr_branch_color()
     # We found an .bzr folder, so we need to invoke bzr and see if we're
     # actually in a repository.
 
-    local branch revno clean IFS=' '
+    local branch revno clean ret IFS=' '
     read branch revno clean <<<"$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2>/dev/null)"
     (( $? != 0 )) && return
 
     if [[ -n "$branch" ]]; then
+        __lp_escape "$branch"
         if (( clean == 0 )); then
-            echo -nE "${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+            echo -nE "${LP_COLOR_CHANGES}${ret}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         else
-            echo -nE "${LP_COLOR_UP}${branch}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
+            echo -nE "${LP_COLOR_UP}${ret}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
         fi
     fi
 }
@@ -1313,6 +1339,7 @@ _lp_bzr_branch_color()
 ####################
 # Wifi link status #
 ####################
+# TODO: test/fix/implement this
 _lp_wifi()
 {
     # Linux

@@ -156,6 +156,7 @@ You can configure some variables in the `~/.config/liquidpromptrc` file:
   showing it only when connected via a remote shell (0) or never showing it (-1).
 * `LP_USER_ALWAYS`, a choice between always displaying the user or showing
   it only when he is different from the one that logged in
+* `LP_MINIMUM_SPACE_AFTER_PROMPT`, the minimum number of free columns required after a prompt, a new line is added if the number of free columns is below this.
 
 You can also force some features to be disabled, to save some time in the
 prompt-building process:

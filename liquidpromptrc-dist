@@ -176,4 +176,8 @@ LP_ENABLE_SSH_COLORS=0
 # will be disabled
 LP_DISABLED_VCS_PATH=""
 
+# Require minimum number of columns in the terminal after the prompt.
+# Default is 0 (off), sensible values are around 20 or 30.
+LP_MINIMUM_SPACE_AFTER_PROMPT=0
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

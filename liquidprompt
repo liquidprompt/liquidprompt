@@ -1508,20 +1508,29 @@ _lp_hg_uncommitted_lines() {
 }
 
 # SUBVERSION #
+# Note that Subversion has no tags, stashes, or staging area. It also has no
+# concept of a remote, since it is not distributed and always must be in sync.
 
-# Get the branch name of the current directory
-# For the first level of the repository, gives the repository name
+# Check if Subversion is enabled in Liquidprompt and the current directory is a
+# valid Subversion repository.
+# return: false if Subversion disabled (2) or not a valid repo (1), true
+#             otherwise.
+_lp_svn_active() {
+    (( LP_ENABLE_SVN )) || return 2
+    \svn info >/dev/null 2>&1 || return 1
+}
+
+# Get the branch name of the repo in the current directory.
+# return: true if a valid Subversion branch is checked out.
+#         lp_vcs_branch; the name of the current branch.
 _lp_svn_branch() {
-    (( LP_ENABLE_SVN )) || return
+    local ret url
+    # SVN info shows repository-relative URLs since v1.8
+    url="$(LC_ALL=C \svn info 2>/dev/null)"
+    url="${url#*Relative URL: }"
+    url="${url%%$'\n'*}"
+    [[ -z "$url" ]] && return 1
 
-    local root=
-    local url=
-    local ret
-    eval "$(LC_ALL=C svn info 2>/dev/null | sed -n 's/^URL: \(.*\)/url="\1"/p;s/^Repository Root: \(.*\)/root="\1"/p' )"
-    [[ -z "${root-}" ]] && return
-
-    # Make url relative to root
-    url="${url:${#root}}"
     if [[ "$url" == */trunk* ]]; then
         lp_vcs_branch=trunk
     elif [[ "$url" == */branches/?* ]]; then
@@ -1531,29 +1540,70 @@ _lp_svn_branch() {
     elif [[ "$url" == */tags/?* ]]; then
         url="${url##*/tags/}"
         __lp_escape "${url%/*}"
-        lp_vcs_branch="$ret"
+        lp_vcs_branch="tag/$ret"
     else
-        __lp_escape "${root##*/}"
-        lp_vcs_branch="$ret"
+        return 1
     fi
 }
 
-# Set a color depending on the branch state:
-# - green if the repository is clean
-#   (use $LP_SVN_STATUS_OPTIONS to define what that means with
-#    the --depth option of 'svn status')
-# - red if there is changes to commit
-# Note that, due to subversion way of managing changes,
-# informations are only displayed for the CURRENT directory.
-_lp_svn_branch_color() {
-    _lp_svn_branch || return $?
-    local changes branch="$lp_vcs_branch"
-    changes=$(( $(svn status ${LP_SVN_STATUS_OPTIONS-} | \grep -c -v "?") ))
-    if (( changes == 0 )); then
-        lp_vcs_branch_color="${LP_COLOR_UP}${branch}${NO_COL}"
-    else
-        lp_vcs_branch_color="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$changes${NO_COL})" # changes to commit
-    fi
+# SVN doesn't have a concept of tags, they are really branches that everyone
+# agrees to not change. For this reason a "tag" is returned by the
+# _lp_svn_branch() function.
+# return: always false (2: disabled).
+_lp_svn_tag() {
+    return 2
+}
+
+# Get the current revision number for the repo in the current directory.
+# return: lp_vcs_commit_id; the number of the current revision.
+_lp_svn_commit_id() {
+    lp_vcs_commit_id="$(\svn info --show-item revision 2>/dev/null)"
+}
+
+# Get additional information if the repo is in any unfinished state.
+# A Subversion merge is no different than a manual file change, so the
+# repository has no extra state to track.
+# return: always false (2: disabled).
+_lp_svn_head_status() {
+    return 2
+}
+
+# Get the number of untracked files in the Subversion repo.
+# return: true if any untracked files are found.
+#         lp_vcs_untracked_files; the number of untracked files.
+_lp_svn_untracked_files() {
+    lp_vcs_untracked_files="$(LC_ALL=C \svn status 2>/dev/null | \grep -c '^?')"
+    (( lp_vcs_untracked_files ))
+}
+
+# Get the number of changed files compared to the base revision.
+# return: true if any files differ from the base revision.
+#         lp_vcs_uncommitted_files; the number of files changed.
+_lp_svn_uncommitted_files() {
+    local files count
+    # svn status is unsafe with newline chars in filenames, which will throw
+    # off this count
+    files="$(\svn status --quiet 2>/dev/null; printf x)"
+    _lp_line_count "${files%x}"
+    lp_vcs_uncommitted_files="$count"
+    (( lp_vcs_uncommitted_files ))
+}
+
+# Get the number of changed lines compared to the base revision.
+# return: true if any lines differ from the base revision.
+#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
+#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
+_lp_svn_uncommitted_lines() {
+    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+        <<<"$(\svn diff --internal-diff 2>/dev/null | awk '
+        BEGIN { plus=0; minus=0 }
+        /^(\+[^+])|(\+$)/ { plus+=1 }
+        /^(-[^-])|(-$)/ { minus+=1 }
+        END {
+            print plus" "minus
+        }')"
+
+    (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
 # FOSSIL #

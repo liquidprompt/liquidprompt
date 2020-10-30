@@ -114,6 +114,10 @@ function test_local {
   unset -f local_function
 }
 
+function test_here_string {
+  assertEquals "Here string failed" "foobar" $(cat <<< "foobar")
+}
+
 function test_read {
   typeset IFS=' '
   # The check of the vars must be done in the same subshell as the read, as
@@ -128,6 +132,21 @@ function test_read {
     assertEquals "read first var" "foo" "$a"
     assertEquals "read ending vars" "bar baz" "$eof"
   }
+
+  # Same as above, but with here-string
+  read a eof <<<"foo bar baz"
+  assertEquals "read first var" "foo" "$a"
+  assertEquals "read ending vars" "bar baz" "$eof"
+
+  # Test -r
+  read -r a b <<<"foo \bar"
+  assertEquals "read first var" "foo" "$a"
+  assertEquals "read backslash var" "\bar" "$b"
+
+  # Test empty vars
+  read a b <<<"foo"
+  assertEquals "read first var" "foo" "$a"
+  assertEquals "read empty var" "" "$b"
 }
 
 function test_parameter_expansion_unset {
@@ -199,6 +218,11 @@ function test_parameter_expansion_cut {
   assertEquals "Parameter expansion shortest trailing cut" $var "${var%c}"
   assertEquals "Parameter expansion shortest trailing cut glob" abcdab "${var%c*}"
   assertEquals "Parameter expansion longest trailing cut glob" ab "${var%%cd*}"
+
+  assertEquals "Parameter expansion nothing starting cut" "$var" "${var#foo}"
+  assertEquals "Parameter expansion nothing starting cut glob" "$var" "${var##*foo}"
+  assertEquals "Parameter expansion nothing trailing cut" "$var" "${var%foo}"
+  assertEquals "Parameter expansion nothing trailing cut glob" "$var" "${var%%foo*}"
 }
 
 function test_parameter_expansion_replace {
@@ -230,7 +254,35 @@ function test_parameter_expansion_nested {
 }
 
 function test_substring {
-  : # ??? Do we ever use this?
+  typeset var=abcdabcd
+
+  assertEquals "Parameter expansion substring" "$var" "${var:0}"
+  assertEquals "Parameter expansion substring" "bcdabcd" "${var:1}"
+  assertEquals "Parameter expansion substring" "" "${var:0:0}"
+  assertEquals "Parameter expansion substring" "a" "${var:0:1}"
+  assertEquals "Parameter expansion substring" "ab" "${var:0:2}"
+
+  assertEquals "Parameter expansion substring" "c" "${var:6:1}"
+  assertEquals "Parameter expansion substring" "cd" "${var:6:2}"
+  assertEquals "Parameter expansion substring" "cd" "${var:6:3}"
+  assertEquals "Parameter expansion substring" "d" "${var:7:1}"
+  assertEquals "Parameter expansion substring" "d" "${var:7:2}"
+  assertEquals "Parameter expansion substring" "" "${var:8:1}"
+
+  assertEquals "Parameter expansion substring" "d" "${var: -1:1}"
+  assertEquals "Parameter expansion substring" "" "${var: -1:0}"
+  assertEquals "Parameter expansion substring" "bcd" "${var: -3:5}"
+
+  assertEquals "Parameter expansion substring" "bcd" "${var: -3}"
+
+  # Negative second parameters were not supported until Bash 4.2
+}
+
+function test_ansi_c_quoted_string {
+  typeset newline='
+'
+  assertEquals "ANSI C quoted newline" "$newline" $'\n'
+  assertEquals "ANSI C quoted tab" "	" $'\t'
 }
 
 function test_advanced_test {
@@ -366,6 +418,12 @@ function test_integer {
   (( int = 0 ))
   assertFalse "Int assignment" $?
   assertFalse "Int false" "(( int ))"
+
+  int+=1
+  assertEquals "Int increment" 1 $int
+
+  int+=5
+  assertEquals "Int increment" 6 $int
 }
 
 function test_array {
@@ -382,7 +440,9 @@ function test_array {
     assertEquals "array element" "foo" "$item"
   done
 
+  typeset IFS=' '
   assertEquals "whole array" "foo foo foo" "${array_a[*]}"
+  assertEquals "size of array" 3 "${#array_a[@]}"
 
   typeset -a array_b
   array_b[1]=foo
@@ -392,6 +452,7 @@ function test_array {
   assertEquals "array index element" "foo" "${array_b[1]}"
   assertEquals "array index element" "bar" "${array_b[2]}"
   assertEquals "array index element" "baz" "${array_b[5]}"
+  assertEquals "null array index element" "" "${array_b[3]}"
 }
 
 function test_source {
@@ -425,10 +486,6 @@ function test_dynamic_function_call {
   assertFalse "called my_qux" 'my_$baz'
 
   unset -f my_bar my_qux
-}
-
-function test_here_string {
-  assertEquals "Here string failed" "foobar" $(cat <<< "foobar")
 }
 
 if [ -n "${ZSH_VERSION-}" ]; then

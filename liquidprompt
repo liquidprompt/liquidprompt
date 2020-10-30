@@ -21,7 +21,8 @@
 # See the README.md file for a summary of features.
 
 # Issue #161: do not load if not an interactive shell
-test -z "$TERM" -o "x$TERM" = xdumb && return
+# Do not exit if '--no-activate' flag was passed, as it overrides this check
+[ "x${-##*i}" = "x$-" ] || [ -z "${TERM-}" ] || [ "x${TERM-}" = xdumb ] && [ "x${1-}" != "x--no-activate" ] && return
 
 if test -n "${BASH_VERSION-}"; then
     # Check for recent enough version of bash.

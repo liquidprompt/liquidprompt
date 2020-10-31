@@ -87,31 +87,6 @@ else
     return
 fi
 
-# Count the number of lines in the input string. A faster subsitute for 'wc -l'.
-# input: $1; a single string of input.
-# return: $count; the number of newline characters in the string.
-__lp_line_count() {
-  local var="${1//[!$'\n']}"
-  count=${#var}
-}
-
-# Store $2 (or $?) as a true/false value in variable named $1
-# $? is propagated
-#   _lp_bool foo 5
-#   => foo=false
-#   _lp_bool foo 0
-#   => foo=true
-_lp_bool() {
-    local res=${2:-$?}
-    if (( res )); then
-        eval $1=false
-    else
-        eval $1=true
-    fi
-    return $res
-}
-
-
 ###############
 # OS specific #
 ###############
@@ -126,42 +101,10 @@ case $(uname) in
     *)         LP_OS=Linux   ;;
 esac
 
-# Get cpu count
-case "$LP_OS" in
-    Linux)   _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo ) ;;
-    FreeBSD|Darwin|OpenBSD) _lp_CPUNUM=$( sysctl -n hw.ncpu ) ;;
-    SunOS)   _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" ) ;;
-esac
-
 # Extended regexp patterns for sed
 # GNU/BSD sed
 _LP_SED_EXTENDED=r
 [[ "$LP_OS" = Darwin ]] && _LP_SED_EXTENDED=E
-
-
-# get current load
-case "$LP_OS" in
-    Linux)
-        _lp_cpu_load () {
-            local eol IFS=$' \t'
-            read lp_cpu_load eol < /proc/loadavg
-        }
-        ;;
-    FreeBSD|Darwin|OpenBSD)
-        _lp_cpu_load () {
-            local bol eol IFS=$' \t'
-            # If you have problems with syntax coloring due to the following
-            # line, do this: ln -s liquidprompt liquidprompt.bash
-            # and edit liquidprompt.bash
-            read bol lp_cpu_load eol <<<"$( LC_ALL=C sysctl -n vm.loadavg )"
-        }
-        ;;
-    SunOS)
-        _lp_cpu_load () {
-            lp_cpu_load="$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
-        }
-esac
-
 
 #################
 # CONFIGURATION #
@@ -632,76 +575,55 @@ lp_activate() {
     fi
 }
 
-_lp_connection() {
-    if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
-        echo ssh
-    else
-        # tmux: see GH #304
-        # TODO check on *BSD
-        local whoami="$(LC_ALL=C who am i)"
-        local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
-        if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
-            echo lcl  # Local
-        elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
-            echo su   # Remote su/sudo
-        else
-            echo tel  # Telnet
-        fi
-    fi
+#####################
+# Utility Functions #
+#####################
+
+# Remove all colors and escape characters of the given string and return a pure text
+_lp_as_text() {
+    # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
+    # $_LP_CLOSE_ESC.
+    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
-_lp_hostname() {
-    # Put the hostname if not locally connected
-    # color it in cyan within SSH, and a warning red if within telnet
-    # else display the host without color
-    # The connection is not expected to change from inside the shell, so we
-    # build this just once
-    LP_HOST=""
-
-    # Only process hostname elements if we haven't turned them off
-    if (( LP_HOSTNAME_ALWAYS != -1 )); then
-
-        [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
-
-        # Which host symbol should we use?
-        if (( LP_ENABLE_FQDN )); then
-            LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
-        else
-            LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
-        fi
-
-        # If we are connected with a X11 support
-        if [[ -n "$DISPLAY" ]]; then
-            LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
-        else
-            LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
-        fi
-
-        case "$(_lp_connection)" in
-        lcl)
-            if (( LP_HOSTNAME_ALWAYS )); then
-                LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
-            else
-                # FIXME do we want to display the chroot if local?
-                LP_HOST="" # no hostname if local
-            fi
-            ;;
-        ssh)
-            # If we want a different color for each host
-            (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-            LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
-            ;;
-        su)
-            LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
-            ;;
-        tel)
-            LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
-            ;;
-        *)
-            LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
-            ;;
-        esac
+# Store $2 (or $?) as a true/false value in variable named $1
+# $? is propagated
+#   _lp_bool foo 5
+#   => foo=false
+#   _lp_bool foo 0
+#   => foo=true
+_lp_bool() {
+    local res=${2:-$?}
+    if (( res )); then
+        eval $1=false
+    else
+        eval $1=true
     fi
+    return $res
+}
+
+_lp_color_map() {
+    # Default scale: 0..100
+    # Custom scale: 0..$2
+    local -i scale value
+    scale=${2:-100}
+    if (( $1 >= scale )); then
+      value=scale-1
+    elif (( $1 < 0 )); then
+      value=0
+    else
+      value=$1
+    fi
+    # Transform the value to a 0..${#COLOR_MAP} scale
+    echo -nE "${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
+}
+
+# Count the number of lines in the input string. A faster subsitute for 'wc -l'.
+# input: $1; a single string of input.
+# return: $count; the number of newline characters in the string.
+__lp_line_count() {
+  local var="${1//[!$'\n']}"
+  count=${#var}
 }
 
 __lp_pwd_tilde() {
@@ -710,6 +632,25 @@ __lp_pwd_tilde() {
     local tilde="~"
     lp_pwd_tilde="${PWD/#$HOME/$tilde}"
 }
+
+# insert a space on the right
+_lp_sr() {
+    [[ -n "$1" ]] && echo -nE "$1 "
+}
+
+# insert a space on the left
+_lp_sl() {
+    [[ -n "$1" ]] && echo -nE " $1"
+}
+
+# insert two space, before and after
+_lp_sb() {
+    [[ -n "$1" ]] && echo -nE " $1 "
+}
+
+##########################
+# Working Directory Path #
+##########################
 
 # Shorten the path of the current working directory
 # * Show only the current directory
@@ -809,7 +750,81 @@ _lp_set_dirtrim() {
     # echo PROMPT_DIRTRIM=$PROMPT_DIRTRIM >&2
 }
 
+###############
+# Environment #
+###############
 
+_lp_connection() {
+    if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
+        echo ssh
+    else
+        # tmux: see GH #304
+        # TODO check on *BSD
+        local whoami="$(LC_ALL=C who am i)"
+        local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
+        if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
+            echo lcl  # Local
+        elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
+            echo su   # Remote su/sudo
+        else
+            echo tel  # Telnet
+        fi
+    fi
+}
+
+_lp_hostname() {
+    # Put the hostname if not locally connected
+    # color it in cyan within SSH, and a warning red if within telnet
+    # else display the host without color
+    # The connection is not expected to change from inside the shell, so we
+    # build this just once
+    LP_HOST=""
+
+    # Only process hostname elements if we haven't turned them off
+    if (( LP_HOSTNAME_ALWAYS != -1 )); then
+
+        [[ -r /etc/debian_chroot ]] && LP_HOST="($(< /etc/debian_chroot))"
+
+        # Which host symbol should we use?
+        if (( LP_ENABLE_FQDN )); then
+            LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
+        else
+            LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
+        fi
+
+        # If we are connected with a X11 support
+        if [[ -n "$DISPLAY" ]]; then
+            LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
+        else
+            LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
+        fi
+
+        case "$(_lp_connection)" in
+        lcl)
+            if (( LP_HOSTNAME_ALWAYS )); then
+                LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
+            else
+                # FIXME do we want to display the chroot if local?
+                LP_HOST="" # no hostname if local
+            fi
+            ;;
+        ssh)
+            # If we want a different color for each host
+            (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+            LP_HOST+="${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        su)
+            LP_HOST+="${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        tel)
+            LP_HOST+="${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
+            ;;
+        *)
+            LP_HOST+="${LP_HOST_SYMBOL}" # defaults to no color
+            ;;
+        esac
+    fi
+}
 
 ################
 # Related jobs #
@@ -871,8 +886,6 @@ _lp_jobcount_color() {
     [[ -n "$lp_jobcount_color" ]]
 }
 
-
-
 ######################
 # VCS branch display #
 ######################
@@ -885,6 +898,69 @@ _lp_are_vcs_enabled() {
         fi
     done
     return 0
+}
+
+# Search upwards through a directory structure looking for a sign of a VCS
+# repository. Used to avoid invoking VCS binaries to discover if in a repo.
+# Checks $LP_DISABLED_VCS_PATH and returns false if a match is found.
+# Otherwise returns the first matching repository.
+# return: true if in repo, false if not (1) or path disabled (2)
+#         lp_vcs_type; the string ID of the VCS controlling this directory.
+#         lp_vcs_root; the path to the root of the found repository.
+_lp_find_vcs() {
+    if ! _lp_are_vcs_enabled; then
+        lp_vcs_type="disabled"
+        lp_vcs_root=""
+        return 2
+    fi
+
+    lp_vcs_root="$PWD"
+    while [[ -n "$lp_vcs_root" ]]; do
+        for vcs in "${_LP_ENABLED_VCSS[@]}"; do
+            if [[ -d "$lp_vcs_root/.$vcs" ]]; then
+                lp_vcs_type="$vcs"
+
+                if [[ "$lp_vcs_type" == git ]]; then
+                    if [[ -n "${VCSH_DIRECTORY-}" ]]; then
+                        lp_vcs_type="git-vcsh"
+                    elif [[ -d "$lp_vcs_root/.git/svn" ]]; then
+                        lp_vcs_type="git-svn"
+                    fi
+                fi
+
+                return 0
+            fi
+        done
+
+        if (( LP_ENABLE_FOSSIL)) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
+            lp_vcs_type="fossil"
+            return 0
+        fi
+
+        lp_vcs_root="${lp_vcs_root%/*}"
+    done
+
+    lp_vcs_type=""
+    lp_vcs_root=""
+    return 1
+}
+
+# Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
+# to # if root and else $
+_lp_smart_mark() {
+    local mark
+    case "$LP_VCS_TYPE" in
+    git)      mark="$LP_MARK_GIT"             ;;
+    git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
+    git-vcsh) mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
+    hg)       mark="$LP_MARK_HG"              ;;
+    svn)      mark="$LP_MARK_SVN"             ;;
+    fossil)   mark="$LP_MARK_FOSSIL"          ;;
+    bzr)      mark="$LP_MARK_BZR"             ;;
+    disabled) mark="$LP_MARK_DISABLED"        ;;
+    *)        mark="$LP_MARK_DEFAULT"         ;;
+    esac
+    echo -nE "${mark}${NO_COL}"
 }
 
 # GIT #
@@ -1018,51 +1094,6 @@ _lp_git_branch_color() {
     fi
 }
 
-# Search upwards through a directory structure looking for a sign of a VCS
-# repository. Used to avoid invoking VCS binaries to discover if in a repo.
-# Checks $LP_DISABLED_VCS_PATH and returns false if a match is found.
-# Otherwise returns the first matching repository.
-# return: true if in repo, false if not (1) or path disabled (2)
-#         lp_vcs_type; the string ID of the VCS controlling this directory.
-#         lp_vcs_root; the path to the root of the found repository.
-_lp_find_vcs() {
-    if ! _lp_are_vcs_enabled; then
-        lp_vcs_type="disabled"
-        lp_vcs_root=""
-        return 2
-    fi
-
-    lp_vcs_root="$PWD"
-    while [[ -n "$lp_vcs_root" ]]; do
-        for vcs in "${_LP_ENABLED_VCSS[@]}"; do
-            if [[ -d "$lp_vcs_root/.$vcs" ]]; then
-                lp_vcs_type="$vcs"
-
-                if [[ "$lp_vcs_type" == git ]]; then
-                    if [[ -n "${VCSH_DIRECTORY-}" ]]; then
-                        lp_vcs_type="git-vcsh"
-                    elif [[ -d "$lp_vcs_root/.git/svn" ]]; then
-                        lp_vcs_type="git-svn"
-                    fi
-                fi
-
-                return 0
-            fi
-        done
-
-        if (( LP_ENABLE_FOSSIL)) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
-            lp_vcs_type="fossil"
-            return 0
-        fi
-
-        lp_vcs_root="${lp_vcs_root%/*}"
-    done
-
-    lp_vcs_type=""
-    lp_vcs_root=""
-    return 1
-}
-
 # MERCURIAL #
 
 # Get the branch name of the current directory
@@ -1185,7 +1216,6 @@ _lp_svn_branch_color() {
         fi
     fi
 }
-
 
 # FOSSIL #
 
@@ -1318,10 +1348,10 @@ _lp_bzr_branch_color() {
     fi
 }
 
-
 ####################
 # Wifi link status #
 ####################
+
 # TODO: test/fix/implement this
 _lp_wifi() {
     # Linux
@@ -1459,24 +1489,8 @@ _lp_battery_color() {
     fi
 }
 
-_lp_color_map() {
-    # Default scale: 0..100
-    # Custom scale: 0..$2
-    local -i scale value
-    scale=${2:-100}
-    if (( $1 >= scale )); then
-      value=scale-1
-    elif (( $1 < 0 )); then
-      value=0
-    else
-      value=$1
-    fi
-    # Transform the value to a 0..${#COLOR_MAP} scale
-    echo -nE "${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
-}
-
 ###########################
-# runtime of last command #
+# Runtime of last command #
 ###########################
 
 _lp_runtime() {
@@ -1535,6 +1549,32 @@ fi
 ###############
 # System load #
 ###############
+
+# Get CPU count and current load
+case "$LP_OS" in
+    Linux)
+        _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo )
+        _lp_cpu_load () {
+            local eol IFS=$' \t'
+            read lp_cpu_load eol < /proc/loadavg
+        }
+        ;;
+    FreeBSD|Darwin|OpenBSD)
+        _lp_CPUNUM=$( sysctl -n hw.ncpu )
+        _lp_cpu_load () {
+            local bol eol IFS=$' \t'
+            # If you have problems with syntax coloring due to the following
+            # line, do this: ln -s liquidprompt liquidprompt.bash
+            # and edit liquidprompt.bash
+            read bol lp_cpu_load eol <<<"$( LC_ALL=C sysctl -n vm.loadavg )"
+        }
+        ;;
+    SunOS)
+        _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" )
+        _lp_cpu_load () {
+            lp_cpu_load="$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
+        }
+esac
 
 # Compute a gradient of background/forground colors depending on the battery status
 _lp_load_color() {
@@ -1633,15 +1673,8 @@ _lp_temperature() {
 }
 
 ##########
-# DESIGN #
+# Title #
 ##########
-
-# Remove all colors and escape characters of the given string and return a pure text
-_lp_as_text() {
-    # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
-    # $_LP_CLOSE_ESC.
-    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
-}
 
 _lp_title() {
     (( LP_ENABLE_TITLE )) || return
@@ -1650,39 +1683,6 @@ _lp_title() {
     echo -nE "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
     _lp_as_text "$1"
     echo -nE "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
-}
-
-# Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
-# to # if root and else $
-_lp_smart_mark() {
-    local mark
-    case "$LP_VCS_TYPE" in
-    git)      mark="$LP_MARK_GIT"             ;;
-    git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
-    git-vcsh) mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
-    hg)       mark="$LP_MARK_HG"              ;;
-    svn)      mark="$LP_MARK_SVN"             ;;
-    fossil)   mark="$LP_MARK_FOSSIL"          ;;
-    bzr)      mark="$LP_MARK_BZR"             ;;
-    disabled) mark="$LP_MARK_DISABLED"        ;;
-    *)        mark="$LP_MARK_DEFAULT"         ;;
-    esac
-    echo -nE "${mark}${NO_COL}"
-}
-
-# insert a space on the right
-_lp_sr() {
-    [[ -n "$1" ]] && echo -nE "$1 "
-}
-
-# insert a space on the left
-_lp_sl() {
-    [[ -n "$1" ]] && echo -nE " $1"
-}
-
-# insert two space, before and after
-_lp_sb() {
-    [[ -n "$1" ]] && echo -nE " $1 "
 }
 
 ###################
@@ -1737,7 +1737,6 @@ fi
 ########################
 # Construct the prompt #
 ########################
-
 
 _lp_set_prompt() {
     # Display the return value of the last command, if different from zero

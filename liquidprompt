@@ -55,8 +55,7 @@ if test -n "${BASH_VERSION-}"; then
     # Escape the given strings
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
-    __lp_escape()
-    {
+    __lp_escape() {
         ret="${1//\\/\\\\}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
@@ -79,8 +78,7 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
-    __lp_escape()
-    {
+    __lp_escape() {
         local arg="${1//\\/\\\\}"
         ret="${arg//\%/$_LP_PERCENT}"
     }
@@ -103,8 +101,7 @@ __lp_line_count() {
 #   => foo=false
 #   _lp_bool foo 0
 #   => foo=true
-_lp_bool()
-{
+_lp_bool() {
     local res=${2:-$?}
     if (( res )); then
         eval $1=false
@@ -179,8 +176,7 @@ esac
 #    In practice, this is only color variables.
 # 2. Setup default values
 # 3. Load the configuration
-_lp_source_config()
-{
+_lp_source_config() {
 
     # TermInfo feature detection
     typeset -a af_colors ab_colors
@@ -636,8 +632,7 @@ lp_activate() {
     fi
 }
 
-_lp_connection()
-{
+_lp_connection() {
     if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
         echo ssh
     else
@@ -721,8 +716,7 @@ __lp_pwd_tilde() {
 # * Show as much of the cwd path as possible, if shortened display a
 #   leading mark, such as ellipses, to indicate that part is missing
 # * show at least LP_PATH_KEEP leading dirs and current directory
-_lp_shorten_path()
-{
+_lp_shorten_path() {
 
     if (( ! LP_ENABLE_SHORTEN_PATH )); then
         # We are not supposed to come here often as this case is already
@@ -883,8 +877,7 @@ _lp_jobcount_color() {
 # VCS branch display #
 ######################
 
-_lp_are_vcs_enabled()
-{
+_lp_are_vcs_enabled() {
     local path
     for path in "${LP_DISABLED_VCS_PATHS[@]}"; do
         if [[ -n "$path" && "$PWD" == "$path"* ]]; then
@@ -897,8 +890,7 @@ _lp_are_vcs_enabled()
 # GIT #
 
 # Get the branch name of the current directory
-_lp_git_branch()
-{
+_lp_git_branch() {
     (( LP_ENABLE_GIT )) || return
 
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
@@ -937,8 +929,7 @@ _lp_git_head_status() {
 # - red if there is changes to commit
 #
 # Add the number of pending commits and the impacted lines.
-_lp_git_branch_color()
-{
+_lp_git_branch_color() {
     (( LP_ENABLE_GIT )) || return
 
     _lp_git_branch || return $?
@@ -1075,8 +1066,7 @@ _lp_find_vcs() {
 # MERCURIAL #
 
 # Get the branch name of the current directory
-_lp_hg_branch()
-{
+_lp_hg_branch() {
     (( LP_ENABLE_HG )) || return
 
     # We found an .hg folder, so we need to invoke hg and see if we're actually
@@ -1095,8 +1085,7 @@ _lp_hg_branch()
 # - green if the repository is up to date
 # - red if there is changes to commit
 # - TODO: yellow if there is some commits not pushed
-_lp_hg_branch_color()
-{
+_lp_hg_branch_color() {
     (( LP_ENABLE_HG )) || return
 
     _lp_hg_branch || return $?
@@ -1146,8 +1135,7 @@ _lp_hg_branch_color()
 
 # Get the branch name of the current directory
 # For the first level of the repository, gives the repository name
-_lp_svn_branch()
-{
+_lp_svn_branch() {
     (( LP_ENABLE_SVN )) || return
 
     local root=
@@ -1181,8 +1169,7 @@ _lp_svn_branch()
 # - red if there is changes to commit
 # Note that, due to subversion way of managing changes,
 # informations are only displayed for the CURRENT directory.
-_lp_svn_branch_color()
-{
+_lp_svn_branch_color() {
     (( LP_ENABLE_SVN )) || return
 
     _lp_svn_branch || return $?
@@ -1203,8 +1190,7 @@ _lp_svn_branch_color()
 # FOSSIL #
 
 # Get the tag name of the current directory
-_lp_fossil_branch()
-{
+_lp_fossil_branch() {
     (( LP_ENABLE_FOSSIL )) || return
 
     local branch ret
@@ -1235,8 +1221,7 @@ _lp_fossil_branch()
 # Add the number of impacted files with a
 # + when files are ADDED or EDITED
 # - when files are DELETED
-_lp_fossil_branch_color()
-{
+_lp_fossil_branch_color() {
     (( LP_ENABLE_FOSSIL )) || return
 
     _lp_fossil_branch || return $?
@@ -1291,8 +1276,7 @@ _lp_fossil_branch_color()
 # Bazaar #
 
 # Get the branch name of the current directory
-_lp_bzr_branch()
-{
+_lp_bzr_branch() {
     (( LP_ENABLE_BZR )) || return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
@@ -1314,8 +1298,7 @@ _lp_bzr_branch()
 # - TODO: yellow if there is some commits not pushed
 #
 # Add the number of pending commits and the impacted lines.
-_lp_bzr_branch_color()
-{
+_lp_bzr_branch_color() {
     (( LP_ENABLE_BZR )) || return
 
     # We found an .bzr folder, so we need to invoke bzr and see if we're
@@ -1340,8 +1323,7 @@ _lp_bzr_branch_color()
 # Wifi link status #
 ####################
 # TODO: test/fix/implement this
-_lp_wifi()
-{
+_lp_wifi() {
     # Linux
     sed -n '3s/^ *[^ ]*  *[^ ]*  *\([0-9]*\).*/\1/p' /proc/net/wireless
 }
@@ -1358,8 +1340,7 @@ _lp_wifi()
 # returns 4 if no battery support
 case "$LP_OS" in
     Linux)
-    _lp_battery()
-    {
+    _lp_battery() {
         (( LP_ENABLE_BATT )) || return 4
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
@@ -1388,8 +1369,7 @@ case "$LP_OS" in
     }
     ;;
     Darwin)
-    _lp_battery()
-    {
+    _lp_battery() {
         (( LP_ENABLE_BATT )) || return 4
         local percent batt_status
         eval "$(pmset -g batt | sed -n 's/^ -InternalBattery.*[[:space:]]\([0-9]*[0-9]\)%; \([^;]*\).*$/percent=\1 batt_status='\'\\2\'/p)"
@@ -1418,8 +1398,7 @@ esac
 # a yellow ⏚ if the battery is charging    and under threshold
 # a yellow ⌁ if the battery is discharging but above threshold
 # a    red ⌁ if the battery is discharging and above threshold
-_lp_battery_color()
-{
+_lp_battery_color() {
     (( LP_ENABLE_BATT )) || return
 
     local mark=$LP_MARK_BATTERY
@@ -1500,8 +1479,7 @@ _lp_color_map() {
 # runtime of last command #
 ###########################
 
-_lp_runtime()
-{
+_lp_runtime() {
     if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
     then
         echo -nE "${LP_COLOR_RUNTIME}"
@@ -1531,8 +1509,7 @@ if $_LP_SHELL_zsh; then
         fi
     }
 else
-    _lp_runtime_before()
-    {
+    _lp_runtime_before() {
         # For debugging
         #echo "XXX $BASH_COMMAND"
 
@@ -1560,8 +1537,7 @@ fi
 ###############
 
 # Compute a gradient of background/forground colors depending on the battery status
-_lp_load_color()
-{
+_lp_load_color() {
     # Colour progression is important ...
     #   bold gray -> bold green -> bold yellow -> bold red ->
     #   black on red -> bold white on red
@@ -1599,8 +1575,7 @@ _lp_load_color()
 # Backends for TEMP. Each backend must return the result in $temperature.
 
 # Implementation using lm-sensors
-_lp_temp_sensors()
-{
+_lp_temp_sensors() {
     # Return the hottest system temperature we get through the sensors command
     # Only the integer part is retained
     local -i i
@@ -1612,8 +1587,7 @@ _lp_temp_sensors()
 }
 
 # Implementation using 'acpi -t'
-_lp_temp_acpi()
-{
+_lp_temp_acpi() {
     local -i i
     local IFS=$' \t\n'
     # Only the integer part is retained
@@ -1624,8 +1598,7 @@ _lp_temp_acpi()
 }
 
 # Dynamic selection of backend
-_lp_temp_detect()
-{
+_lp_temp_detect() {
     local -i temperature
     local cmd
 
@@ -1649,8 +1622,7 @@ _lp_temp_detect()
 
 # Will display the numeric value as we get through the _LP_TEMP_FUNCTION
 # and colorize it through _lp_color_map.
-_lp_temperature()
-{
+_lp_temperature() {
     (( LP_ENABLE_TEMP )) || return
 
     local -i temperature
@@ -1665,15 +1637,13 @@ _lp_temperature()
 ##########
 
 # Remove all colors and escape characters of the given string and return a pure text
-_lp_as_text()
-{
+_lp_as_text() {
     # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
     # $_LP_CLOSE_ESC.
     echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
-_lp_title()
-{
+_lp_title() {
     (( LP_ENABLE_TITLE )) || return
 
     # Get the current computed prompt as pure text
@@ -1684,8 +1654,7 @@ _lp_title()
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
 # to # if root and else $
-_lp_smart_mark()
-{
+_lp_smart_mark() {
     local mark
     case "$LP_VCS_TYPE" in
     git)      mark="$LP_MARK_GIT"             ;;
@@ -1702,20 +1671,17 @@ _lp_smart_mark()
 }
 
 # insert a space on the right
-_lp_sr()
-{
+_lp_sr() {
     [[ -n "$1" ]] && echo -nE "$1 "
 }
 
 # insert a space on the left
-_lp_sl()
-{
+_lp_sl() {
     [[ -n "$1" ]] && echo -nE " $1"
 }
 
 # insert two space, before and after
-_lp_sb()
-{
+_lp_sb() {
     [[ -n "$1" ]] && echo -nE " $1 "
 }
 
@@ -1735,8 +1701,7 @@ if (( LP_ENABLE_TIME )); then
         # perl -C -E 'say join("", map {chr(0x1F550+$_)." ".chr(0x1F55C+$_)." "} 0..11)'
         _LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢 🕗 🕣 🕘 🕤 🕙 🕥 🕚 🕦 🕛 🕧 )
 
-        _lp_time()
-        {
+        _lp_time() {
             # %I: "00".."12"  %M: "00".."59"
             # Bash interprets a '0' prefix as octal
             # so we have to clean that
@@ -1774,8 +1739,7 @@ fi
 ########################
 
 
-_lp_set_prompt()
-{
+_lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
     local -i err=$?
@@ -1904,14 +1868,12 @@ _lp_set_prompt()
     fi
 }
 
-prompt_tag()
-{
+prompt_tag() {
     export LP_PS1_PREFIX="$(_lp_sr "$1")"
 }
 
 # Activate Liquid Prompt
-prompt_on()
-{
+prompt_on() {
     # Reset so all PWD dependent variables are computed after loading
     LP_OLD_PWD=""
 
@@ -1976,8 +1938,7 @@ prompt_on()
 }
 
 # Come back to the old prompt
-prompt_off()
-{
+prompt_off() {
     PS1=$LP_OLD_PS1
     if $_LP_SHELL_bash; then
         eval "$_LP_OLD_SHOPT"
@@ -1990,8 +1951,7 @@ prompt_off()
 }
 
 # Use an empty prompt: just the \$ mark
-prompt_OFF()
-{
+prompt_OFF() {
     PS1="$_LP_MARK_SYMBOL "
     if $_LP_SHELL_bash; then
         shopt -u promptvars

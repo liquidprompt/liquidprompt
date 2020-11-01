@@ -469,14 +469,6 @@ lp_activate() {
         _LP_TERM_UPDATE_DIR=:
     fi
 
-    # Default value for LP_PERM when LP_ENABLE_PERM is 0
-    LP_PERM=${LP_MARK_PERM}   # without color
-
-    # Same as bash '\l', but inlined as a constant as the value will not change
-    # during the shell's life
-    LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
-
-
     ###############
     # Who are we? #
     ###############
@@ -573,6 +565,8 @@ lp_activate() {
         # If no function worked, disable the feature
         _lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
     fi
+
+    _lp_theme_activate
 }
 
 #####################
@@ -1733,25 +1727,39 @@ else
     _lp_time() { : ; }
 fi
 
+#################
+# Default theme #
+#################
 
-########################
-# Construct the prompt #
-########################
+_lp_theme_activate() {
+    # Default value for LP_PERM when LP_ENABLE_PERM is 0
+    LP_PERM=${LP_MARK_PERM}   # without color
 
-_lp_set_prompt() {
-    # Display the return value of the last command, if different from zero
-    # As this get the last returned code, it should be called first
-    local -i err=$?
-    if (( err != 0 )); then
-        LP_ERR=" $LP_COLOR_ERR$err$NO_COL"
+    # Same as bash '\l', but inlined as a constant as the value will not change
+    # during the shell's life
+    LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
+}
+
+_lp_theme_directory() {
+    # LP_PERM: shows a ":"
+    # - colored in green if user has write permission on the current dir
+    # - colored in red if not
+    # - can set another symbol with LP_MARK_PERM
+    if (( LP_ENABLE_PERM )); then
+        if [[ -w "${PWD}" ]]; then
+            LP_PERM="${LP_COLOR_WRITE}${LP_MARK_PERM}${NO_COL}"
+        else
+            LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
+        fi
+    fi
+}
+
+_lp_theme_prompt() {
+    if (( lp_err != 0 )); then
+        LP_ERR=" $LP_COLOR_ERR$lp_err$NO_COL"
     else
         LP_ERR=''     # Hidden
     fi
-
-    local GREP_OPTIONS=
-
-    # bash: execute the old prompt hook
-    eval "$LP_OLD_PROMPT_COMMAND"
 
     # left of main prompt: space at right
     if _lp_jobcount_color; then
@@ -1792,28 +1800,6 @@ _lp_set_prompt() {
 
     LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
 
-    # if change of working directory
-    if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then
-        # Update directory icon for MacOS X
-        $_LP_TERM_UPDATE_DIR
-
-        # LP_PERM: shows a ":"
-        # - colored in green if user has write permission on the current dir
-        # - colored in red if not
-        # - can set another symbol with LP_MARK_PERM
-        if (( LP_ENABLE_PERM )); then
-            if [[ -w "${PWD}" ]]; then
-                LP_PERM="${LP_COLOR_WRITE}${LP_MARK_PERM}${NO_COL}"
-            else
-                LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
-            fi
-        fi
-
-        _lp_shorten_path   # set LP_PWD
-
-        LP_OLD_PWD="LP:$PWD"
-    fi
-
     if _lp_find_vcs; then
         case "$lp_vcs_type" in
             # git, git-svn, git-vcsh
@@ -1835,7 +1821,7 @@ _lp_set_prompt() {
         source "$LP_PS1_FILE"
     fi
 
-    if [[ -z "$LP_PS1" ]]; then
+    if [[ -z "${LP_PS1-}" ]]; then
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host and permissions colon
@@ -1865,6 +1851,40 @@ _lp_set_prompt() {
     else
         PS1=$LP_PS1
     fi
+}
+
+########################
+# Construct the prompt #
+########################
+
+_lp_set_prompt() {
+    # Display the return value of the last command, if different from zero
+    # As this get the last returned code, it should be called first
+    local -i lp_err=$?
+
+    #TODO: unused?
+    local GREP_OPTIONS=
+
+    # bash: execute the old prompt hook
+    eval "$LP_OLD_PROMPT_COMMAND"
+
+    # if change of working directory
+    if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then
+        # Update directory icon for MacOS X
+        $_LP_TERM_UPDATE_DIR
+
+        _lp_shorten_path   # set LP_PWD
+
+        _lp_theme_directory
+
+        # Prefix with 'LP:' to prevent Zsh with AUTO_NAME_DIRS enabled using
+        # this var as a name for the working directory, that will be used by
+        # the '%' and related prompt sequences.
+        # See https://github.com/nojhan/liquidprompt/issues/124 for details.
+        LP_OLD_PWD="LP:$PWD"
+    fi
+
+    _lp_theme_prompt
 }
 
 prompt_tag() {

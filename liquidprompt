@@ -1430,84 +1430,122 @@ _lp_svn_branch_color() {
 }
 
 # FOSSIL #
+# Note that Fossil has no staging area
 
-# Get the tag name of the current directory
+# Check if Fossil is enabled in Liquidprompt and the current directory is a
+# valid Fossil repository. This check should be done before running any other
+# _lp_fossil_* data functions.
+# return: false if Fossil disabled (2) or not a valid repo (1), true otherwise.
+_lp_fossil_active() {
+    (( LP_ENABLE_FOSSIL )) || return 2
+    \fossil status >/dev/null 2>&1 || return 1
+}
+
+# Get the branch name of the repo in the current directory.
+# return: true if a valid Fossil branch is checked out.
+#         lp_vcs_branch; the name of the current branch.
 _lp_fossil_branch() {
-    (( LP_ENABLE_FOSSIL )) || return
-
     local branch ret
 
     # branch current command added in fossil 2.7
-    if branch="$(fossil branch current)"; then
-        __lp_escape "$branch"
-        lp_vcs_branch="$ret"
-        return 0
+    if ! branch="$(\fossil branch current 2>/dev/null)"; then
+        branch=$(\fossil branch list 2>/dev/null | sed -n 's/^\*\s\s*\(\w*\)$/\1/p')
     fi
 
-    branch=$(fossil branch list 2>/dev/null | sed -n 's/^\*\s\s*\(\w*\)$/\1/p')
     if [[ -n "$branch" ]]; then
         __lp_escape "$branch"
         lp_vcs_branch="$ret"
-    elif fossil status &>/dev/null ; then
-        lp_vcs_branch="no-branch"
     else
         return 1
     fi
 }
 
-# Set a color depending on the branch state:
-# - green if the repository is clean
-# - red if there is changes to commit
-# - yellow if the branch has no tag name
-#
-# Add the number of impacted files with a
-# + when files are ADDED or EDITED
-# - when files are DELETED
-_lp_fossil_branch_color() {
-    _lp_fossil_branch || return $?
-    local branch="$lp_vcs_branch"
+# A Fossil tag can refer to multiple checkin IDs, so a matching tag is not a
+# useful ID for where we are.
+# return: always false (2: disabled).
+_lp_fossil_tag() {
+    return 2
+}
 
-    local -i C2E # Modified files (added or edited)
-    local C2A # Extras files
-    local ret
-    C2E=$(fossil changes | wc -l)
-    C2A=$(fossil extras | wc -l)
-    ret=$(fossil diff -i -v | awk '
+# Get the current full commit hash of the Fossil repo in the current directory.
+# return: lp_vcs_commit_id; the hash of the current check-out.
+_lp_fossil_commit_id() {
+    lp_vcs_commit_id="$(LC_ALL=C \fossil status 2>/dev/null | sed -n 's/^checkout:[[:space:]]*\([^[:space:]]*\).*/\1/p')"
+}
+
+# Get additional information if the check-out is in merging before a commit.
+# Like Git, Fossil has a way to abort or undo in progress changes before a
+# commit is actually written.
+# return: true if any extra state is found.
+#         lp_vcs_head_status; the extra repo state.
+_lp_fossil_head_status() {
+    local option
+    option="$(LC_ALL=C \fossil undo --dry-run 2>/dev/null)"
+
+    if [[ "$option" == *"fossil merge"* ]]; then
+        lp_vcs_head_status="MERGING"
+    else
+        return 1
+    fi
+}
+
+# Get the number of Fossil stashes in the repo.
+# return: true if any stashes are found.
+#         lp_vcs_stash_count; the number of stashes.
+_lp_fossil_stash_count() {
+    local stashes count
+    stashes="$(\fossil stash list 2>/dev/null; printf x)"
+    _lp_line_count "${stashes%x}"
+    # Each stash takes up two lines, and no stashes is one line
+    lp_vcs_stash_count=$(( count / 2 ))
+    (( lp_vcs_stash_count ))
+}
+
+# Fossil by default keeps the local repo in sync with the remote. Even if a
+# user disables that, it is not possible to have a local and remote branch
+# named the same not in sync.
+# return: always false (3: disabled).
+_lp_fossil_commits_off_remote() {
+    return 3
+}
+
+# Get the number of extra files in the Fossil repo.
+# return: true if any untracked files are found.
+#         lp_vcs_untracked_files; the number of untracked files.
+_lp_fossil_untracked_files() {
+    local extras count
+    extras="$(\fossil extras 2>/dev/null; printf x)"
+    _lp_line_count "${extras%x}"
+    lp_vcs_untracked_files=$count
+    (( lp_vcs_untracked_files ))
+}
+
+# Get the number of changed files compared to the checked-out version.
+# return: true if any files differ from check-out.
+#         lp_vcs_uncommitted_files; the number of files changed.
+_lp_fossil_uncommitted_files() {
+    local files
+    files="$(\fossil changes 2>/dev/null; printf x)"
+    _lp_line_count "${files%x}"
+    lp_vcs_uncommitted_files=$count
+    (( lp_vcs_uncommitted_files ))
+}
+
+# Get the number of changed lines compared to the checked-out version.
+# return: true if any lines differ from check-out.
+#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
+#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
+_lp_fossil_uncommitted_lines() {
+    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+        <<<"$(\fossil diff --internal --verbose 2>/dev/null | awk '
+        BEGIN { plus=0; minus=0 }
         /^(\+[^+])|(\+$)/ { plus+=1 }
         /^(-[^-])|(-$)/ { minus+=1 }
         END {
-            total=""
-            if (plus>0) {
-                total="+"plus
-                if(minus>0) total=total"/"
-            }
-            if (minus>0) {
-                total=total"-"minus
-            }
-            print total
-        }')
+            print plus" "minus
+        }')"
 
-    if (( C2E > 0 )); then
-        [[ -n "$ret" ]] && ret+=" in "
-        ret="(${LP_COLOR_DIFF}${ret}${C2E}${NO_COL})"
-    fi
-
-    if (( C2A > 0 )); then
-        C2A="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
-    else
-        C2A=""
-    fi
-
-    if [[ "$branch" = "no-tag" ]]; then
-        # Warning, your branch has no tag name !
-        lp_vcs_branch_color="${LP_COLOR_COMMITS}$branch${NO_COL}$ret${LP_COLOR_COMMITS}$C2A${NO_COL}"
-    elif (( C2E == 0 )); then
-        # All is up-to-date
-        lp_vcs_branch_color="${LP_COLOR_UP}$branch$C2A${NO_COL}"
-    else
-        # There're some changes to commit
-        lp_vcs_branch_color="${LP_COLOR_CHANGES}$branch${NO_COL}$ret${LP_COLOR_CHANGES}$C2A${NO_COL}"
-    fi
+    (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
 # Bazaar #

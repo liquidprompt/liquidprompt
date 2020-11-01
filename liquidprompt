@@ -751,18 +751,18 @@ _lp_set_dirtrim() {
 
 _lp_connection() {
     if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
-        echo ssh
+        lp_connection=ssh
     else
         # tmux: see GH #304
         # TODO check on *BSD
         local whoami="$(LC_ALL=C who am i)"
         local sess_parent="$(ps -o comm= -p $PPID 2> /dev/null)"
         if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
-            echo lcl  # Local
+            lp_connection=lcl  # Local
         elif [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
-            echo su   # Remote su/sudo
+            lp_connection=su   # Remote su/sudo
         else
-            echo tel  # Telnet
+            lp_connection=tel  # Telnet
         fi
     fi
 }
@@ -794,7 +794,8 @@ _lp_hostname() {
             LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
         fi
 
-        case "$(_lp_connection)" in
+        _lp_connection
+        case "$lp_connection" in
         lcl)
             if (( LP_HOSTNAME_ALWAYS )); then
                 LP_HOST+="${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"

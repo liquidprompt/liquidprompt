@@ -906,7 +906,7 @@ _lp_are_vcs_enabled() {
 _lp_find_vcs() {
     if ! _lp_are_vcs_enabled; then
         lp_vcs_type="disabled"
-        lp_vcs_root=""
+        lp_vcs_root=
         return 2
     fi
 
@@ -915,15 +915,6 @@ _lp_find_vcs() {
         for vcs in "${_LP_ENABLED_VCSS[@]}"; do
             if [[ -d "$lp_vcs_root/.$vcs" ]]; then
                 lp_vcs_type="$vcs"
-
-                if [[ "$lp_vcs_type" == git ]]; then
-                    if [[ -n "${VCSH_DIRECTORY-}" ]]; then
-                        lp_vcs_type="git-vcsh"
-                    elif [[ -d "$lp_vcs_root/.git/svn" ]]; then
-                        lp_vcs_type="git-svn"
-                    fi
-                fi
-
                 return 0
             fi
         done
@@ -936,8 +927,8 @@ _lp_find_vcs() {
         lp_vcs_root="${lp_vcs_root%/*}"
     done
 
-    lp_vcs_type=""
-    lp_vcs_root=""
+    lp_vcs_type=
+    lp_vcs_root=
     return 1
 }
 
@@ -947,10 +938,16 @@ _lp_find_vcs() {
 #          _lp_find_vcs().
 # return: lp_smart_mark; the symbol of the selected prompt mark
 _lp_smart_mark() {
-    case "$lp_vcs_type" in
-    git)      lp_smart_mark="$LP_MARK_GIT"             ;;
-    git-svn)  lp_smart_mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
-    git-vcsh) lp_smart_mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
+    case "${1:-$lp_vcs_type}" in
+    git)
+        lp_smart_mark="$LP_MARK_GIT"
+
+        if [[ -n "${VCSH_DIRECTORY-}" ]]; then
+            lp_smart_mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH"
+        elif [[ -d "${lp_vcs_root}/.git/svn" ]]; then
+            lp_smart_mark="$LP_MARK_GIT$LP_MARK_SVN"
+        fi
+        ;;
     hg)       lp_smart_mark="$LP_MARK_HG"              ;;
     svn)      lp_smart_mark="$LP_MARK_SVN"             ;;
     fossil)   lp_smart_mark="$LP_MARK_FOSSIL"          ;;
@@ -958,6 +955,188 @@ _lp_smart_mark() {
     disabled) lp_smart_mark="$LP_MARK_DISABLED"        ;;
     *)        lp_smart_mark="$LP_MARK_DEFAULT"         ;;
     esac
+}
+
+# GENERIC VCS #
+
+# Set a color depending on the branch state:
+# - green if the repository is up to date
+# - yellow if there is some commits not pushed
+# - red if there is changes to commit
+# Add the number of pending commits and the impacted lines.
+# return: lp_vcs_details_color; the detailed formatted string of repo details
+_lp_vcs_details_color() {
+    local branch
+    if _lp_vcs_branch; then
+        branch="$lp_vcs_branch"
+    elif _lp_vcs_tag; then
+        branch="tag: $lp_vcs_tag"
+    else
+        _lp_vcs_commit_id
+        branch="${lp_vcs_commit_id:0:7}"
+    fi
+
+    lp_vcs_details_color="$LP_COLOR_UP"
+
+    local has_commit=
+    if _lp_vcs_commits_off_remote; then
+        lp_vcs_details_color="$LP_COLOR_COMMITS_BEHIND"
+        if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS}+$lp_vcs_commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind${NO_COL}"
+        elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS}$lp_vcs_commit_ahead${NO_COL}"
+            lp_vcs_details_color="$LP_COLOR_COMMITS"
+        elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind${NO_COL}"
+        fi
+    fi
+
+    local ret has_lines=
+    if _lp_vcs_uncommitted_lines; then
+        _lp_vcs_unstaged_lines; ret=$?
+        # Only show unstaged changes if the VCS supports staging, otherwise
+        # show uncommitted changes
+        if (( ret == 0 )); then
+            has_lines="+$lp_vcs_unstaged_i_lines/-$lp_vcs_unstaged_d_lines"
+        elif (( ret == 1 )); then
+            has_lines="+0/-0"
+        else
+            has_lines="+$lp_vcs_uncommitted_i_lines/-$lp_vcs_uncommitted_d_lines"
+        fi
+        lp_vcs_details_color="$LP_COLOR_CHANGES"
+    fi
+
+    lp_vcs_details_color+="$branch"
+    if [[ -n "$has_lines" || -n "$has_commit" ]]; then
+        lp_vcs_details_color+="${NO_COL}("
+        if [[ -n "$has_lines" ]]; then
+            lp_vcs_details_color+="${LP_COLOR_DIFF}${has_lines}${NO_COL}${has_commit:+,}"
+        fi
+        lp_vcs_details_color+="${has_commit})"
+    fi
+
+    if _lp_vcs_stash_count; then
+        lp_vcs_details_color+="$LP_COLOR_COMMITS$LP_MARK_STASH"
+    fi
+
+    if _lp_vcs_untracked_files; then
+        lp_vcs_details_color+="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED"
+    fi
+
+    if _lp_vcs_head_status; then
+        lp_vcs_details_color+=" $LP_COLOR_CHANGES$lp_vcs_head_status"
+    fi
+
+    lp_vcs_details_color+="$NO_COL"
+}
+
+# Check if the detected VCS is enabled in Liquidprompt and the current
+# directory is a valid repository of that type. This check should be done
+# before running any other _lp_vcs_* data functions, but can be omitted for
+# speed reasons if the checks done by _lp_find_vcs() are good enough.
+# return: false if VCS disabled (2) or not a valid repo (1), true otherwise.
+_lp_vcs_active() {
+    _lp_${lp_vcs_type}_active 2>/dev/null
+}
+
+# Get the branch name of the repo in the current directory.
+# return: true if a valid VCS branch is checked out.
+#         lp_vcs_branch; the name of the current branch.
+_lp_vcs_branch() {
+    _lp_${lp_vcs_type}_branch 2>/dev/null
+}
+
+# Get a tag name of the repo in the current directory. Note that not all VCS
+# providers support tags that match to one and only one commit object.
+# return: true if a valid VCS tag matches the HEAD commit. False if no tag
+#             matches (1) or unique tags are not supported (2+).
+#         lp_vcs_tag; the name of (one of) the current tag(s).
+_lp_vcs_tag() {
+    _lp_${lp_vcs_type}_tag 2>/dev/null
+}
+
+# Get the current short commit string for the repo in the current directory.
+# Some VCS providers identify commits by a hash, others use a revision number.
+# The returned string should be unique enough that a user can identify the
+# commit. This should never fail if the current directory is a valid repo.
+# return: lp_vcs_commit_id; a short string that can ID the current commit.
+_lp_vcs_commit_id() {
+    _lp_${lp_vcs_type}_commit_id 2>/dev/null
+}
+
+# Get additional information if the repo is in a special or unusual state.
+# Many VCS providers don't have such information, and many users either don't
+# care to see it or rarely get in a repo state that has any such info. This
+# info is unlikely to be similar across VCSs, and should probably be displayed
+# to a user without manipulation.
+# return: true if any extra state is found, false if not (1) or the VCS
+#             provider does not support any useful extra info (2+).
+#         lp_vcs_head_status; the extra repo state
+_lp_vcs_head_status() {
+    _lp_${lp_vcs_type}_head_status 2>/dev/null
+}
+
+# Get the number of stashes in the repo. Not all VCS providers support stashes.
+# return: true if any stashes are found, false if not (1) or the VCS does not
+#             support stashes (2+).
+#         lp_vcs_stash_count; the number of stashes
+_lp_vcs_stash_count() {
+    _lp_${lp_vcs_type}_stash_count 2>/dev/null
+}
+
+# Get the number of commits ahead and behind the upstream branch. Many VCS
+# providers cannot provide these numbers, simply because they simply don't work
+# that way.
+# return: true if any commits differ from the remote branch, false if not (1),
+#             no upstream branch exists (2), or not supported by the VCS (3+).
+#         lp_vcs_commit_behind; the number of commits that only exist remotely.
+#         lp_vcs_commit_ahead; the number of commits that only exist locally.
+_lp_vcs_commits_off_remote() {
+    _lp_${lp_vcs_type}_commits_off_remote 2>/dev/null
+}
+
+# Get the number of untracked aka extra files in the repo. This count excludes
+# files explicitly ignored by the user.
+# return: true if any untracked files are found.
+#         lp_vcs_untracked_files; the number of untracked files.
+_lp_vcs_untracked_files() {
+    _lp_${lp_vcs_type}_untracked_files 2>/dev/null
+}
+
+# Get the number of changed files compared to the last or checked out commit.
+# return: true if any files differ from the latest commit.
+#         lp_vcs_uncommitted_files; the number of lines changed.
+_lp_vcs_uncommitted_files() {
+    _lp_${lp_vcs_type}_uncommitted_files 2>/dev/null
+}
+
+# Get the number of changed lines compared to the last or checked out commit.
+# return: true if any lines differ from the latest commit.
+#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
+#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
+_lp_vcs_uncommitted_lines() {
+    _lp_${lp_vcs_type}_uncommitted_lines 2>/dev/null
+}
+
+# Get the number of changed files compared to staging. Many VCS providers do
+# not have a staging area, and one might need to fall back to
+# uncommitted_files() instead.
+# return: true if any files differ from staging, false if not (1), or the VCS
+#             does not support staging (2).
+#         lp_vcs_unstaged_files; the number of files changed.
+_lp_vcs_unstaged_files() {
+    _lp_${lp_vcs_type}_unstaged_files 2>/dev/null
+}
+
+# Get the number of changed lines compared to staging. Many VCS providers do
+# not have a staging area, and one might need to fall back to
+# uncommitted_lines() instead.
+# return: true if any lines differ from staging, false if not (1), or the VCS
+#             does not support staging (2).
+#         lp_vcs_unstaged_i_lines; the number of lines inserted.
+#         lp_vcs_unstaged_d_lines; the number of lines deleted.
+_lp_vcs_unstaged_lines() {
+    _lp_${lp_vcs_type}_unstaged_lines 2>/dev/null
 }
 
 # GIT #
@@ -1136,73 +1315,6 @@ _lp_git_unstaged_lines() {
     fi
 
     (( lp_vcs_unstaged_i_lines || lp_vcs_unstaged_d_lines ))
-}
-
-# Set a color depending on the branch state:
-# - green if the repository is up to date
-# - yellow if there is some commits not pushed
-# - red if there is changes to commit
-# Add the number of pending commits and the impacted lines.
-# return: lp_vcs_branch_color; the detailed formatted string of repo details
-_lp_git_branch_color() {
-    local branch
-    if _lp_git_branch; then
-        branch="$lp_vcs_branch"
-    elif _lp_git_tag; then
-        branch="tag: $lp_vcs_tag"
-    else
-        _lp_git_commit_id
-        branch="${lp_vcs_commit_id:0:7}"
-    fi
-
-    local end="$NO_COL"
-    if _lp_git_head_status; then
-        end=" ${LP_COLOR_CHANGES}${lp_vcs_head_status}$end"
-    fi
-
-    if _lp_git_untracked_files; then
-        end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
-    fi
-
-    if _lp_git_stash_count; then
-        end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
-    fi
-
-    local has_commit=""
-    if _lp_git_commits_off_remote; then
-        if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
-            has_commit="${LP_COLOR_COMMITS}+$lp_vcs_commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind${NO_COL}"
-        elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
-            has_commit="${LP_COLOR_COMMITS}$lp_vcs_commit_ahead${NO_COL}"
-        elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
-            has_commit="${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind${NO_COL}"
-        fi
-    fi
-
-    local ret
-    if _lp_git_uncommitted_lines; then
-        _lp_git_unstaged_lines
-
-        local has_lines
-        has_lines="+$lp_vcs_unstaged_i_lines/-$lp_vcs_unstaged_d_lines"
-
-        if [[ -n "$has_commit" ]]; then
-            # Changes to commit and commits to push
-            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL},$has_commit)"
-        else
-            ret="${LP_COLOR_CHANGES}${branch}${NO_COL}(${LP_COLOR_DIFF}$has_lines${NO_COL})" # changes to commit
-        fi
-    elif [[ -n "$has_commit" ]]; then
-        # some commit(s) to push
-        if [[ "$lp_vcs_commit_behind" -gt "0" ]]; then
-            ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
-        else
-            ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"
-        fi
-    else
-        ret="${LP_COLOR_UP}${branch}" # nothing to commit or push
-    fi
-    lp_vcs_branch_color="$ret$end"
 }
 
 # MERCURIAL #
@@ -1927,15 +2039,8 @@ _lp_theme_prompt() {
         LP_RUNTIME=
     fi
 
-    if _lp_find_vcs; then
-        case "$lp_vcs_type" in
-            git*)    _lp_git_branch_color;;
-            hg)      _lp_hg_branch_color;;
-            svn)     _lp_svn_branch_color;;
-            fossil)  _lp_fossil_branch_color;;
-            bzr)     _lp_bzr_branch_color;;
-        esac
-        [[ -n "$lp_vcs_branch_color" ]] && LP_VCS=" $lp_vcs_branch_color"
+    if _lp_find_vcs && _lp_vcs_details_color; then
+        LP_VCS=" $lp_vcs_details_color"
     else
         LP_VCS=
     fi

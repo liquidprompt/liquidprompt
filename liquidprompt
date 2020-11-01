@@ -971,7 +971,7 @@ _lp_git_active() {
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 }
 
-# Get the branch name of the repo in the current directory.
+# Get the branch name of the Git repo in the current directory.
 # return: true if a valid Git branch is checked out.
 #         lp_vcs_branch; the name of the current branch.
 _lp_git_branch() {
@@ -986,7 +986,7 @@ _lp_git_branch() {
     fi
 }
 
-# Get a tag name of the repo in the current directory.
+# Get a tag name of the Git repo in the current directory.
 # return: true if a valid Git tag matches the HEAD commit.
 #         lp_vcs_tag; the name of (one of) the current tag(s).
 _lp_git_tag() {
@@ -1007,6 +1007,7 @@ _lp_git_commit_id() {
 
 # Get additional information if HEAD is in merging, rebasing
 # or cherry-picking state.
+# This function depends on _lp_find_vcs() being run first to set $lp_vcs_root.
 # return: true if any extra state is found.
 #         lp_vcs_head_status; the extra repo state.
 _lp_git_head_status() {
@@ -1035,10 +1036,10 @@ _lp_git_stash_count() {
 
 # Count commits behind and ahead on the remote tracking branch of the current
 # local branch.
-# return: false if no commits ahead or behind (1) or if there is no tracking
-#         branch (2).
-#         lp_vcs_commit_behind: commits behind the remote branch.
-#         lp_vcs_commit_ahead: commits ahead of the remote branch.
+# return: false if no commits ahead or behind (1) or if no tracking upstream
+#         branch exists (2).
+#         lp_vcs_commit_behind: number of commits behind the remote branch.
+#         lp_vcs_commit_ahead: number of commits ahead of the remote branch.
 _lp_git_commits_off_remote() {
     local counts
     # The "@{upstream}" notation was added in Git 1.7.0, so this should work for everyone
@@ -1055,10 +1056,25 @@ _lp_git_untracked_files() {
     (( lp_vcs_untracked_files ))
 }
 
-# Get the number of changed lines compared to HEAD
-# return: true if any lines differ from HEAD
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted
+# Get the number of changed files compared to HEAD.
+# return: true if any files differ from HEAD.
+#         lp_vcs_uncommitted_files; the number of lines changed.
+_lp_git_uncommitted_files() {
+    local stat
+    stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
+
+    if [[ "$stat" = *changed* ]]; then
+        stat="${stat/ file*}"
+        lp_vcs_uncommitted_files=${stat//[$' \t']}
+    else
+        return 1
+    fi
+}
+
+# Get the number of changed lines compared to HEAD.
+# return: true if any lines differ from HEAD.
+#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
+#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_git_uncommitted_lines() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
@@ -1081,10 +1097,25 @@ _lp_git_uncommitted_lines() {
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
-# Get the number of changed lines compared to staging
-# return: true if any lines differ from staging
-#         lp_vcs_unstaged_i_lines; the number of lines inserted
-#         lp_vcs_unstaged_d_lines; the number of lines deleted
+# Get the number of changed files compared to staging.
+# return: true if any files differ from staging.
+#         lp_vcs_unstaged_files; the number of files changed.
+_lp_git_unstaged_files() {
+    local stat
+    stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+
+    if [[ "$stat" = *changed* ]]; then
+        stat="${stat/ file*}"
+        lp_vcs_unstaged_files=${stat//[$' \t']}
+    else
+        return 1
+    fi
+}
+
+# Get the number of changed lines compared to staging.
+# return: true if any lines differ from staging.
+#         lp_vcs_unstaged_i_lines; the number of lines inserted.
+#         lp_vcs_unstaged_d_lines; the number of lines deleted.
 _lp_git_unstaged_lines() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"

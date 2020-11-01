@@ -995,6 +995,19 @@ _lp_git_head_status() {
     fi
 }
 
+_lp_git_stash_count() {
+    local stashes count
+    stashes="$(\git rev-parse --verify -q refs/stash; printf x)"
+    __lp_line_count "${stashes%x}"
+    lp_vcs_stash_count=$count
+    (( lp_vcs_stash_count ))
+}
+
+_lp_git_untracked_files() {
+    lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | \grep -c '^??')"
+    (( lp_vcs_untracked_files ))
+}
+
 # Set a color depending on the branch state:
 # - green if the repository is up to date
 # - yellow if there is some commits not pushed
@@ -1010,12 +1023,11 @@ _lp_git_branch_color() {
         end=" ${LP_COLOR_CHANGES}${lp_vcs_head_status}$end"
     fi
 
-    if LC_ALL=C \git status --porcelain 2>/dev/null | \grep -q '^??'; then
+    if _lp_git_untracked_files; then
         end="$LP_COLOR_CHANGES$LP_MARK_UNTRACKED$end"
     fi
 
-    # Show if there is a git stash
-    if \git rev-parse --verify -q refs/stash >/dev/null; then
+    if _lp_git_stash_count; then
         end="$LP_COLOR_COMMITS$LP_MARK_STASH$end"
     fi
 

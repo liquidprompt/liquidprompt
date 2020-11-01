@@ -1987,7 +1987,11 @@ _lp_set_prompt() {
 }
 
 prompt_tag() {
-    export LP_PS1_PREFIX="$(_lp_sr "$1")"
+    if [[ -n "${1-}" ]]; then
+        export LP_PS1_PREFIX="$1 "
+    else
+        export LP_PS1_PREFIX=
+    fi
 }
 
 # Activate Liquid Prompt

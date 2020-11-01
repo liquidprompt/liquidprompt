@@ -1502,23 +1502,21 @@ _lp_battery_color() {
 
     local mark=$LP_MARK_BATTERY
     local chargingmark=$LP_MARK_ADAPTER
-    local -i bat ret
     _lp_battery
-    ret=$?
-    bat=$lp_battery
+    local -i status=$?
 
-    if (( ret >= 4 || bat == 100 )); then
+    if (( status >= 4 || lp_battery == 100 )); then
         # no battery support or battery full: nothing displayed
         return 1
-    elif (( ret == 3 && bat != 100 )); then
+    elif (( status == 3 && lp_battery != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
         lp_battery_color="${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
-    elif (( ret == 2 )); then
+    elif (( status == 2 )); then
         # charging but under threshold
         # yellow ⏚
         lp_battery_color="${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
-    elif (( ret == 1 )); then
+    elif (( status == 1 )); then
         # discharging but above threshold
         # yellow ⌁
         lp_battery_color="${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
@@ -1528,32 +1526,34 @@ _lp_battery_color() {
 
         if (( LP_PERCENTS_ALWAYS )); then
             local -i idx
-            if   (( bat <=  0 )); then
+            if   (( lp_battery <=  0 )); then
                 idx=0
-            elif (( bat <=  5 )); then         #  5
+            elif (( lp_battery <=  5 )); then         #  5
                 idx=9
-            elif (( bat <= 10 )); then         #  5
+            elif (( lp_battery <= 10 )); then         #  5
                 idx=8
-            elif (( bat <= 20 )); then         # 10
+            elif (( lp_battery <= 20 )); then         # 10
                 idx=7
-            elif (( bat <= 30 )); then         # 10
+            elif (( lp_battery <= 30 )); then         # 10
                 idx=6
-            elif (( bat <= 40 )); then         # 10
+            elif (( lp_battery <= 40 )); then         # 10
                 idx=5
-            elif (( bat <= 50 )); then         # 10
+            elif (( lp_battery <= 50 )); then         # 10
                 idx=4
-            elif (( bat <= 65 )); then         # 15
+            elif (( lp_battery <= 65 )); then         # 15
                 idx=3
-            elif (( bat <= 80 )); then         # 15
+            elif (( lp_battery <= 80 )); then         # 15
                 idx=2
-            elif (( bat < 100 )); then         # 20
+            elif (( lp_battery < 100 )); then         # 20
                 idx=1
             else # >= 100
                 idx=0
             fi
 
-            lp_battery_color+="${LP_COLORMAP[idx+_LP_FIRST_INDEX]}${bat}$_LP_PERCENT${NO_COL}"
-        fi # LP_PERCENTS_ALWAYS
+            local ret
+            _lp_color_map $idx 10
+            lp_battery_color+="${ret}${lp_battery}${_LP_PERCENT}${NO_COL}"
+        fi
     fi
 }
 

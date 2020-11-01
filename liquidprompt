@@ -1490,17 +1490,19 @@ _lp_battery_color() {
 # Runtime of last command #
 ###########################
 
-_lp_runtime() {
-    if (( LP_ENABLE_RUNTIME && _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD ))
-    then
-        echo -nE "${LP_COLOR_RUNTIME}"
+_lp_runtime_format() {
+    (( LP_ENABLE_RUNTIME )) || return 2
+
+    lp_runtime_format=
+    if (( _LP_RUNTIME_SECONDS >= LP_RUNTIME_THRESHOLD )); then
         # display runtime seconds as days, hours, minutes, and seconds
-        (( _LP_RUNTIME_SECONDS >= 86400 )) && echo -n $((_LP_RUNTIME_SECONDS / 86400))d
-        (( _LP_RUNTIME_SECONDS >= 3600 )) && echo -n $((_LP_RUNTIME_SECONDS % 86400 / 3600))h
-        (( _LP_RUNTIME_SECONDS >= 60 )) && echo -n $((_LP_RUNTIME_SECONDS % 3600 / 60))m
-        echo -n $((_LP_RUNTIME_SECONDS % 60))"s${NO_COL}"
+        (( _LP_RUNTIME_SECONDS >= 86400 )) && lp_runtime_format=$((_LP_RUNTIME_SECONDS / 86400))d
+        (( _LP_RUNTIME_SECONDS >= 3600 )) && lp_runtime_format+=$((_LP_RUNTIME_SECONDS % 86400 / 3600))h
+        (( _LP_RUNTIME_SECONDS >= 60 )) && lp_runtime_format+=$((_LP_RUNTIME_SECONDS % 3600 / 60))m
+        lp_runtime_format+=$((_LP_RUNTIME_SECONDS % 60))s
+    else
+        return 1
     fi
-    :
 }
 
 if $_LP_SHELL_zsh; then
@@ -1536,6 +1538,12 @@ else
         fi
     }
 fi
+
+_lp_runtime_color() {
+    _lp_runtime_format || return $?
+
+    lp_runtime_color="${LP_COLOR_RUNTIME}${lp_runtime_format}${NO_COL}"
+}
 
 ###############
 # System load #
@@ -1799,7 +1807,11 @@ _lp_theme_prompt() {
         LP_SCLS=
     fi
 
-    LP_RUNTIME=$(_lp_sl "$(_lp_runtime)")
+    if _lp_runtime_color; then
+        LP_RUNTIME=" $lp_runtime_color"
+    else
+        LP_RUNTIME=
+    fi
 
     if _lp_find_vcs; then
         case "$lp_vcs_type" in

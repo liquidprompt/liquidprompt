@@ -942,20 +942,21 @@ _lp_find_vcs() {
 
 # Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
 # to # if root and else $
+# input: lp_vcs_type; the string ID of the VCS type, can be set by
+#          _lp_find_vcs().
+# return: lp_smart_mark; the symbol of the selected prompt mark
 _lp_smart_mark() {
-    local mark
-    case "$LP_VCS_TYPE" in
-    git)      mark="$LP_MARK_GIT"             ;;
-    git-svn)  mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
-    git-vcsh) mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
-    hg)       mark="$LP_MARK_HG"              ;;
-    svn)      mark="$LP_MARK_SVN"             ;;
-    fossil)   mark="$LP_MARK_FOSSIL"          ;;
-    bzr)      mark="$LP_MARK_BZR"             ;;
-    disabled) mark="$LP_MARK_DISABLED"        ;;
-    *)        mark="$LP_MARK_DEFAULT"         ;;
+    case "$lp_vcs_type" in
+    git)      lp_smart_mark="$LP_MARK_GIT"             ;;
+    git-svn)  lp_smart_mark="$LP_MARK_GIT$LP_MARK_SVN" ;;
+    git-vcsh) lp_smart_mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH";;
+    hg)       lp_smart_mark="$LP_MARK_HG"              ;;
+    svn)      lp_smart_mark="$LP_MARK_SVN"             ;;
+    fossil)   lp_smart_mark="$LP_MARK_FOSSIL"          ;;
+    bzr)      lp_smart_mark="$LP_MARK_BZR"             ;;
+    disabled) lp_smart_mark="$LP_MARK_DISABLED"        ;;
+    *)        lp_smart_mark="$LP_MARK_DEFAULT"         ;;
     esac
-    echo -nE "${mark}${NO_COL}"
 }
 
 # GIT #
@@ -1895,8 +1896,8 @@ _lp_theme_prompt() {
         LP_VCS=
     fi
 
-    # end of the prompt line: double spaces
-    LP_MARK="$(_lp_sr "$(_lp_smart_mark $lp_vcs_type)")"
+    _lp_smart_mark
+    LP_MARK="${lp_smart_mark}${NO_COL} "
 
     if [[ -f "${LP_PS1_FILE-}" ]]; then
         source "$LP_PS1_FILE"

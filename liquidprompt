@@ -960,28 +960,53 @@ _lp_smart_mark() {
 
 # GIT #
 
-# Get the branch name of the current directory
+# Check if Git is enabled in Liquidprompt and the current directory is a valid
+# Git repository. This check should be done before running any other _lp_git_*
+# data functions.
+# return: false if Git disabled (2) or not a valid repo (1), true otherwise.
+_lp_git_active() {
+    (( LP_ENABLE_GIT )) || return 2
+    \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
+}
+
+# Get the branch name of the repo in the current directory.
+# return: true if a valid Git branch is checked out.
+#         lp_vcs_branch; the name of the current branch.
 _lp_git_branch() {
-    (( LP_ENABLE_GIT )) || return
-
-    \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
-
     local branch ret
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
-    if branch="$(\git symbolic-ref -q HEAD)"; then
+    if branch="$(\git symbolic-ref -q HEAD 2>/dev/null)"; then
         __lp_escape "${branch#refs/heads/}"
         lp_vcs_branch="$ret"
     else
-        # In detached head state, use commit instead
-        # No escape needed
-        lp_vcs_branch="$(\git rev-parse --short -q HEAD)"
+        return 1
     fi
 }
 
+# Get a tag name of the repo in the current directory.
+# return: true if a valid Git tag matches the HEAD commit.
+#         lp_vcs_tag; the name of (one of) the current tag(s).
+_lp_git_tag() {
+    local tag ret
+    if tag="$(\git describe --tags --exact-match 2>/dev/null)"; then
+        __lp_escape "$tag"
+        lp_vcs_tag="$ret"
+    else
+        return 1
+    fi
+}
 
-# Display additional information if HEAD is in merging, rebasing
-# or cherry-picking state
+# Get the current full commit hash of the repo in the current directory.
+# return: lp_vcs_commit_id; the hash of the HEAD commit.
+_lp_git_commit_id() {
+    lp_vcs_commit_id="$(\git rev-parse -q HEAD 2>/dev/null)"
+}
+
+# Get additional information if HEAD is in merging, rebasing
+# or cherry-picking state.
+# return: true if any extra state is found.
+#         lp_vcs_head_status; the extra repo state.
 _lp_git_head_status() {
     local gitdir="${lp_vcs_root}/.git"
     if [[ -f "${gitdir}/MERGE_HEAD" ]]; then
@@ -995,9 +1020,12 @@ _lp_git_head_status() {
     fi
 }
 
+# Get the number of Git stashes in the repo.
+# return: true if any stashes are found.
+#         lp_vcs_stash_count; the number of stashes.
 _lp_git_stash_count() {
     local stashes count
-    stashes="$(\git rev-parse --verify -q refs/stash; printf x)"
+    stashes="$(\git rev-parse --verify -q refs/stash 2>/dev/null; printf x)"
     __lp_line_count "${stashes%x}"
     lp_vcs_stash_count=$count
     (( lp_vcs_stash_count ))
@@ -1017,20 +1045,82 @@ _lp_git_commits_off_remote() {
     (( lp_vcs_commit_behind || lp_vcs_commit_ahead ))
 }
 
+# Get the number of untracked files in the repo.
+# return: true if any untracked files exist.
+#         lp_vcs_untracked_files: the number of untracked files.
 _lp_git_untracked_files() {
     lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | \grep -c '^??')"
     (( lp_vcs_untracked_files ))
+}
+
+# Get the number of changed lines compared to HEAD
+# return: true if any lines differ from HEAD
+#         lp_vcs_uncommitted_i_lines; the number of lines inserted
+#         lp_vcs_uncommitted_d_lines; the number of lines deleted
+_lp_git_uncommitted_lines() {
+    local stat
+    stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
+
+    stat=${stat/*changed, /} # removing "n file(s) changed"
+
+    if [[ "$stat" = *insertion* ]]; then
+        lp_vcs_uncommitted_i_lines=${stat/ inser*}
+    else
+        lp_vcs_uncommitted_i_lines=0
+    fi
+
+    if [[ "$stat" = *deletion* ]]; then
+        stat=${stat/*\(+\), }
+        lp_vcs_uncommitted_d_lines=${stat/ del*/}
+    else
+        lp_vcs_uncommitted_d_lines=0
+    fi
+
+    (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
+}
+
+# Get the number of changed lines compared to staging
+# return: true if any lines differ from staging
+#         lp_vcs_unstaged_i_lines; the number of lines inserted
+#         lp_vcs_unstaged_d_lines; the number of lines deleted
+_lp_git_unstaged_lines() {
+    local stat
+    stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+
+    stat=${stat/*changed, /} # removing "n file(s) changed"
+
+    if [[ "$stat" = *insertion* ]]; then
+        lp_vcs_unstaged_i_lines=${stat/ inser*}
+    else
+        lp_vcs_unstaged_i_lines=0
+    fi
+
+    if [[ "$stat" = *deletion* ]]; then
+        stat=${stat/*\(+\), }
+        lp_vcs_unstaged_d_lines=${stat/ del*/}
+    else
+        lp_vcs_unstaged_d_lines=0
+    fi
+
+    (( lp_vcs_unstaged_i_lines || lp_vcs_unstaged_d_lines ))
 }
 
 # Set a color depending on the branch state:
 # - green if the repository is up to date
 # - yellow if there is some commits not pushed
 # - red if there is changes to commit
-#
 # Add the number of pending commits and the impacted lines.
+# return: lp_vcs_branch_color; the detailed formatted string of repo details
 _lp_git_branch_color() {
-    _lp_git_branch || return $?
-    local branch="$lp_vcs_branch"
+    local branch
+    if _lp_git_branch; then
+        branch="$lp_vcs_branch"
+    elif _lp_git_tag; then
+        branch="tag: $lp_vcs_tag"
+    else
+        _lp_git_commit_id
+        branch="${lp_vcs_commit_id:0:7}"
+    fi
 
     local end="$NO_COL"
     if _lp_git_head_status; then
@@ -1057,31 +1147,11 @@ _lp_git_branch_color() {
     fi
 
     local ret
-    local shortstat # only to check for uncommitted changes
-    shortstat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
-
-    if [[ -n "$shortstat" ]]; then
-        local u_stat # shorstat of *unstaged* changes
-        u_stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
-        u_stat=${u_stat/*changed, /} # removing "n file(s) changed"
-
-        local i_lines # inserted lines
-        if [[ "$u_stat" = *insertion* ]]; then
-            i_lines=${u_stat/ inser*}
-        else
-            i_lines=0
-        fi
-
-        local d_lines # deleted lines
-        if [[ "$u_stat" = *deletion* ]]; then
-            d_lines=${u_stat/*\(+\), }
-            d_lines=${d_lines/ del*/}
-        else
-            d_lines=0
-        fi
+    if _lp_git_uncommitted_lines; then
+        _lp_git_unstaged_lines
 
         local has_lines
-        has_lines="+$i_lines/-$d_lines"
+        has_lines="+$lp_vcs_unstaged_i_lines/-$lp_vcs_unstaged_d_lines"
 
         if [[ -n "$has_commit" ]]; then
             # Changes to commit and commits to push
@@ -1091,7 +1161,7 @@ _lp_git_branch_color() {
         fi
     elif [[ -n "$has_commit" ]]; then
         # some commit(s) to push
-        if [[ "$commit_behind" -gt "0" ]]; then
+        if [[ "$lp_vcs_commit_behind" -gt "0" ]]; then
             ret="${LP_COLOR_COMMITS_BEHIND}${branch}${NO_COL}($has_commit)"
         else
             ret="${LP_COLOR_COMMITS}${branch}${NO_COL}($has_commit)"

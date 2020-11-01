@@ -1645,36 +1645,32 @@ case "$LP_OS" in
         }
 esac
 
-# Compute a gradient of background/forground colors depending on the battery status
-_lp_load_color() {
-    # Colour progression is important ...
-    #   bold gray -> bold green -> bold yellow -> bold red ->
-    #   black on red -> bold white on red
-    #
-    # Then we have to choose the values at which the colours switch, with
-    # anything past yellow being pretty important.
+_lp_load() {
+    (( LP_ENABLE_LOAD )) || return 2
 
-    (( LP_ENABLE_LOAD )) || return
-
-    local lp_cpu_load
     # Get value (OS-specific) into lp_cpu_load
     _lp_cpu_load
 
-    lp_cpu_load=${lp_cpu_load/./}   # Remove '.'
-    lp_cpu_load=${lp_cpu_load#0}    # Remove leading '0'
-    lp_cpu_load=${lp_cpu_load#0}    # Remove leading '0', again (ex: 0.09)
-    local -i load=${lp_cpu_load:-0}/$_lp_CPUNUM
+    lp_load=${lp_cpu_load/./}   # Remove '.'
+    lp_load=${lp_load#0}    # Remove leading '0'
+    lp_load=${lp_load#0}    # Remove leading '0', again (ex: 0.09)
+    lp_load=$(( ${lp_load:-0} / _lp_CPUNUM ))
 
-    if (( load > LP_LOAD_THRESHOLD )); then
-        local ret
-        _lp_color_map $load
-        ret="${ret}${LP_MARK_LOAD}"
+    (( lp_load > LP_LOAD_THRESHOLD ))
+}
 
-        if (( LP_PERCENTS_ALWAYS )); then
-            ret+="${load}${_LP_PERCENT}"
-        fi
-        echo -nE "${ret}${NO_COL}"
+# Compute a gradient of background/forground colors depending on the battery status
+_lp_load_color() {
+    _lp_load || return $?
+
+    local ret
+    _lp_color_map $lp_load
+    lp_load_color="${ret}${LP_MARK_LOAD}"
+
+    if (( LP_PERCENTS_ALWAYS )); then
+        lp_load_color+="${lp_load}${_LP_PERCENT}"
     fi
+    lp_load_color+="$NO_COL"
 }
 
 ######################
@@ -1855,7 +1851,11 @@ _lp_theme_prompt() {
     else
         LP_TEMP=
     fi
-    LP_LOAD="$(_lp_sr "$(_lp_load_color)")"
+    if _lp_load_color; then
+        LP_LOAD="$lp_load_color "
+    else
+        LP_LOAD=
+    fi
     if _lp_battery_color; then
         LP_BATT="$lp_battery_color "
     else

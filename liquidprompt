@@ -2131,49 +2131,40 @@ _lp_title() {
 # CURRENT TIME    #
 ###################
 
-# LP_TIME is set colored, with a space on the right side
-if (( LP_ENABLE_TIME )); then
-    if (( LP_TIME_ANALOG )); then
-        typeset -i _LP_CLOCK_PREV=-1
-        # The targeted unicode characters are the "CLOCK FACE" ones
-        # They are located in the codepages between:
-        #     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
-        #     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
-        # Generated with:
-        # perl -C -E 'say join("", map {chr(0x1F550+$_)." ".chr(0x1F55C+$_)." "} 0..11)'
-        _LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢 🕗 🕣 🕘 🕤 🕙 🕥 🕚 🕦 🕛 🕧 )
+# The targeted unicode characters are the "CLOCK FACE" ones
+# They are located in the codepages between:
+#     U+1F550 (ONE OCLOCK) and U+1F55B (TWELVE OCLOCK), for the plain hours
+#     U+1F55C (ONE-THIRTY) and U+1F567 (TWELVE-THIRTY), for the thirties
+# Generated with:
+# perl -C -E 'say join("", map {chr(0x1F550+$_)." ".chr(0x1F55C+$_)." "} 0..11)'
+_LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢 🕗 🕣 🕘 🕤 🕙 🕥 🕚 🕦 🕛 🕧 )
 
-        _lp_time() {
-            # %I: "00".."12"  %M: "00".."59"
-            # Bash interprets a '0' prefix as octal
-            # so we have to clean that
-            local hhmm="$(date "+hh=%I mm=%M")" IFS=' '
-            # hh:  1..12  mm: 0..59
-            local -i hh mm clock
-            eval ${hhmm//=0/=}  # Line split for zsh
-            # clock: 0 .. 25
-            #   1:00..1:14 -> 0
-            #   1:15..1:44 -> 1
-            #   1:45..2:15 -> 2
-            #   ...
-            #   12:15..12:44 -> 23
-            #   12:45..12:59 -> 0
-            if (( ( clock=((hh*60+mm-45)/30)%24 ) != _LP_CLOCK_PREV )); then
-                # There is a space just after the clock char because the glyph
-                # width is twice usual glyphs
-                LP_TIME="${LP_COLOR_TIME}${_LP_CLOCK[clock+_LP_FIRST_INDEX]} ${NO_COL} "
-                _LP_CLOCK_PREV=clock
-            fi
-        }
-    else
-        # Never changes
-        LP_TIME="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL} "
-        _lp_time() { : ; }
-    fi
-else
-    LP_TIME=""
-    _lp_time() { : ; }
-fi
+_lp_analog_time() {
+    # %I: "00".."12"  %M: "00".."59"
+    # Bash interprets a '0' prefix as octal
+    # so we have to clean that
+    local hhmm="$(date "+hh=%I mm=%M")" IFS=' '
+    # hh:  1..12  mm: 0..59
+    local -i hh mm
+    eval ${hhmm//=0/=}  # Line split for zsh
+    # clock: 0 .. 25
+    #   1:00..1:14 -> 0
+    #   1:15..1:44 -> 1
+    #   1:45..2:15 -> 2
+    #   ...
+    #   12:15..12:44 -> 23
+    #   12:45..12:59 -> 0
+    # There is a space just after the clock char because the glyph
+    # width is twice usual glyphs
+    lp_analog_time="${_LP_CLOCK[((hh*60+mm-45)/30)%24+_LP_FIRST_INDEX]} "
+}
+
+_lp_analog_time_color() {
+    (( LP_ENABLE_TIME && LP_TIME_ANALOG )) || return 2
+
+    _lp_analog_time
+    lp_analog_time_color="${LP_COLOR_TIME}${lp_analog_time}${NO_COL}"
+}
 
 #################
 # Default theme #
@@ -2186,6 +2177,14 @@ _lp_theme_activate() {
     # Same as bash '\l', but inlined as a constant as the value will not change
     # during the shell's life
     LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
+
+    if (( LP_ENABLE_TIME )); then
+        if (( ! LP_TIME_ANALOG )); then
+            LP_TIME="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL} "
+        fi
+    else
+        LP_TIME=
+    fi
 }
 
 _lp_theme_directory() {
@@ -2206,7 +2205,7 @@ _lp_theme_prompt() {
     if (( lp_err != 0 )); then
         LP_ERR=" $LP_COLOR_ERR$lp_err$NO_COL"
     else
-        LP_ERR=''     # Hidden
+        LP_ERR=
     fi
 
     # left of main prompt: space at right
@@ -2230,7 +2229,11 @@ _lp_theme_prompt() {
     else
         LP_BATT=
     fi
-    _lp_time
+
+    if _lp_analog_time_color; then
+        LP_TIME="$lp_analog_time_color "
+    fi
+
     _lp_sudo_check
 
     # in main prompt: no space

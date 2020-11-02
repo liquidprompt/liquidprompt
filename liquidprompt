@@ -445,14 +445,14 @@ lp_activate() {
         LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
         LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
-        LP_TITLE_OPEN="$(printf '\033k')"
+        LP_TITLE_OPEN=$'\Ek'
         # "\e\" but on bash \ must be escaped
-        LP_TITLE_CLOSE="$(printf '\033%s' "$_LP_BACKSLASH")"
+        LP_TITLE_CLOSE=$'\E'"$_LP_BACKSLASH"
     else
         LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
         LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
-        LP_TITLE_OPEN="$(printf '\e]0;')"
-        LP_TITLE_CLOSE="$(printf '\a')"
+        LP_TITLE_OPEN=$'\E]0;'
+        LP_TITLE_CLOSE=$'\a'
     fi
 
     [[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
@@ -578,7 +578,7 @@ lp_activate() {
 _lp_as_text() {
     # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
     # $_LP_CLOSE_ESC.
-    echo -nE "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
+    printf '%s' "$1" | sed -$_LP_SED_EXTENDED "s,$_LP_CLEAN_ESC,,g"
 }
 
 # Store $2 (or $?) as a true/false value in variable named $1
@@ -2119,12 +2119,12 @@ _lp_temperature_color() {
 ##########
 
 _lp_title() {
-    (( LP_ENABLE_TITLE )) || return
+    (( LP_ENABLE_TITLE )) || return 2
 
     # Get the current computed prompt as pure text
-    echo -nE "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
-    _lp_as_text "$1"
-    echo -nE "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    printf '%s' "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
+    _lp_as_text "${1-}"
+    printf '%s' "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 ###################

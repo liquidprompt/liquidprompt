@@ -1031,6 +1031,9 @@ _lp_vcs_details_color() {
 
     if _lp_vcs_head_status; then
         lp_vcs_details_color+=" $LP_COLOR_CHANGES$lp_vcs_head_status"
+        if [[ -n "${lp_vcs_head_details-}" ]]; then
+            lp_vcs_details_color+="(${lp_vcs_head_details})"
+        fi
     fi
 
     lp_vcs_details_color+="$NO_COL"
@@ -1086,6 +1089,8 @@ _lp_vcs_commit_id() {
 # return: true if any extra state is found, false if not (1) or the VCS
 #             provider does not support any useful extra info (2+).
 #         lp_vcs_head_status; the extra repo state
+#         lp_vcs_head_details; optional extra details, like progress in a
+#             rebase. This might not be set, so protect it with "${var-}".
 _lp_vcs_head_status() {
     _lp_${lp_vcs_type}_head_status 2>/dev/null
 }
@@ -1203,16 +1208,44 @@ _lp_git_commit_id() {
 # This function depends on _lp_find_vcs() being run first to set $lp_vcs_root.
 # return: true if any extra state is found.
 #         lp_vcs_head_status; the extra repo state.
+#         lp_vcs_head_details; optional extra details, like progress in a rebase.
 _lp_git_head_status() {
-    local gitdir="${lp_vcs_root}/.git"
+    local gitdir="${lp_vcs_root}/.git" IFS= step total
+
     if [[ -f "${gitdir}/MERGE_HEAD" ]]; then
         lp_vcs_head_status="MERGING"
-    elif [[ -d "${gitdir}/rebase-apply" || -d "${gitdir}/rebase-merge" ]]; then
-        lp_vcs_head_status="REBASING"
+    elif [[ -d "${gitdir}/rebase-merge" ]]; then
+        read step <"${gitdir}/rebase-merge/msgnum"
+        read total <"${gitdir}/rebase-merge/end"
+        if [ -f "${gitdir}/rebase-merge/interactive" ]; then
+            lp_vcs_head_status="REBASE-i"
+        else
+            lp_vcs_head_status="REBASE-m"
+        fi
+    elif [[ -d "${gitdir}/rebase-apply" ]]; then
+        read step <"${gitdir}/rebase-apply/next"
+        read total <"${gitdir}/rebase-apply/last"
+        if [ -f "${gitdir}/rebase-apply/rebasing" ]; then
+            lp_vcs_head_status="REBASE"
+        elif [ -f "${gitdir}/rebase-apply/applying" ]; then
+            lp_vcs_head_status="AM"
+        else
+            lp_vcs_head_status="AM/REBASE"
+        fi
     elif [[ -f "${gitdir}/CHERRY_PICK_HEAD" ]]; then
         lp_vcs_head_status="CHERRY-PICKING"
+    elif [[ -f "${gitdir}/REVERT_HEAD" ]]; then
+        lp_vcs_head_status="REVERTING"
+    elif [[ -f "${gitdir}/BISECT_START" ]]; then
+        lp_vcs_head_status="BISECTING"
     else
         return 1
+    fi
+
+    if [[ -n "$step" && -n "$total" ]]; then
+        lp_vcs_head_details="${step}/${total}"
+    else
+        lp_vcs_head_details=
     fi
 }
 
@@ -1243,7 +1276,7 @@ _lp_git_commits_off_remote() {
 
 # Get the number of untracked files in the repo.
 # return: true if any untracked files exist.
-#         lp_vcs_untracked_files: the number of untracked files.
+#         lp_vcs_untracked_files; the number of untracked files.
 _lp_git_untracked_files() {
     lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | \grep -c '^??')"
     (( lp_vcs_untracked_files ))

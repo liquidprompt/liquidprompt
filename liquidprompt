@@ -478,11 +478,8 @@ lp_activate() {
 
     unset -f _lp_require_tool
 
-    if (( LP_ENABLE_JOBS )); then
-        command -v screen >/dev/null ; _LP_ENABLE_SCREEN=!$?
-        command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=!$?
-        (( _LP_ENABLE_DETACHED_SESSIONS = ( _LP_ENABLE_SCREEN || _LP_ENABLE_TMUX ) ))
-    fi
+    command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
+    command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
 
     # Use standard path symbols inside Midnight Commander
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
@@ -812,10 +809,8 @@ _lp_set_dirtrim() {
 # return: lp_detached_sessions; the number of detached sessions
 _lp_detached_sessions() {
     local -i count=0
-    if (( _LP_ENABLE_DETACHED_SESSIONS )); then
-        (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
-        (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
-    fi
+    (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
+    (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
     lp_detached_sessions=$count
     (( lp_detached_sessions ))
 }

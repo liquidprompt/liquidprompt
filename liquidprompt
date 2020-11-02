@@ -440,17 +440,13 @@ lp_activate() {
     # Use standard path symbols inside Midnight Commander
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
-    # If we are running in a terminal multiplexer, brackets are colored
-    if [[ "$TERM" == screen* || -n ${TMUX-} ]]; then
-        LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
-        LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+    # If we are running in a terminal multiplexer, special title escapes
+    if _lp_multiplexer; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         LP_TITLE_OPEN=$'\Ek'
         # "\e\" but on bash \ must be escaped
         LP_TITLE_CLOSE=$'\E'"$_LP_BACKSLASH"
     else
-        LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
-        LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
         LP_TITLE_OPEN=$'\E]0;'
         LP_TITLE_CLOSE=$'\a'
     fi
@@ -778,6 +774,17 @@ _lp_chroot() {
     if [[ -r /etc/debian_chroot ]]; then
         IFS= read -r lp_chroot </etc/debian_chroot
         [[ -n "$lp_chroot" ]] && return 0
+    fi
+    return 1
+}
+
+_lp_multiplexer() {
+    if [[ "$TERM" == screen* ]]; then
+        lp_mulitplexer=screen
+        return 0
+    elif [[ -n ${TMUX-} ]]; then
+        lp_mulitplexer=tmux
+        return 0
     fi
     return 1
 }
@@ -2191,6 +2198,15 @@ _lp_theme_activate() {
     # build this just once
     _lp_hostname_color
     LP_HOST="$lp_hostname_color"
+
+    # If we are running in a terminal multiplexer, brackets are colored
+    if _lp_multiplexer; then
+        LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_OPEN}${NO_COL}"
+        LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_BRACKET_CLOSE}${NO_COL}"
+    else
+        LP_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN}"
+        LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
+    fi
 
     # Same as bash '\l', but inlined as a constant as the value will not change
     # during the shell's life

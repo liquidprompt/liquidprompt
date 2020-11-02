@@ -119,7 +119,7 @@ _LP_SED_EXTENDED=r
 #    In practice, this is only color variables.
 # 2. Setup default values
 # 3. Load the configuration
-_lp_source_config() {
+__lp_source_config() {
 
     # TermInfo feature detection
     typeset -a af_colors ab_colors
@@ -400,13 +400,13 @@ lp_activate() {
         # Disable previous hooks as options that set them
         # may have changed
         {
-            add-zsh-hook -d precmd  _lp_set_prompt
-            add-zsh-hook -d preexec _lp_runtime_before
-            add-zsh-hook -d precmd  _lp_runtime_after
+            add-zsh-hook -d precmd  __lp_set_prompt
+            add-zsh-hook -d preexec __lp_runtime_before
+            add-zsh-hook -d precmd  __lp_runtime_after
         } >/dev/null
     fi
 
-    _lp_source_config
+    __lp_source_config
 
     # Disable feature if the tool is not installed
     _lp_require_tool()
@@ -528,8 +528,8 @@ lp_activate() {
 
     if (( LP_ENABLE_SHORTEN_PATH )); then
         if (( LP_PATH_KEEP == -1 )); then
-            # _lp_shorten_path becomes a noop
-            _lp_shorten_path()
+            # __lp_shorten_path becomes a noop
+            __lp_shorten_path()
             {
                 :
             }
@@ -541,8 +541,8 @@ lp_activate() {
         LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NO_COL"
 
         if $_LP_SHELL_bash && [[ -n "$PROMPT_DIRTRIM" ]]; then
-            unset -f _lp_shorten_path
-            alias _lp_shorten_path=_lp_set_dirtrim
+            unset -f __lp_shorten_path
+            alias __lp_shorten_path=__lp_set_dirtrim
         fi
     fi
 
@@ -550,14 +550,14 @@ lp_activate() {
 
     if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
         if $_LP_SHELL_zsh; then
-            add-zsh-hook preexec _lp_runtime_before
-            add-zsh-hook precmd  _lp_runtime_after
+            add-zsh-hook preexec __lp_runtime_before
+            add-zsh-hook precmd  __lp_runtime_after
         else
             _LP_AT_PROMPT=0
-            # _lp_runtime_before gets called just before bash executes a command,
+            # __lp_runtime_before gets called just before bash executes a command,
             # including $PROMPT_COMMAND
             # Pass $_ to this call, because it sets $_ to what it already was
-            trap '_lp_runtime_before "$_"' DEBUG
+            trap '__lp_runtime_before "$_"' DEBUG
         fi
     fi
 
@@ -652,7 +652,7 @@ _lp_sb() {
 # * Show as much of the cwd path as possible, if shortened display a
 #   leading mark, such as ellipses, to indicate that part is missing
 # * show at least LP_PATH_KEEP leading dirs and current directory
-_lp_shorten_path() {
+__lp_shorten_path() {
 
     if (( ! LP_ENABLE_SHORTEN_PATH )); then
         # We are not supposed to come here often as this case is already
@@ -720,7 +720,7 @@ _lp_shorten_path() {
 # of the displayed path (if "\w" is present in the PS1 var).
 # Liquid Prompt can calculate this number under two conditions, path shortening
 # must be disabled and PROMPT_DIRTRIM must be already set.
-_lp_set_dirtrim() {
+__lp_set_dirtrim() {
     local lp_pwd_tilde p
     __lp_pwd_tilde
     p="$lp_pwd_tilde"
@@ -1945,17 +1945,17 @@ _lp_runtime_format() {
 }
 
 if $_LP_SHELL_zsh; then
-    _lp_runtime_before() {
+    __lp_runtime_before() {
       _LP_RUNTIME_LAST_SECONDS=$SECONDS
     }
-    _lp_runtime_after() {
+    __lp_runtime_after() {
         if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
             (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
             unset _LP_RUNTIME_LAST_SECONDS
         fi
     }
 else
-    _lp_runtime_before() {
+    __lp_runtime_before() {
         # For debugging
         #echo "XXX $BASH_COMMAND"
 
@@ -2313,7 +2313,7 @@ _lp_theme_prompt() {
 # Construct the prompt #
 ########################
 
-_lp_set_prompt() {
+__lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
     local -i lp_err=$?
@@ -2333,7 +2333,7 @@ _lp_set_prompt() {
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
-        _lp_shorten_path   # set LP_PWD
+        __lp_shorten_path   # set LP_PWD
 
         _lp_theme_directory
 
@@ -2399,7 +2399,7 @@ prompt_on() {
 
         # Disable parameter/command expansion from PS1
         shopt -u promptvars
-        PROMPT_COMMAND=_lp_set_prompt
+        PROMPT_COMMAND=__lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
         [[ -n "$_LP_ZSH_HOOK" ]] && add-zsh-hook -d precmd $_LP_ZSH_HOOK
@@ -2410,11 +2410,11 @@ prompt_on() {
         #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {
         #        local TIMEFMT='Liquid Prompt build time: %*E'
-        #        time _lp_set_prompt
+        #        time __lp_set_prompt
         #    }
         #    _LP_ZSH_HOOK=_lp_main_precmd
         #else
-            _LP_ZSH_HOOK=_lp_set_prompt
+            _LP_ZSH_HOOK=__lp_set_prompt
         #fi
         add-zsh-hook precmd $_LP_ZSH_HOOK
     fi

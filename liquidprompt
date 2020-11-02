@@ -788,7 +788,7 @@ _lp_hostname() {
         fi
 
         # If we are connected with a X11 support
-        if [[ -n "$DISPLAY" ]]; then
+        if [[ -n "${DISPLAY-}" ]]; then
             LP_HOST="${LP_COLOR_X11_ON}${LP_HOST}@${NO_COL}"
         else
             LP_HOST="${LP_COLOR_X11_OFF}${LP_HOST}@${NO_COL}"
@@ -1967,7 +1967,7 @@ else
         # If this is when the prompt is being drawn, the command is done,
         # so calculate the time. Note these two events could be at the same
         # time, so no elif is used
-        if [[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ]]; then
+        if [[ "$BASH_COMMAND" == "${PROMPT_COMMAND-}" ]]; then
             _LP_AT_PROMPT=1
             # Compute number of seconds since program was started
             if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
@@ -2367,7 +2367,7 @@ prompt_on() {
     if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
         if $_LP_SHELL_bash; then
-            LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
+            LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
             _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND=""

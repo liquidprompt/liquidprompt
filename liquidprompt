@@ -1449,7 +1449,17 @@ _lp_fossil_branch() {
 
     # branch current command added in fossil 2.7
     if ! branch="$(\fossil branch current 2>/dev/null)"; then
-        branch=$(\fossil branch list 2>/dev/null | sed -n 's/^\*\s\s*\(\w*\)$/\1/p')
+        # Almost any character can be in a branch name, but we have no way of
+        # knowing if a newline is part of the name or not. In fact, there is no
+        # way to prevent a branch containing the string '\n* ' to not break
+        # this. Just hope that no one crazy enough to do that to their branch
+        # names is running Fossil <2.7
+        branch="$(\fossil branch list 2>/dev/null)"
+        branch="${branch#*$'\n\* '}"
+        # If the current branch is the first in the list, the above check would
+        # not have removed anything
+        branch="${branch#\* }"
+        branch="${branch%%$'\n'*}"
     fi
 
     if [[ -n "$branch" ]]; then

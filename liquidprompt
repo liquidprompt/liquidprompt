@@ -491,23 +491,28 @@ lp_activate() {
     # Where are we? #
     #################
 
+
     if (( LP_ENABLE_SHORTEN_PATH )); then
         if (( LP_PATH_KEEP == -1 )); then
-            # __lp_shorten_path becomes a noop
-            __lp_shorten_path()
-            {
-                :
+            lp_path=$_LP_DIR_SYMBOL
+            __lp_path() { : ; }
+        else
+            __lp_path() {
+                local lp_shorten_path
+                __lp_shorten_path
+                lp_path=$lp_shorten_path
             }
-            # Will never change
-            LP_PWD="${LP_COLOR_PATH}${_LP_DIR_SYMBOL}$NO_COL"
         fi
     else
         # Will never change
-        LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NO_COL"
+        lp_path=$LP_PATH_DEFAULT
 
-        if $_LP_SHELL_bash && [[ -n "$PROMPT_DIRTRIM" ]]; then
-            unset -f __lp_shorten_path
-            alias __lp_shorten_path=__lp_set_dirtrim
+        if $_LP_SHELL_bash && [[ -n ${PROMPT_DIRTRIM-} ]]; then
+            __lp_path() {
+                __lp_set_dirtrim
+            }
+        else
+            __lp_path() { : ; }
         fi
     fi
 
@@ -620,28 +625,14 @@ _lp_sb() {
 #   leading mark, such as ellipses, to indicate that part is missing
 # * show at least LP_PATH_KEEP leading dirs and current directory
 __lp_shorten_path() {
-
-    if (( ! LP_ENABLE_SHORTEN_PATH )); then
-        # We are not supposed to come here often as this case is already
-        # optimized at install time
-        LP_PWD="${LP_COLOR_PATH}${LP_PATH_DEFAULT}$NO_COL"
-        return
-    fi
-
-    local ret=
-
-    local lp_pwd_tilde p
+    local ret= lp_pwd_tilde p
     __lp_pwd_tilde
     p="$lp_pwd_tilde"
 
     local mask="${LP_MARK_SHORTEN_PATH}"
     local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 ))
 
-    if (( LP_PATH_KEEP == -1 )); then
-        # only show the current directory, excluding any parent dirs
-        ret="${p##*/}" # discard everything up to and including the last slash
-        [[ "${ret}" == "" ]] && ret="/" # if in root directory
-    elif (( ${#p} <= max_len )); then
+    if (( ${#p} <= max_len )); then
         ret="${p}"
     elif (( LP_PATH_KEEP == 0 )); then
         # len is over max len, show as much of the tail as is allowed
@@ -680,7 +671,7 @@ __lp_shorten_path() {
     fi
     # Escape special chars
     __lp_escape "$ret"
-    LP_PWD="${LP_COLOR_PATH}${ret}$NO_COL"
+    lp_shorten_path="$ret"
 }
 
 # In Bash shells, PROMPT_DIRTRIM is the number of directories to keep at the end
@@ -2262,6 +2253,8 @@ _lp_theme_directory() {
             LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
         fi
     fi
+
+    LP_PWD="${LP_COLOR_PATH}${lp_path}${NO_COL}"
 }
 
 _lp_theme_prompt() {
@@ -2401,7 +2394,7 @@ __lp_set_prompt() {
         # Update directory icon for MacOS X
         $_LP_TERM_UPDATE_DIR
 
-        __lp_shorten_path   # set LP_PWD
+        __lp_path
 
         _lp_theme_directory
 

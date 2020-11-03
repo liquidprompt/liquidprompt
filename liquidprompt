@@ -789,6 +789,22 @@ _lp_python_env_color() {
     lp_python_env_color="[${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}]"
 }
 
+_lp_software_collections() {
+    (( LP_ENABLE_SCLS )) || return 2
+
+    if [[ -n "${X_SCLS-}" ]]; then
+        lp_software_collections="${X_SCLS%"${X_SCLS##*[![:space:]]}"}"
+    else
+        return 1
+    fi
+}
+
+_lp_software_collections_color() {
+    _lp_software_collections || return $?
+
+    lp_software_collections_color="[${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}]"
+}
+
 # return: 0 if login user, 1 if not, 2 if root
 _lp_user() {
     if (( EUID == 0 )); then
@@ -2346,9 +2362,8 @@ _lp_theme_prompt() {
         LP_VENV=
     fi
 
-    # Display the current software collections enabled, if available
-    if [[ "$LP_ENABLE_SCLS,${X_SCLS-}" = 1,?* ]]; then
-        LP_SCLS=" [${LP_COLOR_VIRTUALENV}${X_SCLS%"${X_SCLS##*[![:space:]]}"}${NO_COL}]"
+    if _lp_software_collections_color; then
+        LP_SCLS=" $lp_software_collections_color"
     else
         LP_SCLS=
     fi

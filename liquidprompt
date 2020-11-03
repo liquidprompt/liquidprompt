@@ -769,6 +769,26 @@ _lp_http_proxy_color() {
     lp_http_proxy_color="${LP_COLOR_PROXY}${LP_MARK_PROXY}${NO_COL}"
 }
 
+_lp_python_env() {
+    (( LP_ENABLE_VIRTUALENV )) || return 2
+
+    # Why are these trunkated to the last '/' section? It has always been this
+    # way, and the original author didn't explain why.
+    if [[ -n "${VIRTUAL_ENV-}" ]]; then
+        lp_python_env="${VIRTUAL_ENV##*/}"
+    elif [[ -n "${CONDA_DEFAULT_ENV-}" ]]; then
+        lp_python_env="${CONDA_DEFAULT_ENV##*/}"
+    else
+        return 1
+    fi
+}
+
+_lp_python_env_color() {
+    _lp_python_env || return $?
+
+    lp_python_env_color="[${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}]"
+}
+
 # return: 0 if login user, 1 if not, 2 if root
 _lp_user() {
     if (( EUID == 0 )); then
@@ -2320,13 +2340,8 @@ _lp_theme_prompt() {
         LP_PROXY=
     fi
 
-    # Display the current Python virtual environment, if available
-    if [[ "$LP_ENABLE_VIRTUALENV,${VIRTUAL_ENV-}${CONDA_DEFAULT_ENV-}" = 1,?* ]]; then
-        if [[ -n "${VIRTUAL_ENV-}" ]]; then
-            LP_VENV=" [${LP_COLOR_VIRTUALENV}${VIRTUAL_ENV##*/}${NO_COL}]"
-        else
-            LP_VENV=" [${LP_COLOR_VIRTUALENV}${CONDA_DEFAULT_ENV##*/}${NO_COL}]"
-        fi
+    if _lp_python_env_color; then
+        LP_VENV=" $lp_python_env_color"
     else
         LP_VENV=
     fi

@@ -1851,7 +1851,7 @@ case "$LP_OS" in
     _lp_battery() {
         (( LP_ENABLE_BATT )) || return 5
         local percent batt_status
-        eval "$(pmset -g batt | sed -n 's/^ -InternalBattery.*[[:space:]]\([0-9]*[0-9]\)%; \([^;]*\).*$/lp_battery=\1 batt_status='\'\\2\'/p)"
+        IFS=; read -r lp_battery batt_status <<<"$(pmset -g batt | sed -n 's/^ -InternalBattery.*[[:space:]]\([0-9]*[0-9]\)%; \([^;]*\).*$/\1;\2/p')"
         case "$batt_status" in
             charged | "")
             return 4
@@ -2156,12 +2156,15 @@ _LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢
 
 _lp_analog_time() {
     # %I: "00".."12"  %M: "00".."59"
+    # hh:  1..12  mm: 0..59
+    local hh mm
+    IFS=' ' read hh mm <<<"$(date '+%I %M')"
+
     # Bash interprets a '0' prefix as octal
     # so we have to clean that
-    local hhmm="$(date "+hh=%I mm=%M")" IFS=' '
-    # hh:  1..12  mm: 0..59
-    local -i hh mm
-    eval ${hhmm//=0/=}  # Line split for zsh
+    hh="${hh#0}"
+    mm="${mm#0}"
+
     # clock: 0 .. 25
     #   1:00..1:14 -> 0
     #   1:15..1:44 -> 1

@@ -753,6 +753,22 @@ _lp_multiplexer() {
     return 1
 }
 
+_lp_http_proxy() {
+    (( LP_ENABLE_PROXY )) || return 2
+
+    if [[ -n "${http_proxy-}${HTTP_PROXY-}${https_proxy-}${HTTPS_PROXY-}${all_proxy-}${ALL_PROXY-}" ]]; then
+        lp_http_proxy="${http_proxy:-${HTTP_PROXY:-${https_proxy:-${HTTPS_PROXY:-${all_proxy:-$ALL_PROXY}}}}}"
+    else
+        return 1
+    fi
+}
+
+_lp_http_proxy_color() {
+    _lp_http_proxy || return $?
+
+    lp_http_proxy_color="${LP_COLOR_PROXY}${LP_MARK_PROXY}${NO_COL}"
+}
+
 # return: 0 if login user, 1 if not, 2 if root
 _lp_user() {
     if (( EUID == 0 )); then
@@ -2298,8 +2314,8 @@ _lp_theme_prompt() {
     fi
 
     # in main prompt: no space
-    if [[ "$LP_ENABLE_PROXY,${http_proxy-}" = 1,?* ]]; then
-        LP_PROXY="$LP_COLOR_PROXY$LP_MARK_PROXY$NO_COL"
+    if _lp_http_proxy_color; then
+        LP_PROXY="$lp_http_proxy_color"
     else
         LP_PROXY=
     fi

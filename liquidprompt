@@ -533,6 +533,8 @@ lp_activate() {
     fi
 
     _lp_theme_activate
+
+    prompt_on
 }
 
 #####################
@@ -2514,7 +2516,6 @@ prompt_OFF() {
 # By default, sourcing liquidprompt will activate Liquid Prompt
 if [ "${1-}" != "--no-activate" ]; then
     lp_activate
-    prompt_on
 fi
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

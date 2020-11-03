@@ -31,8 +31,8 @@ if test -n "${BASH_VERSION-}"; then
         return
     fi
 
-    _LP_SHELL_bash=true
-    _LP_SHELL_zsh=false
+    _LP_SHELL_bash=1
+    _LP_SHELL_zsh=0
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
 
@@ -59,8 +59,8 @@ if test -n "${BASH_VERSION-}"; then
         ret="${1//\\/\\\\}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
-    _LP_SHELL_bash=false
-    _LP_SHELL_zsh=true
+    _LP_SHELL_bash=0
+    _LP_SHELL_zsh=1
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
 
@@ -360,7 +360,7 @@ __lp_source_config() {
     if [[ -n "${LP_DISABLED_VCS_PATH-}" ]]; then
         echo "liquidprompt: LP_DISABLED_VCS_PATH is deprecated. Update your config to use LP_DISABLED_VCS_PATHS array." >&2
 
-        $_LP_SHELL_zsh && setopt local_options && setopt sh_word_split
+        (( _LP_SHELL_zsh )) && setopt local_options && setopt sh_word_split
         local path IFS=:
         for path in $LP_DISABLED_VCS_PATH; do
             LP_DISABLED_VCS_PATHS+=("$path")
@@ -388,7 +388,7 @@ __lp_source_config() {
 }
 
 lp_activate() {
-    if $_LP_SHELL_bash; then
+    if (( _LP_SHELL_bash )); then
         # Disable the DEBUG trap used by the RUNTIME feature
         # (in case we are reloading LP in the same shell after disabling
         # the feature in .liquidpromptrc)
@@ -507,7 +507,7 @@ lp_activate() {
         # Will never change
         lp_path=$LP_PATH_DEFAULT
 
-        if $_LP_SHELL_bash && [[ -n ${PROMPT_DIRTRIM-} ]]; then
+        if (( _LP_SHELL_bash )) && [[ -n ${PROMPT_DIRTRIM-} ]]; then
             __lp_path() {
                 __lp_set_dirtrim
             }
@@ -519,7 +519,7 @@ lp_activate() {
     _LP_RUNTIME_LAST_SECONDS=$SECONDS
 
     if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
-        if $_LP_SHELL_zsh; then
+        if (( _LP_SHELL_zsh )); then
             add-zsh-hook preexec __lp_runtime_before
             add-zsh-hook precmd  __lp_runtime_after
         else
@@ -1959,7 +1959,7 @@ _lp_runtime_format() {
     fi
 }
 
-if $_LP_SHELL_zsh; then
+if (( _LP_SHELL_zsh )); then
     __lp_runtime_before() {
       _LP_RUNTIME_LAST_SECONDS=$SECONDS
     }
@@ -2424,7 +2424,7 @@ prompt_on() {
     # if Liquid Prompt has not been already set
     if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
-        if $_LP_SHELL_bash; then
+        if (( _LP_SHELL_bash )); then
             LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
             _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
@@ -2447,7 +2447,7 @@ prompt_on() {
             done
         fi
     fi
-    if $_LP_SHELL_bash; then
+    if (( _LP_SHELL_bash )); then
         # Prevent some cases where the user shoots in his own foot.
         # PROMPT_COMMAND is not exported by default, but some users
         # incorrectly export it from their profile/bashrc (GitHub #450),
@@ -2484,7 +2484,7 @@ prompt_on() {
 # Come back to the old prompt
 prompt_off() {
     PS1=$LP_OLD_PS1
-    if $_LP_SHELL_bash; then
+    if (( _LP_SHELL_bash )); then
         eval "$_LP_OLD_SHOPT"
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
@@ -2497,7 +2497,7 @@ prompt_off() {
 # Use an empty prompt: just the \$ mark
 prompt_OFF() {
     PS1="$_LP_MARK_SYMBOL "
-    if $_LP_SHELL_bash; then
+    if (( _LP_SHELL_bash )); then
         shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh

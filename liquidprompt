@@ -969,6 +969,12 @@ _lp_vcs_details_color() {
     local branch
     if _lp_vcs_branch; then
         branch="$lp_vcs_branch"
+
+        if _lp_vcs_bookmark; then
+            branch+=": $lp_vcs_bookmark"
+        fi
+    elif _lp_vcs_bookmark; then
+        branch="$lp_vcs_bookmark"
     elif _lp_vcs_tag; then
         branch="tag: $lp_vcs_tag"
     else
@@ -1044,6 +1050,14 @@ _lp_vcs_active() {
 #         lp_vcs_branch; the name of the current branch.
 _lp_vcs_branch() {
     _lp_${lp_vcs_type}_branch 2>/dev/null
+}
+
+# Get the bookmark name of the repo in the current directory.
+# Most VCS providers don't support this.
+# return: true if a valid VCS bookmark is active.
+#         lp_vcs_bookmark; the name of the current bookmark.
+_lp_vcs_bookmark() {
+    _lp_${lp_vcs_type}_bookmark 2>/dev/null
 }
 
 # Get a tag name of the repo in the current directory. Note that not all VCS
@@ -1333,8 +1347,8 @@ _lp_hg_active() {
 
 # Get the branch name of the Mercurial repo in the current directory.
 # Note that Mercurial commits are always "on a branch", so checking out a
-# non-head commit will still return a branch name.
-# TODO: support bookmarks, maybe replace hg branch
+# non-head commit will still return a branch name. A closer analog to Git
+# branches are Mercurial bookmarks.
 # return: true if a valid Mercurial branch is checked out.
 #         lp_vcs_branch; the name of the current branch.
 _lp_hg_branch() {
@@ -1346,6 +1360,20 @@ _lp_hg_branch() {
         # This should never happen. Should this function return a branch name
         # only if the head of the branch is checked out? But there can be
         # multiple heads of a branch...
+        return 1
+    fi
+}
+
+# Get the bookmark name of the Mercurial repo in the current directory.
+# Mercurial bookmarks work more like Git branches.
+# return: true if a valid Mercurial bookmark is checked out.
+#         lp_vcs_bookmark; the name of the current bookmark.
+_lp_hg_bookmark() {
+    local bookmark ret
+    if bookmark="$(\hg bookmark --list --quiet . 2>/dev/null)"; then
+        __lp_escape "$bookmark"
+        lp_vcs_bookmark="$ret"
+    else
         return 1
     fi
 }

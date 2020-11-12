@@ -51,13 +51,6 @@ if test -n "${BASH_VERSION-}"; then
     # Sed expression using extended regexp to match terminal
     # escape sequences with their wrappers
     _LP_CLEAN_ESC='\\\[([^\]+|\\[^]])*\\\]'
-
-    # Escape the given strings
-    # Must be used for all strings injected in PS1 that may comes from remote sources,
-    # like $PWD, VCS branch names...
-    __lp_escape() {
-        ret="${1//\\/\\\\}"
-    }
 elif test -n "${ZSH_VERSION-}" ; then
     _LP_SHELL_bash=0
     _LP_SHELL_zsh=1
@@ -74,14 +67,9 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
-    _LP_BACKSLASH="\\"
+    _LP_BACKSLASH='\'
 
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
-
-    __lp_escape() {
-        local arg="${1//\\/\\\\}"
-        ret="${arg//\%/$_LP_PERCENT}"
-    }
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -626,6 +614,37 @@ __lp_is_function() {
     else
         [[ $(LC_ALL=C \type -w "$1") == *function ]]
     fi
+}
+
+_LP_ESCAPES=(
+    0   001 002 003 004 005 006 a
+    b   t   n   v   f   r   016 017
+    020 021 022 023 024 025 026 027
+    030 031 032 e   034 035 036 037
+)
+_LP_ESCAPES[127+_LP_FIRST_INDEX]=177
+
+# Escape the given strings
+# Must be used for all strings injected in PS1 that may comes from remote sources,
+# like $PWD, VCS branch names...
+__lp_escape() {
+    local string="${1-}"
+    # Replace with two backslashes to distinguish from escape codes.
+    # Each backslash is two backslashes if the shell needs it escaped.
+    string=${string//\\/$_LP_BACKSLASH$_LP_BACKSLASH}
+    # Replace with two percents if the shell needs it escaped.
+    string=${string//\%/$_LP_PERCENT}
+    local -i codepoint i
+    ret=
+    for (( i=0; i<${#string}; i++ )); do
+        # The ' literal in the string tells printf to convert to the integer codepoint of the character.
+        printf -v codepoint '%d' "'${string:$i:1}"
+        if (( codepoint < 32 || codepoint == 127 )); then
+            ret+=${_LP_BACKSLASH}${_LP_ESCAPES[codepoint+_LP_FIRST_INDEX]}
+        else
+            ret+=${string:$i:1}
+        fi
+    done
 }
 
 # Count the number of lines in the input string. A faster subsitute for 'wc -l'.

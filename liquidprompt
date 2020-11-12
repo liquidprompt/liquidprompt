@@ -392,7 +392,7 @@ lp_activate() {
         # Disable the DEBUG trap used by the RUNTIME feature
         # (in case we are reloading LP in the same shell after disabling
         # the feature in .liquidpromptrc)
-        [[ -n "${LP_ENABLE_RUNTIME-}" ]] && trap - DEBUG
+        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} )) && trap - DEBUG
     else # zsh
         # For ZSH, autoload required functions
         autoload -Uz add-zsh-hook
@@ -2015,12 +2015,6 @@ if (( _LP_SHELL_zsh )); then
     __lp_runtime_before() {
       _LP_RUNTIME_LAST_SECONDS=$SECONDS
     }
-    __lp_runtime_after() {
-        if [[ -n "$_LP_RUNTIME_LAST_SECONDS" ]]; then
-            (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
-            unset _LP_RUNTIME_LAST_SECONDS
-        fi
-    }
 else
     __lp_runtime_before() {
         # For debugging
@@ -2036,14 +2030,18 @@ else
         # time, so no elif is used
         if [[ "$BASH_COMMAND" == "${PROMPT_COMMAND-}" ]]; then
             _LP_AT_PROMPT=1
-            # Compute number of seconds since program was started
-            if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]] ; then
-                (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
-                unset _LP_RUNTIME_LAST_SECONDS
-            fi
+            __lp_runtime_after
         fi
     }
 fi
+
+# Compute number of seconds since the command was started
+__lp_runtime_after() {
+    if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]]; then
+        (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
+        unset _LP_RUNTIME_LAST_SECONDS
+    fi
+}
 
 _lp_runtime_color() {
     _lp_runtime_format || return "$?"
@@ -2479,7 +2477,7 @@ prompt_on() {
         else # zsh
             LP_OLD_PROMPT_COMMAND=""
             _LP_ZSH_PROMPT_THEME=""
-            if [[ -n "$prompt_theme" && "$prompt_theme" != off ]]; then
+            if [[ -n "${prompt_theme-}" && "$prompt_theme" != off ]]; then
                 _LP_ZSH_PROMPT_THEME="$prompt_theme"
                 # Disable the prompt to disable its precmd hook
                 prompt off
@@ -2512,7 +2510,7 @@ prompt_on() {
         PROMPT_COMMAND=__lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
-        [[ -n "$_LP_ZSH_HOOK" ]] && add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
+        [[ -n "${_LP_ZSH_HOOK-}" ]] && add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
         # Set options that affect PS1 evaluation
         # Disable parameter/command expansion; enable percent expansion
         setopt promptpercent nopromptbang nopromptsubst

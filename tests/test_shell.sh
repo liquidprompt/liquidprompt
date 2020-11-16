@@ -358,6 +358,8 @@ function test_printf {
   assertEquals "printf string" "test string" "$(printf 'test string')"
   assertEquals "printf string substitute" "test string" "$(printf %s 'test string')"
   assertEquals "printf literal escape" "\012" "$(printf %s '\012')"
+  assertEquals "printf ignored extra arguments" "abc" "$(printf %s 'a' 'b' 'c')"
+  assertEquals "printf ignored extra arguments" $'a\nb\nc' "$(printf '%s\n' 'a' 'b' 'c')"
 }
 
 function test_arithmetic_command {

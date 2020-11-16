@@ -357,6 +357,8 @@ lp_activate() {
         # (in case we are reloading LP in the same shell after disabling
         # the feature in .liquidpromptrc)
         (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} )) && trap - DEBUG
+
+        complete -F __lp_theme_bash_complete lp_theme
     else # zsh
         # For ZSH, autoload required functions
         autoload -Uz add-zsh-hook
@@ -368,6 +370,8 @@ lp_activate() {
             add-zsh-hook -d preexec __lp_runtime_before
             add-zsh-hook -d precmd  __lp_runtime_after
         } >/dev/null
+
+        autoload -Uz compinit && compinit && compdef __lp_theme_zsh_complete lp_theme
     fi
 
     # TermInfo feature detection
@@ -692,6 +696,48 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
     fi
 
     lp_terminal_format+=$_LP_CLOSE_ESC
+}
+
+# Get a list of themes currently loaded. Looks for functions matching
+# _lp_<theme>_theme_prompt().
+# return: lp_theme_list; an array of theme names
+__lp_theme_list() {
+    lp_theme_list=()
+
+    local -a _functions
+    if (( _LP_SHELL_zsh )); then
+        _functions=( "${(ko)functions[@]}" )
+    else
+        local IFS=$'\n'
+        _functions=( $(declare -F) )
+    fi
+
+    local function
+    for function in "${_functions[@]}"; do
+        if [[ $function == *_lp_*_theme_prompt ]]; then
+            function=${function#*_lp_}
+            lp_theme_list+=("${function%_theme_prompt}")
+        fi
+    done
+}
+
+__lp_theme_bash_complete() {
+    COMPREPLY=()
+    local -a lp_theme_list
+    local theme partial_theme=${2-}
+
+    __lp_theme_list
+
+    for theme in "${lp_theme_list[@]}"; do
+        [[ -n $partial_theme && $theme != "$partial_theme"* ]] && continue
+        COMPREPLY+=("$theme")
+    done
+}
+
+__lp_theme_zsh_complete() {
+    local -a lp_theme_list
+    __lp_theme_list
+    _describe 'theme' lp_theme_list
 }
 
 ##########################
@@ -2645,10 +2691,20 @@ prompt_OFF() {
 
 lp_theme() {
     local theme=${1-}
+
+    if [[ $theme == '--list' ]]; then
+        local -a lp_theme_list
+        __lp_theme_list
+        printf '%s\n' "${lp_theme_list[@]}"
+        return
+    fi
+
     local f_prompt="_lp_${theme}_theme_prompt" f_dir="_lp_${theme}_theme_directory" f_activate="_lp_${theme}_theme_activate"
 
     if [[ -z $theme ]]; then
-        printf 'Must pass in the name of a theme. If you meant the default Liquidprompt theme, try "default".\n' 2>&1
+        printf '%s\n%s\n' \
+            'Must pass in the name of a theme. If you meant the default Liquidprompt theme, try "default".' \
+            'Run "lp_theme --list" to see all loaded and available themes.' 2>&1
         return 1
     fi
 

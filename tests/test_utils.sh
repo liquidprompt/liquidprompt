@@ -41,6 +41,22 @@ function test_pwd_tilde {
   assertEquals "shorted home path" "~/a/test/path" "$lp_pwd_tilde"
 }
 
+function test_is_function {
+  function my_function { :; }
+
+  # Ignore errors, we just really need this to not be a function
+  unset -f not_my_function >/dev/null 2>&1 || true
+
+  assertTrue "failed to find valid function" '__lp_is_function my_function'
+  assertFalse "claimed to find non-existent function" '__lp_is_function not_my_function'
+
+  alias not_my_function=my_function
+  assertFalse "claimed alias was a function" '__lp_is_function not_my_function'
+
+  unset -f my_function
+  unalias not_my_function
+}
+
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit

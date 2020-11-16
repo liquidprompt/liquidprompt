@@ -595,6 +595,14 @@ _lp_color_map() {
     ret="${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
 }
 
+__lp_is_function() {
+    if (( _LP_SHELL_bash )); then
+        [[ $(LC_ALL=C \type -t "$1") == function ]]
+    else
+        [[ $(LC_ALL=C \type -w "$1") == *function ]]
+    fi
+}
+
 # Count the number of lines in the input string. A faster subsitute for 'wc -l'.
 # input: $1; a single string of input.
 # return: $count; the number of newline characters in the string.

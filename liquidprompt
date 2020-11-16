@@ -2183,10 +2183,24 @@ _lp_temperature_color() {
 _lp_title() {
     (( LP_ENABLE_TITLE )) || return 2
 
-    # Get the current computed prompt as pure text
-    printf '%s' "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
-    _lp_as_text "${1-}"
-    printf '%s' "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    # Get the input as pure text
+    _lp_generated_title=$(_lp_as_text "${1-}")
+}
+
+_lp_raw_title() {
+    (( LP_ENABLE_TITLE )) || return 2
+
+    _lp_generated_title=${1-}
+}
+
+lp_title() {
+    (( LP_ENABLE_TITLE )) || return 2
+
+    if [[ -n ${1+x} ]]; then
+        _lp_manual_title=$1
+    else
+        unset _lp_manual_title
+    fi
 }
 
 ###################
@@ -2398,12 +2412,8 @@ _lp_theme_prompt() {
         # add return code and prompt mark
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
-        # "invisible" parts
         # Get the current prompt on the fly and make it a title
-        LP_TITLE="$(_lp_title "$PS1")"
-
-        # Insert it in the prompt
-        PS1="${LP_TITLE}${PS1}"
+        _lp_title "$PS1"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
@@ -2450,6 +2460,10 @@ __lp_set_prompt() {
     fi
 
     _lp_theme_prompt
+
+    if (( LP_ENABLE_TITLE )); then
+        PS1="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}${PS1}"
+    fi
 }
 
 prompt_tag() {

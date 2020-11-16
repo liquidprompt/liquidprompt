@@ -1320,10 +1320,7 @@ _lp_git_head_status() {
 # return: true if any stashes are found.
 #         lp_vcs_stash_count; the number of stashes.
 _lp_git_stash_count() {
-    local stashes count
-    stashes="$(\git rev-parse --verify -q refs/stash 2>/dev/null; printf x)"
-    __lp_line_count "${stashes%x}"
-    lp_vcs_stash_count=$count
+    lp_vcs_stash_count="$(\git rev-list --walk-reflogs --count refs/stash 2>/dev/null)"
     (( lp_vcs_stash_count ))
 }
 

@@ -547,9 +547,14 @@ lp_activate() {
         __lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
     fi
 
-    _lp_theme_activate
-
-    prompt_on
+    if [[ -n ${_LP_THEME_ACTIVATE_FUNCTION-} ]]; then
+        # Reactivate current theme
+        "$_LP_THEME_ACTIVATE_FUNCTION"
+        prompt_on
+    else
+        # Set default theme if no theme set
+        lp_theme default
+    fi
 }
 
 #####################
@@ -2323,7 +2328,7 @@ _lp_analog_time_color() {
 # Default theme #
 #################
 
-_lp_theme_activate() {
+_lp_default_theme_activate() {
     # Default value for LP_PERM when LP_ENABLE_PERM is 0
     LP_PERM=${LP_MARK_PERM}   # without color
 
@@ -2379,7 +2384,7 @@ _lp_theme_activate() {
     fi
 }
 
-_lp_theme_directory() {
+_lp_default_theme_directory() {
     # LP_PERM: shows a ":"
     # - colored in green if user has write permission on the current dir
     # - colored in red if not
@@ -2395,7 +2400,7 @@ _lp_theme_directory() {
     LP_PWD="${LP_COLOR_PATH}${lp_path}${NO_COL}"
 }
 
-_lp_theme_prompt() {
+_lp_default_theme_prompt() {
     if (( lp_err != 0 )); then
         LP_ERR=" $LP_COLOR_ERR$lp_err$NO_COL"
     else
@@ -2524,7 +2529,7 @@ __lp_set_prompt() {
 
         __lp_path
 
-        _lp_theme_directory
+        "$_LP_THEME_DIRECTORY_FUNCTION"
 
         # Prefix with 'LP:' to prevent Zsh with AUTO_NAME_DIRS enabled using
         # this var as a name for the working directory, that will be used by
@@ -2533,7 +2538,7 @@ __lp_set_prompt() {
         LP_OLD_PWD="LP:$PWD"
     fi
 
-    _lp_theme_prompt
+    "$_LP_THEME_PROMPT_FUNCTION"
 
     if (( LP_ENABLE_TITLE )); then
         PS1="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}${PS1}"
@@ -2636,6 +2641,35 @@ prompt_OFF() {
         add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
         setopt promptpercent nopromptbang nopromptsubst
     fi
+}
+
+lp_theme() {
+    local theme=${1-}
+    local f_prompt="_lp_${theme}_theme_prompt" f_dir="_lp_${theme}_theme_directory" f_activate="_lp_${theme}_theme_activate"
+
+    if [[ -z $theme ]]; then
+        printf 'Must pass in the name of a theme. If you meant the default Liquidprompt theme, try "default".\n' 2>&1
+        return 1
+    fi
+
+    if ! __lp_is_function "$f_prompt"; then
+        printf 'Loading theme "%s" failed: cannot find function "%s". Please source the theme file first.\n' \
+            "$theme" "$f_prompt" 2>&1
+        return 2
+    fi
+    if ! __lp_is_function "$f_dir"; then
+        f_dir=":"
+    fi
+    if ! __lp_is_function "$f_activate"; then
+        f_activate=":"
+    fi
+
+    _LP_THEME_ACTIVATE_FUNCTION=$f_activate
+    _LP_THEME_DIRECTORY_FUNCTION=$f_dir
+    _LP_THEME_PROMPT_FUNCTION=$f_prompt
+
+    "$f_activate"
+    prompt_on
 }
 
 # By default, sourcing liquidprompt will activate Liquid Prompt

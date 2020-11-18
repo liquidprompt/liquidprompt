@@ -1,0 +1,163 @@
+
+_lp_powerline_theme_activate() {
+    # Load default markers if not already defined
+    POWERLINE_HARD_DIVIDER=${POWERLINE_HARD_DIVIDER:-""}    # U+E0B0
+    POWERLINE_SOFT_DIVIDER=${POWERLINE_SOFT_DIVIDER:-""}    # U+E0B1
+    POWERLINE_VCS_MARKER=${POWERLINE_VCS_MARKER:-""}        # U+E0A0
+    POWERLINE_SECURE_MARKER=${POWERLINE_SECURE_MARKER:-""}  # U+E0A2
+    POWERLINE_ROOT_MARKER=${POWERLINE_ROOT_MARKER:-"#"}
+    POWERLINE_STASH_MARKER=${POWERLINE_STASH_MARKER:-"ST"}
+
+    # Load default colors if not already defined
+    [[ -z ${POWERLINE_HOST_COLOR[@]+x}           ]] && POWERLINE_HOST_COLOR=(220 166 0 0 3 2)
+    [[ -z ${POWERLINE_USER_COLOR[@]+x}           ]] && POWERLINE_USER_COLOR=(231 31 1 0 7 6)
+    [[ -z ${POWERLINE_PYTHON_ENV_COLOR[@]+x}     ]] && POWERLINE_PYTHON_ENV_COLOR=(231 74 0 0 7 4)
+    [[ -z ${POWERLINE_PATH_COLOR[@]+x}           ]] && POWERLINE_PATH_COLOR=(250 240 0 0 7 0)
+    [[ -z ${POWERLINE_PATH_SEPARATOR_COLOR[@]+x} ]] && POWERLINE_PATH_SEPARATOR_COLOR=(245 240 0 0 7 0)
+    [[ -z ${POWERLINE_PATH_LAST_COLOR[@]+x}      ]] && POWERLINE_PATH_LAST_COLOR=(252 240 1 0 7 0)
+    [[ -z ${POWERLINE_JOBS_COLOR[@]+x}           ]] && POWERLINE_JOBS_COLOR=(220 166 0 0 3 2)
+    [[ -z ${POWERLINE_VCS_CLEAN_COLOR[@]+x}      ]] && POWERLINE_VCS_CLEAN_COLOR=(250 236 0 0 7 0)
+    [[ -z ${POWERLINE_VCS_DIRTY_COLOR[@]+x}      ]] && POWERLINE_VCS_DIRTY_COLOR=(220 236 0 0 3 0)
+    [[ -z ${POWERLINE_VCS_STASH_COLOR[@]+x}      ]] && POWERLINE_VCS_STASH_COLOR=(220 236 0 0 3 0)
+    [[ -z ${POWERLINE_ERROR_COLOR[@]+x}          ]] && POWERLINE_ERROR_COLOR=(231 52 0 0 7 1)
+
+    _LP_DISPLAY_HOST=1
+    # Which host symbol should we use?
+    if (( LP_HOSTNAME_ALWAYS != -1 )); then
+        local lp_connection
+        _lp_connection
+
+        if [[ $lp_connection == lcl ]] && (( LP_HOSTNAME_ALWAYS == 0 )); then
+            _LP_DISPLAY_HOST=0
+        else
+            if (( LP_ENABLE_FQDN )); then
+                _LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
+            fi
+
+            case "$lp_connection" in
+                ssh) _LP_HOST_ICON="${POWERLINE_SECURE_MARKER} "  ;;
+                su)  _LP_HOST_ICON="${POWERLINE_ROOT_MARKER} "  ;;
+                *)   _LP_HOST_ICON=""  ;;
+            esac
+        fi
+    else
+        _LP_DISPLAY_HOST=0
+    fi
+}
+
+_lp_powerline_theme_directory() {
+    # Not all terminals support Powerline special characters in the title
+    local title=${_LP_USER_SYMBOL}
+    if (( _LP_DISPLAY_HOST )); then
+        title+="@${_LP_HOST_SYMBOL}"
+    fi
+    title+=":${lp_path}"
+
+    _lp_raw_title "$title"
+}
+
+_lp_powerline_theme_prompt() {
+    local section_arrow lp_terminal_format _lp_last_af_color _lp_last_ab_color
+    PS1=''
+
+    if (( _LP_DISPLAY_HOST )); then
+        lp_terminal_format "${POWERLINE_HOST_COLOR[@]}"
+        __powerline_section_arrow "${POWERLINE_USER_COLOR[@]}"
+
+        PS1+="${lp_terminal_format} ${_LP_HOST_ICON}${_LP_HOST_SYMBOL} ${section_arrow}"
+    fi
+
+    lp_terminal_format "${POWERLINE_USER_COLOR[@]}"
+    PS1+="${lp_terminal_format} ${_LP_USER_SYMBOL} "
+
+    local lp_python_env
+    if _lp_python_env; then
+        __powerline_section_arrow "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+        lp_terminal_format "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+
+        PS1+="${section_arrow}${lp_terminal_format} (e) ${lp_python_env} "
+    fi
+
+    __powerline_section_arrow "${POWERLINE_PATH_COLOR[@]}"
+
+    lp_terminal_format "${POWERLINE_PATH_COLOR[@]}"
+    local path_format=$lp_terminal_format
+    lp_terminal_format "${POWERLINE_PATH_SEPARATOR_COLOR[@]}"
+    local separator_format=$lp_terminal_format
+    lp_terminal_format "${POWERLINE_PATH_LAST_COLOR[@]}"
+    local last_dir_format=$lp_terminal_format powerline_path
+
+    __powerline_path_split "$path_format" "$separator_format" "$last_dir_format"
+    PS1+=${section_arrow}${powerline_path}
+
+    local lp_running_jobs lp_stopped_jobs
+    if _lp_jobcount; then
+        __powerline_section_arrow "${POWERLINE_JOBS_COLOR[@]}"
+        lp_terminal_format "${POWERLINE_JOBS_COLOR[@]}"
+
+        PS1+="${section_arrow}${lp_terminal_format} $(( lp_running_jobs + lp_stopped_jobs )) "
+    fi
+
+    # TODO render on left side
+    local lp_vcs_type lp_vcs_root
+    if _lp_find_vcs; then
+        local lp_vcs_uncommitted_files lp_vcs_untracked_files
+        if _lp_vcs_uncommitted_files || _lp_vcs_untracked_files; then
+            __powerline_section_arrow "${POWERLINE_VCS_DIRTY_COLOR[@]}"
+            lp_terminal_format "${POWERLINE_VCS_DIRTY_COLOR[@]}"
+        else
+            __powerline_section_arrow "${POWERLINE_VCS_CLEAN_COLOR[@]}"
+            lp_terminal_format "${POWERLINE_VCS_CLEAN_COLOR[@]}"
+        fi
+
+        local lp_vcs_branch
+        _lp_vcs_branch
+        PS1+="${section_arrow}${lp_terminal_format} ${POWERLINE_VCS_MARKER} ${lp_vcs_branch} "
+
+        local lp_vcs_stash_count
+        if _lp_vcs_stash_count; then
+            lp_terminal_format "${POWERLINE_VCS_STASH_COLOR[@]}"
+
+            PS1+="${POWERLINE_SOFT_DIVIDER}${lp_terminal_format} ${POWERLINE_STASH_MARKER} ${lp_vcs_stash_count} "
+        fi
+    fi
+
+    if (( lp_err )); then
+        __powerline_section_arrow "${POWERLINE_ERROR_COLOR[@]}"
+        lp_terminal_format "${POWERLINE_ERROR_COLOR[@]}"
+        PS1+="${section_arrow}${lp_terminal_format} ${lp_err} "
+    fi
+
+    # Reset background for end of prompt
+    __powerline_section_arrow -1
+    lp_terminal_format -1
+    PS1+="${section_arrow}${lp_terminal_format} "
+}
+
+__powerline_section_arrow() {
+    local lp_terminal_format
+    lp_terminal_format -3 "${2-}" 0 0 -1 "${6-}"
+    section_arrow="${lp_terminal_format}${POWERLINE_HARD_DIVIDER}"
+}
+
+__powerline_path_split() {  # path_format, [separator_format], [last_dir_format]
+    local path_format=${1-} separator_format=${2:-${1-}} last_dir_format=${3:-${1-}}
+
+    local path_separator="${separator_format}${POWERLINE_SOFT_DIVIDER}"
+
+    local path_start=${lp_path%/*} path_end=${lp_path##*/}
+
+    if [[ $lp_path == '/' || $lp_path != *'/'* ]]; then
+        :  # If the path is only / or doesn't contain one (if the path is ~),
+           # no separators are needed.
+    elif [[ ${lp_path:0:1} == '/' ]]; then
+        # The replace would treat the leading / as a separator, and not show
+        # it at all. Powerline treats the leading / as a directory (as it is).
+        powerline_path="${path_format} /${path_start//\// ${path_separator} ${path_format}} ${path_separator}"
+    else
+        powerline_path="${path_format} ${path_start//\// ${path_separator} ${path_format}} ${path_separator}"
+    fi
+
+    # If path_end is empty, the path was only /
+    powerline_path+="${last_dir_format} ${path_end:-/} "
+}

@@ -868,11 +868,11 @@ _lp_chroot() {
 }
 
 _lp_multiplexer() {
-    if [[ "$TERM" == screen* ]]; then
-        lp_mulitplexer=screen
-        return 0
-    elif [[ -n ${TMUX-} ]]; then
+    if [[ -n ${TMUX-} ]]; then
         lp_mulitplexer=tmux
+        return 0
+    elif [[ "$TERM" == screen* ]]; then
+        lp_mulitplexer=screen
         return 0
     fi
     return 1

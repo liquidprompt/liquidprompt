@@ -164,6 +164,7 @@ prompt-building process:
 * `LP_ENABLE_SHORTEN_PATH`, if you want to shorten the path display
 * `LP_ENABLE_PROXY`, if you want to detect if a proxy is used
 * `LP_ENABLE_JOBS`, if you want to have jobs information
+* `LP_ENABLE_DETACHED_SESSIONS`, if you want to have detached sessions (screen, tmux) information
 * `LP_ENABLE_LOAD`, if you want to have load information
 * `LP_ENABLE_BATT`, if you want to have battery information
 * `LP_ENABLE_GIT`, if you want to have Git information

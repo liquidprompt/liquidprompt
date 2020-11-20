@@ -81,6 +81,10 @@ LP_ENABLE_PROXY=1
 # Recommended value is 1
 LP_ENABLE_JOBS=1
 
+# Enable the detached sessions feature.
+# Default value is 1
+LP_ENABLE_DETACHED_SESSIONS=1
+
 # Enable the load feature.
 # Recommended value is 1
 LP_ENABLE_LOAD=1

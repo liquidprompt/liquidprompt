@@ -204,6 +204,7 @@ __lp_source_config() {
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
     LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
+    LP_ENABLE_DETACHED_SESSIONS=${LP_ENABLE_DETACHED_SESSIONS:-1}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
@@ -448,8 +449,10 @@ lp_activate() {
 
     unset -f _lp_require_tool
 
-    command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
-    command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
+    if (( LP_ENABLE_DETACHED_SESSIONS )); then
+        command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
+        command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
+    fi
 
     # Use standard path symbols inside Midnight Commander
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
@@ -1038,10 +1041,13 @@ _lp_hostname_color() {
 # on the host
 # return: lp_detached_sessions; the number of detached sessions
 _lp_detached_sessions() {
+    (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
+
     local -i count=0
     (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
     lp_detached_sessions=$count
+
     (( lp_detached_sessions ))
 }
 
@@ -1050,6 +1056,8 @@ _lp_detached_sessions() {
 # return: lp_running_jobs; the number of running shell jobs
 #         lp_stopped_jobs; the number of stopped shell jobs
 _lp_jobcount() {
+    (( LP_ENABLE_JOBS )) || return 2
+
     local -i count
     # Count running jobs
     # The $(...) syntax strips trailing newlines, so add a character to the end
@@ -1071,20 +1079,21 @@ _lp_jobcount() {
 # - attached running jobs (started with $ myjob &)
 # - attached stopped jobs (suspended with Ctrl-Z)
 _lp_jobcount_color() {
-    (( LP_ENABLE_JOBS )) || return 2
+    (( LP_ENABLE_JOBS || LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
     lp_jobcount_color=
 
     _lp_detached_sessions && lp_jobcount_color="${LP_COLOR_JOB_D}${lp_detached_sessions}d${NO_COL}"
 
-    _lp_jobcount
-    if (( lp_running_jobs > 0 )); then
-        [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
-        lp_jobcount_color+="${LP_COLOR_JOB_R}${lp_running_jobs}&${NO_COL}"
-    fi
-    if (( lp_stopped_jobs > 0 )); then
-        [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
-        lp_jobcount_color+="${LP_COLOR_JOB_Z}${lp_stopped_jobs}z${NO_COL}"
+    if _lp_jobcount; then
+        if (( lp_running_jobs > 0 )); then
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            lp_jobcount_color+="${LP_COLOR_JOB_R}${lp_running_jobs}&${NO_COL}"
+        fi
+        if (( lp_stopped_jobs > 0 )); then
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            lp_jobcount_color+="${LP_COLOR_JOB_Z}${lp_stopped_jobs}z${NO_COL}"
+        fi
     fi
 
     [[ -n "$lp_jobcount_color" ]]

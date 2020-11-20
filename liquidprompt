@@ -1511,7 +1511,7 @@ if (( LP_ENABLE_TEMP )); then
         # Only the integer part is retained
         local -i i
         local IFS=$' \t\n'
-        for i in $(sensors -u |
+        for i in $(sensors -u 2>/dev/null |
                 sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
             (( $i > ${temperature:-0} )) && temperature=i
         done

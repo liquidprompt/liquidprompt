@@ -21,35 +21,28 @@ _lp_powerline_theme_activate() {
     [[ -z ${POWERLINE_VCS_STASH_COLOR[@]+x}      ]] && POWERLINE_VCS_STASH_COLOR=(220 236 0 0 3 0)
     [[ -z ${POWERLINE_ERROR_COLOR[@]+x}          ]] && POWERLINE_ERROR_COLOR=(231 52 0 0 7 1)
 
-    _LP_DISPLAY_HOST=1
-    # Which host symbol should we use?
-    if (( LP_HOSTNAME_ALWAYS != -1 )); then
-        local lp_connection
-        _lp_connection
+    __powerline_hostname_generate
+}
 
-        if [[ $lp_connection == lcl ]] && (( LP_HOSTNAME_ALWAYS == 0 )); then
-            _LP_DISPLAY_HOST=0
-        else
-            if (( LP_ENABLE_FQDN )); then
-                _LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
-            fi
+__powerline_hostname_generate() {
+    _POWERLINE_HOSTNAME=
+    local lp_hostname lp_connection
+    if _lp_hostname; then
+        _POWERLINE_HOSTNAME=${lp_hostname}
 
-            case "$lp_connection" in
-                ssh) _LP_HOST_ICON="${POWERLINE_SECURE_MARKER} "  ;;
-                su)  _LP_HOST_ICON="${POWERLINE_ROOT_MARKER} "  ;;
-                *)   _LP_HOST_ICON=""  ;;
-            esac
-        fi
-    else
-        _LP_DISPLAY_HOST=0
+        case "$lp_connection" in
+            ssh) _POWERLINE_HOST_ICON="${POWERLINE_SECURE_MARKER} "  ;;
+            su)  _POWERLINE_HOST_ICON="${POWERLINE_ROOT_MARKER} "  ;;
+            *)   _POWERLINE_HOST_ICON=""  ;;
+        esac
     fi
 }
 
 _lp_powerline_theme_directory() {
     # Not all terminals support Powerline special characters in the title
     local title=${_LP_USER_SYMBOL}
-    if (( _LP_DISPLAY_HOST )); then
-        title+="@${_LP_HOST_SYMBOL}"
+    if [[ -n $_POWERLINE_HOSTNAME ]]; then
+        title+="@${_POWERLINE_HOSTNAME}"
     fi
     title+=":${lp_path}"
 
@@ -60,11 +53,11 @@ _lp_powerline_theme_prompt() {
     local section_arrow lp_terminal_format _lp_last_af_color _lp_last_ab_color
     PS1=''
 
-    if (( _LP_DISPLAY_HOST )); then
+    if [[ -n $_POWERLINE_HOSTNAME ]]; then
         lp_terminal_format "${POWERLINE_HOST_COLOR[@]}"
         __powerline_section_arrow "${POWERLINE_USER_COLOR[@]}"
 
-        PS1+="${lp_terminal_format} ${_LP_HOST_ICON}${_LP_HOST_SYMBOL} ${section_arrow}"
+        PS1+="${lp_terminal_format} ${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME} ${section_arrow}"
     fi
 
     lp_terminal_format "${POWERLINE_USER_COLOR[@]}"

@@ -961,12 +961,7 @@ _lp_sudo_active_color() {
     fi
 }
 
-# Put the hostname if not locally connected
-# color it in cyan within SSH, and a warning red if within telnet
-# else display the host without color
-_lp_hostname_color() {
-    lp_hostname_color=
-
+_lp_hostname() {
     # Only process hostname elements if we haven't turned them off
     if (( LP_HOSTNAME_ALWAYS != -1 )); then
 
@@ -977,40 +972,61 @@ _lp_hostname_color() {
             LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
         fi
 
-        if _lp_connected_display; then
-            lp_hostname_color="${LP_COLOR_X11_ON}"
-        else
-            lp_hostname_color="${LP_COLOR_X11_OFF}"
-        fi
-
-        if _lp_chroot; then
-            lp_hostname_color+="(${lp_chroot})"
-        fi
+        lp_hostname=${LP_HOST_SYMBOL}
 
         _lp_connection
+        if [[ $lp_connection == lcl ]] && ! (( LP_HOSTNAME_ALWAYS )); then
+            # no hostname if local
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+
+# Put the hostname if not locally connected
+# color it in cyan within SSH, and a warning red if within telnet
+# else display the host without color
+_lp_hostname_color() {
+    if _lp_connected_display; then
+        lp_hostname_color="${LP_COLOR_X11_ON}"
+    else
+        lp_hostname_color="${LP_COLOR_X11_OFF}"
+    fi
+
+    if _lp_chroot; then
+        lp_hostname_color+="(${lp_chroot})"
+    fi
+
+    if _lp_hostname; then
         case "$lp_connection" in
         lcl)
-            if (( LP_HOSTNAME_ALWAYS )); then
-                lp_hostname_color+="@${LP_COLOR_HOST}${LP_HOST_SYMBOL}${NO_COL}"
-            else
-                lp_hostname_color+="$NO_COL" # no hostname if local
-            fi
+            lp_hostname_color+="@${LP_COLOR_HOST}${lp_hostname}${NO_COL}"
             ;;
         ssh)
             # If we want a different color for each host
             (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-            lp_hostname_color+="@${LP_COLOR_SSH}${LP_HOST_SYMBOL}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_SSH}${lp_hostname}${NO_COL}"
             ;;
         su)
-            lp_hostname_color+="@${LP_COLOR_SU}${LP_HOST_SYMBOL}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_SU}${lp_hostname}${NO_COL}"
             ;;
         tel)
-            lp_hostname_color+="@${LP_COLOR_TELNET}${LP_HOST_SYMBOL}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_TELNET}${lp_hostname}${NO_COL}"
             ;;
         *)
-            lp_hostname_color+="@${NO_COL}${LP_HOST_SYMBOL}" # defaults to no color
+            lp_hostname_color+="@${NO_COL}${lp_hostname}" # defaults to no color
             ;;
         esac
+    else
+        if [[ -n $lp_chroot ]]; then
+            # End the color of the chroot
+            lp_hostname_color+=${NO_COL}
+        else
+            # Nothing to display
+            lp_hostname_color=""
+            return 1
+        fi
     fi
 }
 

@@ -2366,6 +2366,8 @@ lp_title() {
 _LP_CLOCK=(🕐 🕜 🕑 🕝 🕒 🕞 🕓 🕟 🕔 🕠 🕕 🕡 🕖 🕢 🕗 🕣 🕘 🕤 🕙 🕥 🕚 🕦 🕛 🕧 )
 
 _lp_analog_time() {
+    (( LP_ENABLE_TIME && LP_TIME_ANALOG )) || return 2
+
     # %I: "00".."12"  %M: "00".."59"
     # hh:  1..12  mm: 0..59
     local hh mm
@@ -2389,10 +2391,21 @@ _lp_analog_time() {
 }
 
 _lp_analog_time_color() {
-    (( LP_ENABLE_TIME && LP_TIME_ANALOG )) || return 2
+    _lp_analog_time || return "$?"
 
-    _lp_analog_time
     lp_analog_time_color="${LP_COLOR_TIME}${lp_analog_time}${NO_COL}"
+}
+
+_lp_time() {
+    (( LP_ENABLE_TIME && ! LP_TIME_ANALOG )) || return 2
+
+    lp_time=${_LP_TIME_SYMBOL}
+}
+
+_lp_time_color() {
+    _lp_time || return "$?"
+
+    lp_time_color="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
 }
 
 #################
@@ -2446,10 +2459,8 @@ _lp_default_theme_activate() {
     # during the shell's life
     LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
 
-    if (( LP_ENABLE_TIME )); then
-        if (( ! LP_TIME_ANALOG )); then
-            LP_TIME="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL} "
-        fi
+    if _lp_time_color; then
+        LP_TIME="${lp_time_color} "
     else
         LP_TIME=
     fi

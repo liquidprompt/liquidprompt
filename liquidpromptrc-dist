@@ -56,11 +56,11 @@ LP_HOSTNAME_ALWAYS=0
 # the hostname is displayed
 LP_ENABLE_FQDN=0
 
-# Always display the user name, even if the user is the same as the one logged
-# in.
-# Defaults to 1 (always display the user name)
-# set to 0 if you want to hide the logged user (it will always display different
-# users)
+# When to display the user name:
+# 1: always display the user name
+# 0: hide the logged user (always display different users)
+# -1: never display the user name
+# Default value is 1
 LP_USER_ALWAYS=1
 
 # Display the percentages of load/batteries along with their

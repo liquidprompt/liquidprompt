@@ -22,6 +22,7 @@ _lp_powerline_theme_activate() {
     [[ -z ${POWERLINE_ERROR_COLOR[@]+x}          ]] && POWERLINE_ERROR_COLOR=(231 52 0 0 7 1)
 
     __powerline_hostname_generate
+    __powerline_username_generate
 }
 
 __powerline_hostname_generate() {
@@ -38,13 +39,26 @@ __powerline_hostname_generate() {
     fi
 }
 
+__powerline_username_generate() {
+    _POWERLINE_USERNAME=
+    local lp_username
+    if _lp_username; then
+        _POWERLINE_USERNAME=${lp_username}
+    fi
+}
+
 _lp_powerline_theme_directory() {
     # Not all terminals support Powerline special characters in the title
-    local title=${_LP_USER_SYMBOL}
+    local title=
+    if [[ -n $_POWERLINE_USERNAME ]]; then
+        title+=${_POWERLINE_USERNAME}
+    fi
     if [[ -n $_POWERLINE_HOSTNAME ]]; then
         title+="@${_POWERLINE_HOSTNAME}"
     fi
-    title+=":${lp_path}"
+
+    [[ -n $title ]] && title+=":"
+    title+="${lp_path}"
 
     _lp_raw_title "$title"
 }
@@ -55,13 +69,19 @@ _lp_powerline_theme_prompt() {
 
     if [[ -n $_POWERLINE_HOSTNAME ]]; then
         lp_terminal_format "${POWERLINE_HOST_COLOR[@]}"
-        __powerline_section_arrow "${POWERLINE_USER_COLOR[@]}"
 
-        PS1+="${lp_terminal_format} ${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME} ${section_arrow}"
+        PS1+="${lp_terminal_format} ${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME} "
+
+        if [[ -n $_POWERLINE_USERNAME ]]; then
+            __powerline_section_arrow "${POWERLINE_USER_COLOR[@]}"
+            PS1+="${section_arrow}"
+        fi
     fi
 
-    lp_terminal_format "${POWERLINE_USER_COLOR[@]}"
-    PS1+="${lp_terminal_format} ${_LP_USER_SYMBOL} "
+    if [[ -n $_POWERLINE_USERNAME ]]; then
+        lp_terminal_format "${POWERLINE_USER_COLOR[@]}"
+        PS1+="${lp_terminal_format} ${_POWERLINE_USERNAME} "
+    fi
 
     local lp_python_env
     if _lp_python_env; then

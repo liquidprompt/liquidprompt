@@ -936,13 +936,28 @@ _lp_software_collections_color() {
 # return: 0 if login user, 1 if not, 2 if root
 _lp_user() {
     if (( EUID == 0 )); then
-        # if user is root
+        # user is root
         return 2
     elif [[ "${USER}" != "$(logname 2>/dev/null || printf '%s' "${LOGNAME-}")" ]]; then
-        # if user is not login user
+        # user is not login user
         return 1
     else
         return 0
+    fi
+}
+
+# Return the username (if we should display one).
+_lp_username() {
+    if (( LP_USER_ALWAYS == -1 )); then
+        # No username ever
+        lp_username=''
+        return 2
+    elif (( LP_USER_ALWAYS )) || ! _lp_user; then
+        lp_username=${_LP_USER_SYMBOL}
+        return 0
+    else
+        lp_username=''
+        return 1
     fi
 }
 
@@ -2417,23 +2432,26 @@ _lp_default_theme_activate() {
     LP_PERM=${LP_MARK_PERM}   # without color
 
     _lp_user
-    local -i user=$?
+    local -i user_type=$?
 
-    # Yellow for root, bold if the user is not the login one, else no color.
-    if (( user < 2 )); then  # if user is not root
-        # if user is not login user
-        if (( user == 1 )); then
-            LP_USER="${LP_COLOR_USER_ALT}${_LP_USER_SYMBOL}${NO_COL}"
-        elif (( LP_USER_ALWAYS )); then
-            LP_USER="${LP_COLOR_USER_LOGGED}${_LP_USER_SYMBOL}${NO_COL}"
+    if _lp_username; then
+        # Yellow for root, bold if the user is not the login one, else no color.
+        if (( user_type == 2 )); then
+            LP_USER="${LP_COLOR_USER_ROOT}${lp_username}${NO_COL}"
+        elif (( user_type == 1 )); then
+            LP_USER="${LP_COLOR_USER_ALT}${lp_username}${NO_COL}"
         else
-            LP_USER=
+            LP_USER="${LP_COLOR_USER_LOGGED}${lp_username}${NO_COL}"
         fi
+    else
+        LP_USER=
+    fi
+
+    if (( user_type < 2 )); then  # if user is not root
         if (( LP_ENABLE_SUDO )); then
             LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
         fi
     else # root!
-        LP_USER="${LP_COLOR_USER_ROOT}${_LP_USER_SYMBOL}${NO_COL}"
         LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
         LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
         if (( ! LP_ENABLE_VCS_ROOT )); then

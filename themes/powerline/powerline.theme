@@ -7,7 +7,8 @@ _lp_powerline_theme_activate() {
     POWERLINE_SECURE_MARKER=${POWERLINE_SECURE_MARKER:-""}  # U+E0A2
     POWERLINE_ROOT_MARKER=${POWERLINE_ROOT_MARKER:-"#"}
     POWERLINE_STASH_MARKER=${POWERLINE_STASH_MARKER:-"ST"}
-    POWERLINE_SPACER=${POWERLINE_SPACER:-" "}
+    POWERLINE_PYTHON_ENV_MARKER=${POWERLINE_PYTHON_ENV_MARKER:-"(e) "}
+    POWERLINE_SPACER=${POWERLINE_SPACER:-" "}                # U+00A0  non-breaking space
 
     # Load default colors if not already defined
     [[ -z ${POWERLINE_HOST_COLOR[@]+x}           ]] && POWERLINE_HOST_COLOR=(220 166 0 0 3 2)
@@ -112,6 +113,113 @@ _lp_powerline_theme_prompt() {
     PS1=${powerline_sections}
 }
 
+_lp_powerline_full_theme_activate() {
+    _lp_powerline_theme_activate
+
+    # Load default markers if not already defined
+    POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
+    POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
+    POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
+
+    # Load default colors if not already defined
+    [[ -z ${POWERLINE_BATTERY_COLOR[@]+x}              ]] && POWERLINE_BATTERY_COLOR=(-1 238 0 0 -1 0)
+    [[ -z ${POWERLINE_CHROOT_COLOR[@]+x}               ]] && POWERLINE_CHROOT_COLOR=(219 30 0 0 7 4)
+    [[ -z ${POWERLINE_LOAD_COLOR[@]+x}                 ]] && POWERLINE_LOAD_COLOR=(-1 148 0 0 -1 3)
+    [[ -z ${POWERLINE_NEUTRAL_COLOR[@]+x}              ]] && POWERLINE_NEUTRAL_COLOR=(252 234 0 0 7 0)
+    [[ -z ${POWERLINE_PROXY_COLOR[@]+x}                ]] && POWERLINE_PROXY_COLOR=(21 219 1 0 4 7)
+    [[ -z ${POWERLINE_RUNTIME_COLOR[@]+x}              ]] && POWERLINE_RUNTIME_COLOR=(226 17 0 0 3 4)
+    [[ -z ${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]+x} ]] && POWERLINE_SOFTWARE_COLLECTIONS_COLOR=(231 62 0 0 7 5)
+    [[ -z ${POWERLINE_TEMPERATURE_COLOR[@]+x}          ]] && POWERLINE_TEMPERATURE_COLOR=(-1 240 0 0 -1 0)
+    [[ -z ${POWERLINE_TIME_COLOR[@]+x}                 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
+}
+
+_lp_powerline_full_theme_directory() {
+    _lp_powerline_theme_directory
+}
+
+_lp_powerline_full_theme_prompt() {
+    local powerline_sections first_section _lp_last_af_color _lp_last_ab_color
+
+    __powerline_section "$LP_PS1_PREFIX" "${POWERLINE_NEUTRAL_COLOR[@]}"
+
+    local lp_time lp_analog_time
+    if _lp_time; then
+        __powerline_section "$lp_time" "${POWERLINE_TIME_COLOR[@]}"
+    elif _lp_analog_time; then
+        __powerline_section "$lp_analog_time" "${POWERLINE_TIME_COLOR[@]}"
+    fi
+
+    __powerline_battery_section
+
+    local lp_load_color
+    if _lp_load_color; then
+        __powerline_formatted_section "$lp_load_color" "${POWERLINE_LOAD_COLOR[@]}"
+    fi
+
+    local lp_temperature_color
+    if _lp_temperature_color; then
+        __powerline_formatted_section "$lp_temperature_color" "${POWERLINE_TEMPERATURE_COLOR[@]}"
+    fi
+
+    local lp_detached_sessions lp_running_jobs lp_stopped_jobs jobs_string=
+    if _lp_detached_sessions; then
+        jobs_string="${lp_detached_sessions}d"
+    fi
+    if _lp_jobcount; then
+        if (( lp_running_jobs > 0 )); then
+            [[ -n $jobs_string ]] && jobs_string+='/'
+            jobs_string+="${lp_running_jobs}&"
+        fi
+        if (( lp_stopped_jobs > 0 )); then
+            [[ -n $jobs_string ]] && jobs_string+='/'
+            jobs_string+="${lp_stopped_jobs}z"
+        fi
+    fi
+    __powerline_section "$jobs_string" "${POWERLINE_JOBS_COLOR[@]}"
+
+    __powerline_section "$_POWERLINE_USERNAME" "${POWERLINE_USER_COLOR[@]}"
+
+    __powerline_section "${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME}" "${POWERLINE_HOST_COLOR[@]}"
+
+    __powerline_path_section
+
+    local lp_chroot
+    if _lp_chroot; then
+        __powerline_section "${POWERLINE_CHROOT_MARKER}${lp_chroot}" "${POWERLINE_CHROOT_COLOR[@]}"
+    fi
+
+    local lp_software_collections
+    if _lp_software_collections; then
+        __powerline_section "${POWERLINE_SOFTWARE_COLLECTION_MARKER}${lp_software_collections}" "${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]}"
+    fi
+
+    local lp_python_env
+    if _lp_python_env; then
+        __powerline_section "${POWERLINE_PYTHON_ENV_MARKER}${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+    fi
+
+    local lp_http_proxy
+    if _lp_http_proxy; then
+        __powerline_section "${POWERLINE_PROXY_MARKER}${lp_http_proxy}" "${POWERLINE_PROXY_COLOR[@]}"
+    fi
+
+    __powerline_vcs_section
+
+    if _lp_runtime_format; then
+        __powerline_section "${lp_runtime_format}" "${POWERLINE_RUNTIME_COLOR[@]}"
+    fi
+
+    if _lp_error; then
+        __powerline_section "${lp_error}" "${POWERLINE_ERROR_COLOR[@]}"
+    fi
+
+    __powerline_section "$LP_PS1_POSTFIX" "${POWERLINE_NEUTRAL_COLOR[@]}"
+
+    __powerline_end_terminator
+
+    PS1=$powerline_sections
+}
+
 __powerline_section() {  # string, (color array)
     local section_arrow lp_terminal_format string=${1-}
     shift
@@ -122,6 +230,19 @@ __powerline_section() {  # string, (color array)
     lp_terminal_format "$@"
 
     powerline_sections+="${section_arrow}${lp_terminal_format}${POWERLINE_SPACER}${string}${POWERLINE_SPACER}"
+}
+
+# Same as __powerline_section(), but it resets formatting after the input string
+__powerline_formatted_section() {
+    local section_arrow lp_terminal_format string=${1-}
+    shift
+
+    [[ -z $string ]] && return 1
+
+    __powerline_section_arrow "$@"
+    lp_terminal_format "$@"
+
+    powerline_sections+="${section_arrow}${lp_terminal_format}${POWERLINE_SPACER}${string}${lp_terminal_format}${POWERLINE_SPACER}"
 }
 
 # Reset background for end of prompt
@@ -188,3 +309,27 @@ __powerline_path_section() {
     __powerline_path_split
     powerline_sections+=${section_arrow}${powerline_path}
 }
+
+# Is this a dirty hack? Yes. Am I proud of it? Also yes.
+__powerline_battery_section() {
+    local lp_battery_color NO_COL=''
+    if _lp_battery_color; then
+        __powerline_formatted_section "$lp_battery_color" "${POWERLINE_BATTERY_COLOR[@]}"
+    fi
+}
+
+__powerline_vcs_section() {
+    local lp_vcs_type lp_vcs_root
+    if _lp_find_vcs; then
+        local section_arrow lp_terminal_format
+
+        __powerline_section_arrow "${POWERLINE_VCS_CLEAN_COLOR[@]}"
+        lp_terminal_format "${POWERLINE_VCS_CLEAN_COLOR[@]}"
+
+        local lp_vcs_details_color NO_COL=$lp_terminal_format
+        _lp_vcs_details_color
+
+        powerline_sections+="${section_arrow}${lp_terminal_format}${POWERLINE_SPACER}${lp_vcs_details_color}${POWERLINE_SPACER}"
+    fi
+}
+

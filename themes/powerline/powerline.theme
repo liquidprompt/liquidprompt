@@ -103,8 +103,8 @@ _lp_powerline_theme_prompt() {
         fi
     fi
 
-    if (( lp_err )); then
-        __powerline_section "${lp_err}" "${POWERLINE_ERROR_COLOR[@]}"
+    if _lp_error; then
+        __powerline_section "${lp_error}" "${POWERLINE_ERROR_COLOR[@]}"
     fi
 
     __powerline_end_terminator

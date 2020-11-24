@@ -181,6 +181,7 @@ prompt-building process:
 * `LP_ENABLE_SUDO`, if you want the prompt mark to change color while you have password-less root access
 * `LP_ENABLE_FQDN`, if you want the display of the fully qualified domain name
 * `LP_ENABLE_TIME`, if you want to display the time at which the prompt was shown
+* `LP_ENABLE_ERROR`, if you want to display the error code of the last command (if not 0)
 * `LP_TIME_ANALOG`, if you want to show the time using an analog clock instead of numeric values
 
 Note that if required commands are not installed, enabling the corresponding

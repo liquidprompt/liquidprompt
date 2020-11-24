@@ -226,6 +226,7 @@ __lp_source_config() {
     LP_DISABLED_VCS_PATHS=("${LP_DISABLED_VCS_PATHS[@]-}")
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
+    LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -878,6 +879,18 @@ _lp_chroot() {
         [[ -n "$lp_chroot" ]] && return 0
     fi
     return 1
+}
+
+_lp_error() {
+    (( LP_ENABLE_ERROR )) || return 2
+
+    (( lp_error != 0 ))
+}
+
+_lp_error_color() {
+    _lp_error || return "$?"
+
+    lp_error_color="${LP_COLOR_ERR}${lp_error}${NO_COL}"
 }
 
 _lp_multiplexer() {
@@ -2508,12 +2521,6 @@ _lp_default_theme_directory() {
 }
 
 _lp_default_theme_prompt() {
-    if (( lp_err != 0 )); then
-        LP_ERR=" $LP_COLOR_ERR$lp_err$NO_COL"
-    else
-        LP_ERR=
-    fi
-
     # left of main prompt: space at right
     if _lp_jobcount_color; then
         LP_JOBS="$lp_jobcount_color "
@@ -2569,6 +2576,12 @@ _lp_default_theme_prompt() {
         LP_RUNTIME=
     fi
 
+    if _lp_error_color; then
+        LP_ERR=" $lp_error_color"
+    else
+        LP_ERR=
+    fi
+
     if _lp_find_vcs && _lp_vcs_details_color; then
         LP_VCS=" $lp_vcs_details_color"
     else
@@ -2617,7 +2630,7 @@ _lp_default_theme_prompt() {
 __lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
-    local -i lp_err=$?
+    local -i lp_error=$?
 
     #TODO: unused?
     local GREP_OPTIONS=

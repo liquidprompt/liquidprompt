@@ -176,6 +176,9 @@ LP_ENABLE_SCREEN_TITLE=0
 # Use different colors for the different hosts you SSH to
 LP_ENABLE_SSH_COLORS=0
 
+# Show the error code of the last command if it was not 0
+LP_ENABLE_ERROR=1
+
 # Specify an array of absolute paths in which all vcs will be disabled.
 # Ex: ("/root" "/home/me/large-remove-svn-repo")
 LP_DISABLED_VCS_PATHS=()

@@ -99,6 +99,13 @@ else
     return
 fi
 
+# Count the number of lines in the input string. A faster subsitute for 'wc -l'.
+# input: $1; a single string of input.
+# return: $count; the number of newline characters in the string.
+__lp_line_count() {
+  local var="${1//[!$'\n']}"
+  count=${#var}
+}
 
 # Store $2 (or $?) as a true/false value in variable named $1
 # $? is propagated

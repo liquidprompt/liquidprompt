@@ -302,6 +302,9 @@ __lp_source_config() {
     # Debugging flags
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
 
+    if [[ ${1-} == --no-config ]]; then
+        return
+    fi
 
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
@@ -422,7 +425,7 @@ lp_activate() {
     # If tput doesn't exist or lookup failed, still try to send bell
     _LP_TI_BELL=${_LP_TI_BELL:-$'\a'}
 
-    __lp_source_config
+    __lp_source_config "$@"
 
     # Disable feature if the tool is not installed
     _lp_require_tool()

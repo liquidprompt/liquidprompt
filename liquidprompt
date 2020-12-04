@@ -497,11 +497,21 @@ lp_activate() {
             && LC_MESSAGES=C sudo -V | GREP_OPTIONS= \grep -qE '^Sudo version (1(\.([789]\.|[1-9][0-9])|[0-9])|[2-9])' \
             || LP_ENABLE_SUDO=0
         fi
+
+        if (( user == 1 )); then
+            LP_COLOR_USER=$LP_COLOR_USER_ALT
+        else
+            LP_COLOR_USER=$LP_COLOR_USER_LOGGED
+        fi
     else # root!
         LP_ENABLE_SUDO=0
         if (( ! LP_ENABLE_VCS_ROOT )); then
             LP_DISABLED_VCS_PATHS=("/")
         fi
+
+        LP_COLOR_MARK=$LP_COLOR_MARK_ROOT
+        LP_COLOR_PATH=$LP_COLOR_PATH_ROOT
+        LP_COLOR_USER=$LP_COLOR_USER_ROOT
     fi
 
     #################
@@ -962,20 +972,9 @@ _lp_username() {
 }
 
 _lp_username_color() {
-    lp_username_color=
     _lp_username || return "$?"
 
-    _lp_user
-    local -i user_type=$?
-
-    # Yellow for root, bold if the user is not the login one, else no color.
-    if (( user_type == 2 )); then
-        lp_username_color="${LP_COLOR_USER_ROOT}${lp_username}${NO_COL}"
-    elif (( user_type == 1 )); then
-        lp_username_color="${LP_COLOR_USER_ALT}${lp_username}${NO_COL}"
-    else
-        lp_username_color="${LP_COLOR_USER_LOGGED}${lp_username}${NO_COL}"
-    fi
+    lp_username_color="${LP_COLOR_USER}${lp_username}${NO_COL}"
 }
 
 # Test the code with the commands:
@@ -2456,8 +2455,6 @@ _lp_default_theme_activate() {
             LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
         fi
     else # root!
-        LP_COLOR_MARK="${LP_COLOR_MARK_ROOT}"
-        LP_COLOR_PATH="${LP_COLOR_PATH_ROOT}"
         if (( ! LP_ENABLE_VCS_ROOT )); then
             LP_MARK_DISABLED="$LP_MARK_DEFAULT"
         fi
@@ -2465,8 +2462,11 @@ _lp_default_theme_activate() {
 
     # The user or connection type is not expected to change from inside the
     # shell, so we build this just once.
-    _lp_username_color
-    LP_USER="$lp_username_color"
+    if _lp_username_color; then
+        LP_USER="$lp_username_color"
+    else
+        LP_USER=
+    fi
 
     _lp_hostname_color
     LP_HOST="$lp_hostname_color"

@@ -1026,7 +1026,7 @@ _lp_hostname() {
             return 1
         fi
     else
-        return 1
+        return 2
     fi
 }
 

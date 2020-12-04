@@ -961,6 +961,23 @@ _lp_username() {
     fi
 }
 
+_lp_username_color() {
+    lp_username_color=
+    _lp_username || return "$?"
+
+    _lp_user
+    local -i user_type=$?
+
+    # Yellow for root, bold if the user is not the login one, else no color.
+    if (( user_type == 2 )); then
+        lp_username_color="${LP_COLOR_USER_ROOT}${lp_username}${NO_COL}"
+    elif (( user_type == 1 )); then
+        lp_username_color="${LP_COLOR_USER_ALT}${lp_username}${NO_COL}"
+    else
+        lp_username_color="${LP_COLOR_USER_LOGGED}${lp_username}${NO_COL}"
+    fi
+}
+
 # Test the code with the commands:
 #   sudo id   # sudo, enter your credentials
 #   sudo -K   # revoke your credentials
@@ -2434,19 +2451,6 @@ _lp_default_theme_activate() {
     _lp_user
     local -i user_type=$?
 
-    if _lp_username; then
-        # Yellow for root, bold if the user is not the login one, else no color.
-        if (( user_type == 2 )); then
-            LP_USER="${LP_COLOR_USER_ROOT}${lp_username}${NO_COL}"
-        elif (( user_type == 1 )); then
-            LP_USER="${LP_COLOR_USER_ALT}${lp_username}${NO_COL}"
-        else
-            LP_USER="${LP_COLOR_USER_LOGGED}${lp_username}${NO_COL}"
-        fi
-    else
-        LP_USER=
-    fi
-
     if (( user_type < 2 )); then  # if user is not root
         if (( LP_ENABLE_SUDO )); then
             LP_COLOR_MARK_NO_SUDO="$LP_COLOR_MARK"
@@ -2459,8 +2463,11 @@ _lp_default_theme_activate() {
         fi
     fi
 
-    # The connection is not expected to change from inside the shell, so we
-    # build this just once
+    # The user or connection type is not expected to change from inside the
+    # shell, so we build this just once.
+    _lp_username_color
+    LP_USER="$lp_username_color"
+
     _lp_hostname_color
     LP_HOST="$lp_hostname_color"
 

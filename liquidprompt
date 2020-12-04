@@ -587,11 +587,7 @@ _lp_as_text() {
 }
 
 # Store $2 (or $?) as a true/false value in variable named $1
-# $? is propagated
-#   _lp_bool foo 5
-#   => foo=false
-#   _lp_bool foo 0
-#   => foo=true
+# Deprecated since v2.0.
 _lp_bool() {
     local res=${2:-$?}
     if (( res )); then
@@ -642,16 +638,19 @@ __lp_pwd_tilde() {
 }
 
 # insert a space on the right
+# Deprecated since v2.0.
 _lp_sr() {
     [[ -n "$1" ]] && echo -nE "$1 "
 }
 
 # insert a space on the left
+# Deprecated since v2.0.
 _lp_sl() {
     [[ -n "$1" ]] && echo -nE " $1"
 }
 
 # insert two space, before and after
+# Deprecated since v2.0.
 _lp_sb() {
     [[ -n "$1" ]] && echo -nE " $1 "
 }

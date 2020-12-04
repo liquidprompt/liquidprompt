@@ -1065,7 +1065,7 @@ _lp_hostname_color() {
             ;;
         esac
     else
-        if [[ -n $lp_chroot ]]; then
+        if [[ -n ${lp_chroot-} ]]; then
             # End the color of the chroot
             lp_hostname_color+=${NO_COL}
         else

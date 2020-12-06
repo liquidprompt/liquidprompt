@@ -878,7 +878,12 @@ _lp_connection() {
 _lp_chroot() {
     if [[ -r /etc/debian_chroot ]]; then
         IFS= read -r lp_chroot </etc/debian_chroot
-        [[ -n "$lp_chroot" ]] && return 0
+        if [[ -n "$lp_chroot" ]]; then
+            local ret
+            __lp_escape "$lp_chroot"
+            lp_chroot=$ret
+            return 0
+        fi
     fi
     return 1
 }
@@ -910,7 +915,9 @@ _lp_http_proxy() {
     (( LP_ENABLE_PROXY )) || return 2
 
     if [[ -n "${http_proxy-}${HTTP_PROXY-}${https_proxy-}${HTTPS_PROXY-}${all_proxy-}${ALL_PROXY-}" ]]; then
-        lp_http_proxy="${http_proxy:-${HTTP_PROXY:-${https_proxy:-${HTTPS_PROXY:-${all_proxy:-$ALL_PROXY}}}}}"
+        local ret
+        __lp_escape "${http_proxy:-${HTTP_PROXY:-${https_proxy:-${HTTPS_PROXY:-${all_proxy:-$ALL_PROXY}}}}}"
+        lp_http_proxy=$ret
     else
         return 1
     fi
@@ -925,12 +932,16 @@ _lp_http_proxy_color() {
 _lp_python_env() {
     (( LP_ENABLE_VIRTUALENV )) || return 2
 
+    local ret
+
     # Why are these trunkated to the last '/' section? It has always been this
     # way, and the original author didn't explain why.
     if [[ -n "${VIRTUAL_ENV-}" ]]; then
-        lp_python_env="${VIRTUAL_ENV##*/}"
+        __lp_escape "${VIRTUAL_ENV##*/}"
+        lp_python_env=$ret
     elif [[ -n "${CONDA_DEFAULT_ENV-}" ]]; then
-        lp_python_env="${CONDA_DEFAULT_ENV##*/}"
+        __lp_escape "${CONDA_DEFAULT_ENV##*/}"
+        lp_python_env=$ret
     else
         return 1
     fi
@@ -946,7 +957,9 @@ _lp_software_collections() {
     (( LP_ENABLE_SCLS )) || return 2
 
     if [[ -n "${X_SCLS-}" ]]; then
-        lp_software_collections="${X_SCLS%"${X_SCLS##*[![:space:]]}"}"
+        local ret
+        __lp_escape "${X_SCLS%"${X_SCLS##*[![:space:]]}"}"
+        lp_software_collections=$ret
     else
         return 1
     fi

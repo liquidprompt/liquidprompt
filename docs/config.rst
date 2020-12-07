@@ -682,6 +682,29 @@ These color strings will be used without modification, so they need to be valid
 terminal escape sequences, either generated with :func:`lp_terminal_format` or
 using the ``$COLOR`` variables.
 
+Valid preset color variables are:
+
+* ``BOLD`` - bold formatting only.
+* ``BLACK``
+* ``BOLD_GRAY`` - actually bold black
+* ``RED``
+* ``BOLD_RED``
+* ``GREEN``
+* ``BOLD_GREEN``
+* ``YELLOW``
+* ``BOLD_YELLOW``
+* ``BLUE``
+* ``BOLD_BLUE``
+* ``PURPLE`` or ``MAGENTA``
+* ``BOLD_PURPLE``, ``BOLD_MAGENTA`` or ``PINK``
+* ``CYAN``
+* ``BOLD_CYAN``
+* ``WHITE``
+* ``BOLD_WHITE``
+* ``WARN_RED`` - black foreground, red background
+* ``CRIT_RED`` - white foreground, red background
+* ``DANGER_RED`` - yellow foreground, red background
+
 .. attribute:: LP_COLORMAP
    :type: array<string>
 

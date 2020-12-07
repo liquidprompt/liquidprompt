@@ -110,15 +110,7 @@ _LP_SED_EXTENDED=r
 # CONFIGURATION #
 #################
 
-# The following code is run just once. But it is encapsulated in a function
-# to benefit of 'local' variables.
-#
-# What we do here:
-# 1. Setup variables that can be used by the user: the "API" of Liquid Prompt
-#    for config/theme. Those variables are local to the function.
-#    In practice, this is only color variables.
-# 2. Setup default values
-# 3. Load the configuration
+# Load the user configuration and setup defaults.
 __lp_source_config() {
 
     local af_color= ab_color=
@@ -356,6 +348,7 @@ __lp_source_config() {
     fi
 }
 
+# Initialize features based on the user config.
 lp_activate() {
     if (( _LP_SHELL_bash )); then
         # Disable the DEBUG trap used by the RUNTIME feature
@@ -617,6 +610,7 @@ _lp_color_map() {
     ret="${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
 }
 
+# Return true if the input is the name of a function.
 __lp_is_function() {
     if (( _LP_SHELL_bash )); then
         [[ $(LC_ALL=C \type -t "$1") == function ]]
@@ -626,13 +620,12 @@ __lp_is_function() {
 }
 
 # Count the number of lines in the input string. A faster subsitute for 'wc -l'.
-# input: $1; a single string of input.
-# return: $count; the number of newline characters in the string.
 __lp_line_count() {
   local var="${1//[!$'\n']}"
   count=${#var}
 }
 
+# Return $PWD with $HOME at the start replaced by "~".
 __lp_pwd_tilde() {
     # Needs to be in a variable, as different versions of Bash treat '~' in a
     # substitution differently
@@ -652,7 +645,7 @@ _lp_sl() {
     [[ -n "$1" ]] && echo -nE " $1"
 }
 
-# insert two space, before and after
+# insert two spaces, before and after
 # Deprecated since v2.0.
 _lp_sb() {
     [[ -n "$1" ]] && echo -nE " $1 "
@@ -716,7 +709,6 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
 
 # Get a list of themes currently loaded. Looks for functions matching
 # _lp_<theme>_theme_prompt().
-# return: lp_theme_list; an array of theme names
 __lp_theme_list() {
     lp_theme_list=()
 
@@ -761,10 +753,6 @@ __lp_theme_zsh_complete() {
 ##########################
 
 # Shorten the path of the current working directory
-# * Show only the current directory
-# * Show as much of the cwd path as possible, if shortened display a
-#   leading mark, such as ellipses, to indicate that part is missing
-# * show at least LP_PATH_KEEP leading dirs and current directory
 __lp_shorten_path() {
     local ret= lp_pwd_tilde p
     __lp_pwd_tilde
@@ -815,10 +803,8 @@ __lp_shorten_path() {
     lp_shorten_path="$ret"
 }
 
-# In Bash shells, PROMPT_DIRTRIM is the number of directories to keep at the end
+# Calculate PROMPT_DIRTRIM; the number of directories to keep at the end
 # of the displayed path (if "\w" is present in the PS1 var).
-# Liquid Prompt can calculate this number under two conditions, path shortening
-# must be disabled and PROMPT_DIRTRIM must be already set.
 __lp_set_dirtrim() {
     local lp_pwd_tilde p
     __lp_pwd_tilde
@@ -971,7 +957,7 @@ _lp_software_collections_color() {
     lp_software_collections_color="[${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}]"
 }
 
-# return: 0 if login user, 1 if not, 2 if root
+# Determine what type of user we are
 _lp_user() {
     if (( EUID == 0 )); then
         # user is root
@@ -1096,9 +1082,7 @@ _lp_hostname_color() {
 # Related jobs #
 ################
 
-# Return the count of detached screens sessions and/or tmux sessions running
-# on the host
-# return: lp_detached_sessions; the number of detached sessions
+# Return the count of detached screen and/or tmux sessions.
 _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
@@ -1110,10 +1094,8 @@ _lp_detached_sessions() {
     (( lp_detached_sessions ))
 }
 
-# Return the count of attached running jobs (started with $ myjob &) and/or
-# stopped jobs (suspended with Ctrl-Z)
-# return: lp_running_jobs; the number of running shell jobs
-#         lp_stopped_jobs; the number of stopped shell jobs
+# Return the count of attached running shell jobs (started with $ myjob &) and/or
+# stopped jobs (suspended with Ctrl-Z).
 _lp_jobcount() {
     (( LP_ENABLE_JOBS )) || return 2
 
@@ -1133,10 +1115,7 @@ _lp_jobcount() {
     (( lp_running_jobs || lp_stopped_jobs ))
 }
 
-# Display the count of each if non-zero:
-# - detached screens sessions and/or tmux sessions running on the host
-# - attached running jobs (started with $ myjob &)
-# - attached stopped jobs (suspended with Ctrl-Z)
+# Display the count of detached sessions and shell jobs if not zero.
 _lp_jobcount_color() {
     (( LP_ENABLE_JOBS || LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
@@ -1174,11 +1153,6 @@ _lp_are_vcs_enabled() {
 
 # Search upwards through a directory structure looking for a sign of a VCS
 # repository. Used to avoid invoking VCS binaries to discover if in a repo.
-# Checks $LP_DISABLED_VCS_PATH and returns false if a match is found.
-# Otherwise returns the first matching repository.
-# return: true if in repo, false if not (1) or path disabled (2)
-#         lp_vcs_type; the string ID of the VCS controlling this directory.
-#         lp_vcs_root; the path to the root of the found repository.
 _lp_find_vcs() {
     if ! _lp_are_vcs_enabled; then
         lp_vcs_type="disabled"
@@ -1208,11 +1182,7 @@ _lp_find_vcs() {
     return 1
 }
 
-# Set the prompt mark to ± if git, to ☿ if mercurial, to ‡ if subversion
-# to # if root and else $
-# input: lp_vcs_type; the string ID of the VCS type, can be set by
-#          _lp_find_vcs().
-# return: lp_smart_mark; the symbol of the selected prompt mark
+# Set the prompt mark depending on the current VCS.
 _lp_smart_mark() {
     case "${1:-$lp_vcs_type}" in
     git)
@@ -1235,12 +1205,7 @@ _lp_smart_mark() {
 
 # GENERIC VCS #
 
-# Set a color depending on the branch state:
-# - green if the repository is up to date
-# - yellow if there is some commits not pushed
-# - red if there is changes to commit
-# Add the number of pending commits and the impacted lines.
-# return: lp_vcs_details_color; the detailed formatted string of repo details
+# Create a formatted string describing the status of the repo.
 _lp_vcs_details_color() {
     local branch
     if _lp_vcs_branch; then
@@ -1316,120 +1281,68 @@ _lp_vcs_details_color() {
 }
 
 # Check if the detected VCS is enabled in Liquidprompt and the current
-# directory is a valid repository of that type. This check should be done
-# before running any other _lp_vcs_* data functions, but can be omitted for
-# speed reasons if the checks done by _lp_find_vcs() are good enough.
-# return: false if VCS disabled (2) or not a valid repo (1), true otherwise.
+# directory is a valid repository of that type.
 _lp_vcs_active() {
     "_lp_${lp_vcs_type}_active" 2>/dev/null
 }
 
 # Get the branch name of the repo in the current directory.
-# return: true if a valid VCS branch is checked out.
-#         lp_vcs_branch; the name of the current branch.
 _lp_vcs_branch() {
     "_lp_${lp_vcs_type}_branch" 2>/dev/null
 }
 
 # Get the bookmark name of the repo in the current directory.
-# Most VCS providers don't support this.
-# return: true if a valid VCS bookmark is active.
-#         lp_vcs_bookmark; the name of the current bookmark.
 _lp_vcs_bookmark() {
     "_lp_${lp_vcs_type}_bookmark" 2>/dev/null
 }
 
-# Get a tag name of the repo in the current directory. Note that not all VCS
-# providers support tags that match to one and only one commit object.
-# return: true if a valid VCS tag matches the HEAD commit. False if no tag
-#             matches (1) or unique tags are not supported (2+).
-#         lp_vcs_tag; the name of (one of) the current tag(s).
+# Get a tag name of the repo in the current directory.
 _lp_vcs_tag() {
     "_lp_${lp_vcs_type}_tag" 2>/dev/null
 }
 
-# Get the current short commit string for the repo in the current directory.
-# Some VCS providers identify commits by a hash, others use a revision number.
-# The returned string should be unique enough that a user can identify the
-# commit. This should never fail if the current directory is a valid repo.
-# return: lp_vcs_commit_id; a short string that can ID the current commit.
+# Get the current commit string for the repo in the current directory.
 _lp_vcs_commit_id() {
     "_lp_${lp_vcs_type}_commit_id" 2>/dev/null
 }
 
 # Get additional information if the repo is in a special or unusual state.
-# Many VCS providers don't have such information, and many users either don't
-# care to see it or rarely get in a repo state that has any such info. This
-# info is unlikely to be similar across VCSs, and should probably be displayed
-# to a user without manipulation.
-# return: true if any extra state is found, false if not (1) or the VCS
-#             provider does not support any useful extra info (2+).
-#         lp_vcs_head_status; the extra repo state
-#         lp_vcs_head_details; optional extra details, like progress in a
-#             rebase. This might not be set, so protect it with "${var-}".
 _lp_vcs_head_status() {
     "_lp_${lp_vcs_type}_head_status" 2>/dev/null
+    # TODO: set lp_vcs_head_details if not set?
 }
 
-# Get the number of stashes in the repo. Not all VCS providers support stashes.
-# return: true if any stashes are found, false if not (1) or the VCS does not
-#             support stashes (2+).
-#         lp_vcs_stash_count; the number of stashes
+# Get the number of stashes in the repo.
 _lp_vcs_stash_count() {
     "_lp_${lp_vcs_type}_stash_count" 2>/dev/null
 }
 
-# Get the number of commits ahead and behind the upstream branch. Many VCS
-# providers cannot provide these numbers, simply because they simply don't work
-# that way.
-# return: true if any commits differ from the remote branch, false if not (1),
-#             no upstream branch exists (2), or not supported by the VCS (3+).
-#         lp_vcs_commit_behind; the number of commits that only exist remotely.
-#         lp_vcs_commit_ahead; the number of commits that only exist locally.
+# Get the number of commits ahead and behind the upstream branch.
 _lp_vcs_commits_off_remote() {
     "_lp_${lp_vcs_type}_commits_off_remote" 2>/dev/null
 }
 
-# Get the number of untracked aka extra files in the repo. This count excludes
-# files explicitly ignored by the user.
-# return: true if any untracked files are found.
-#         lp_vcs_untracked_files; the number of untracked files.
+# Get the number of untracked aka extra files in the repo.
 _lp_vcs_untracked_files() {
     "_lp_${lp_vcs_type}_untracked_files" 2>/dev/null
 }
 
 # Get the number of changed files compared to the last or checked out commit.
-# return: true if any files differ from the latest commit.
-#         lp_vcs_uncommitted_files; the number of lines changed.
 _lp_vcs_uncommitted_files() {
     "_lp_${lp_vcs_type}_uncommitted_files" 2>/dev/null
 }
 
 # Get the number of changed lines compared to the last or checked out commit.
-# return: true if any lines differ from the latest commit.
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_vcs_uncommitted_lines() {
     "_lp_${lp_vcs_type}_uncommitted_lines" 2>/dev/null
 }
 
-# Get the number of changed files compared to staging. Many VCS providers do
-# not have a staging area, and one might need to fall back to
-# uncommitted_files() instead.
-# return: true if any files differ from staging, false if not (1), or the VCS
-#             does not support staging (2).
-#         lp_vcs_unstaged_files; the number of files changed.
+# Get the number of changed files compared to staging.
 _lp_vcs_unstaged_files() {
     "_lp_${lp_vcs_type}_unstaged_files" 2>/dev/null
 }
 
-# Get the number of changed lines compared to staging. Many VCS providers do
-# not have a staging area, and one might need to fall back to
-# uncommitted_lines() instead.
-# return: true if any lines differ from staging, false if not (1), or the VCS
-#             does not support staging (2).
-#         lp_vcs_unstaged_i_lines; the number of lines inserted.
-#         lp_vcs_unstaged_d_lines; the number of lines deleted.
+# Get the number of changed lines compared to staging.
 _lp_vcs_unstaged_lines() {
     "_lp_${lp_vcs_type}_unstaged_lines" 2>/dev/null
 }
@@ -1437,17 +1350,13 @@ _lp_vcs_unstaged_lines() {
 # GIT #
 
 # Check if Git is enabled in Liquidprompt and the current directory is a valid
-# Git repository. This check should be done before running any other _lp_git_*
-# data functions.
-# return: false if Git disabled (2) or not a valid repo (1), true otherwise.
+# Git repository.
 _lp_git_active() {
     (( LP_ENABLE_GIT )) || return 2
     \git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 }
 
 # Get the branch name of the Git repo in the current directory.
-# return: true if a valid Git branch is checked out.
-#         lp_vcs_branch; the name of the current branch.
 _lp_git_branch() {
     local branch ret
     # Recent versions of Git support the --short option for symbolic-ref, but
@@ -1461,8 +1370,6 @@ _lp_git_branch() {
 }
 
 # Get a tag name of the Git repo in the current directory.
-# return: true if a valid Git tag matches the HEAD commit.
-#         lp_vcs_tag; the name of (one of) the current tag(s).
 _lp_git_tag() {
     local tag ret
     if tag="$(\git describe --tags --exact-match 2>/dev/null)"; then
@@ -1474,17 +1381,11 @@ _lp_git_tag() {
 }
 
 # Get the current full commit hash of the repo in the current directory.
-# return: lp_vcs_commit_id; the hash of the HEAD commit.
 _lp_git_commit_id() {
     lp_vcs_commit_id="$(\git rev-parse -q HEAD 2>/dev/null)"
 }
 
-# Get additional information if HEAD is in merging, rebasing
-# or cherry-picking state.
-# This function depends on _lp_find_vcs() being run first to set $lp_vcs_root.
-# return: true if any extra state is found.
-#         lp_vcs_head_status; the extra repo state.
-#         lp_vcs_head_details; optional extra details, like progress in a rebase.
+# Get additional information if HEAD is in merging, rebasing or cherry-picking state.
 _lp_git_head_status() {
     local gitdir="${lp_vcs_root}/.git" IFS= step total
 
@@ -1526,8 +1427,6 @@ _lp_git_head_status() {
 }
 
 # Get the number of Git stashes in the repo.
-# return: true if any stashes are found.
-#         lp_vcs_stash_count; the number of stashes.
 _lp_git_stash_count() {
     lp_vcs_stash_count="$(\git rev-list --walk-reflogs --count refs/stash 2>/dev/null)"
     (( lp_vcs_stash_count ))
@@ -1535,10 +1434,6 @@ _lp_git_stash_count() {
 
 # Count commits behind and ahead on the remote tracking branch of the current
 # local branch.
-# return: false if no commits ahead or behind (1) or if no tracking upstream
-#         branch exists (2).
-#         lp_vcs_commit_behind: number of commits behind the remote branch.
-#         lp_vcs_commit_ahead: number of commits ahead of the remote branch.
 _lp_git_commits_off_remote() {
     local counts
     # The "@{upstream}" notation was added in Git 1.7.0, so this should work for everyone
@@ -1548,16 +1443,12 @@ _lp_git_commits_off_remote() {
 }
 
 # Get the number of untracked files in the repo.
-# return: true if any untracked files exist.
-#         lp_vcs_untracked_files; the number of untracked files.
 _lp_git_untracked_files() {
     lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | \grep -c '^??')"
     (( lp_vcs_untracked_files ))
 }
 
 # Get the number of changed files compared to HEAD.
-# return: true if any files differ from HEAD.
-#         lp_vcs_uncommitted_files; the number of lines changed.
 _lp_git_uncommitted_files() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
@@ -1571,9 +1462,6 @@ _lp_git_uncommitted_files() {
 }
 
 # Get the number of changed lines compared to HEAD.
-# return: true if any lines differ from HEAD.
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_git_uncommitted_lines() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
@@ -1597,8 +1485,6 @@ _lp_git_uncommitted_lines() {
 }
 
 # Get the number of changed files compared to staging.
-# return: true if any files differ from staging.
-#         lp_vcs_unstaged_files; the number of files changed.
 _lp_git_unstaged_files() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
@@ -1612,9 +1498,6 @@ _lp_git_unstaged_files() {
 }
 
 # Get the number of changed lines compared to staging.
-# return: true if any lines differ from staging.
-#         lp_vcs_unstaged_i_lines; the number of lines inserted.
-#         lp_vcs_unstaged_d_lines; the number of lines deleted.
 _lp_git_unstaged_lines() {
     local stat
     stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
@@ -1641,22 +1524,13 @@ _lp_git_unstaged_lines() {
 # Note that Mercurial has no staging area
 
 # Check if Mercurial is enabled in Liquidprompt and the current directory is a
-# valid Mercurial repository. Note that as 'hg' is written in Python, the
-# startup cost is quite heavy, and as of this writing, 'hg root' does nothing
-# more than look for a '.hg' directory, not examine the contents.
-# return: false if Mercurial disabled (2) or not a valid repo (1), true
-#             otherwise.
+# valid Mercurial repository.
 _lp_hg_active() {
     (( LP_ENABLE_HG )) || return 2
     \hg root >/dev/null 2>&1 || return 1
 }
 
 # Get the branch name of the Mercurial repo in the current directory.
-# Note that Mercurial commits are always "on a branch", so checking out a
-# non-head commit will still return a branch name. A closer analog to Git
-# branches are Mercurial bookmarks.
-# return: true if a valid Mercurial branch is checked out.
-#         lp_vcs_branch; the name of the current branch.
 _lp_hg_branch() {
     local branch ret
     if branch="$(\hg branch 2>/dev/null)"; then
@@ -1671,9 +1545,6 @@ _lp_hg_branch() {
 }
 
 # Get the bookmark name of the Mercurial repo in the current directory.
-# Mercurial bookmarks work more like Git branches.
-# return: true if a valid Mercurial bookmark is checked out.
-#         lp_vcs_bookmark; the name of the current bookmark.
 _lp_hg_bookmark() {
     local bookmark ret
     if bookmark="$(\hg bookmark --list --quiet . 2>/dev/null)"; then
@@ -1685,8 +1556,6 @@ _lp_hg_bookmark() {
 }
 
 # Get the most recent tag that refers to the current revision.
-# return: true if a valid Mercurial tag is checked out.
-#         lp_vcs_tag; the name of the current tag.
 _lp_hg_tag() {
     local tags ret
     tags="$(\hg identify --template='{tags}' 2>/dev/null)"
@@ -1700,15 +1569,11 @@ _lp_hg_tag() {
 }
 
 # Get the current global revision id for the repo in the current directory.
-# return: lp_vcs_commit_id; the global hash of the current revision.
 _lp_hg_commit_id() {
     lp_vcs_commit_id="$(\hg identify --id 2>/dev/null)"
 }
 
 # Get additional information if the repo is in any unfinished state.
-# This function depends on _lp_find_vcs() being run first to set $lp_vcs_root.
-# return: true if any unfinished state is found.
-#         lp_vcs_head_status; the extra repo state.
 _lp_hg_head_status() {
     local hgdir="${lp_vcs_root}/.hg"
     if [[ -d "${hgdir}/merge" ]]; then
@@ -1729,8 +1594,6 @@ _lp_hg_head_status() {
 }
 
 # Get the number of Mercurial shelves in the repo.
-# return: true if any shelves are found.
-#         lp_vcs_stash_count; the number of shelves.
 _lp_hg_stash_count() {
     local shelves count
     shelves="$(\hg shelve --list 2>/dev/null; printf x)"
@@ -1739,9 +1602,6 @@ _lp_hg_stash_count() {
     (( lp_vcs_stash_count ))
 }
 
-# Mercurial doesn't keep a local copy of the remote state, so checking this
-# will require a connection to the remote server. This means it is often
-# prohibitively time expensive, and therefore shouldn't be used in a prompt.
 # https://github.com/nojhan/liquidprompt/issues/217
 # return: always false (3: disabled).
 _lp_hg_commits_off_remote() {
@@ -1750,8 +1610,6 @@ _lp_hg_commits_off_remote() {
 }
 
 # Get the number of untracked files in the Mercurial repo.
-# return: true if any untracked files are found.
-#         lp_vcs_untracked_files; the number of untracked files.
 _lp_hg_untracked_files() {
     local untracked
     untracked="$(\hg status --unknown --template '{status}' 2>/dev/null)"
@@ -1760,8 +1618,6 @@ _lp_hg_untracked_files() {
 }
 
 # Get the number of changed files compared to the base revision.
-# return: true if any files differ from the base revision.
-#         lp_vcs_uncommitted_files; the number of files changed.
 _lp_hg_uncommitted_files() {
     local files
     files="$(\hg status --modified --template '{status}' 2>/dev/null)"
@@ -1770,9 +1626,6 @@ _lp_hg_uncommitted_files() {
 }
 
 # Get the number of changed lines compared to the base revision.
-# return: true if any lines differ from the base revision.
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_hg_uncommitted_lines() {
     IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\hg diff --stat 2>/dev/null | sed -n '$ s/^.*, \([0-9]*\) .*, \([0-9]*\).*$/\1 \2/p')"
@@ -1786,16 +1639,12 @@ _lp_hg_uncommitted_lines() {
 
 # Check if Subversion is enabled in Liquidprompt and the current directory is a
 # valid Subversion repository.
-# return: false if Subversion disabled (2) or not a valid repo (1), true
-#             otherwise.
 _lp_svn_active() {
     (( LP_ENABLE_SVN )) || return 2
     \svn info >/dev/null 2>&1 || return 1
 }
 
 # Get the branch name of the repo in the current directory.
-# return: true if a valid Subversion branch is checked out.
-#         lp_vcs_branch; the name of the current branch.
 _lp_svn_branch() {
     local ret url
     # SVN info shows repository-relative URLs since v1.8
@@ -1819,39 +1668,18 @@ _lp_svn_branch() {
     fi
 }
 
-# SVN doesn't have a concept of tags, they are really branches that everyone
-# agrees to not change. For this reason a "tag" is returned by the
-# _lp_svn_branch() function.
-# return: always false (2: disabled).
-_lp_svn_tag() {
-    return 2
-}
-
 # Get the current revision number for the repo in the current directory.
-# return: lp_vcs_commit_id; the number of the current revision.
 _lp_svn_commit_id() {
     lp_vcs_commit_id="$(\svn info --show-item revision 2>/dev/null)"
 }
 
-# Get additional information if the repo is in any unfinished state.
-# A Subversion merge is no different than a manual file change, so the
-# repository has no extra state to track.
-# return: always false (2: disabled).
-_lp_svn_head_status() {
-    return 2
-}
-
 # Get the number of untracked files in the Subversion repo.
-# return: true if any untracked files are found.
-#         lp_vcs_untracked_files; the number of untracked files.
 _lp_svn_untracked_files() {
     lp_vcs_untracked_files="$(LC_ALL=C \svn status 2>/dev/null | \grep -c '^?')"
     (( lp_vcs_untracked_files ))
 }
 
 # Get the number of changed files compared to the base revision.
-# return: true if any files differ from the base revision.
-#         lp_vcs_uncommitted_files; the number of files changed.
 _lp_svn_uncommitted_files() {
     local files count
     # svn status is unsafe with newline chars in filenames, which will throw
@@ -1863,9 +1691,6 @@ _lp_svn_uncommitted_files() {
 }
 
 # Get the number of changed lines compared to the base revision.
-# return: true if any lines differ from the base revision.
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_svn_uncommitted_lines() {
     IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\svn diff --internal-diff 2>/dev/null | awk '
@@ -1880,20 +1705,16 @@ _lp_svn_uncommitted_lines() {
 }
 
 # FOSSIL #
-# Note that Fossil has no staging area
+# Note that Fossil has no staging area, bookmarks, or unique tags.
 
 # Check if Fossil is enabled in Liquidprompt and the current directory is a
-# valid Fossil repository. This check should be done before running any other
-# _lp_fossil_* data functions.
-# return: false if Fossil disabled (2) or not a valid repo (1), true otherwise.
+# valid Fossil repository.
 _lp_fossil_active() {
     (( LP_ENABLE_FOSSIL )) || return 2
     \fossil status >/dev/null 2>&1 || return 1
 }
 
 # Get the branch name of the repo in the current directory.
-# return: true if a valid Fossil branch is checked out.
-#         lp_vcs_branch; the name of the current branch.
 _lp_fossil_branch() {
     local branch ret
 
@@ -1920,24 +1741,12 @@ _lp_fossil_branch() {
     fi
 }
 
-# A Fossil tag can refer to multiple checkin IDs, so a matching tag is not a
-# useful ID for where we are.
-# return: always false (2: disabled).
-_lp_fossil_tag() {
-    return 2
-}
-
 # Get the current full commit hash of the Fossil repo in the current directory.
-# return: lp_vcs_commit_id; the hash of the current check-out.
 _lp_fossil_commit_id() {
     lp_vcs_commit_id="$(LC_ALL=C \fossil status 2>/dev/null | sed -n 's/^checkout:[[:space:]]*\([^[:space:]]*\).*/\1/p')"
 }
 
 # Get additional information if the check-out is in merging before a commit.
-# Like Git, Fossil has a way to abort or undo in progress changes before a
-# commit is actually written.
-# return: true if any extra state is found.
-#         lp_vcs_head_status; the extra repo state.
 _lp_fossil_head_status() {
     local option
     option="$(LC_ALL=C \fossil undo --dry-run 2>/dev/null)"
@@ -1950,8 +1759,6 @@ _lp_fossil_head_status() {
 }
 
 # Get the number of Fossil stashes in the repo.
-# return: true if any stashes are found.
-#         lp_vcs_stash_count; the number of stashes.
 _lp_fossil_stash_count() {
     local stashes count
     stashes="$(\fossil stash list 2>/dev/null; printf x)"
@@ -1961,17 +1768,7 @@ _lp_fossil_stash_count() {
     (( lp_vcs_stash_count ))
 }
 
-# Fossil by default keeps the local repo in sync with the remote. Even if a
-# user disables that, it is not possible to have a local and remote branch
-# named the same not in sync.
-# return: always false (3: disabled).
-_lp_fossil_commits_off_remote() {
-    return 3
-}
-
 # Get the number of extra files in the Fossil repo.
-# return: true if any untracked files are found.
-#         lp_vcs_untracked_files; the number of untracked files.
 _lp_fossil_untracked_files() {
     local extras count
     extras="$(\fossil extras 2>/dev/null; printf x)"
@@ -1981,8 +1778,6 @@ _lp_fossil_untracked_files() {
 }
 
 # Get the number of changed files compared to the checked-out version.
-# return: true if any files differ from check-out.
-#         lp_vcs_uncommitted_files; the number of files changed.
 _lp_fossil_uncommitted_files() {
     local files
     files="$(\fossil changes 2>/dev/null; printf x)"
@@ -1992,9 +1787,6 @@ _lp_fossil_uncommitted_files() {
 }
 
 # Get the number of changed lines compared to the checked-out version.
-# return: true if any lines differ from check-out.
-#         lp_vcs_uncommitted_i_lines; the number of lines inserted.
-#         lp_vcs_uncommitted_d_lines; the number of lines deleted.
 _lp_fossil_uncommitted_lines() {
     IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\fossil diff --internal --verbose 2>/dev/null | awk '
@@ -2069,13 +1861,7 @@ _lp_wifi() {
 # Battery status #
 ##################
 
-# Get the battery status in percent
-# returns 0 (and battery level) if battery is discharging and under threshold
-# returns 1 (and battery level) if battery is discharging and above threshold
-# returns 2 (and battery level) if battery is charging but under threshold
-# returns 3 (and battery level) if battery is charging and above threshold
-# returns 4 if no battery support
-# returns 5 if disabled
+# Get the battery status in percent.
 case "$LP_OS" in
     Linux)
     _lp_battery() {
@@ -2132,12 +1918,7 @@ case "$LP_OS" in
     ;;
 esac
 
-# Compute a gradient of background/foreground colors depending on the battery status
-# Display:
-# a  green ⏚ if the battery is charging    and above threshold
-# a yellow ⏚ if the battery is charging    and under threshold
-# a yellow ⌁ if the battery is discharging but above threshold
-# a    red ⌁ if the battery is discharging and above threshold
+# Compute a gradient of background/foreground colors depending on the battery status.
 _lp_battery_color() {
     (( LP_ENABLE_BATT )) || return 2
 
@@ -2299,7 +2080,7 @@ _lp_load() {
     (( lp_load > LP_LOAD_THRESHOLD ))
 }
 
-# Compute a gradient of background/forground colors depending on the battery status
+# Compute a gradient of background/forground colors depending on the load.
 _lp_load_color() {
     _lp_load || return "$?"
 
@@ -2317,8 +2098,6 @@ _lp_load_color() {
 # System temperature #
 ######################
 
-# Will set _LP_TEMP_FUNCTION so the temperature monitoring feature use an
-# available command.
 # Backends for TEMP. Each backend must return the result in $lp_temperature.
 
 # Implementation using lm-sensors
@@ -2365,7 +2144,7 @@ __lp_temp_detect() {
     return 1
 }
 
-
+# Returns current highest system temperature.
 _lp_temperature() {
     (( LP_ENABLE_TEMP )) || return 2
 
@@ -2375,8 +2154,7 @@ _lp_temperature() {
     (( lp_temperature >= LP_TEMP_THRESHOLD ))
 }
 
-# Will display the numeric value as we get from _lp_temperature
-# and colorize it through _lp_color_map.
+# Display the numeric value as we get from _lp_temperature and colorize it through _lp_color_map.
 _lp_temperature_color() {
     _lp_temperature || return "$?"
 

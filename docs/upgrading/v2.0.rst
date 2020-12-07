@@ -1,0 +1,676 @@
+Version 2.0 Upgrade Notes
+*************************
+
+Most of the changes in 2.0 are in private functions and variables.
+There are two public API changes that could impact users:
+:ref:`$lp_err <lp_err>` and :ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`.
+The rest are private API changes, but are still documented here.
+
+.. contents::
+   :local:
+
+Breaking Changes
+++++++++++++++++
+
+Public Breaking Changes
+=======================
+
+.. _lp_err:
+
+$lp_err
+-------
+
+Renamed to ``$lp_error``. Instead of referencing it directly, use
+:func:`_lp_error`.
+
+Private Breaking Changes
+========================
+
+$_LP_SHELL_bash
+---------------
+
+Now returns ``1`` or ``0`` instead of ``true`` or ``false``
+
+Replace test statements like::
+
+   if $_LP_SHELL_bash; then
+
+with::
+
+   if (( $_LP_SHELL_bash )); then
+
+$_LP_SHELL_zsh
+--------------
+
+Now returns ``1`` or ``0`` instead of ``true`` or ``false``
+
+Replace test statements like::
+
+   if $_LP_SHELL_zsh; then
+
+with::
+
+   if (( $_LP_SHELL_zsh )); then
+
+_lp_battery()
+-------------
+
+Return changed from stdout to ``$lp_battery``
+
+Replace assignment statements like::
+
+   battery="$(_lp_battery)"
+
+with::
+
+   local lp_battery
+   _lp_battery
+   battery=$lp_battery
+
+See also: :func:`_lp_battery`.
+
+_lp_battery_color()
+-------------------
+
+Return changed from stdout to ``$lp_battery_color``
+
+Replace assignment statements like::
+
+   battery_color="$(_lp_battery_color)"
+
+with::
+
+   local lp_battery_color
+   _lp_battery_color
+   battery_color=$lp_battery_color
+
+See also: :func:`_lp_battery_color`.
+
+_lp_bzr_branch()
+----------------
+
+Return changed from stdout to ``$lp_vcs_branch``
+
+Recommended that :func:`_lp_vcs_branch` is used instead.
+
+Replace assignment statements like::
+
+   branch="$(_lp_bzr_branch)"
+
+with::
+
+   local lp_vcs_branch
+   if _lp_bzr_branch; then
+       branch=$lp_vcs_branch
+   fi
+
+_lp_bzr_branch_color()
+----------------------
+
+Removed, replace by :func:`_lp_vcs_details_color`.
+
+If the exact previous output is needed, you can implement a theme function using
+:doc:`../functions/data/vcs`.
+
+Replace assignment statements like::
+
+   LP_VCS="$(_lp_bzr_branch_color)"
+
+with::
+
+   if _lp_find_vcs;
+       local lp_vcs_details_color
+       _lp_vcs_details_color
+       LP_VCS=$lp_vcs_details_color
+   fi
+
+_lp_color_map()
+---------------
+
+Return changed from stdout to ``$ret``
+
+Replace assignment statements like::
+
+   output="$(_lp_color_map "$input")"
+
+with::
+
+   local ret
+   _lp_color_map "$input"
+   output=$ret
+
+See also: :func:`_lp_color_map`.
+
+_lp_connection()
+----------------
+
+Return changed from stdout to ``$lp_connection``
+
+Replace assignment statements like::
+
+   connection="$(_lp_connection)"
+
+with::
+
+   local lp_connection
+   _lp_connection
+   connection=$lp_connection
+
+See also: :func:`_lp_connection`.
+
+_lp_escape()
+------------
+
+Renamed to :attr:`__lp_escape`.
+Return changed from stdout to ``$ret``
+
+Replace assignment statements like::
+
+   output="$(_lp_escape "$input")"
+
+with::
+
+   local ret
+   __lp_escape "$input"
+   output=$ret
+
+_lp_fossil_branch()
+-------------------
+
+Return changed from stdout to ``$lp_vcs_branch``
+
+Recommended that :func:`_lp_vcs_branch` is used instead.
+
+No longer returns "no-branch" if branch not found.
+
+Replace assignment statements like::
+
+   branch="$(_lp_fossil_branch)"
+
+with::
+
+   local lp_vcs_branch
+   if _lp_fossil_branch; then
+       branch=$lp_vcs_branch
+   else
+       branch="no-branch"
+   fi
+
+_lp_fossil_branch_color()
+-------------------------
+
+Removed, replace by :func:`_lp_vcs_details_color`.
+
+If the exact previous output is needed, you can implement a theme function using
+:doc:`../functions/data/vcs`.
+
+Replace assignment statements like::
+
+   LP_VCS="$(_lp_fossil_branch_color)"
+
+with::
+
+   if _lp_find_vcs;
+       local lp_vcs_details_color
+       _lp_vcs_details_color
+       LP_VCS=$lp_vcs_details_color
+   fi
+
+_lp_get_home_tilde_collapsed()
+------------------------------
+
+Renamed to :func:`__lp_pwd_tilde`.
+
+Return changed from stdout to ``$lp_pwd_tilde``
+
+Recommended that :attr:`lp_path` is used instead.
+
+Replace assignment statements like::
+
+   working_dir="$(_lp_get_home_tilde_collapsed)"
+
+with::
+
+   local lp_pwd_tilde
+   __lp_pwd_tilde
+   working_dir=$lp_pwd_tilde
+
+_lp_git_branch()
+----------------
+
+Return changed from stdout to ``$lp_vcs_branch``
+
+Recommended that :func:`_lp_vcs_branch` is used instead.
+
+No longer returns commit hash if branch not found.
+
+Replace assignment statements like::
+
+   branch="$(_lp_git_branch)"
+
+with::
+
+   local lp_vcs_branch
+   if _lp_git_branch; then
+       branch=$lp_vcs_branch
+   else
+       local lp_vcs_commit_id
+       _lp_git_commit_id
+       branch=$lp_vcs_commit_id
+   fi
+
+_lp_git_branch_color()
+----------------------
+
+Removed, replace by :func:`_lp_vcs_details_color`.
+
+Replace assignment statements like::
+
+   LP_VCS="$(_lp_git_branch_color)"
+
+with::
+
+   if _lp_find_vcs;
+       local lp_vcs_details_color
+       _lp_vcs_details_color
+       LP_VCS=$lp_vcs_details_color
+   fi
+
+_lp_git_head_status()
+---------------------
+
+Return changed from stdout to ``$lp_vcs_head_status``
+
+Recommended that :func:`_lp_vcs_head_status` is used instead.
+
+Replace assignment statements like::
+
+   head_status="$(_lp_git_head_status)"
+
+with::
+
+   local lp_vcs_head_status
+   _lp_git_head_status
+   head_status=$lp_vcs_head_status
+
+See also: :func:`_lp_git_head_status`.
+
+_lp_hg_branch()
+---------------
+
+Return changed from stdout to ``$lp_vcs_branch``
+
+Recommended that :func:`_lp_vcs_branch` is used instead.
+
+Replace assignment statements like::
+
+   branch="$(_lp_hg_branch)"
+
+with::
+
+   local lp_vcs_branch
+   if _lp_hg_branch; then
+       branch=$lp_vcs_branch
+   fi
+
+_lp_hg_branch_color()
+---------------------
+
+Removed, replace by :func:`_lp_vcs_details_color`.
+
+If the exact previous output is needed, you can implement a theme function using
+:doc:`../functions/data/vcs`.
+
+Replace assignment statements like::
+
+   LP_VCS="$(_lp_hg_branch_color)"
+
+with::
+
+   if _lp_find_vcs;
+       local lp_vcs_details_color
+       _lp_vcs_details_color
+       LP_VCS=$lp_vcs_details_color
+   fi
+
+_lp_jobcount_color()
+--------------------
+
+Return changed from stdout to ``$lp_jobcount_color``
+
+Replace assignment statements like::
+
+   jobcount_color="$(_lp_jobcount_color)"
+
+with::
+
+   local lp_jobcount_color
+   _lp_jobcount_color
+   jobcount_color=$lp_jobcount_color
+
+See also: :func:`_lp_jobcount_color`.
+
+_lp_load_color()
+----------------
+
+Return changed from stdout to ``$lp_load_color``
+
+Replace assignment statements like::
+
+   load_color="$(_lp_load_color)"
+
+with::
+
+   local lp_load_color
+   _lp_load_color
+   load_color=$lp_load_color
+
+See also: :func:`_lp_load_color`.
+
+_lp_runtime()
+-------------
+
+Renamed to :func:`_lp_runtime_color`.
+
+Return changed from stdout to ``$lp_runtime_color``
+
+Replace assignment statements like::
+
+   runtime_color="$(_lp_runtime)"
+
+with::
+
+   local lp_runtime_color
+   _lp_runtime_color
+   runtime_color=$lp_runtime_color
+
+_lp_runtime_after()
+-------------------
+
+Renamed to :func:`__lp_runtime_after`.
+
+Recommended to not use this internal function.
+
+_lp_runtime_before()
+--------------------
+
+Renamed to :func:`__lp_runtime_before`.
+
+Recommended to not use this internal function.
+
+_lp_set_dirtrim()
+-----------------
+
+Renamed to :func:`__lp_set_dirtrim`.
+
+Recommended that :attr:`lp_path` is used instead.
+
+_lp_set_prompt()
+----------------
+
+Renamed to :attr:`__lp_set_prompt`.
+
+Recommended to not use this internal function.
+
+_lp_shorten_path()
+------------------
+
+Renamed to :func:`__lp_shorten_path`.
+
+Recommended that :attr:`lp_path` is used instead.
+
+Return changed from stdout to ``$lp_shorten_path``
+
+Replace assignment statements like::
+
+   cwd="$(_lp_shorten_path)"
+
+with::
+
+   local lp_shorten_path
+   __lp_shorten_path
+   cwd=$lp_shorten_path
+
+_lp_smart_mark()
+----------------
+
+Return changed from stdout to ``$lp_smart_mark``
+
+Replace assignment statements like::
+
+   mark="$(_lp_smart_mark)"
+
+with::
+
+   local lp_smart_mark
+   _lp_smart_mark
+   mark=$lp_smart_mark
+
+See also: :func:`_lp_smart_mark`.
+
+_lp_source_config()
+-------------------
+
+Renamed to :attr:`__lp_source_config`.
+
+Recommended to not use this internal function.
+
+_lp_svn_branch()
+----------------
+
+Return changed from stdout to ``$lp_vcs_branch``
+
+Recommended that :func:`_lp_vcs_branch` is used instead.
+
+No longer returns directory name if branch not found.
+
+Replace assignment statements like::
+
+   branch="$(_lp_svn_branch)"
+
+with::
+
+   local lp_vcs_branch
+   if _lp_svn_branch; then
+       branch=$lp_vcs_branch
+   else
+       local lp_vcs_commit_id
+       _lp_svn_commit_id
+       branch=$lp_vcs_commit_id
+   fi
+
+_lp_svn_branch_color()
+----------------------
+
+Removed, replace by :func:`_lp_vcs_details_color`.
+
+If the exact previous output is needed, you can implement a theme function using
+:doc:`../functions/data/vcs`.
+
+Replace assignment statements like::
+
+   LP_VCS="$(_lp_svn_branch_color)"
+
+with::
+
+   if _lp_find_vcs;
+       local lp_vcs_details_color
+       _lp_vcs_details_color
+       LP_VCS=$lp_vcs_details_color
+   fi
+
+_lp_temp_acpi()
+---------------
+
+Renamed to :func:`__lp_temp_acpi`.
+
+Recommended that :func:`_lp_temperature` is used instead.
+
+Return changed from ``$temperature`` to ``$lp_temperature``.
+
+Replace statements like::
+
+   _lp_temp_acpi
+   # use $temperature
+
+with::
+
+   __lp_temp_acpi
+   # use $lp_temperature
+
+_lp_temp_detect()
+-----------------
+
+Renamed to :func:`__lp_temp_detect`.
+
+Recommended to not use this internal function.
+
+_lp_temp_sensors()
+------------------
+
+Renamed to :func:`__lp_temp_sensors`.
+
+Recommended that :func:`_lp_temperature` is used instead.
+
+Return changed from ``$temperature`` to ``$lp_temperature``.
+
+Replace statements like::
+
+   _lp_temp_sensors
+   # use $temperature
+
+with::
+
+   __lp_temp_sensors
+   # use $lp_temperature
+
+_lp_temperature()
+-----------------
+
+Renamed to :func:`_lp_temperature_color`.
+
+Return changed from stdout to ``$lp_temperature_color``
+
+Replace assignment statements like::
+
+   temp_color="$(_lp_temperature)"
+
+with::
+
+   local lp_temperature_color
+   _lp_temperature_color
+   temp_color=$lp_temperature_color
+
+Not to be confused with the new :func:`_lp_temperature`.
+
+_lp_time()
+----------
+
+Split into :func:`_lp_time()`, :func:`_lp_time_color()`,
+:func:`_lp_analog_time()`, and  `_lp_analog_time_color()`.
+
+The return value is no longer stored in ``LP_TIME``.
+
+Replace statements like::
+
+   _lp_time
+
+with::
+
+   local lp_time_color lp_analog_time_color
+   if _lp_time_color; then
+       LP_TIME="${lp_time_color} "
+   elif _lp_analog_time_color; then
+       LP_TIME="${lp_analog_time_color} "
+   else
+       LP_TIME=
+   fi
+
+_lp_upwards_find()
+------------------
+
+Replaced by :func:`_lp_find_vcs`.
+
+Replace statements like::
+
+   _lp_upwards_find .hg || return
+
+with::
+
+   local lp_vcs_type lp_vcs_root
+   _lp_find_vcs && [[ $lp_vcs_type == hg ]] || return
+
+Deprecations
+++++++++++++
+
+Public Deprecations
+===================
+
+.. _lp_disabled_vcs_path:
+
+$LP_DISABLED_VCS_PATH
+---------------------
+
+Replaced by :attr:`LP_DISABLED_VCS_PATHS` array variable.
+
+Replace a set statement like::
+
+   LP_DISABLED_VCS_PATH="/my/one/path:/my/other/path"
+
+with::
+
+   LP_DISABLED_VCS_PATHS=("/my/one/path" "/my/other/path")
+
+Private Deprecations
+====================
+
+_lp_bool()
+----------
+
+Replaced by manually storing return codes.
+
+Most often, the return code can be used in an ``if`` block, and never needs to
+be stored::
+
+   if _lp_http_proxy; then
+   ...
+
+If the function returns a more complicated return code, you can store it like
+this::
+
+   _lp_user
+   local -i code=$?
+
+or like this if the code only matters if it is not zero::
+
+   _lp_user || local -i code=$?
+
+_lp_sb()
+--------
+
+Replaced by data functions indicating if they returned data or not. For
+example::
+
+   if _lp_http_proxy; then
+       my_data="${lp_http_proxy} "
+   else
+       my_data=""
+   fi
+
+If the string source is not a data function, you can replace this function with
+a structure like::
+
+   [[ -n $my_data ]] && my_data=" ${my_data} "
+
+With spaces before or after as needed.
+
+_lp_sl()
+--------
+
+See ``_lp_sb()`` above.
+
+_lp_sr()
+--------
+
+See ``_lp_sb()`` above.
+

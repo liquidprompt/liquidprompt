@@ -1,0 +1,11 @@
+Upgrading Liquidprompt
+**********************
+
+We try our best to make new versions of Liquidprompt backwards compatable with
+previous versions, but sometimes things need to change to make forward progress.
+If a version introduces breaking changes or deprecation notices, a detailed
+document describing what changes a user needs to make will be linked below.
+
+.. toctree::
+
+   upgrading/v2.0

@@ -205,6 +205,101 @@ this.
 
    .. versionadded:: 2.0
 
+Bazaar
+------
+
+.. warning::
+   Bazaar is no longer being actively developed, and depends on Python 2, which
+   is no longer supported. `Breezy <https://www.breezy-vcs.org/>`_ is a fork
+   that can work with Bazaar repositories. To use Breezy in place of Bazaar, set
+   a wrapper function::
+
+      bzr() { brz "$@"; }
+
+.. note::
+   Bazaar does not support bookmarks.
+   A nick is somewhat like a bookmark, but there is no command to view a naked
+   branch name, so the ``nick`` command is used for branches.
+
+.. note::
+   Bazaar does not support a staging area.
+
+.. note::
+   Bazaar does not support getting details of remote tracking branches.
+   Bazaar does not keep a local copy of the remote state, so checking this
+   would be impossible anyway.
+
+.. note::
+   Bazaar does not have extra head statuses. A Bazaar merge can be partially
+   complete, but there is no command to test for it.
+
+.. function:: _lp_bzr_active()
+
+   Returns ``true`` if Bazaar is enabled in Liquidprompt and the current
+   directory is a valid Bazaar repository. This check should be done before
+   running any other ``_lp_bzr_*`` data functions if accessing the Bazaar
+   data functions directly instead of through the generic interface.
+
+   Can be disabled by :attr:`LP_ENABLE_BZR`.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_branch() -> var:lp_vcs_branch
+
+   Returns ``true`` if a branch is active in the repository. Returns the branch
+   name.
+
+   .. versionchanged:: 2.0
+      Return method changed from stdout.
+      No branch now returns ``false``.
+
+.. function:: _lp_bzr_commit_id() -> var:lp_vcs_commit_id
+
+   Returns the revision number of the current commit. The return code is not
+   defined.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_stash_count() -> var:lp_vcs_stash_count
+
+   Returns ``true`` if there are shelves the repository. Returns the
+   number of shelves.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_tag() -> var:lp_vcs_tag
+
+   Returns ``true`` if a tag is active in the repository. Returns the
+   tag name.
+
+   If multiple tags match, only one is returned. Which tag is selected is not
+   defined.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_uncommitted_files() -> var:lp_vcs_uncommitted_files
+
+   Returns ``true`` if any uncommitted files exist in the repository. In other
+   words, tracked files that contain uncommitted changes. Returns the number of
+   uncommitted files.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+
+   Returns ``true`` if any uncommitted lines exist in the repository. In other
+   words, tracked files that contain uncommitted changes. Returns the number of
+   uncommitted lines.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_bzr_untracked_files() -> var:lp_vcs_untracked_files
+
+   Returns ``true`` if any untracked files exist in the repository. Returns the
+   number of untracked files.
+
+   .. versionadded:: 2.0
+
 Fossil
 ------
 

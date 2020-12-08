@@ -1801,16 +1801,20 @@ _lp_fossil_uncommitted_lines() {
 }
 
 # Bazaar #
+# Note that Bazaar has no staging area, bookmarks, remote tracking branches, or extra statuses.
+
+# Check if Bazaar is enabled in Liquidprompt and the current directory is a
+# valid Bazaar repository. This check should be done before running any other
+# _lp_bzr_* data functions.
+_lp_bzr_active() {
+    (( LP_ENABLE_BZR )) || return 2
+    \bzr status >/dev/null 2>&1 || return 1
+}
 
 # Get the branch name of the current directory
 _lp_bzr_branch() {
-    (( LP_ENABLE_BZR )) || return
-
-    # We found an .bzr folder, so we need to invoke bzr and see if we're
-    # actually in a repository.
-
     local branch ret
-    if branch="$(bzr nick 2> /dev/null)"; then
+    if branch="$(\bzr nick 2> /dev/null)"; then
         __lp_escape "$branch"
         lp_vcs_branch="$ret"
     else
@@ -1818,33 +1822,70 @@ _lp_bzr_branch() {
     fi
 }
 
-
-# Set a color depending on the branch state:
-# - green if the repository is up to date
-# - red if there is changes to commit
-# - TODO: yellow if there is some commits not pushed
-#
-# Add the number of pending commits and the impacted lines.
-_lp_bzr_branch_color() {
-    (( LP_ENABLE_BZR )) || return 2
-
-    # We found an .bzr folder, so we need to invoke bzr and see if we're
-    # actually in a repository.
-
-    local branch revno clean ret IFS=' '
-    read branch revno clean <<<"$(bzr version-info --check-clean --custom --template='{branch_nick} {revno} {clean}' 2>/dev/null)"
-    (( $? != 0 )) && return
-
-    if [[ -n "$branch" ]]; then
-        __lp_escape "$branch"
-        if (( clean == 0 )); then
-            lp_vcs_branch_color="${LP_COLOR_CHANGES}${ret}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
-        else
-            lp_vcs_branch_color="${LP_COLOR_UP}${ret}${NO_COL}(${LP_COLOR_COMMITS}$revno${NO_COL})"
-        fi
+# Get the most recent tag that refers to the current revision.
+_lp_bzr_tag() {
+    local tag ret eol
+    IFS=$' \t' read tag eol <<<"$(LC_ALL=C \bzr tags --revision=last:1 2>/dev/null)"
+    if [[ -n "$tag" ]]; then
+        __lp_escape "$tag"
+        lp_vcs_tag="$ret"
     else
         return 1
     fi
+}
+
+# Get the current full commit hash of the repo in the current directory.
+_lp_bzr_commit_id() {
+    lp_vcs_commit_id="$(\bzr revno 2>/dev/null)"
+}
+
+# Get the number of Bazaar shelves in the repo.
+_lp_bzr_stash_count() {
+    local shelves count
+    shelves="$(\bzr shelve --list 2>/dev/null)"
+    local -i ret=$?
+
+    if (( ret == 0 )); then
+        # No error code means no shelves.
+        lp_vcs_stash_count=0
+    elif (( ret == 1 )); then
+        # Return of 1 means there are shelves.
+        # The usual "printf x" trick can't be used, as it squashes the error code.
+        __lp_line_count "$shelves"
+        lp_vcs_stash_count=$(( $count + 1 ))
+    else
+        return 1
+    fi
+
+    (( lp_vcs_stash_count ))
+}
+
+# Get the number of unknown files in the repo.
+_lp_bzr_untracked_files() {
+    lp_vcs_untracked_files="$(LC_ALL=C \bzr status --short 2>/dev/null | \grep -c '^?')"
+
+    (( lp_vcs_untracked_files ))
+}
+
+# Get the number of changed files compared to the checked-out version.
+_lp_bzr_uncommitted_files() {
+    lp_vcs_uncommitted_files="$(LC_ALL=C \bzr status --short 2>/dev/null | \grep -vc '^?')"
+
+    (( lp_vcs_uncommitted_files ))
+}
+
+# Get the number of changed lines compared to the checked-out version.
+_lp_bzr_uncommitted_lines() {
+    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+        <<<"$(\bzr diff 2>/dev/null | awk '
+        BEGIN { plus=0; minus=0 }
+        /^(\+[^+])|(\+$)/ { plus+=1 }
+        /^(-[^-])|(-$)/ { minus+=1 }
+        END {
+            print plus" "minus
+        }')"
+
+    (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
 ####################

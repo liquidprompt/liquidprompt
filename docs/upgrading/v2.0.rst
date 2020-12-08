@@ -2,8 +2,9 @@ Version 2.0 Upgrade Notes
 *************************
 
 Most of the changes in 2.0 are in private functions and variables.
-There are two public API changes that could impact users:
-:ref:`$lp_err <lp_err>` and :ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`.
+There are three public API changes that could impact users:
+:ref:`$lp_err <lp_err>`, :ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`,
+and :ref:`_lp_title() <lp_title>`.
 The rest are private API changes, but are still documented here.
 
 .. contents::
@@ -620,6 +621,24 @@ Replace a set statement like::
 with::
 
    LP_DISABLED_VCS_PATHS=("/my/one/path" "/my/other/path")
+
+.. _lp_title:
+
+_lp_title()
+-----------
+
+Replaced by :func:`_lp_formatted_title`.
+
+Most likely would have been used in a template or ``.ps1`` file.
+
+Replace a call like::
+
+   LP_TITLE="$(_lp_title "$PS1")"
+   PS1="${LP_TITLE}${PS1}"
+
+with::
+
+   _lp_formatted_title "$PS1"
 
 Private Deprecations
 ====================

@@ -21,6 +21,7 @@ instructions for trying Liquidprompt temporarily.
    config
    theme
    functions
+   release-notes
    upgrading
 
 Indices and tables

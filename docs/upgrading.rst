@@ -7,5 +7,7 @@ If a version introduces breaking changes or deprecation notices, a detailed
 document describing what changes a user needs to make will be linked below.
 
 .. toctree::
+   :maxdepth: 2
+   :reversed:
 
    upgrading/v2.0

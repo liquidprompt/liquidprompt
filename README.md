@@ -1,6 +1,9 @@
 Liquid Prompt — a useful adaptive prompt for Bash & zsh
 =======================================================
 
+![Tests](https://github.com/nojhan/liquidprompt/workflows/tests/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/liquidprompt/badge/?version=stable)](https://liquidprompt.readthedocs.io/)
+
 Liquid Prompt gives you a nicely displayed prompt with useful information
 when you need it. It shows you what you need when you need it.
 You will notice what changes *when* it changes, saving time and frustration.

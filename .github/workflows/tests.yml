@@ -1,0 +1,27 @@
+name: tests
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-16.04
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - macos-10.15
+          - macos-11.0
+          - windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install zsh
+        run: sudo apt-get --yes install zsh
+        if: runner.os == 'Linux'
+      - run: ./tests.sh
+        shell: bash

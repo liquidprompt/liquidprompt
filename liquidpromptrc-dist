@@ -3,6 +3,10 @@
 # LIQUID PROMPT CONFIGURATION FILE #
 ####################################
 
+# This example config file does not contain all possible config options, nor
+# does it have detailed option descriptions. See the documentation for that:
+# https://liquidprompt.readthedocs.io/en/stable/config.html
+
 # If you want to use different themes and features,
 # you can load the corresponding files here:
 #source ~/.config/liquidprompt/nojhan.theme
@@ -12,7 +16,7 @@
 # BEHAVIOUR #
 #############
 
-# Display the battery level when the level is below this threshold.
+# Display the battery level in more urgent color when the level is below this threshold.
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 
@@ -56,11 +60,11 @@ LP_HOSTNAME_ALWAYS=0
 # the hostname is displayed
 LP_ENABLE_FQDN=0
 
-# Always display the user name, even if the user is the same as the one logged
-# in.
-# Defaults to 1 (always display the user name)
-# set to 0 if you want to hide the logged user (it will always display different
-# users)
+# When to display the user name:
+# 1: always display the user name
+# 0: hide the logged user (always display different users)
+# -1: never display the user name
+# Default value is 1
 LP_USER_ALWAYS=1
 
 # Display the percentages of load/batteries along with their
@@ -81,6 +85,10 @@ LP_ENABLE_PROXY=1
 # Recommended value is 1
 LP_ENABLE_JOBS=1
 
+# Enable the detached sessions feature.
+# Default value is 1
+LP_ENABLE_DETACHED_SESSIONS=1
+
 # Enable the load feature.
 # Recommended value is 1
 LP_ENABLE_LOAD=1
@@ -91,7 +99,7 @@ LP_ENABLE_BATT=1
 
 # Enable the 'sudo credentials' feature.
 # Be warned that this may pollute the syslog if you don't have sudo
-# credentials, and the sysadmin will hate you.
+# credentials, and the sysadmin might hate you.
 LP_ENABLE_SUDO=0
 
 # Enable the VCS features with the root account.
@@ -118,9 +126,7 @@ LP_ENABLE_FOSSIL=1
 # Recommanded value is 1
 LP_ENABLE_BZR=1
 
-# Show time of when the current prompt was displayed. (Must be enabled and
-# disabled in the config file and not after liquidprompt has already been
-# sourced.)
+# Show time of when the current prompt was displayed.
 LP_ENABLE_TIME=0
 
 # Show runtime of the previous command if over LP_RUNTIME_THRESHOLD
@@ -148,32 +154,28 @@ LP_ENABLE_VIRTUALENV=1
 # Recommended value is 1
 LP_ENABLE_SCLS=1
 
-# Show average system temperature
+# Show highest system temperature
 LP_ENABLE_TEMP=1
 
 # When showing the time, use an analog clock instead of numeric values.
-# The analog clock is "accurate" to the nearest half hour.
-# You must have a unicode-capable terminal and a font with the "CLOCK"
-# characters.
 # Recommended value is 0
 LP_TIME_ANALOG=0
 
 # Use the prompt as the title of the terminal window
-# The content is not customizable, the implementation is very basic,
-# and this may not work properly on exotic terminals, thus the
-# recommended value is 0
-# See LP_TITLE_OPEN and LP_TITLE_CLOSE to change escape characters to adapt this
-# feature to your specific terminal.
+# Recommended value is 0
 LP_ENABLE_TITLE=0
 
-# Enable Title for screen and byobu
+# Enable Title for screen, byobu, and tmux
 LP_ENABLE_SCREEN_TITLE=0
 
 # Use different colors for the different hosts you SSH to
 LP_ENABLE_SSH_COLORS=0
 
-# Specify a list of complete and colon (":") separated paths in which, all vcs
-# will be disabled
-LP_DISABLED_VCS_PATH=""
+# Show the error code of the last command if it was not 0
+LP_ENABLE_ERROR=1
+
+# Specify an array of absolute paths in which all vcs will be disabled.
+# Ex: ("/root" "/home/me/large-remove-svn-repo")
+LP_DISABLED_VCS_PATHS=()
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

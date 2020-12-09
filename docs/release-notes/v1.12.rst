@@ -1,0 +1,40 @@
+Version 1.12 Release Notes
+**************************
+
+Most of the changes in 1.12 are accumulated bug fixes, but a few features made
+it in as well.
+
+.. contents::
+   :local:
+
+Runtime Bell
+============
+
+A new feature, similar to the displayed last command runtime, is to ring the
+terminal bell when the running command exits, if the runtime was over a
+threshold. This can be used to notify when a long running command has finished.
+
+See the :attr:`LP_RUNTIME_BELL` and :attr:`LP_RUNTIME_BELL_THRESHOLD` config
+options.
+
+Permissions Mark
+================
+
+The ``:`` mark between the hostname and the current directory was a constant
+string, but now it has a config option: :attr:`LP_MARK_PERM`.
+
+Preset Color Aliases
+====================
+
+The ``5`` value of the basic colors is often named "magenta", but in
+Liquidprompt it has always been "purple", and the bold version is "pink".
+
+To make the options more standard, an alias for ``PURPLE`` is ``MAGENTA``, and
+``PINK`` now has aliases of ``BOLD_PURPLE`` and ``BOLD_MAGENTA``.
+
+Speed Improvements
+==================
+
+Improvements to the startup process have cut startup times by at least 30% in
+all cases.
+

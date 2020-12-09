@@ -1,0 +1,74 @@
+Version 2.0 Release Notes
+*************************
+
+Version 2.0 had to break a few eggs, but got a lot of reward out of it. This
+release is full of new features and improvements.
+
+.. contents::
+   :local:
+
+Speed Improvements
+==================
+
+By removing subshells, ``exec``, and other ``fork`` ing calls, the whole project
+has seen incredible speed improvements, anywhere from 1.5 to 10 times as fast.
+
+Theme Engine
+============
+
+Thanks to the new data source functions (see below), themes are able to change
+*everything* about how the prompt is displayed, instead of only color and
+element order.
+See :doc:`../theme`.
+
+Example Themes
+==============
+
+Liquidprompt now ships with some example themes showcasing how the new theme
+engine works. They are also fulling working themes that you can use as your
+daily drivers.
+See :doc:`../theme/included`.
+
+Data Sources
+============
+
+To power the themes, all of the data sources in Liquidprompt have been broken
+out into individual data functions that can be called by themes. They are also
+documented in detail in :doc:`../functions/data`.
+
+Version Control Interface
+=========================
+
+Before, each version control provider had its own function for displaying
+repository information. Now there is a unifying interface over all VCS providers
+that themes can use to display any VCS provider the same as all the others.
+See :doc:`../functions/data/vcs`.
+
+The default theme now uses this interface to display all VCS providers in the
+same way (similar to how Git was displayed before).
+See :doc:`../functions/theme`.
+
+Version Control Tracking updates without directory change
+=========================================================
+
+Before, if ``git init`` or similar was run in a directory, Liquidprompt would
+not display any repository information until the current directory was changed.
+Thanks to the speed improvements, Liquidprompt now checks for a repository at
+each prompt, while still being faster than version 1.12.
+
+Activate Function
+=================
+
+Before, when changing the user config file, a user needed to source
+``liquidprompt`` again to load their config changes (or ``exec bash`` or ``exec
+zsh``). Now that all of the initialization code has been refactored into
+:attr:`lp_activate`, running :attr:`lp_activate` after modifiying the config
+file or installing a new feature dependent program like ``git`` is all that is
+needed!
+
+Documentation
+=============
+
+The often lacking README documentation has been re-written with Sphinx to make
+this much improved documentation source.
+

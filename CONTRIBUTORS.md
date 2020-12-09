@@ -191,3 +191,15 @@ Thanks again to everyone for all of the help and support!
 * Nolan Leake (@nolanl)
 * Éloi Rivard (@azmeuk)
 * Felix Eckhofer (@tribut)
+* Paul Lhussiez (@Depado)
+* Cyril Bouthors (@cyril-bouthors)
+* Felix Schlitter (@felixSchl)
+* Christoph Burschka (@cburschka)
+* @dreamcat4
+* Munif Tanjim (@MunifTanjim)
+* @ilovezfs
+* Aleksey Tsalolikhin (@atsaloli)
+* Micah Silverman (@dogeared)
+* Rohan Kapadia (@kapad)
+* Jan Gorecki (@jangorecki)
+* Otto Kekäläinen (@ottok)

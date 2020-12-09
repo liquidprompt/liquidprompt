@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.0-beta.1] - 2020-12-09
 ### BREAKING CHANGES
 Note: these breaking changes are the only reason that this version is so much
 faster. They are also on private functions and variables, which the end user
-was not supposed to use. If you were using them, see the upgrade notes for help.
+was not supposed to use. If you were using them, see the
+[upgrade notes](https://liquidprompt.readthedocs.io/en/stable/upgrading/v2.0.html)
+for help.
 
 - **general**: `$_LP_SHELL_bash` and `$_LP_SHELL_zsh` contain `1` or `0` instead of `true`
   or `false` ([f681cdf])
@@ -44,11 +48,12 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
   `_lp_analog_time_color()` ([8cb609d])
 - **vcs**: `_lp_<vcs>_branch()` return changed from stdout to `$lp_vcs_branch` ([f3404f9])
 - **vcs**: `_lp_<vcs>_branch_color()` functions removed, replaced by
-  `_lp_vcs_details_color()` ([cafb8b2], [bf2b9c6], [1a9fcd0], [4fff496])
+  `_lp_vcs_details_color()` ([cafb8b2], [bf2b9c6], [1a9fcd0], [4fff496], [b523025])
 - **vcs**: `_lp_smart_mark()` return changed from stdout to `$lp_smart_mark` ([9c6d073])
 - **vcs**: `_lp_upwards_find()` removed, replaced by `_lp_find_vcs()` ([f434b6d])
 
 ### Deprecated
+- **title**: `_lp_title()` is replaced by `_lp_formatted_title()` ([46df995], [9604203], [#581])
 - **utils**: `_lp_bool()` is replaced by manually storing return codes ([82ee823]).
 - **utils**: `_lp_sb()` is replaced by data functions indicating if they
   returned data or not ([82ee823]).
@@ -62,17 +67,26 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
   is active. See the upgrade notes for help ([cad6286])
 
 ### Added
+- **general**: Sphinx documentation ([0d420d2], [c7b5003], [b523025], [f9fd12e])
 - **general**: Command line flag `--no-activate` to skip auto shell activation when sourcing
   liquidprompt ([e122d21])
 - **general**: `lp_activate()` function to reload config without needing to re-source
   liquidprompt ([e1f8bd5], [22dd760])
+- **general**: `theme-preview.sh` script to generate standard prompt previews ([0b94b74])
+- **bzr**: `_lp_bzr_active()` data function ([b523025])
+- **bzr**: `_lp_bzr_commit_id()` data function ([b523025])
+- **bzr**: `_lp_bzr_stash_count()` data function ([b523025])
+- **bzr**: `_lp_bzr_tag()` data function ([b523025])
+- **bzr**: `_lp_bzr_uncommitted_files()` data function ([b523025])
+- **bzr**: `_lp_bzr_uncommitted_lines()` data function ([b523025])
+- **bzr**: `_lp_bzr_untracked_files()` data function ([b523025])
 - **color**: `lp_terminal_format()` util function ([#486], [09cfced])
 - **env**: `$LP_ENABLE_ERROR` config option ([#543], [63b9f73])
 - **env**: `_lp_chroot()` data function ([c946155])
 - **env**: `_lp_connected_display()` data function ([c946155])
 - **env**: `_lp_error()` data function ([63b9f73])
-- **env**: `_lp_hostname()` data function ([8de1a72])
-- **env**: `_lp_hostname_color()` theme function ([c946155], [8de1a72])
+- **env**: `_lp_hostname()` data function ([8de1a72], [6ea54e9])
+- **env**: `_lp_hostname_color()` theme function ([c946155], [8de1a72], [b1a3145])
 - **env**: `_lp_http_proxy()` data function ([78dee3c])
 - **env**: `_lp_http_proxy_color()` theme function ([78dee3c])
 - **env**: `_lp_multiplexer()` data function ([0200b99], [230c9d7])
@@ -96,7 +110,7 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 - **git**: `_lp_git_commit_id()` data function ([70b4ef6])
 - **git**: `_lp_git_commits_off_remote()` data function ([309b443])
 - **git**: `_lp_git_stash_count()` data function ([fe9919f], [bb19836])
-- **git**: `_lp_git_tag()` data function ([70b4ef6])
+- **git**: `_lp_git_tag()` data function ([70b4ef6], [#506])
 - **git**: `_lp_git_uncommitted_files()` data function ([67dc0a9])
 - **git**: `_lp_git_uncommitted_lines()` data function ([70b4ef6])
 - **git**: `_lp_git_unstaged_files()` data function ([67dc0a9])
@@ -125,8 +139,8 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 - **svn**: `_lp_svn_untracked_files()` data function ([4fff496])
 - **temperature**: `_lp_temperature()` as data function ([69c75a3])
 - **tests**: Tests to check if a shell supports all features that Liquidprompt
-  needs ([#469], [46918f6], [5a9293d])
-- **tests**: TravisCI build file ([#469], [a4aa823])
+  needs ([#469], [46918f6], [5a9293d], [cdb860])
+- **tests**: Github Actions build file ([#469], [05e0a50])
 - **theme**: `__lp_theme_bash_complete()` to complete themes in Bash for `lp_theme()` ([884c069])
 - **theme**: `__lp_theme_list()` to list themes loaded in function memory ([884c069])
 - **theme**: `__lp_theme_zsh_complete()` to complete themes in Zsh for `lp_theme()` ([884c069])
@@ -136,38 +150,41 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 - **theme**: `lp_theme()` to switch themes without resourcing any
   files ([45f8091], [884c069], [#592])
 - **theme**: `powerline_full`, the default theme order in Powerline style ([bcefaf3])
-- **theme**: `powerline`, a clone of the Powerline prompt ([af8382b], [8de1a72], [5ef795d])
+- **theme**: `powerline`, a clone of the Powerline prompt ([af8382b], [8de1a72], [5ef795d], [#520])
 - **time**: `_lp_analog_time()` data function ([8cb609d], [bc120d5])
 - **time**: `_lp_analog_time_color()` theme function ([8cb609d], [bc120d5])
 - **time**: `_lp_time()` data function ([bc120d5])
 - **time**: `_lp_time_color()` theme function ([bc120d5])
+- **title**: `lp_formatted_title()` sets persistent title stripping terminal formatting
+  sequences ([46df995], [9604203])
 - **title**: `_lp_raw_title()` sets persistent title without stripping terminal formatting
   sequences ([46df995])
-- **title**: `lp_title()` sets a manual title that overrides the theme set title ([46df995])
+- **title**: `lp_title()` sets a manual title that overrides the theme set title ([46df995], [#609])
 - **utils**: `__lp_is_function()` util function ([9b40ca1])
 - **utils**: `__lp_line_count()` util function ([a314677])
-- **vcs**: `_lp_find_vcs()` to quickly find nearest VCS repo ([f434b6d])
-- **vcs**: `_lp_vcs_active()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_bookmark()` data function ([f4636e6])
-- **vcs**: `_lp_vcs_branch()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_commit_id()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_commits_off_remote()` data function ([cafb8b2])
+- **vcs**: `_lp_find_vcs()` to quickly find nearest VCS repo ([f434b6d], [#524])
+- **vcs**: `_lp_vcs_active()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_bookmark()` data function ([f4636e6], [#524])
+- **vcs**: `_lp_vcs_branch()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_commit_id()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_commits_off_remote()` data function ([cafb8b2], [#524])
 - **vcs**: `_lp_vcs_details_color()` to format VCS details regardless of VCS
-  type ([cafb8b2], [f4636e6], [5c56e65])
-- **vcs**: `_lp_vcs_head_status()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_stash_count()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_tag()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_uncommitted_files()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_uncommitted_lines()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_unstaged_files()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_unstaged_lines()` data function ([cafb8b2])
-- **vcs**: `_lp_vcs_untracked_files()` data function ([cafb8b2])
+  type ([cafb8b2], [f4636e6], [5c56e65], [#524])
+- **vcs**: `_lp_vcs_head_status()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_stash_count()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_tag()` data function ([cafb8b2], [#506], [#524])
+- **vcs**: `_lp_vcs_uncommitted_files()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_uncommitted_lines()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_unstaged_files()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_unstaged_lines()` data function ([cafb8b2], [#524])
+- **vcs**: `_lp_vcs_untracked_files()` data function ([cafb8b2], [#524])
 
 ### Fixed
 - **general**: Issues with custom `$IFS` ([e48856b])
 - **general**: Liquidprompt is now `set -u` compatable ([#354], [a8aa8c9], [cb9d71b])
 - **battery**: Color display would break with custom `$LP_COLORMAP` array ([f3f20ec])
 - **runtime**: DEBUG trap was not unset if `$LP_ENABLE_RUNTIME_BELL` was disabled ([cb9d71b])
+- **time**: Add default value for `$LP_TIME_ANALOG` ([f8c1c47])
 - **vcs**: VCS display for new VCS works without needing to change directories ([f434b6d])
 
 ### Changed
@@ -187,8 +204,9 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
   with runtime bell ([3e615cd])
 - **svn**: `_lp_svn_branch()` prefixes tag with "tag/", no longer returns current directory if no
   match found ([4fff496])
-- **title**: `_lp_title()` now directly sets the persistent title instead of returning a title
-  sequence on stdout ([46df995], [#581])
+
+### Removed
+- **vcsh**: `$LP_ENABLE_VCSH` config option, which did nothing ([f86a097])
 
 ## [1.12.1] - 2020-10-25
 ### Fixed
@@ -392,7 +410,8 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v1.12.1...master
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.0-beta.1...master
+[2.0.0-beta.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0-beta.1
 [1.12.1]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.1
 [1.12.0]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.0
 [1.11]: https://github.com/nojhan/liquidprompt/releases/tag/v_1.11
@@ -491,15 +510,19 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [#476]: https://github.com/nojhan/liquidprompt/pull/476
 [#479]: https://github.com/nojhan/liquidprompt/issues/479
 [#480]: https://github.com/nojhan/liquidprompt/pull/480
+[#486]: https://github.com/nojhan/liquidprompt/issues/486
 [#497]: https://github.com/nojhan/liquidprompt/pull/497
 [#499]: https://github.com/nojhan/liquidprompt/issues/499
 [#501]: https://github.com/nojhan/liquidprompt/issues/501
 [#503]: https://github.com/nojhan/liquidprompt/pull/503
+[#506]: https://github.com/nojhan/liquidprompt/issues/506
 [#508]: https://github.com/nojhan/liquidprompt/pull/508
 [#509]: https://github.com/nojhan/liquidprompt/pull/509
 [#517]: https://github.com/nojhan/liquidprompt/issues/517
+[#520]: https://github.com/nojhan/liquidprompt/issues/520
 [#522]: https://github.com/nojhan/liquidprompt/issues/522
 [#523]: https://github.com/nojhan/liquidprompt/pull/523
+[#524]: https://github.com/nojhan/liquidprompt/issues/524
 [#527]: https://github.com/nojhan/liquidprompt/issues/527
 [#543]: https://github.com/nojhan/liquidprompt/issues/543
 [#548]: https://github.com/nojhan/liquidprompt/issues/548
@@ -514,6 +537,7 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [#604]: https://github.com/nojhan/liquidprompt/pull/604
 [#605]: https://github.com/nojhan/liquidprompt/pull/605
 [#607]: https://github.com/nojhan/liquidprompt/issues/607
+[#609]: https://github.com/nojhan/liquidprompt/issues/609
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
 [#615]: https://github.com/nojhan/liquidprompt/issues/615
@@ -525,9 +549,12 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [03434d3]: https://github.com/nojhan/liquidprompt/commit/03434d388686792b6ed2aa0bf0e09851c90a7479
 [03c73fe]: https://github.com/nojhan/liquidprompt/commit/03c73fe05e5a3b48252a9f527e6e62666afbd726
 [0548290]: https://github.com/nojhan/liquidprompt/commit/05482901fe86788032ab4089525c415384937a24
+[05e0a50]: https://github.com/nojhan/liquidprompt/commit/05e0a502e8ae4e2a4711f5222f39c2589c6f582f
 [07be967]: https://github.com/nojhan/liquidprompt/commit/07be96765bbd742c5c2846ef6adbb0c253948216
 [07d18d4]: https://github.com/nojhan/liquidprompt/commit/07d18d4ca3f4a77377591d62dc054e00f4616cc7
 [09cfced]: https://github.com/nojhan/liquidprompt/commit/09cfced24745dd7aea086a292ab042f070ce4fbb
+[0b94b74]: https://github.com/nojhan/liquidprompt/commit/0b94b74d02046077a21d3fb83842c6a1fe74f6e5
+[0d420d2]: https://github.com/nojhan/liquidprompt/commit/0d420d2f3ac84a83e150110f9e09fc21e919df7f
 [0e0cc12]: https://github.com/nojhan/liquidprompt/commit/0e0cc12fabc474b6c0cfed7abf80c9f61efb68fc
 [0e0cc87]: https://github.com/nojhan/liquidprompt/commit/0e0cc870c2dcf3fbfed1b2e187e918d74dd6d3db
 [0f0fd37]: https://github.com/nojhan/liquidprompt/commit/0f0fd3739a8dd9821b34b78859de13b47b2d856d
@@ -569,7 +596,9 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [695d629]: https://github.com/nojhan/liquidprompt/commit/695d629dd5cf7109e8892075d4cf7fadd8c17d94
 [6961f99]: https://github.com/nojhan/liquidprompt/commit/6961f998b83f491995ce731bd232c5170cf4be5f
 [69c75a3]: https://github.com/nojhan/liquidprompt/commit/69c75a3e6c4998d682e480fb3df935e4eb224444
+[6cdb860]: https://github.com/nojhan/liquidprompt/commit/6cdb86006e4d2ad6dee06e60e229842144305594
 [6d94db6]: https://github.com/nojhan/liquidprompt/commit/6d94db6de7de879c14da842df535163a57dce638
+[6ea54e9]: https://github.com/nojhan/liquidprompt/commit/6ea54e91f84be1c491314c3680e82b06d769218e
 [70b4ef6]: https://github.com/nojhan/liquidprompt/commit/70b4ef65c034c5050173dbe70178b459e5acddc2
 [73f2057]: https://github.com/nojhan/liquidprompt/commit/73f205748fe6f09abcfe01ec150a456518aecc18
 [7402f79]: https://github.com/nojhan/liquidprompt/commit/7402f79a7518e74e16d36c74e8b5943d11f390d7
@@ -589,6 +618,7 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [8da3314]: https://github.com/nojhan/liquidprompt/commit/8da33144c89075dfd2309feaa718ccf3fe693ff6
 [8de1a72]: https://github.com/nojhan/liquidprompt/commit/8de1a729f7190612d573218625dc1aaf4c2f78bf
 [93df016]: https://github.com/nojhan/liquidprompt/commit/93df0169499c4ca8563add267e95dcd343d95f12
+[9604203]: https://github.com/nojhan/liquidprompt/commit/9604203fb9f90b44a8c806f32e7746588b70a83b
 [9633ac8]: https://github.com/nojhan/liquidprompt/commit/9633ac83cad5f5702c1e853940c0ab2e166961bf
 [9b40ca1]: https://github.com/nojhan/liquidprompt/commit/9b40ca139a43e51b4d0fbdc780d0661bfffbf6ae
 [9ba5d28]: https://github.com/nojhan/liquidprompt/commit/9ba5d2824571d41c1aa7a3573a3cf17ed729f2bb
@@ -597,7 +627,6 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [9c6d073]: https://github.com/nojhan/liquidprompt/commit/9c6d073e3cc7a49cfce209ce4307881d70340161
 [a314677]: https://github.com/nojhan/liquidprompt/commit/a314677b8031804130c69de94d4604e9c319575a
 [a35032f]: https://github.com/nojhan/liquidprompt/commit/a35032fe03ab3d84093141c403a7c6615f7c38d9
-[a4aa823]: https://github.com/nojhan/liquidprompt/commit/a4aa823b8ac79534d9914d4a2b9eabbb9d042628
 [a70e80f]: https://github.com/nojhan/liquidprompt/commit/a70e80f0f501031ef97ea8baf88ca6d7ef56ad8a
 [a8114dd]: https://github.com/nojhan/liquidprompt/commit/a8114dd9550e2e7fd33b93eb7885de08b3e64933
 [a8571bb]: https://github.com/nojhan/liquidprompt/commit/a8571bb2920d9f11006754e634304242d929db57
@@ -606,12 +635,15 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [aa870b5]: https://github.com/nojhan/liquidprompt/commit/aa870b54d27cd6deda50a24f2030511d8a23c45e
 [af8382b]: https://github.com/nojhan/liquidprompt/commit/af8382b56833e8ce08834c61c70c6eda805b413f
 [afe3195]: https://github.com/nojhan/liquidprompt/commit/afe319526a14e6ab73fba175c06e7a45188a37c4
+[b1a3145]: https://github.com/nojhan/liquidprompt/commit/b1a3145ae5432e39ff85d144207eb490f3af341a
+[b523025]: https://github.com/nojhan/liquidprompt/commit/b523025221c2c9084a933cf545fa9cb999916323
 [b53e53b]: https://github.com/nojhan/liquidprompt/commit/b53e53b6a5a5b783896b8fd75d341dbb1d7d5e5c
 [bb19836]: https://github.com/nojhan/liquidprompt/commit/bb198362d78310905ef213bbdedce1ace5002b99
 [bc120d5]: https://github.com/nojhan/liquidprompt/commit/bc120d50c265ece6158317ddea0488919e0747dd
 [bcefaf3]: https://github.com/nojhan/liquidprompt/commit/bcefaf32e9e301e13706fc5c39de814c1a2630aa
 [bf2b9c6]: https://github.com/nojhan/liquidprompt/commit/bf2b9c60a788c32f38078f580b79ba80540d3bdf
 [c3d4970]: https://github.com/nojhan/liquidprompt/commit/c3d49708e598a79eca50caa0f96fca6230ce204e
+[c7b5003]: https://github.com/nojhan/liquidprompt/commit/c7b5003616d769ac1a4edc06d28ba6b84bfe0418
 [c946155]: https://github.com/nojhan/liquidprompt/commit/c9461552d9618548d4a858b0153671cf0fdbdac3
 [c98f16d]: https://github.com/nojhan/liquidprompt/commit/c98f16d52f9cc22723679124c3d64b06cbcb6e6e
 [c9bdefe]: https://github.com/nojhan/liquidprompt/commit/c9bdefe020c30bb053c0815a1633e5e3be25e4ef
@@ -646,7 +678,10 @@ was not supposed to use. If you were using them, see the upgrade notes for help.
 [f4636e6]: https://github.com/nojhan/liquidprompt/commit/f4636e66455a80586f20bb1ea9624a15299cea58
 [f4afc5d]: https://github.com/nojhan/liquidprompt/commit/f4afc5d0a8f776c96308001fcdae4a5aa1dac2bd
 [f681cdf]: https://github.com/nojhan/liquidprompt/commit/f681cdf9d8dd1d847aaf5f0b69222606a181c648
+[f86a097]: https://github.com/nojhan/liquidprompt/commit/f86a097d5eb9cab2a2fbca7629e9c2c389f1e12e
+[f8c1c47]: https://github.com/nojhan/liquidprompt/commit/f8c1c4770aab0a1c15f3e17b0b47a421f024f1b7
 [f9038e0]: https://github.com/nojhan/liquidprompt/commit/f9038e0331df1dfedbeb442c84ec62d63a90c37d
+[f9fd12e]: https://github.com/nojhan/liquidprompt/commit/f9fd12eed963ce2d64762e09b04adb06e00692a4
 [fabc775]: https://github.com/nojhan/liquidprompt/commit/fabc775cb8bfe1be5a39cf577d2d2187398881b0
 [fb123f4]: https://github.com/nojhan/liquidprompt/commit/fb123f4c5eee08c265eb91cc5a4d3de7e9c6c75d
 [fdbd7ca]: https://github.com/nojhan/liquidprompt/commit/fdbd7ca545a2847fb3e862a6088740aa2a06c799

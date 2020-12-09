@@ -1,6 +1,15 @@
 
 . ../liquidprompt --no-activate
 
+function test_as_text {
+  # The escape sequences are different on Bash and Zsh
+  assertEquals "basic text removal" "a normal string without colors" \
+    "$(_lp_as_text "${_LP_OPEN_ESC}bad text${_LP_CLOSE_ESC}a normal string without ${_LP_OPEN_ESC}color${_LP_CLOSE_ESC}colors")"
+
+  assertEquals "control character removal" "string" \
+    "$(_lp_as_text "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}str${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing")"
+}
+
 function test_line_count {
   typeset test_string="a normal string"
   __lp_line_count "$test_string"

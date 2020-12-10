@@ -582,7 +582,7 @@ Marks
    Mark used to indicate the size of the directory stack. Here are some
    alternative marks you might like: ⚟ = ≡ ≣
 
-   See also :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
+   See also: :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
 
    .. versionadded:: 2.0
 
@@ -805,7 +805,7 @@ Valid preset color variables are:
 
    Color used to indicate the size of the directory stack.
 
-   See also :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_MARK_DIRSTACK`.
+   See also: :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_MARK_DIRSTACK`.
 
    .. versionadded:: 2.0
 

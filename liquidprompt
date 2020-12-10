@@ -2147,7 +2147,7 @@ __lp_temp_sensors() {
     # Only the integer part is retained
     local -i i
     local IFS=$' \t\n'
-    for i in $(LC_ALL=C \sensors -u |
+    for i in $(LC_ALL=C \sensors -u 2>/dev/null |
             sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
         (( $i > ${lp_temperature:-0} )) && lp_temperature=$i
     done

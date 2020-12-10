@@ -99,6 +99,16 @@ Environment
    .. versionchanged:: 2.0
       Return method changed from stdout.
 
+.. function:: _lp_dirstack() -> var:lp_dirstack
+
+    Returns true if directory stack support is enabled and the directory stack
+    contains more than one directory. In that case, the return variable is set
+    to the number of directories on the stack.
+
+    Can be enabled by :attr:`LP_ENABLE_DIRSTACK`.
+
+    .. versionadded:: 2.0
+
 .. function:: _lp_error() -> var:lp_error
 
    Returns ``true`` if the last user shell command returned a non-zero exit

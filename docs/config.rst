@@ -190,6 +190,16 @@ Features
 
    .. versionadded:: 2.0
 
+.. attribute:: LP_ENABLE_DIRSTACK
+   :type: bool
+   :value: 0
+
+   Display the size of the directory stack if it is greater than ``1``.
+
+   See also: :attr:`LP_MARK_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
+
+   .. versionadded:: 2.0
+
 .. attribute:: LP_ENABLE_ERROR
    :type: bool
    :value: 1
@@ -565,6 +575,17 @@ Marks
    Mark used to indicate that the prompt is ready for user input, unless some
    other context overrides it, like a VCS repository.
 
+.. attribute:: LP_MARK_DIRSTACK
+   :type: string
+   :value: "⚞"
+
+   Mark used to indicate the size of the directory stack. Here are some
+   alternative marks you might like: ⚟ = ≡ ≣
+
+   See also :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
+
+   .. versionadded:: 2.0
+
 .. attribute:: LP_MARK_DISABLED
    :type: string
    :value: "⌀"
@@ -777,6 +798,16 @@ Valid preset color variables are:
 
    Color used to indicate that the current repository has lines that have been
    changed since the last commit.
+
+.. attribute:: LP_COLOR_DIRSTACK
+   :type: string
+   :value: $BOLD_YELLOW
+
+   Color used to indicate the size of the directory stack.
+
+   See also :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_MARK_DIRSTACK`.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_COLOR_DISCHARGING_ABOVE
    :type: string

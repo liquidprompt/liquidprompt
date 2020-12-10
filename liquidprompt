@@ -322,9 +322,9 @@ __lp_source_config() {
         echo "liquidprompt: LP_DISABLED_VCS_PATH is deprecated. Update your config to use LP_DISABLED_VCS_PATHS array." >&2
 
         (( _LP_SHELL_zsh )) && setopt local_options && setopt sh_word_split
-        local path IFS=:
-        for path in $LP_DISABLED_VCS_PATH; do
-            LP_DISABLED_VCS_PATHS+=("$path")
+        local _path IFS=:
+        for _path in $LP_DISABLED_VCS_PATH; do
+            LP_DISABLED_VCS_PATHS+=("$_path")
         done
     fi
 
@@ -1142,9 +1142,9 @@ _lp_jobcount_color() {
 ######################
 
 _lp_are_vcs_enabled() {
-    local path
-    for path in "${LP_DISABLED_VCS_PATHS[@]}"; do
-        if [[ -n "$path" && "$PWD" == "$path"* ]]; then
+    local _path
+    for _path in "${LP_DISABLED_VCS_PATHS[@]}"; do
+        if [[ -n "$_path" && "$PWD" == "$_path"* ]]; then
             return 1
         fi
     done
@@ -1966,20 +1966,20 @@ _lp_battery_color() {
     local mark=$LP_MARK_BATTERY
     local chargingmark=$LP_MARK_ADAPTER
     _lp_battery
-    local -i status=$?
+    local -i _status=$?
 
-    if (( status >= 4 || lp_battery == 100 )); then
+    if (( _status >= 4 || lp_battery == 100 )); then
         # no battery support or battery full: nothing displayed
         return 1
-    elif (( status == 3 && lp_battery != 100 )); then
+    elif (( _status == 3 && lp_battery != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
         lp_battery_color="${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
-    elif (( status == 2 )); then
+    elif (( _status == 2 )); then
         # charging but under threshold
         # yellow ⏚
         lp_battery_color="${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
-    elif (( status == 1 )); then
+    elif (( _status == 1 )); then
         # discharging but above threshold
         # yellow ⌁
         lp_battery_color="${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"

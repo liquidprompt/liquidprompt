@@ -1081,6 +1081,22 @@ _lp_hostname_color() {
     fi
 }
 
+_lp_dirstack() {
+    (( LP_ENABLE_DIRSTACK )) || return 2
+
+    local count dir_stack=$(dirs -p; printf x)
+    __lp_line_count "${dir_stack%x}"
+    lp_dirstack=$count
+
+    (( lp_dirstack > 1 ))
+}
+
+_lp_dirstack_color() {
+    _lp_dirstack || return "$?"
+
+    lp_dirstack_color="${LP_COLOR_DIRSTACK}${LP_MARK_DIRSTACK}${lp_dirstack}${NO_COL}"
+}
+
 ################
 # Related jobs #
 ################
@@ -1138,27 +1154,6 @@ _lp_jobcount_color() {
     fi
 
     [[ -n "$lp_jobcount_color" ]]
-}
-
-###################
-# Directory stack #
-###################
-
-_lp_dirstack() {
-    (( LP_ENABLE_DIRSTACK )) || return 2
-
-    lp_dirstack=
-
-    local -i ds
-    (( ds = $(dirs -p | wc -l) ))
-
-    if (( ds > 1 )); then
-        lp_dirstack+="${LP_COLOR_DIRSTACK}${LP_MARK_DIRSTACK}${ds}${NO_COL}"
-    else
-        return 1
-    fi
-
-    return 0
 }
 
 ######################
@@ -2419,6 +2414,12 @@ _lp_default_theme_prompt() {
         LP_COLOR_MARK="$lp_sudo_active_color"
     fi
 
+    if _lp_dirstack_color; then
+        LP_DIRSTACK=" $lp_dirstack_color"
+    else
+        LP_DIRSTACK=
+    fi
+
     # in main prompt: no space
     if _lp_http_proxy_color; then
         LP_PROXY="$lp_http_proxy_color"
@@ -2456,12 +2457,6 @@ _lp_default_theme_prompt() {
         LP_VCS=
     fi
 
-    if _lp_dirstack; then
-        LP_STCK=" $lp_dirstack"
-    else
-        LP_STCK=
-    fi
-
     _lp_smart_mark
     LP_MARK="${lp_smart_mark}${NO_COL} "
 
@@ -2475,7 +2470,7 @@ _lp_default_theme_prompt() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_STCK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

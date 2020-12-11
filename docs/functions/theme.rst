@@ -215,7 +215,7 @@ specific text and formatting may change.
    * :attr:`LP_MARK_STASH`
    * :attr:`LP_MARK_UNTRACKED`
 
-   This function should only be called when in a VCS repo; use
+   This function should only be called when in a VCS repository; use
    :func:`_lp_find_vcs` or :func:`_lp_vcs_active` before.
 
    The return code is undefined; a string should always be returned.

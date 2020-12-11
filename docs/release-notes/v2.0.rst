@@ -62,8 +62,8 @@ Activate Function
 Before, when changing the user config file, a user needed to source
 ``liquidprompt`` again to load their config changes (or ``exec bash`` or ``exec
 zsh``). Now that all of the initialization code has been refactored into
-:attr:`lp_activate`, running :attr:`lp_activate` after modifiying the config
-file or installing a new feature dependent program like ``git`` is all that is
+:attr:`lp_activate`, running :attr:`lp_activate` after modifying the config file
+or installing a new feature dependent program like ``git`` is all that is
 needed!
 
 Documentation

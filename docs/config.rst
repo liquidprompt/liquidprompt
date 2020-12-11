@@ -9,7 +9,7 @@ options. They can either be set before sourcing Liquidprompt (in ``.bashrc`` or
 ``.zshrc``), or set in a Liquidprompt config file.
 
 .. note::
-   Config variables set in a config file take precence over variables set in the
+   Config variables set in a config file take precedence over variables set in the
    environment or on the command line. Setting a config option on the command
    line, then running :func:`lp_activate` will overwrite that option with the
    value from the config file, if it is set there.

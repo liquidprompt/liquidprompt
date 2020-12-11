@@ -64,7 +64,7 @@ Path
    the values of :attr:`LP_PATH_KEEP` and :attr:`LP_ENABLE_SHORTEN_PATH`.
 
    Only :func:`__lp_shorten_path` actually sets ``lp_path``, other config
-   options will initiallize ``lp_path`` with a shell escape sequence so the
+   options will initialize ``lp_path`` with a shell escape sequence so the
    shell will print the path.
 
    .. versionadded:: 2.0
@@ -93,8 +93,8 @@ Path
    Shorten the path of the current working directory if the path is longer than
    :attr:`LP_PATH_LENGTH`. Show as much of the current working directory path as
    possible. If shortened display a leading mark, such as ellipses, to indicate
-   that part is missing. Show at least :attr:`LP_PATH_KEEP` leading dirs and
-   current directory.
+   that part is missing. Show at least :attr:`LP_PATH_KEEP` leading directories
+   and current directory.
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_shorten_path``.
@@ -130,7 +130,7 @@ Runtime
 .. function:: __lp_runtime_after()
 
    Hooks into the shell to run directly after the user command returns, to
-   record the current time, and calcuate how long the command ran for.
+   record the current time, and calculate how long the command ran for.
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_runtime_after``.

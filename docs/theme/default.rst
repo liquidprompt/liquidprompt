@@ -53,12 +53,12 @@ Templates
 =========
 
 The default theme supports templated sections. Each piece of the theme is saved
-to a variable, and can be aranged in any order in a template. If you want to
+to a variable, and can be arranged in any order in a template. If you want to
 change the theme enough to move things around, but not enough to make your own
 theme, templates will let you change the order of the default theme's pieces.
 
 As the default theme of Liquidprompt was the only theme until version 2.0,
-templates were sometimes refered to as "themes" in version 1.X.
+templates were sometimes referred to as "themes" in version 1.X.
 
 For a template file to be loaded, its filepath must be set in
 :attr:`LP_PS1_FILE`.
@@ -66,7 +66,7 @@ For a template file to be loaded, its filepath must be set in
 A template file does nothing more than set :attr:`LP_PS1` to a value. The
 following sections are available to be used.
 
-An example template file is avaliable: liquid.ps1_.
+An example template file is available: liquid.ps1_.
 
 .. _liquid.ps1: https://github.com/nojhan/liquidprompt/blob/master/liquid.ps1
 

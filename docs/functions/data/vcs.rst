@@ -315,8 +315,8 @@ Fossil
 
 .. note::
    Fossil does not support remote tracking branches. Fossil by default keeps the
-   local repo in sync with the remote. Even if a user disables that, it is not
-   possible to have a local and remote branch named the same not in sync.
+   local repository in sync with the remote. Even if a user disables that, it is
+   not possible to have a local and remote branch named the same not in sync.
 
 .. function:: _lp_fossil_active()
 
@@ -347,8 +347,8 @@ Fossil
 
 .. function:: _lp_fossil_head_status() -> var:lp_vcs_head_status
 
-   Return ``true`` if the repo is in a special or unusual state. Return the
-   special status.
+   Return ``true`` if the repository is in a special or unusual state. Return
+   the special status.
 
    Does not return any extra details.
 
@@ -432,8 +432,8 @@ Git
 .. function:: _lp_git_head_status() -> var:lp_vcs_head_status, \
                                        var:lp_vcs_head_details
 
-   Return ``true`` if the repo is in a special or unusual state. Return the
-   special status, and any extra details (like progress in a rebase) if
+   Return ``true`` if the repository is in a special or unusual state. Return
+   the special status, and any extra details (like progress in a rebase) if
    applicable.
 
    .. versionadded:: 2.0
@@ -559,8 +559,8 @@ Mercurial
 
 .. function:: _lp_hg_head_status() -> var:lp_vcs_head_status
 
-   Return ``true`` if the repo is in a special or unusual state. Return the
-   special status.
+   Return ``true`` if the repository is in a special or unusual state. Return
+   the special status.
 
    Does not return any extra details.
 

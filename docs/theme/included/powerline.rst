@@ -15,7 +15,7 @@ The ``powerline`` theme is a clone of the `Powerline prompt`_. It copies the
 
 This prompt is a proof of (a specific) concept: that Liquidprompt can do what
 Powerline does, but faster.
-That said, this is a fully useable theme.
+That said, this is a fully usable theme.
 
 .. versionadded:: 2.0
 
@@ -219,13 +219,13 @@ These color config options take an array of integers, which are arguments to
    :type: array<int>
    :value: (250, 236, 0, 0, 7, 0)
 
-   Color for the VCS section if the repo is clean.
+   Color for the VCS section if the repository is clean.
 
 .. attribute:: POWERLINE_VCS_DIRTY_COLOR
    :type: array<int>
    :value: (220, 236, 0, 0, 3, 0)
 
-   Color for the VCS section if the repo is not clean.
+   Color for the VCS section if the repository is not clean.
 
 .. attribute:: POWERLINE_VCS_STASH_COLOR
    :type: array<int>
@@ -363,7 +363,7 @@ ______
    :type: array<int>
    :value: (231, 62, 0, 0, 7, 5)
 
-   Color for the Red Hat Sofware Collections section.
+   Color for the Red Hat Software Collections section.
 
 .. attribute:: POWERLINE_TEMPERATURE_COLOR
    :type: array<int>

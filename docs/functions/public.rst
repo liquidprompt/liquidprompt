@@ -89,7 +89,7 @@ their config.
    *fallback_foreground_color* and *fallback_background_color* are used when the
    normal colors are higher than the terminal supported colors. The special
    negative inputs do not work for these options, and they are not checked for
-   compatablilty before being used, so it is recommended that they are in the
+   compatibility before being used, so it is recommended that they are in the
    range ``0-7``.
    When setting *foreground_color* or *background_color* to negative inputs,
    these options are never checked.

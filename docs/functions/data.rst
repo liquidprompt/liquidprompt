@@ -38,7 +38,7 @@ Battery
 
    Returns an integer percentage of the current battery level.
 
-   If the the threshold is not surpassed, the battery level is still returned.
+   If the threshold is not surpassed, the battery level is still returned.
 
    The threshold is configured with :attr:`LP_BATTERY_THRESHOLD`.
 
@@ -175,7 +175,7 @@ Load
    cores, in centiload units. In other words, the load average is multiplied by
    100, then divided by the number of CPU cores.
 
-   If the the threshold is not surpassed, the load average is still returned.
+   If the threshold is not surpassed, the load average is still returned.
 
    The threshold is configured with :attr:`LP_LOAD_THRESHOLD`.
 
@@ -273,8 +273,7 @@ Temperature
    Returns ``true`` if the highest system temperature is greater than the
    threshold. Returns the highest temperature integer.
 
-   If the the threshold is not surpassed, the highest temperature is still
-   returned.
+   If the threshold is not surpassed, the highest temperature is still returned.
 
    The threshold is configured with :attr:`LP_TEMP_THRESHOLD`.
 

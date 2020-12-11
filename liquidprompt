@@ -2394,7 +2394,7 @@ _lp_default_theme_directory() {
     LP_PWD="${LP_COLOR_PATH}${lp_path}${NO_COL}"
 }
 
-_lp_default_theme_prompt() {
+_lp_default_theme_prompt_data() {
     # left of main prompt: space at right
     if _lp_jobcount_color; then
         LP_JOBS="$lp_jobcount_color "
@@ -2470,7 +2470,9 @@ _lp_default_theme_prompt() {
 
     _lp_smart_mark
     LP_MARK="${lp_smart_mark}${NO_COL} "
+}
 
+_lp_default_theme_prompt_template() {
     if [[ -f "${LP_PS1_FILE-}" ]]; then
         source "$LP_PS1_FILE"
     fi
@@ -2501,6 +2503,11 @@ _lp_default_theme_prompt() {
     else
         PS1=$LP_PS1
     fi
+}
+
+_lp_default_theme_prompt() {
+    _lp_default_theme_prompt_data
+    _lp_default_theme_prompt_template
 }
 
 ########################

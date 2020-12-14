@@ -7,5 +7,6 @@ them as they are added to Liquidprompt.
 .. toctree::
    :maxdepth: 2
 
+   included/alternate_vcs
    included/powerline
 

@@ -120,6 +120,7 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
+    POWERLINE_DIRSTACK_MARKER=${POWERLINE_DIRSTACK_MARKER:-"⚞"}
 
     # Load default colors if not already defined
     [[ -z ${POWERLINE_BATTERY_COLOR[@]+x}              ]] && POWERLINE_BATTERY_COLOR=(-1 238 0 0 -1 0)
@@ -304,10 +305,19 @@ __powerline_path_split() {  # path_format, [separator_format], [last_dir_format]
 # __powerline_path_split(), which forgets the old colors for the arrow. This
 # function lets the arrow go first.
 __powerline_path_section() {
-    local powerline_path section_arrow
+    local powerline_path section_arrow dirstack_indicator
     __powerline_section_arrow "${POWERLINE_PATH_COLOR[@]}"
     __powerline_path_split
-    powerline_sections+=${section_arrow}${powerline_path}
+    __powerline_dirstack_indicator
+    powerline_sections+="${section_arrow}${powerline_path}${dirstack_indicator}"
+}
+
+__powerline_dirstack_indicator() {
+    if _lp_dirstack; then
+        dirstack_indicator="${POWERLINE_DIRSTACK_MARKER}${lp_dirstack}${POWERLINE_SPACER}"
+    else
+        dirstack_indicator=
+    fi
 }
 
 # Is this a dirty hack? Yes. Am I proud of it? Also yes.

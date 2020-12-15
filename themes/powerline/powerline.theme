@@ -120,7 +120,6 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
-    POWERLINE_DIRSTACK_MARKER=${POWERLINE_DIRSTACK_MARKER:-"⚞"}
 
     # Load default colors if not already defined
     [[ -z ${POWERLINE_BATTERY_COLOR[@]+x}              ]] && POWERLINE_BATTERY_COLOR=(-1 238 0 0 -1 0)
@@ -132,6 +131,7 @@ _lp_powerline_full_theme_activate() {
     [[ -z ${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]+x} ]] && POWERLINE_SOFTWARE_COLLECTIONS_COLOR=(231 62 0 0 7 5)
     [[ -z ${POWERLINE_TEMPERATURE_COLOR[@]+x}          ]] && POWERLINE_TEMPERATURE_COLOR=(-1 240 0 0 -1 0)
     [[ -z ${POWERLINE_TIME_COLOR[@]+x}                 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
+    [[ -z ${POWERLINE_DIRSTACK_COLOR[@]+x}             ]] && POWERLINE_DIRSTACK_COLOR=("${POWERLINE_NEUTRAL_COLOR[@]}")
 }
 
 _lp_powerline_full_theme_directory() {
@@ -183,6 +183,10 @@ _lp_powerline_full_theme_prompt() {
     __powerline_section "${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME}" "${POWERLINE_HOST_COLOR[@]}"
 
     __powerline_path_section
+
+    if _lp_dirstack; then
+        __powerline_section "${LP_MARK_DIRSTACK}${lp_dirstack}" "${POWERLINE_DIRSTACK_COLOR[@]}"
+    fi
 
     local lp_chroot
     if _lp_chroot; then
@@ -305,19 +309,10 @@ __powerline_path_split() {  # path_format, [separator_format], [last_dir_format]
 # __powerline_path_split(), which forgets the old colors for the arrow. This
 # function lets the arrow go first.
 __powerline_path_section() {
-    local powerline_path section_arrow dirstack_indicator
+    local powerline_path section_arrow
     __powerline_section_arrow "${POWERLINE_PATH_COLOR[@]}"
     __powerline_path_split
-    __powerline_dirstack_indicator
-    powerline_sections+="${section_arrow}${powerline_path}${dirstack_indicator}"
-}
-
-__powerline_dirstack_indicator() {
-    if _lp_dirstack; then
-        dirstack_indicator="${POWERLINE_DIRSTACK_MARKER}${lp_dirstack}${POWERLINE_SPACER}"
-    else
-        dirstack_indicator=
-    fi
+    powerline_sections+=${section_arrow}${powerline_path}
 }
 
 # Is this a dirty hack? Yes. Am I proud of it? Also yes.

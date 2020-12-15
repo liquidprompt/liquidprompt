@@ -306,12 +306,6 @@ _______
 
    The marker string used to indicate the following string is a chroot.
 
-.. attribute:: POWERLINE_DIRSTACK_MARKER
-   :type: string
-   :value: "⚞"
-
-   The marker string used to indicate the size of the directory stack.
-
 .. attribute:: POWERLINE_PROXY_MARKER
    :type: string
    :value: "proxy: "
@@ -339,6 +333,12 @@ ______
    :value: (219, 30, 0, 0, 7, 4)
 
    Color for the chroot section.
+
+.. attribute:: POWERLINE_DIRSTACK_COLOR
+   :type: array<int>
+   :value: :attr:`POWERLINE_NEUTRAL_COLOR`
+
+   Color for the directory stack section.
 
 .. attribute:: POWERLINE_LOAD_COLOR
    :type: array<int>

@@ -97,8 +97,8 @@ _lp_powerline_theme_prompt() {
 
         local lp_vcs_stash_count
         if _lp_vcs_stash_count; then
-            __powerline_sub_section_arrow -2
-            powerline_sections+=$sub_section_arrow
+            __powerline_sub_section_format -2
+            powerline_sections+="${sub_section_format}${POWERLINE_SOFT_DIVIDER}"
 
             __powerline_section "${POWERLINE_STASH_MARKER} ${lp_vcs_stash_count}" "${POWERLINE_VCS_STASH_COLOR[@]}"
         fi
@@ -270,39 +270,10 @@ __powerline_section_arrow() {  # _, background_color, _, _, _, fallback_backgrou
     fi
 }
 
-__powerline_sub_section_arrow() {  # foreground_color, _, _, _, fallback_foreground_color
+__powerline_sub_section_format() {  # foreground_color, _, _, _, fallback_foreground_color
     local lp_terminal_format
     lp_terminal_format "${1-}" -2 0 0 "${5-}"
-    sub_section_arrow="${lp_terminal_format}${POWERLINE_SOFT_DIVIDER}"
-}
-
-__powerline_path_split() {  # path_format, [separator_format], [last_dir_format]
-    lp_terminal_format "${POWERLINE_PATH_COLOR[@]}"
-    local path_format=$lp_terminal_format
-
-    local sub_section_arrow
-    __powerline_sub_section_arrow "${POWERLINE_PATH_SEPARATOR_COLOR[@]}"
-    local separator="${POWERLINE_SPACER}${sub_section_arrow}"
-
-    lp_terminal_format "${POWERLINE_PATH_LAST_COLOR[@]}"
-    local last_dir_format=$lp_terminal_format
-
-    local path_start=${lp_path%/*} path_end=${lp_path##*/}
-
-    # If the path is only / or doesn't contain one (if the path is ~),
-    # no separators are needed.
-    if [[ $lp_path != '/' && $lp_path == *'/'* ]]; then
-        local leader=
-        if [[ ${lp_path:0:1} == '/' ]]; then
-            # The replace would treat the leading / as a separator, and not show
-            # it at all. Powerline treats the leading / as a directory (as it is).
-            leader='/'
-        fi
-        powerline_path="${path_format}${POWERLINE_SPACER}${leader}${path_start//\//${separator}${path_format}${POWERLINE_SPACER}}${separator}"
-    fi
-
-    # If path_end is empty, the path was only /
-    powerline_path+="${last_dir_format}${POWERLINE_SPACER}${path_end:-/}${POWERLINE_SPACER}"
+    sub_section_format="${lp_terminal_format}"
 }
 
 # This cannot use __powerline_section() as we generate colors inside
@@ -311,8 +282,22 @@ __powerline_path_split() {  # path_format, [separator_format], [last_dir_format]
 __powerline_path_section() {
     local powerline_path section_arrow
     __powerline_section_arrow "${POWERLINE_PATH_COLOR[@]}"
-    __powerline_path_split
-    powerline_sections+=${section_arrow}${powerline_path}
+
+    lp_terminal_format "${POWERLINE_PATH_COLOR[@]}"
+    local path_format=$lp_terminal_format
+
+    local sub_section_format
+    __powerline_sub_section_format "${POWERLINE_PATH_SEPARATOR_COLOR[@]}"
+    local separator_format=$sub_section_format
+
+    lp_terminal_format "${POWERLINE_PATH_LAST_COLOR[@]}"
+    local last_dir_format=$lp_terminal_format
+
+    local lp_path_format
+    _lp_path_format "$path_format" "$last_dir_format" "" '' \
+        "${POWERLINE_SPACER}${POWERLINE_SOFT_DIVIDER}${POWERLINE_SPACER}" "$separator_format"
+
+    powerline_sections+="${section_arrow}${POWERLINE_SPACER}${lp_path_format}${POWERLINE_SPACER}"
 }
 
 # Is this a dirty hack? Yes. Am I proud of it? Also yes.

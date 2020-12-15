@@ -51,6 +51,108 @@ function test_pwd_tilde {
   PWD="/home/user/a/test/path"
   __lp_pwd_tilde
   assertEquals "shorted home path" "~/a/test/path" "$lp_pwd_tilde"
+
+  __lp_pwd_tilde "/home/user/a/different/path"
+  assertEquals "shorted home path" "~/a/different/path" "$lp_pwd_tilde"
+}
+
+function pathSetUp {
+  # We cannot use SHUNIT_TEMPDIR because we need to know the start of the path
+  typeset long_path="/tmp/_lp/a/very/long/pathname"
+  mkdir -p "${long_path}/" "${long_path/name/foo}/"
+}
+
+function pathTearDown {
+  rm -r "/tmp/_lp/"
+}
+
+function test_get_unique_directory {
+  pathSetUp
+
+  typeset lp_unique_directory
+
+  __lp_get_unique_directory "/"
+  assertFalse "No shortening on '/'" "$?"
+
+  __lp_get_unique_directory "~"
+  assertFalse "No shortening on '~'" "$?"
+
+  __lp_get_unique_directory "/tmp/_lp/a"
+  assertFalse "No shortening on 'a'" "$?"
+
+  __lp_get_unique_directory "/tmp/_lp/a/very"
+  assertTrue "Shortening on 'very'" "$?"
+  assertEquals "Shortening on 'very'" "v" "$lp_unique_directory"
+
+  __lp_get_unique_directory "/tmp/_lp/a/very/long/pathname"
+  assertTrue "Partial shortening on 'pathname'" "$?"
+  assertEquals "Partial shortening on 'pathname'" "pathn" "$lp_unique_directory"
+
+  pathTearDown
+}
+
+function test_path_format() {
+  pathSetUp
+
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  _lp_find_vcs() {
+    return 1
+  }
+
+  typeset COLUMNS=100
+  LP_PATH_LENGTH=100
+
+  typeset lp_path_format
+
+  _lp_path_format '{format}'
+  assertEquals "root directory formatting" '{format}/' "$lp_path_format"
+
+  _lp_path_format '{format}' '' '' '' '['
+  assertEquals "root directory formatting ignore separator" '{format}/' "$lp_path_format"
+
+  PWD="/tmp"
+  _lp_path_format ''
+  assertEquals "root directory no formatting" '/tmp' "$lp_path_format"
+
+  _lp_path_format '' '' '' '' '^'
+  assertEquals "root directory no formatting custom separator" '/^tmp' "$lp_path_format"
+
+  PWD=$HOME
+  _lp_path_format '{format}'
+  assertEquals "home directory formatting" '{format}~' "$lp_path_format"
+
+  PWD="/tmp/_lp/a"
+  _lp_path_format ''
+  assertEquals "short directory formatting" "$PWD" "$lp_path_format"
+
+  LP_PATH_LENGTH=13
+
+  PWD="/tmp/_lp/a/very"
+  _lp_path_format ''
+  assertEquals "short directory formatting" "/t/_lp/a/very" "$lp_path_format"
+
+  LP_PATH_LENGTH=1
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "shortened directory formatting" "{n}/{s}t/{s}_/{n}a/{l}very" "$lp_path_format"
+
+  LP_PATH_LENGTH=13
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{n}/{s}t/{n}_lp/{n}a/{l}very" "$lp_path_format"
+
+  _lp_find_vcs() {
+    lp_vcs_root="/tmp/_lp/a/very"
+  }
+
+  PWD="/tmp/_lp/a/very/long/pathname"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting" "{n}/{s}t/{s}_/{n}a/{v}very/{s}l/{l}pathname" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '^' '{^}'
+  assertEquals "full directory formatting with separator" "{n}/{^}^{s}t{^}^{s}_{^}^{n}a{^}^{v}very{^}^{s}l{^}^{l}pathname" "$lp_path_format"
+
+  pathTearDown
 }
 
 function test_is_function {

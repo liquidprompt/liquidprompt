@@ -277,12 +277,48 @@ Liquidprompt Configuration
 --------------------------
 All Liquidprompt config options are respected, **except for**:
 
+* :attr:`LP_COLOR_DIRSTACK`
+* :attr:`LP_COLOR_ERR`
+* :attr:`LP_COLOR_HOST`
+* :attr:`LP_COLOR_IN_MULTIPLEXER`
+* :attr:`LP_COLOR_JOB_D`
+* :attr:`LP_COLOR_JOB_R`
+* :attr:`LP_COLOR_JOB_Z`
+* :attr:`LP_COLOR_MARK`
+* :attr:`LP_COLOR_MARK_ROOT`
+* :attr:`LP_COLOR_MARK_SUDO`
+* :attr:`LP_COLOR_NOWRITE`
+* :attr:`LP_COLOR_PATH`
+* :attr:`LP_COLOR_PATH_ROOT`
+* :attr:`LP_COLOR_PROXY`
+* :attr:`LP_COLOR_RUNTIME`
+* :attr:`LP_COLOR_SSH`
+* :attr:`LP_COLOR_SU`
+* :attr:`LP_COLOR_TELNET`
+* :attr:`LP_COLOR_TIME`
+* :attr:`LP_COLOR_USER_ALT`
+* :attr:`LP_COLOR_USER_LOGGED`
+* :attr:`LP_COLOR_USER_ROOT`
+* :attr:`LP_COLOR_VIRTUALENV`
+* :attr:`LP_COLOR_WRITE`
+* :attr:`LP_COLOR_X11_OFF`
+* :attr:`LP_COLOR_X11_ON`
 * :attr:`LP_ENABLE_PERM`
 * :attr:`LP_ENABLE_SSH_COLORS`
 * :attr:`LP_ENABLE_SUDO`
+* :attr:`LP_MARK_BRACKET_OPEN`
+* :attr:`LP_MARK_BRACKET_CLOSE`
+* :attr:`LP_MARK_BZR`
+* :attr:`LP_MARK_DEFAULT`
+* :attr:`LP_MARK_DISABLED`
+* :attr:`LP_MARK_FOSSIL`
+* :attr:`LP_MARK_GIT`
+* :attr:`LP_MARK_HG`
+* :attr:`LP_MARK_PERM`
 * :attr:`LP_MARK_PREFIX`
-* all marks
-* all colors
+* :attr:`LP_MARK_PROXY`
+* :attr:`LP_MARK_SVN`
+* :attr:`LP_MARK_VCSH`
 
 Theme Configuration
 -------------------
@@ -336,7 +372,7 @@ ______
 
 .. attribute:: POWERLINE_DIRSTACK_COLOR
    :type: array<int>
-   :value: :attr:`POWERLINE_NEUTRAL_COLOR`
+   :value: $POWERLINE_NEUTRAL_COLOR
 
    Color for the directory stack section.
 

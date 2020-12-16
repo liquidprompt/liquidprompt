@@ -73,7 +73,7 @@ _lp_powerline_theme_prompt() {
 
     local lp_python_env
     if _lp_python_env; then
-        __powerline_section "(e) ${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+        __powerline_section "${POWERLINE_PYTHON_ENV_MARKER}${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
     fi
 
     __powerline_path_section

@@ -131,6 +131,7 @@ _lp_powerline_full_theme_activate() {
     [[ -z ${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]+x} ]] && POWERLINE_SOFTWARE_COLLECTIONS_COLOR=(231 62 0 0 7 5)
     [[ -z ${POWERLINE_TEMPERATURE_COLOR[@]+x}          ]] && POWERLINE_TEMPERATURE_COLOR=(-1 240 0 0 -1 0)
     [[ -z ${POWERLINE_TIME_COLOR[@]+x}                 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
+    [[ -z ${POWERLINE_DIRSTACK_COLOR[@]+x}             ]] && POWERLINE_DIRSTACK_COLOR=("${POWERLINE_NEUTRAL_COLOR[@]}")
 }
 
 _lp_powerline_full_theme_directory() {
@@ -182,6 +183,10 @@ _lp_powerline_full_theme_prompt() {
     __powerline_section "${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME}" "${POWERLINE_HOST_COLOR[@]}"
 
     __powerline_path_section
+
+    if _lp_dirstack; then
+        __powerline_section "${LP_MARK_DIRSTACK}${lp_dirstack}" "${POWERLINE_DIRSTACK_COLOR[@]}"
+    fi
 
     local lp_chroot
     if _lp_chroot; then

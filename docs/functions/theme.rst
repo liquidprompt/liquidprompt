@@ -97,6 +97,13 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_dirstack_color() -> var:lp_dirstack_color
+
+    Returns :func:`_lp_dirstack`, prefixed with :attr:`LP_MARK_DIRSTACK`, all
+    colored with :attr:`LP_COLOR_DIRSTACK`.
+
+    .. versionadded:: 2.0
+
 .. function:: _lp_error_color() -> var:lp_error_color
 
    Returns :func:`_lp_error` with color from :attr:`LP_COLOR_ERR`.

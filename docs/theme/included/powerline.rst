@@ -334,6 +334,12 @@ ______
 
    Color for the chroot section.
 
+.. attribute:: POWERLINE_DIRSTACK_COLOR
+   :type: array<int>
+   :value: :attr:`POWERLINE_NEUTRAL_COLOR`
+
+   Color for the directory stack section.
+
 .. attribute:: POWERLINE_LOAD_COLOR
    :type: array<int>
    :value: (-1, 148, 0, 0, -1, 3)

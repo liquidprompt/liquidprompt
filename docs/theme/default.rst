@@ -156,6 +156,12 @@ default order if the user does not configure a different template.
    The current working directory in bold, shortened if it takes too much space.
    See :attr:`LP_ENABLE_SHORTEN_PATH`.
 
+.. attribute:: LP_DIRSTACK
+
+   The size of the directory stack, prefixed with :attr:`LP_MARK_DIRSTACK`, all
+   colored with :attr:`LP_COLOR_DIRSTACK`. Can be enabled by
+   :attr:`LP_ENABLE_DIRSTACK`.
+
 .. attribute:: LP_BRACKET_CLOSE
 
    A closing bracket, designed to go around the core of the prompt (generally

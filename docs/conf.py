@@ -32,8 +32,12 @@ extensions = [
     'sphinx_rtd_theme',
 ]
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+# This value determines how to group the document tree into manual pages
+man_pages = [
+    ('functions', 'liquidprompt', 'Liquidprompt functions', [], 3),
+    ('config', 'liquidprompt', 'Liquidprompt configuration', [], 5),
+    ('theme', 'liquidprompt', 'Liquidprompt theming', [], 7),
+]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

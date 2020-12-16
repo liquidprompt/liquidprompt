@@ -1,16 +1,6 @@
 Theming
 *******
 
-.. toctree::
-   :maxdepth: 2
-
-   theme/default
-   theme/included
-   theme/custom
-
-.. contents::
-   :local:
-
 Liquidprompt has a strong data and theming engine, allowing it to be extremely
 flexible and customizable.
 
@@ -26,6 +16,16 @@ See the `Liquidprompt Theme List`_ on the wiki for user created themes.
 If you want to create your own theme, see :doc:`theme/custom`.
 
 .. _`Liquidprompt Theme List`: https://github.com/nojhan/liquidprompt/wiki/Themes
+
+.. toctree::
+   :maxdepth: 2
+
+   theme/default
+   theme/included
+   theme/custom
+
+.. contents::
+   :local:
 
 Switching Themes
 ----------------

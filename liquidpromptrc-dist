@@ -181,4 +181,11 @@ LP_ENABLE_ERROR=1
 # Ex: ("/root" "/home/me/large-remove-svn-repo")
 LP_DISABLED_VCS_PATHS=()
 
+# Use a local liquidpromptrc if it exists.
+# Can be helpful if you sync your primary config across machines, or if
+# there's a system-wide config at /etc/liquidpromptrc from which you'd
+# like to make only minor deviations.
+#LOCAL_RCFILE=$HOME/.liquidpromptrc.local
+#[ -f "$LOCAL_RCFILE" ] && source "$LOCAL_RCFILE"
+
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

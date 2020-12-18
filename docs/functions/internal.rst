@@ -54,6 +54,16 @@ Formatting
 
 .. _`ANSI escape color code`: https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
+Load
+----
+
+.. function:: __lp_cpu_count() -> var:_lp_CPUNUM
+
+   Returns the number of CPUs on the machine. The implementation depends on the
+   operating system.
+
+   .. versionadded:: 2.0
+
 Path
 ----
 

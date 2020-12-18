@@ -564,6 +564,11 @@ lp_activate() {
         __lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
     fi
 
+    if (( LP_ENABLE_LOAD )); then
+        # Find and save the number of CPUs
+        __lp_cpu_count
+    fi
+
     if [[ -n ${_LP_THEME_ACTIVATE_FUNCTION-} ]]; then
         # Reactivate current theme
         "$_LP_THEME_ACTIVATE_FUNCTION"
@@ -2103,14 +2108,18 @@ _lp_runtime_color() {
 # Get CPU count and current load
 case "$LP_OS" in
     Linux)
-        _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo )
+        __lp_cpu_count() {
+            _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo )
+        }
         _lp_cpu_load () {
             local eol IFS=$' \t'
             read lp_cpu_load eol < /proc/loadavg
         }
         ;;
     FreeBSD|Darwin|OpenBSD)
-        _lp_CPUNUM=$( sysctl -n hw.ncpu )
+        __lp_cpu_count() {
+            _lp_CPUNUM=$( sysctl -n hw.ncpu )
+        }
         _lp_cpu_load () {
             local bol eol IFS=$' \t'
             # If you have problems with syntax coloring due to the following
@@ -2120,7 +2129,9 @@ case "$LP_OS" in
         }
         ;;
     SunOS)
-        _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" )
+        __lp_cpu_count() {
+            _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" )
+        }
         _lp_cpu_load () {
             lp_cpu_load="$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
         }

@@ -1,4 +1,7 @@
 
+# Error on unset variables
+set -u
+
 . ../liquidprompt --no-activate
 
 typeset -a who_outputs ps_outputs values

@@ -1,4 +1,7 @@
 
+# Error on unset variables
+set -u
+
 # Load MacOS version of _lp_battery()
 uname() { printf 'Darwin'; }
 

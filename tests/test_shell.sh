@@ -1,4 +1,7 @@
 
+# Error on unset variables
+set -u
+
 function test_test {
   assertTrue "[[ form of test" '[[ 1 -eq 1 ]]'
 
@@ -89,7 +92,7 @@ function test_local {
   }
 
   local_function
-  assertNull "c should not be set" "$c"
+  assertNull "c should not be set" "${c+x}"
 
   function local_function {
     assertEquals "c should inherit from outer scope" 5 "$c"
@@ -108,8 +111,8 @@ function test_local {
   }
 
   local_function
-  assertNull "d should not be set" "$d"
-  assertNull "e should not be set" "$e"
+  assertNull "d should not be set" "${d+x}"
+  assertNull "e should not be set" "${e+x}"
 
   unset -f local_function
 }
@@ -454,7 +457,7 @@ function test_array {
   assertEquals "array index element" "foo" "${array_b[1]}"
   assertEquals "array index element" "bar" "${array_b[2]}"
   assertEquals "array index element" "baz" "${array_b[5]}"
-  assertEquals "null array index element" "" "${array_b[3]}"
+  assertNull "null array index element" "${array_b[3]:+x}"
 }
 
 function test_source {

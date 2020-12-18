@@ -1,4 +1,7 @@
 
+# Error on unset variables
+set -u
+
 . ../liquidprompt --no-activate
 
 typeset -a outputs values

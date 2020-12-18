@@ -18,9 +18,13 @@ for shell in "${shells[@]}"; do
   fi
 done
 
+fail=0
+
 for test_file in ./test_*.sh; do
   for shell in "${testing_shells[@]}"; do
-    printf "Running shell '%s' with test '%s'\n" "$shell" "$test_file"
-    $shell "$test_file" || exit $?
+    printf "\nRunning shell '%s' with test '%s'\n" "$shell" "$test_file"
+    "$shell" "$test_file" || fail=$?
   done
 done
+
+exit "$fail"

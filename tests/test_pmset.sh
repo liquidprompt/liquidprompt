@@ -46,6 +46,20 @@ outputs+=(
 statuses+=(0)
 values+=(7)
 
+# Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
+outputs+=(
+"Now drawing from 'AC Power'
+ -InternalBattery-0 (id=5701731)	100%; charged; 0:00 remaining present: true"
+)
+statuses+=(4)
+values+=(100)
+outputs+=(
+"Now drawing from 'Battery Power'
+ -InternalBattery-0 (id=5701731)	100%; discharging; 2:49 remaining present: true"
+)
+statuses+=(0)
+values+=(100)
+
 
 function test_pmset {
 

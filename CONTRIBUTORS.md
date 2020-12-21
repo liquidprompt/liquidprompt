@@ -96,6 +96,17 @@ Thanks again to everyone for all of the help and support!
 * Tristan Miller (@logological)
 * Markus Gebert (@mgeb)
 * Tore Anderson (@toreanderson)
+* Fabien MARTY (@thefab)
+* Alessio Garzi (@Ozzyboshi)
+* Mathieu MD (@mathieumd)
+* Romano Giannetti (@Rmano)
+* Paulo Cazarotto (@phcco)
+* Jürgen Weigert (@jnweiger)
+* Sven-Hendrik Haase (@svenstaro)
+* Sandro Jäckel (@SuperSandro2000)
+* David Pape (@zyzzyxdonta)
+* Aksel Sjögren (@akselsjogren)
+* Raina Otoni (@rotoni)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -203,3 +214,5 @@ Thanks again to everyone for all of the help and support!
 * Rohan Kapadia (@kapad)
 * Jan Gorecki (@jangorecki)
 * Otto Kekäläinen (@ottok)
+* Mike Simonson (@mikeSimonson)
+* Viorel-Cosmin Miron (@uhlhosting)

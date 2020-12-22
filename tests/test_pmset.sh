@@ -63,6 +63,21 @@ outputs+=(
 statuses+=(0)
 values+=(100)
 
+# Darwin Kernel Version 18.7.0: Tue Nov 10 00:07:31 PST 2020; root:xnu-4903.278.51~1/RELEASE_X86_64 x86_64 i386 MacBookPro15,1 Darwin
+outputs+=(
+"Now drawing from 'AC Power'
+ -InternalBattery-0 (id=4325475)	100%; charged; 0:00 remaining present: true"
+)
+statuses+=(4)
+values+=(100)
+
+# Darwin Kernel Version 19.6.0: Tue Nov 10 00:10:30 PST 2020; root:xnu-6153.141.10~1/RELEASE_X86_64 x86_64 i386 Macmini7,1 Darwin
+outputs+=(
+"Now drawing from 'AC Power'"
+)
+statuses+=(4)
+values+=('')
+
 
 function test_pmset {
 

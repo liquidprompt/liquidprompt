@@ -14,6 +14,12 @@ tty_outputs+=(
 )
 values+=("0")
 
+# Darwin Kernel Version 18.7.0: Tue Nov 10 00:07:31 PST 2020; root:xnu-4903.278.51~1/RELEASE_X86_64 x86_64 i386 MacBookPro15,1 Darwin
+tty_outputs+=(
+"/dev/ttys135"
+)
+values+=("ttys135")
+
 
 function test_terminal_device {
 

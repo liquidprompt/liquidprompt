@@ -14,6 +14,12 @@ host_cksum_outputs+=(
 )
 values+=("4172267268")
 
+# Darwin Kernel Version 18.7.0: Tue Nov 10 00:07:31 PST 2020; root:xnu-4903.278.51~1/RELEASE_X86_64 x86_64 i386 MacBookPro15,1 Darwin
+host_cksum_outputs+=(
+"3020151712 13"
+)
+values+=("3020151712")
+
 
 function test_hostname_hash {
 

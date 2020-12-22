@@ -37,6 +37,31 @@ tmux_outputs+=(
 )
 tmux_values+=(1)
 
+# Darwin Kernel Version 18.7.0: Tue Nov 10 00:07:31 PST 2020; root:xnu-4903.278.51~1/RELEASE_X86_64 x86_64 i386 MacBookPro15,1 Darwin
+screen_outputs+=(
+"This room is empty (/var/folders/x3/gk96bn856xv__mnm_h8xnjqw0000gn/T/.screen).
+""
+"
+)
+screen_values+=(0)
+
+# Darwin Kernel Version 19.6.0: Tue Nov 10 00:10:30 PST 2020; root:xnu-6153.141.10~1/RELEASE_X86_64 x86_64 i386 Macmini7,1 Darwin
+screen_outputs+=(
+"No Sockets found in /var/folders/s1/y_2wmcg90gl9x54bq2p4t9980000gn/T/.screen.
+""
+"
+)
+screen_values+=(0)
+
+# Linux 5.4.0-58-generic #64-Ubuntu SMP Wed Dec 9 08:16:25 UTC 2020 x86_64 GNU/Linux Ubuntu 20.04.1 LTS
+screen_outputs+=(
+"There is a screen on:""
+	840.irssi	(12/12/20 09:49:29)	(Detached)
+1 Socket in /run/screen/S-usernam.""
+"
+)
+screen_values+=(1)
+
 
 function test_screen_sessions {
 

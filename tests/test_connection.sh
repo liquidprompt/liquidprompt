@@ -17,6 +17,33 @@ ps_outputs+=(
 )
 values+=(tel)
 
+# Darwin Kernel Version 18.7.0: Tue Nov 10 00:07:31 PST 2020; root:xnu-4903.278.51~1/RELEASE_X86_64 x86_64 i386 MacBookPro15,1 Darwin
+who_outputs+=(
+"user.lastname ttys135      Dec 21 19:08"
+)
+ps_outputs+=(
+"-bash"
+)
+values+=(lcl)
+
+# Darwin Kernel Version 19.6.0: Tue Nov 10 00:10:30 PST 2020; root:xnu-6153.141.10~1/RELEASE_X86_64 x86_64 i386 Macmini7,1 Darwin
+who_outputs+=(
+"usernames ttys000      Dec 21 19:12 (fe80::12:a1b2:a123:fb84%en0)"
+)
+ps_outputs+=(
+"-bash"
+)
+values+=(tel)
+
+# Linux 5.4.0-58-generic #64-Ubuntu SMP Wed Dec 9 08:16:25 UTC 2020 x86_64 GNU/Linux Ubuntu 20.04.1 LTS
+who_outputs+=(
+"usernam  pts/1        Dec 21 19:16 (2600:8801:9600:b64:9966:24a:dc6f:41fd)"
+)
+ps_outputs+=(
+"bash"
+)
+values+=(tel)
+
 
 function test_connection {
 

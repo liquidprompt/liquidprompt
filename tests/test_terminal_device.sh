@@ -20,6 +20,12 @@ tty_outputs+=(
 )
 values+=("ttys135")
 
+# Linux 4.9.0-13-amd64 #1 SMP Debian 4.9.228-1 (2020-07-05) x86_64 GNU/Linux Debian 9.13 (stretch)
+tty_outputs+=(
+"/dev/pts/75"
+)
+values+=("75")
+
 
 function test_terminal_device {
 

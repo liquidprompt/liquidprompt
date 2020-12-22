@@ -62,6 +62,15 @@ screen_outputs+=(
 )
 screen_values+=(1)
 
+# Linux 4.9.0-13-amd64 #1 SMP Debian 4.9.228-1 (2020-07-05) x86_64 GNU/Linux Debian 9.13 (stretch)
+screen_outputs+=(
+"There is a screen on:""
+	30133.pts-6.hostnam	(08/03/20 09:10:09)	(Attached)
+1 Socket in /run/screen/S-user.""
+"
+)
+screen_values+=(0)
+
 
 function test_screen_sessions {
 

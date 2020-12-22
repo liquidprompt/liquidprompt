@@ -44,6 +44,24 @@ ps_outputs+=(
 )
 values+=(tel)
 
+# Linux 5.4.0-58-generic #64-Ubuntu SMP Wed Dec 9 08:16:25 UTC 2020 x86_64 GNU/Linux Ubuntu 20.04.1 LTS
+who_outputs+=(
+""
+)
+ps_outputs+=(
+"bash"
+)
+values+=(lcl)
+
+# Linux 4.9.0-13-amd64 #1 SMP Debian 4.9.228-1 (2020-07-05) x86_64 GNU/Linux Debian 9.13 (stretch)
+who_outputs+=(
+"user     pts/75       Dec 22 10:39 (10.0.0.117)"
+)
+ps_outputs+=(
+"bash"
+)
+values+=(tel)
+
 
 function test_connection {
 

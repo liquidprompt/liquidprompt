@@ -27,7 +27,7 @@ printf -- '---/proc/version:\n'
 cat /proc/version 2>/dev/null || printf '<none>\n'
 
 # Sanity check to verify special characters have not been lost on upload
-printf '\nSpecial character check: %s\n' $'\a\b\t\001\r'
+printf '\nSpecial character check: \a\b\t\001\r\n'
 
 test_tool() {
   local stderr

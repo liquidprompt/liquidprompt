@@ -32,7 +32,7 @@ function test_sysctl_hw_ncpu {
     __ncpu_output=${ncpu_outputs[$index]}
 
     __lp_cpu_count
-    assertEquals "CPU count" "${ncpu_values[$index]}" "$_lp_CPUNUM"
+    assertEquals "CPU count at index ${index}" "${ncpu_values[$index]}" "$_lp_CPUNUM"
   done
 }
 
@@ -46,7 +46,7 @@ function test_sysctl_vm_loadavg {
     __loadavg_output=${loadavg_outputs[$index]}
 
     _lp_cpu_load
-    assertEquals "CPU load" "${loadavg_values[$index]}" "$lp_cpu_load"
+    assertEquals "CPU load at index ${index}" "${loadavg_values[$index]}" "$lp_cpu_load"
   done
 }
 

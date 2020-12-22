@@ -42,8 +42,9 @@ function test_sensors {
 
   for (( index=0; index < ${#values[@]}; index++ )); do
     __output=${outputs[$index]}
+    local lp_temperature=0
     __lp_temp_sensors
-    assertEquals "Sensors temperature output" "${values[$index]}" "$lp_temperature"
+    assertEquals "Sensors temperature output at index ${index}" "${values[$index]}" "$lp_temperature"
   done
 }
 

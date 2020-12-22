@@ -31,7 +31,7 @@ function test_terminal_device {
     __tty_output=${tty_outputs[$index]}
 
     _lp_terminal_device
-    assertEquals "Terminal device basename" "${values[$index]}" "$lp_terminal_device"
+    assertEquals "Terminal device basename at index ${index}" "${values[$index]}" "$lp_terminal_device"
   done
 }
 

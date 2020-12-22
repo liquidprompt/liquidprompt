@@ -90,16 +90,16 @@ function test_pmset {
 
     LP_BATTERY_THRESHOLD=100
     _lp_battery
-    assertEquals "pmset battery below returns" "${statuses[$index]}" "$?"
-    assertEquals "pmset battery value" "${values[$index]}" "$lp_battery"
+    assertEquals "pmset battery below returns at index ${index}" "${statuses[$index]}" "$?"
+    assertEquals "pmset battery value at index ${index}" "${values[$index]}" "$lp_battery"
 
     _status=${statuses[$index]}
     (( _status < 4 )) && _status=$(( _status + 1 ))
 
     LP_BATTERY_THRESHOLD=0
     _lp_battery
-    assertEquals "pmset battery above returns" "$_status" "$?"
-    assertEquals "pmset battery value" "${values[$index]}" "$lp_battery"
+    assertEquals "pmset battery above returns at index ${index}" "$_status" "$?"
+    assertEquals "pmset battery value at index ${index}" "${values[$index]}" "$lp_battery"
   done
 }
 

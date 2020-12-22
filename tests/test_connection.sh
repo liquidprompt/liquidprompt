@@ -60,11 +60,11 @@ function test_connection {
     local SSH_CLIENT= SSH2_CLIENT= SSH_TTY=
 
     _lp_connection
-    assertEquals "Connection output" "${values[$index]}" "$lp_connection"
+    assertEquals "Connection output at index ${index}" "${values[$index]}" "$lp_connection"
 
     SSH_CLIENT=foo
     _lp_connection
-    assertEquals "Connection output" "ssh" "$lp_connection"
+    assertEquals "Connection output at index ${index} with ssh" "ssh" "$lp_connection"
     unset SSH_CLIENT
   done
 }

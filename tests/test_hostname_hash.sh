@@ -31,7 +31,7 @@ function test_hostname_hash {
     __host_cksum_output=${host_cksum_outputs[$index]}
 
     __lp_hostname_hash
-    assertEquals "Hostname cksum hash" "${values[$index]}" "$lp_hostname_hash"
+    assertEquals "Hostname cksum hash at index ${index}" "${values[$index]}" "$lp_hostname_hash"
   done
 }
 

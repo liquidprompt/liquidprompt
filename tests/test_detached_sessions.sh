@@ -73,7 +73,7 @@ function test_screen_sessions {
   for (( index=0; index < ${#screen_values[@]}; index++ )); do
     __screen_output=${screen_outputs[$index]}
     _lp_detached_sessions
-    assertEquals "Screen sessions output" "${screen_values[$index]}" "$lp_detached_sessions"
+    assertEquals "Screen sessions output at index ${index}" "${screen_values[$index]}" "$lp_detached_sessions"
   done
 }
 
@@ -87,7 +87,7 @@ function test_tmux_sessions {
   for (( index=0; index < ${#tmux_values[@]}; index++ )); do
     __tmux_output=${tmux_outputs[$index]}
     _lp_detached_sessions
-    assertEquals "Tmux sessions output" "${tmux_values[$index]}" "$lp_detached_sessions"
+    assertEquals "Tmux sessions output at index ${index}" "${tmux_values[$index]}" "$lp_detached_sessions"
   done
 }
 

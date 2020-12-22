@@ -64,6 +64,15 @@ Load
 
    .. versionadded:: 2.0
 
+OS
+--
+
+.. function:: __lp_hostname_hash() -> var:lp_hostname_hash
+
+   Returns the hash of the hostname as computed by ``cksum``.
+
+   .. versionadded:: 2.0
+
 Path
 ----
 

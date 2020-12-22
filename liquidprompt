@@ -166,12 +166,11 @@ __lp_source_config() {
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${_LP_TI_RESET-}${_LP_CLOSE_ESC}"
 
-    # compute the hash of the hostname
-    # and get the corresponding number in [1-6] (red,green,yellow,blue,purple or cyan)
-    # FIXME Add more formats (bold? 256 colors?)
-    # cksum is separated with tab on SunOS, space on others
-    local cksum="$(hostname | cksum)"
-    __lp_foreground_color "$(( 1 + ${cksum%%[$' \t']*} % 6 ))"
+    # compute the hash of the hostname and get the corresponding number in
+    # [1-6] (red,green,yellow,blue,purple or cyan)
+    local lp_hostname_hash
+    __lp_hostname_hash
+    __lp_foreground_color "$(( 1 + lp_hostname_hash % 6 ))"
     LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
 
 
@@ -631,6 +630,12 @@ __lp_is_function() {
 __lp_line_count() {
   local var="${1//[!$'\n']}"
   count=${#var}
+}
+
+__lp_hostname_hash() {
+    # cksum is separated with tab on SunOS, space on others
+    local cksum="$(hostname | cksum)"
+    lp_hostname_hash=${cksum%%[$' \t']*}
 }
 
 # Return $PWD with $HOME at the start replaced by "~".

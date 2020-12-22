@@ -144,6 +144,20 @@ Environment
 
    .. versionadded:: 2.0
 
+.. function:: _lp_terminal_device() -> var:lp_terminal_device
+
+   Returns the basename of the terminal device connected to the shell's standard
+   input.
+
+   .. note::
+      This value should never change during the life of the shell.
+
+   .. note::
+      This data source is unlikely to be wanted by the user, and should not be
+      included in themes by default.
+
+   .. versionadded:: 2.0
+
 Jobs
 ----
 

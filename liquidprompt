@@ -965,6 +965,12 @@ _lp_software_collections_color() {
     lp_software_collections_color="[${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}]"
 }
 
+# Same as bash '\l', but can be inlined as a constant as the value will not
+# change during the shell's life.
+_lp_terminal_device() {
+    lp_terminal_device="$(basename -- "$(tty)" 2>/dev/null)"
+}
+
 # Determine what type of user we are
 _lp_user() {
     if (( EUID == 0 )); then
@@ -2367,9 +2373,8 @@ _lp_default_theme_activate() {
         LP_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE}"
     fi
 
-    # Same as bash '\l', but inlined as a constant as the value will not change
-    # during the shell's life
-    LP_TTYN="$(basename -- "$(tty)" 2>/dev/null)"
+    _lp_terminal_device
+    LP_TTYN=$lp_terminal_device
 
     if _lp_time_color; then
         LP_TIME="${lp_time_color} "

@@ -2200,7 +2200,7 @@ __lp_temp_acpi() {
     local IFS=$' \t\n'
     # Only the integer part is retained
     for i in $(LC_ALL=C \acpi -t |
-            sed -n 's/.* \(-\?[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
+            sed -n 's/.* \(-\{0,1\}[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
         (( $i > ${lp_temperature:-0} )) && lp_temperature=$i
     done
 }

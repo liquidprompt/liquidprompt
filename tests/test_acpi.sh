@@ -25,6 +25,12 @@ temp_outputs+=(
 )
 temp_values+=(23)
 
+# Unknown
+temp_outputs+=(
+"Thermal 0: ok, -267.8 degrees C"
+)
+temp_values+=(0)
+
 
 function test_acpi_battery {
 

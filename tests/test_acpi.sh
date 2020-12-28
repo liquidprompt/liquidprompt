@@ -26,6 +26,11 @@ temp_outputs+=(
 temp_values+=(23)
 
 # Unknown
+battery_outputs+=(
+"Battery 0: Discharging, 55%, 01:39:34 remaining"
+)
+battery_statuses+=(0)
+battery_values+=(55)
 temp_outputs+=(
 "Thermal 0: ok, -267.8 degrees C"
 )

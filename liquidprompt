@@ -302,7 +302,8 @@ __lp_source_config() {
 
     # Default config file may be the XDG standard ~/.config/liquidpromptrc,
     # but heirloom dotfile has priority.
-    local -a configfiles=("$HOME/.liquidpromptrc" "${XDG_CONFIG_HOME:-"$HOME/.config"}/liquidpromptrc")
+    local -a configfiles
+    configfiles=("$HOME/.liquidpromptrc" "${XDG_CONFIG_HOME:-"$HOME/.config"}/liquidpromptrc")
 
     # trailing ":" is so that ${search#*:} always removes something
     local configfile search="${XDG_CONFIG_DIRS:-/etc/xdg}:"

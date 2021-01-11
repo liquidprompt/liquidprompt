@@ -1136,6 +1136,7 @@ _lp_detached_sessions() {
 _lp_jobcount() {
     (( LP_ENABLE_JOBS )) || return 2
 
+    local jobs
     local -i count
     # Count running jobs
     # The $(...) syntax strips trailing newlines, so add a character to the end
@@ -1196,6 +1197,8 @@ _lp_find_vcs() {
         lp_vcs_root=
         return 2
     fi
+
+    local vcs
 
     lp_vcs_root="$PWD"
     while [[ -n "$lp_vcs_root" ]]; do

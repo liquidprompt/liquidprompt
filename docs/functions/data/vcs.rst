@@ -165,7 +165,7 @@ this.
 
    .. versionadded:: 2.0
 
-.. function:: _lp_vcs_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_vcs_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of
@@ -186,7 +186,7 @@ this.
 
    .. versionadded:: 2.0
 
-.. function:: _lp_vcs_unstaged_lines() -> var:lp_vcs_unstaged_lines
+.. function:: _lp_vcs_unstaged_lines() -> var:lp_vcs_unstaged_i_lines, var:lp_vcs_unstaged_d_lines
 
    Returns ``true`` if any unstaged lines exist in the repository. In other
    words, tracked files that contain unstaged changes. Returns the number of
@@ -285,7 +285,7 @@ Bazaar
 
    .. versionadded:: 2.0
 
-.. function:: _lp_bzr_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_bzr_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of
@@ -369,7 +369,7 @@ Fossil
 
    .. versionadded:: 2.0
 
-.. function:: _lp_fossil_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_fossil_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of
@@ -463,7 +463,7 @@ Git
 
    .. versionadded:: 2.0
 
-.. function:: _lp_git_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_git_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of
@@ -479,7 +479,7 @@ Git
 
    .. versionadded:: 2.0
 
-.. function:: _lp_git_unstaged_lines() -> var:lp_vcs_unstaged_lines
+.. function:: _lp_git_unstaged_lines() -> var:lp_vcs_unstaged_i_lines, var:lp_vcs_unstaged_d_lines
 
    Returns ``true`` if any unstaged lines exist in the repository. In other
    words, tracked files that contain unstaged changes. Returns the number of
@@ -594,7 +594,7 @@ Mercurial
 
    .. versionadded:: 2.0
 
-.. function:: _lp_hg_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_hg_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of
@@ -673,7 +673,7 @@ Subversion
 
    .. versionadded:: 2.0
 
-.. function:: _lp_svn_uncommitted_lines() -> var:lp_vcs_uncommitted_lines
+.. function:: _lp_svn_uncommitted_lines() -> var:lp_vcs_uncommitted_i_lines, var:lp_vcs_uncommitted_d_lines
 
    Returns ``true`` if any uncommitted lines exist in the repository. In other
    words, tracked files that contain uncommitted changes. Returns the number of

@@ -1387,6 +1387,16 @@ _lp_vcs_unstaged_lines() {
     "_lp_${lp_vcs_type}_unstaged_lines" 2>/dev/null
 }
 
+# Get the number of changed files in staging compared to the last or checked out commit.
+_lp_vcs_staged_files() {
+    "_lp_${lp_vcs_type}_staged_files" 2>/dev/null
+}
+
+# Get the number of changed lines in staging compared to the last or checked out commit.
+_lp_vcs_staged_lines() {
+    "_lp_${lp_vcs_type}_staged_lines" 2>/dev/null
+}
+
 # GIT #
 
 # Check if Git is enabled in Liquidprompt and the current directory is a valid
@@ -1574,6 +1584,33 @@ _lp_git_unstaged_lines() {
 
     lp_vcs_unstaged_i_lines=$lp_git_diff_shortstat_i_lines
     lp_vcs_unstaged_d_lines=$lp_git_diff_shortstat_d_lines
+}
+
+__lp_git_diff_shortstat_staged() {
+    if [[ -z ${_lp_git_diff_shortstat_staged+x} ]]; then
+        _lp_git_diff_shortstat_staged="$(LC_ALL=C \git diff --shortstat --cached 2>/dev/null)"
+    fi
+}
+
+# Get the number of changed files in staging compared to HEAD.
+_lp_git_staged_files() {
+    __lp_git_diff_shortstat_staged
+
+    local lp_git_diff_shortstat_files
+    __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_staged" || return "$?"
+
+    lp_vcs_staged_files=$lp_git_diff_shortstat_files
+}
+
+# Get the number of changed lines in staging compared to HEAD.
+_lp_git_staged_lines() {
+    __lp_git_diff_shortstat_staged
+
+    local lp_git_diff_shortstat_i_lines lp_git_diff_shortstat_d_lines
+    __lp_git_diff_shortstat_lines "$_lp_git_diff_shortstat_staged" || return "$?"
+
+    lp_vcs_staged_i_lines=$lp_git_diff_shortstat_i_lines
+    lp_vcs_staged_d_lines=$lp_git_diff_shortstat_d_lines
 }
 
 # MERCURIAL #
@@ -2554,7 +2591,7 @@ __lp_set_prompt() {
     fi
 
     # Localize cache data variables
-    local _lp_git_diff_shortstat_uncommitted _lp_git_diff_shortstat_unstaged
+    local _lp_git_diff_shortstat_uncommitted _lp_git_diff_shortstat_unstaged _lp_git_diff_shortstat_staged
 
     # if change of working directory
     if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then

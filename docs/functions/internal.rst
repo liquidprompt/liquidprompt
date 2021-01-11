@@ -75,6 +75,16 @@ Git
 
    .. versionadded:: 2.0
 
+.. function:: __lp_git_diff_shortstat_staged() -> var:_lp_git_diff_shortstat_staged
+
+   Returns the output of a ``git diff --shortstat`` command, comparing the
+   staging area to the HEAD commit.
+
+   The return variable is supposed to be a cache, set as local in
+   :func:`__lp_set_prompt`, preventing duplicate calls to ``git``.
+
+   .. versionadded:: 2.0
+
 .. function:: __lp_git_diff_shortstat_uncommitted() -> var:_lp_git_diff_shortstat_uncommitted
 
    Returns the output of a ``git diff --shortstat`` command, comparing the

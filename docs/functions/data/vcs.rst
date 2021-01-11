@@ -129,6 +129,26 @@ this.
 
    .. versionadded:: 2.0
 
+.. function:: _lp_vcs_staged_files() -> var:lp_vcs_staged_files
+
+   Returns ``true`` if any staged files exist in the repository. In other words,
+   tracked files that contain staged changes. Returns the number of staged
+   files.
+
+   Many VCS providers do not support staging.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_vcs_staged_lines() -> var:lp_vcs_staged_i_lines, var:lp_vcs_staged_d_lines
+
+   Returns ``true`` if any staged lines exist in the repository. In other words,
+   tracked files that contain staged changes. Returns the number of staged
+   lines.
+
+   Many VCS providers do not support staging.
+
+   .. versionadded:: 2.0
+
 .. function:: _lp_vcs_stash_count() -> var:lp_vcs_stash_count
 
    Returns ``true`` if there are stashes the repository. Returns the
@@ -435,6 +455,22 @@ Git
    Return ``true`` if the repository is in a special or unusual state. Return
    the special status, and any extra details (like progress in a rebase) if
    applicable.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_git_staged_files() -> var:lp_vcs_staged_files
+
+   Returns ``true`` if any staged files exist in the repository. In other words,
+   tracked files that contain staged changes. Returns the number of staged
+   files.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_git_staged_lines() -> var:lp_vcs_staged_i_lines, var:lp_vcs_staged_d_lines
+
+   Returns ``true`` if any staged lines exist in the repository. In other words,
+   tracked files that contain staged changes. Returns the number of staged
+   lines.
 
    .. versionadded:: 2.0
 

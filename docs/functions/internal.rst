@@ -54,6 +54,47 @@ Formatting
 
 .. _`ANSI escape color code`: https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
+Git
+---
+
+.. function:: __lp_git_diff_shortstat_files(diff_shortstat) -> var:lp_git_diff_shortstat_files
+
+   Processes the input *diff_shortstat* as the output of a ``git diff
+   --shortstat`` command, returning the number of changed files. This allows for
+   the comparison of any two states, as :func:`__lp_git_diff_shortstat_files`
+   does not run any specific ``git diff`` command.
+
+   .. versionadded:: 2.0
+
+.. function:: __lp_git_diff_shortstat_lines(diff_shortstat) -> var:lp_git_diff_shortstat_lines
+
+   Processes the input *diff_shortstat* as the output of a ``git diff
+   --shortstat`` command, returning the number of changed lines. This allows for
+   the comparison of any two states, as :func:`__lp_git_diff_shortstat_files`
+   does not run any specific ``git diff`` command.
+
+   .. versionadded:: 2.0
+
+.. function:: __lp_git_diff_shortstat_uncommitted() -> var:_lp_git_diff_shortstat_uncommitted
+
+   Returns the output of a ``git diff --shortstat`` command, comparing the
+   working directory to the HEAD commit.
+
+   The return variable is supposed to be a cache, set as local in
+   :func:`__lp_set_prompt`, preventing duplicate calls to ``git``.
+
+   .. versionadded:: 2.0
+
+.. function:: __lp_git_diff_shortstat_unstaged() -> var:_lp_git_diff_shortstat_unstaged
+
+   Returns the output of a ``git diff --shortstat`` command, comparing the
+   working directory to the staging area.
+
+   The return variable is supposed to be a cache, set as local in
+   :func:`__lp_set_prompt`, preventing duplicate calls to ``git``.
+
+   .. versionadded:: 2.0
+
 Load
 ----
 
@@ -129,8 +170,8 @@ Prompt
    Setup features that need to be handled outside of the themes, like
    :func:`_lp_error` (since last return code must be recorded first), non
    printing features like :attr:`LP_ENABLE_RUNTIME_BELL` and
-   :attr:`LP_ENABLE_TITLE`, and track current directory changes. This function
-   also calls the current theme functions.
+   :attr:`LP_ENABLE_TITLE`, track current directory changes, and initialize data
+   source cache variables. This function also calls the current theme functions.
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_set_prompt``.

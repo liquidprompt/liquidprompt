@@ -180,6 +180,7 @@ __lp_source_config() {
     LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
+    LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
@@ -793,7 +794,7 @@ _lp_path_format() {
 
     local lp_vcs_root lp_vcs_type
     local vcs_root_directory=
-    if _lp_find_vcs; then
+    if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
         __lp_pwd_tilde "$lp_vcs_root"
         vcs_root_directory=$lp_pwd_tilde
     fi

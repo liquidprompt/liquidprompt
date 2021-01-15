@@ -103,6 +103,7 @@ function test_path_format() {
 
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
+  LP_PATH_VCS_ROOT=1
 
   typeset lp_path_format
 

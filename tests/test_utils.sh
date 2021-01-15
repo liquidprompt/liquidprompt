@@ -103,6 +103,7 @@ function test_path_format() {
 
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
+  LP_PATH_KEEP=0
   LP_PATH_VCS_ROOT=1
 
   typeset lp_path_format
@@ -142,10 +143,19 @@ function test_path_format() {
   _lp_path_format '{n}' '{l}' '{v}' '{s}'
   assertEquals "medium directory formatting" "{n}/{s}t/{n}_lp/{n}a/{l}very" "$lp_path_format"
 
+  LP_PATH_KEEP=2
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{n}/{n}tmp/{s}_/{n}a/{l}very" "$lp_path_format"
+
+  LP_PATH_KEEP=3
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{n}/{n}tmp/{n}_lp/{n}a/{l}very" "$lp_path_format"
+
   _lp_find_vcs() {
     lp_vcs_root="/tmp/_lp/a/very"
   }
 
+  LP_PATH_KEEP=0
   PWD="/tmp/_lp/a/very/long/pathname"
   _lp_path_format '{n}' '{l}' '{v}' '{s}'
   assertEquals "full directory formatting" "{n}/{s}t/{s}_/{n}a/{v}very/{s}l/{l}pathname" "$lp_path_format"

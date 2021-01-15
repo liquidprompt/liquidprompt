@@ -801,7 +801,7 @@ _lp_path_format() {
 
     local path_to_proccess="${display_path}/" current_path="" current_directory="" lp_unique_directory
 
-    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 ))
+    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0
     local shortened_path_length=$path_length
 
     while [[ -n $path_to_proccess ]]; do
@@ -816,6 +816,7 @@ _lp_path_format() {
             fi
         fi
 
+        directory_count+=1
         current_path+=${current_directory}
         path_to_proccess=${path_to_proccess#*/}
 
@@ -825,7 +826,9 @@ _lp_path_format() {
         elif [[ -z $path_to_proccess ]]; then
             # Last directory
             lp_path_format+="${last_directory_format}${current_directory}"
-        elif (( shortened_path_length > max_len )) && __lp_get_unique_directory "$current_path"; then
+        elif (( shortened_path_length > max_len && directory_count > LP_PATH_KEEP )) && \
+            __lp_get_unique_directory "$current_path"; then
+
             lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
             shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
         else

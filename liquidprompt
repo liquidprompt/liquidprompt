@@ -744,14 +744,13 @@ __lp_theme_zsh_complete() {
 ##########################
 
 __lp_get_unique_directory() {
-    lp_unique_directory=""
     local directory=${1##*/} root=${1%/*}
     local -a matching
     local -i i
-    for (( i=0; i < $(( ${#directory} - 1 )); i++ )); do
-        lp_unique_directory+="${directory:$i:1}"
+    for (( i=1; i < ${#directory}; i++ )); do
+        lp_unique_directory=${directory:0:$i}
         matching=("${root}/${lp_unique_directory}"*/)
-        if [[ ${#matching[@]} -eq 1 ]]; then
+        if (( ${#matching[@]} == 1 )); then
             return 0
         fi
     done

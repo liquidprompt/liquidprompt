@@ -180,6 +180,7 @@ __lp_source_config() {
     LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
+    LP_PATH_METHOD=${LP_PATH_METHOD:-truncate_chars_from_path_left}
     LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
@@ -757,6 +758,12 @@ __lp_get_unique_directory() {
     return 1
 }
 
+# methods:
+#   truncate_chars_from_path_left
+#   truncate_chars_from_dir_middle
+#   truncate_chars_from_dir_right
+#   truncate_chars_to_unique_dir
+#   dirs_from_path_right
 _lp_path_format() {
     local path_format=${1-$LP_COLOR_PATH}
     local last_directory_format=${2:-$path_format}
@@ -787,6 +794,7 @@ _lp_path_format() {
         fi
     else
         # only root or home to show
+        # TODO this does not show if root or home is vcs
         lp_path=$display_path
         lp_path_format="${last_directory_format}${display_path}"
         return
@@ -801,7 +809,7 @@ _lp_path_format() {
 
     local path_to_proccess="${display_path}/" current_path="" current_directory="" lp_unique_directory
 
-    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0
+    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0 needed_length
     local shortened_path_length=$path_length
 
     while [[ -n $path_to_proccess ]]; do
@@ -826,11 +834,40 @@ _lp_path_format() {
         elif [[ -z $path_to_proccess ]]; then
             # Last directory
             lp_path_format+="${last_directory_format}${current_directory}"
-        elif (( shortened_path_length > max_len && directory_count > LP_PATH_KEEP )) && \
-            __lp_get_unique_directory "$current_path"; then
+        elif (( shortened_path_length > max_len && directory_count > LP_PATH_KEEP )); then
+            needed_length=$(( shortened_path_length - max_len ))
 
-            lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
-            shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
+            if [[ $LP_PATH_METHOD == "truncate_chars_to_unique_dir" ]] && \
+                __lp_get_unique_directory "$current_path"; then
+
+                lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
+                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
+            elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]] && \
+                (( ${#LP_MARK_SHORTEN_PATH} < ${#current_directory} )); then
+
+                lp_path_format+="${shortened_directory_format}${LP_MARK_SHORTEN_PATH}"
+
+                if (( needed_length >= ${#current_directory} )); then
+                    shortened_path_length=$(( shortened_path_length - ${#current_directory} ))
+                else
+                    lp_path_format+="${current_directory:$needed_length}"
+                    shortened_path_length=$(( shortened_path_length - needed_length ))
+                fi
+            elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_right" ]] && \
+                (( ${#LP_MARK_SHORTEN_PATH} + 3 < ${#current_directory} )); then
+
+                lp_path_format+="${shortened_directory_format}${current_directory:0:3}${LP_MARK_SHORTEN_PATH}"
+                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + 3 ))
+            elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
+                (( ${#LP_MARK_SHORTEN_PATH} + 6 < ${#current_directory} )); then
+
+                lp_path_format+="${shortened_directory_format}${current_directory:0:3}${LP_MARK_SHORTEN_PATH}${current_directory: -3}"
+                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + 6 ))
+            else
+                # Need to shorten, but no method matched, or the matched method
+                # did not make the string any shorter.
+                lp_path_format+="${path_format}${current_directory}"
+            fi
         else
             lp_path_format+="${path_format}${current_directory}"
         fi

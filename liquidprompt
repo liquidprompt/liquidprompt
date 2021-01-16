@@ -180,6 +180,7 @@ __lp_source_config() {
     LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
+    LP_PATH_CHARACTER_KEEP=${LP_PATH_CHARACTER_KEEP:-3}
     LP_PATH_METHOD=${LP_PATH_METHOD:-truncate_chars_from_path_left}
     LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
     LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
@@ -854,15 +855,16 @@ _lp_path_format() {
                     shortened_path_length=$(( shortened_path_length - needed_length ))
                 fi
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_right" ]] && \
-                (( ${#LP_MARK_SHORTEN_PATH} + 3 < ${#current_directory} )); then
+                (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP < ${#current_directory} )); then
 
-                lp_path_format+="${shortened_directory_format}${current_directory:0:3}${LP_MARK_SHORTEN_PATH}"
-                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + 3 ))
+                lp_path_format+="${shortened_directory_format}${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
+                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
-                (( ${#LP_MARK_SHORTEN_PATH} + 6 < ${#current_directory} )); then
+                (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
 
-                lp_path_format+="${shortened_directory_format}${current_directory:0:3}${LP_MARK_SHORTEN_PATH}${current_directory: -3}"
-                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + 6 ))
+                lp_path_format+="${shortened_directory_format}${current_directory:0:$LP_PATH_CHARACTER_KEEP}"
+                lp_path_format+="${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
+                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.

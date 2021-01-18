@@ -1279,7 +1279,7 @@ _lp_vcs_details_color() {
     fi
 
     local ret has_lines=
-    if _lp_vcs_uncommitted_lines; then
+    if _lp_vcs_uncommitted_files; then
         _lp_vcs_unstaged_lines; ret=$?
         # Only show unstaged changes if the VCS supports staging, otherwise
         # show uncommitted changes
@@ -1288,6 +1288,7 @@ _lp_vcs_details_color() {
         elif (( ret == 1 )); then
             has_lines="+0/-0"
         else
+            _lp_vcs_uncommitted_lines
             has_lines="+$lp_vcs_uncommitted_i_lines/-$lp_vcs_uncommitted_d_lines"
         fi
         lp_vcs_details_color="$LP_COLOR_CHANGES"

@@ -1387,6 +1387,16 @@ _lp_vcs_unstaged_lines() {
     "_lp_${lp_vcs_type}_unstaged_lines" 2>/dev/null
 }
 
+# Get the number of changed files in staging compared to the last or checked out commit.
+_lp_vcs_staged_files() {
+    "_lp_${lp_vcs_type}_staged_files" 2>/dev/null
+}
+
+# Get the number of changed lines in staging compared to the last or checked out commit.
+_lp_vcs_staged_lines() {
+    "_lp_${lp_vcs_type}_staged_lines" 2>/dev/null
+}
+
 # GIT #
 
 # Check if Git is enabled in Liquidprompt and the current directory is a valid
@@ -1488,76 +1498,119 @@ _lp_git_untracked_files() {
     (( lp_vcs_untracked_files ))
 }
 
-# Get the number of changed files compared to HEAD.
-_lp_git_uncommitted_files() {
-    local stat
-    stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
+# Get the number of changed files.
+__lp_git_diff_shortstat_files() {  # diff_shortstat
+    local stat=$1
 
     if [[ "$stat" = *changed* ]]; then
         stat="${stat/ file*}"
-        lp_vcs_uncommitted_files=${stat//[$' \t']}
+        lp_git_diff_shortstat_files=${stat//[$' \t']}
     else
         return 1
     fi
+}
+
+# Get the number of changed lines.
+__lp_git_diff_shortstat_lines() {  # diff_shortstat
+    local stat=$1
+
+    stat=${stat/*changed, /} # removing "n file(s) changed"
+
+    if [[ "$stat" = *insertion* ]]; then
+        lp_git_diff_shortstat_i_lines=${stat/ inser*}
+    else
+        lp_git_diff_shortstat_i_lines=0
+    fi
+
+    if [[ "$stat" = *deletion* ]]; then
+        stat=${stat/*\(+\), }
+        lp_git_diff_shortstat_d_lines=${stat/ del*/}
+    else
+        lp_git_diff_shortstat_d_lines=0
+    fi
+
+    (( lp_git_diff_shortstat_i_lines || lp_git_diff_shortstat_d_lines ))
+}
+
+__lp_git_diff_shortstat_uncommitted() {
+    if [[ -z ${_lp_git_diff_shortstat_uncommitted+x} ]]; then
+        _lp_git_diff_shortstat_uncommitted="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
+    fi
+}
+
+# Get the number of changed files compared to HEAD.
+_lp_git_uncommitted_files() {
+    __lp_git_diff_shortstat_uncommitted
+
+    local lp_git_diff_shortstat_files
+    __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_uncommitted" || return "$?"
+
+    lp_vcs_uncommitted_files=$lp_git_diff_shortstat_files
 }
 
 # Get the number of changed lines compared to HEAD.
 _lp_git_uncommitted_lines() {
-    local stat
-    stat="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
+    __lp_git_diff_shortstat_uncommitted
 
-    stat=${stat/*changed, /} # removing "n file(s) changed"
+    local lp_git_diff_shortstat_i_lines lp_git_diff_shortstat_d_lines
+    __lp_git_diff_shortstat_lines "$_lp_git_diff_shortstat_uncommitted" || return "$?"
 
-    if [[ "$stat" = *insertion* ]]; then
-        lp_vcs_uncommitted_i_lines=${stat/ inser*}
-    else
-        lp_vcs_uncommitted_i_lines=0
+    lp_vcs_uncommitted_i_lines=$lp_git_diff_shortstat_i_lines
+    lp_vcs_uncommitted_d_lines=$lp_git_diff_shortstat_d_lines
+}
+
+__lp_git_diff_shortstat_unstaged() {
+    if [[ -z ${_lp_git_diff_shortstat_unstaged+x} ]]; then
+        _lp_git_diff_shortstat_unstaged="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
     fi
-
-    if [[ "$stat" = *deletion* ]]; then
-        stat=${stat/*\(+\), }
-        lp_vcs_uncommitted_d_lines=${stat/ del*/}
-    else
-        lp_vcs_uncommitted_d_lines=0
-    fi
-
-    (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
 # Get the number of changed files compared to staging.
 _lp_git_unstaged_files() {
-    local stat
-    stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+    __lp_git_diff_shortstat_unstaged
 
-    if [[ "$stat" = *changed* ]]; then
-        stat="${stat/ file*}"
-        lp_vcs_unstaged_files=${stat//[$' \t']}
-    else
-        return 1
-    fi
+    local lp_git_diff_shortstat_files
+    __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_unstaged" || return "$?"
+
+    lp_vcs_unstaged_files=$lp_git_diff_shortstat_files
 }
 
 # Get the number of changed lines compared to staging.
 _lp_git_unstaged_lines() {
-    local stat
-    stat="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
+    __lp_git_diff_shortstat_unstaged
 
-    stat=${stat/*changed, /} # removing "n file(s) changed"
+    local lp_git_diff_shortstat_i_lines lp_git_diff_shortstat_d_lines
+    __lp_git_diff_shortstat_lines "$_lp_git_diff_shortstat_unstaged" || return "$?"
 
-    if [[ "$stat" = *insertion* ]]; then
-        lp_vcs_unstaged_i_lines=${stat/ inser*}
-    else
-        lp_vcs_unstaged_i_lines=0
+    lp_vcs_unstaged_i_lines=$lp_git_diff_shortstat_i_lines
+    lp_vcs_unstaged_d_lines=$lp_git_diff_shortstat_d_lines
+}
+
+__lp_git_diff_shortstat_staged() {
+    if [[ -z ${_lp_git_diff_shortstat_staged+x} ]]; then
+        _lp_git_diff_shortstat_staged="$(LC_ALL=C \git diff --shortstat --cached 2>/dev/null)"
     fi
+}
 
-    if [[ "$stat" = *deletion* ]]; then
-        stat=${stat/*\(+\), }
-        lp_vcs_unstaged_d_lines=${stat/ del*/}
-    else
-        lp_vcs_unstaged_d_lines=0
-    fi
+# Get the number of changed files in staging compared to HEAD.
+_lp_git_staged_files() {
+    __lp_git_diff_shortstat_staged
 
-    (( lp_vcs_unstaged_i_lines || lp_vcs_unstaged_d_lines ))
+    local lp_git_diff_shortstat_files
+    __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_staged" || return "$?"
+
+    lp_vcs_staged_files=$lp_git_diff_shortstat_files
+}
+
+# Get the number of changed lines in staging compared to HEAD.
+_lp_git_staged_lines() {
+    __lp_git_diff_shortstat_staged
+
+    local lp_git_diff_shortstat_i_lines lp_git_diff_shortstat_d_lines
+    __lp_git_diff_shortstat_lines "$_lp_git_diff_shortstat_staged" || return "$?"
+
+    lp_vcs_staged_i_lines=$lp_git_diff_shortstat_i_lines
+    lp_vcs_staged_d_lines=$lp_git_diff_shortstat_d_lines
 }
 
 # MERCURIAL #
@@ -2536,6 +2589,9 @@ __lp_set_prompt() {
     if (( LP_ENABLE_RUNTIME_BELL && _LP_RUNTIME_SECONDS >= LP_RUNTIME_BELL_THRESHOLD )); then
         printf '%s' "$_LP_TI_BELL"
     fi
+
+    # Localize cache data variables
+    local _lp_git_diff_shortstat_uncommitted _lp_git_diff_shortstat_unstaged _lp_git_diff_shortstat_staged
 
     # if change of working directory
     if [[ "${LP_OLD_PWD-}" != "LP:$PWD" ]]; then

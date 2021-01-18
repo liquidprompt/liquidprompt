@@ -1534,7 +1534,7 @@ __lp_git_diff_shortstat_lines() {  # diff_shortstat
 }
 
 __lp_git_diff_shortstat_uncommitted() {
-    if [[ -z ${_lp_git_diff_shortstat_uncommitted+x} ]]; then
+    if [[ -z ${_lp_git_diff_shortstat_uncommitted-} ]]; then
         _lp_git_diff_shortstat_uncommitted="$(LC_ALL=C \git diff --shortstat HEAD -- 2>/dev/null)"
     fi
 }
@@ -1561,7 +1561,7 @@ _lp_git_uncommitted_lines() {
 }
 
 __lp_git_diff_shortstat_unstaged() {
-    if [[ -z ${_lp_git_diff_shortstat_unstaged+x} ]]; then
+    if [[ -z ${_lp_git_diff_shortstat_unstaged-} ]]; then
         _lp_git_diff_shortstat_unstaged="$(LC_ALL=C \git diff --shortstat 2>/dev/null)"
     fi
 }
@@ -1588,7 +1588,7 @@ _lp_git_unstaged_lines() {
 }
 
 __lp_git_diff_shortstat_staged() {
-    if [[ -z ${_lp_git_diff_shortstat_staged+x} ]]; then
+    if [[ -z ${_lp_git_diff_shortstat_staged-} ]]; then
         _lp_git_diff_shortstat_staged="$(LC_ALL=C \git diff --shortstat --cached 2>/dev/null)"
     fi
 }

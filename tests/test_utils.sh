@@ -91,7 +91,127 @@ function test_get_unique_directory {
   pathTearDown
 }
 
-function test_path_format() {
+function test_path_format_from_path_left() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  _lp_find_vcs() {
+    return 1
+  }
+
+  LP_ENABLE_SHORTEN_PATH=1
+  typeset COLUMNS=100
+  LP_PATH_LENGTH=100
+  LP_PATH_KEEP=0
+  LP_PATH_VCS_ROOT=1
+  LP_PATH_METHOD=truncate_chars_from_path_left
+  LP_MARK_SHORTEN_PATH="..."
+
+  typeset lp_path_format
+
+  _lp_path_format '{format}'
+  assertEquals "root directory formatting" '{format}/' "$lp_path_format"
+
+  _lp_path_format '{format}' '' '' '' '['
+  assertEquals "root directory formatting ignore separator" '{format}/' "$lp_path_format"
+
+  PWD="/tmp"
+  _lp_path_format ''
+  assertEquals "root directory no formatting" '/tmp' "$lp_path_format"
+
+  _lp_path_format '' '' '' '' '^'
+  assertEquals "root directory no formatting custom separator" '/^tmp' "$lp_path_format"
+
+  PWD=$HOME
+  _lp_path_format '{format}'
+  assertEquals "home directory formatting" '{format}~' "$lp_path_format"
+
+  PWD="/tmp/_lp/a"
+  _lp_path_format ''
+  assertEquals "short directory formatting" "$PWD" "$lp_path_format"
+
+  LP_PATH_LENGTH=1
+
+  PWD="/tmp/_lp/a/very"
+  _lp_path_format ''
+  assertEquals "short directory formatting" ".../very" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "shortened directory formatting" "{s}.../{l}very" "$lp_path_format"
+
+  LP_PATH_LENGTH=13
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{s}.../{n}_lp/{n}a/{l}very" "$lp_path_format"
+
+  LP_PATH_KEEP=2
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{n}/{n}tmp/{s}.../{l}very" "$lp_path_format"
+
+  LP_PATH_KEEP=3
+  # Don't shorten if it would make longer
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{n}/{n}tmp/{n}_lp/{n}a/{l}very" "$lp_path_format"
+
+  _lp_find_vcs() {
+    lp_vcs_root="/tmp/_lp/a/very"
+  }
+
+  LP_PATH_KEEP=0
+  PWD="/tmp/_lp/a/very/long/pathname"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting" "{s}.../{v}very/{s}.../{l}pathname" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '^' '{^}'
+  assertEquals "full directory formatting with separator" "{s}...{^}^{v}very{^}^{s}...{^}^{l}pathname" "$lp_path_format"
+
+  LP_PATH_KEEP=2
+  PWD="/tmp/averylong/superduperlong/obviouslytoolong/dir"
+
+  LP_PATH_LENGTH=30
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting length $LP_PATH_LENGTH" "{n}/{n}tmp/{s}...g/{n}obviouslytoolong/{l}dir" "$lp_path_format"
+
+  LP_PATH_LENGTH=29
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting length $LP_PATH_LENGTH" "{n}/{n}tmp/{s}.../{n}obviouslytoolong/{l}dir" "$lp_path_format"
+
+  LP_PATH_LENGTH=28
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting length $LP_PATH_LENGTH" "{n}/{n}tmp/{s}...obviouslytoolong/{l}dir" "$lp_path_format"
+
+  LP_PATH_LENGTH=27
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting length $LP_PATH_LENGTH" "{n}/{n}tmp/{s}...bviouslytoolong/{l}dir" "$lp_path_format"
+
+  PWD="/tmp/a/bc/last"
+  LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
+  _lp_path_format ''
+  assertEquals "2 short dirs shortening" "/tmp/.../last" "$lp_path_format"
+
+  PWD="/tmp/a/b/last"
+  LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
+  _lp_path_format ''
+  assertEquals "2 short dirs no shortening" "/tmp/a/b/last" "$lp_path_format"
+
+  PWD="/tmp/a/b/c/last"
+  LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
+  _lp_path_format ''
+  assertEquals "3 short dirs shortening" "/tmp/...c/last" "$lp_path_format"
+
+  LP_PATH_LENGTH=${#PWD}
+  _lp_path_format ''
+  assertEquals "3 short dirs no shortening" "/tmp/a/b/c/last" "$lp_path_format"
+
+  _lp_find_vcs() {
+    lp_vcs_root="/tmp/a/b"
+  }
+
+  LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
+  _lp_path_format ''
+  assertEquals "no shortening" "/tmp/a/b/c/last" "$lp_path_format"
+}
+
+function test_path_format_unique() {
   pathSetUp
 
   typeset HOME="/home/user"
@@ -101,10 +221,12 @@ function test_path_format() {
     return 1
   }
 
+  LP_ENABLE_SHORTEN_PATH=1
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
   LP_PATH_KEEP=0
   LP_PATH_VCS_ROOT=1
+  LP_PATH_METHOD=truncate_chars_to_unique_dir
 
   typeset lp_path_format
 

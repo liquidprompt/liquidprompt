@@ -452,6 +452,68 @@ function test_path_format_unique() {
   pathTearDown
 }
 
+function test_path_format_last_dir() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  _lp_find_vcs() {
+    return 1
+  }
+
+  LP_ENABLE_SHORTEN_PATH=1
+  LP_PATH_VCS_ROOT=1
+  LP_PATH_METHOD=truncate_to_last_dir
+
+  typeset lp_path_format
+
+  _lp_path_format '{format}'
+  assertEquals "root directory formatting" '{format}/' "$lp_path_format"
+
+  _lp_path_format '{format}' '' '' '' '['
+  assertEquals "root directory formatting ignore separator" '{format}/' "$lp_path_format"
+
+  PWD="/tmp"
+  _lp_path_format ''
+  assertEquals "root directory no formatting" 'tmp' "$lp_path_format"
+
+  _lp_path_format '' '' '' '' '^'
+  assertEquals "root directory no formatting custom separator" 'tmp' "$lp_path_format"
+
+  PWD=$HOME
+  _lp_path_format '{format}'
+  assertEquals "home directory formatting" '{format}~' "$lp_path_format"
+
+  PWD="/tmp/_lp/a"
+  _lp_path_format ''
+  assertEquals "short directory formatting" "a" "$lp_path_format"
+
+  PWD="/tmp/_lp/a/very"
+  _lp_path_format ''
+  assertEquals "short directory formatting" "very" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "shortened directory formatting" "{l}very" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "medium directory formatting" "{l}very" "$lp_path_format"
+
+  _lp_find_vcs() {
+    lp_vcs_root="$PWD"
+  }
+
+  PWD="/tmp/_lp/a/very"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory vcs formatting" "{v}very" "$lp_path_format"
+
+  LP_PATH_VCS_ROOT=0
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory formatting" "{l}very" "$lp_path_format"
+
+  PWD="/tmp/_lp/a/very/long/pathname"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '^' '{^}'
+  assertEquals "full directory formatting with separator" "{l}pathname" "$lp_path_format"
+}
+
 function test_is_function {
   function my_function { :; }
 

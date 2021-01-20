@@ -779,7 +779,7 @@ __lp_end_path_left_shortening() {
 #   truncate_chars_from_dir_middle
 #   truncate_chars_from_dir_right
 #   truncate_chars_to_unique_dir
-#   dirs_from_path_right
+#   truncate_to_last_dir
 _lp_path_format() {
     local path_format=${1-$LP_COLOR_PATH}
     local last_directory_format=${2:-$path_format}
@@ -797,7 +797,28 @@ _lp_path_format() {
 
     local -i path_length=${#display_path}
 
-    if [[ $path_length > 1 ]]; then
+    local lp_vcs_root lp_vcs_type
+    local vcs_root_directory=
+    if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
+        __lp_pwd_tilde "$lp_vcs_root"
+        vcs_root_directory=$lp_pwd_tilde
+    fi
+
+    if [[ $path_length == 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
+        if [[ $path_length > 1 ]]; then
+            lp_path=${display_path##*/}
+        else
+            # only root or home to show
+            lp_path=$display_path
+        fi
+
+        if [[ $display_path == $vcs_root_directory ]]; then
+            lp_path_format="${vcs_root_format}${lp_path}"
+        else
+            lp_path_format="${last_directory_format}${lp_path}"
+        fi
+        return
+    else
         if [[ $separator != "/" && ${display_path:0:1} == "/" ]]; then
             # The root directory ('/') becomes a directory name instead of a leading separator
             # Add one to account for the first / needing to be both replaced and shown
@@ -808,19 +829,6 @@ _lp_path_format() {
             local slash_count="${display_path//[!"/"]}"
             path_length+=$(( ${#slash_count} * ( ${#separator} - 1 ) ))
         fi
-    else
-        # only root or home to show
-        # TODO this does not show if root or home is vcs
-        lp_path=$display_path
-        lp_path_format="${last_directory_format}${display_path}"
-        return
-    fi
-
-    local lp_vcs_root lp_vcs_type
-    local vcs_root_directory=
-    if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
-        __lp_pwd_tilde "$lp_vcs_root"
-        vcs_root_directory=$lp_pwd_tilde
     fi
 
     local path_to_proccess="${display_path}/" current_path="" current_directory="" lp_unique_directory

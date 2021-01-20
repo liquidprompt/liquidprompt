@@ -41,7 +41,6 @@ if test -n "${BASH_VERSION-}"; then
     _LP_FQDN_SYMBOL="\H"
     _LP_TIME_SYMBOL="\t"
     _LP_MARK_SYMBOL='\$'
-    _LP_PWD_SYMBOL="\\w"
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
@@ -68,7 +67,6 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_FQDN_SYMBOL="%M"
     _LP_TIME_SYMBOL="%*"
     _LP_MARK_SYMBOL='%(!.#.%%)'
-    _LP_PWD_SYMBOL="%~"
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
@@ -183,7 +181,6 @@ __lp_source_config() {
     LP_PATH_CHARACTER_KEEP=${LP_PATH_CHARACTER_KEEP:-3}
     LP_PATH_METHOD=${LP_PATH_METHOD:-truncate_chars_from_path_left}
     LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
-    LP_PATH_DEFAULT="${LP_PATH_DEFAULT:-$_LP_PWD_SYMBOL}"
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
@@ -322,6 +319,8 @@ __lp_source_config() {
         fi
     done
 
+    # Deprecations and compatability shims
+
     if [[ -n "${LP_DISABLED_VCS_PATH-}" ]]; then
         echo "liquidprompt: LP_DISABLED_VCS_PATH is deprecated. Update your config to use LP_DISABLED_VCS_PATHS array." >&2
 
@@ -349,6 +348,32 @@ __lp_source_config() {
         )
         unset LP_COLORMAP_0 LP_COLORMAP_1 LP_COLORMAP_2 LP_COLORMAP_3 LP_COLORMAP_4 \
               LP_COLORMAP_5 LP_COLORMAP_6 LP_COLORMAP_7 LP_COLORMAP_8 LP_COLORMAP_9
+    fi
+
+    if [[ -n ${LP_PATH_DEFAULT-} ]]; then
+        echo "liquidprompt: LP_PATH_DEFAULT is deprecated. Update your config to set LP_PATH_METHOD." >&2
+        if (( ! LP_ENABLE_SHORTEN_PATH )); then
+            # There is just no elegant way to handle this. Fallback to the old way with basic formatting support.
+            _lp_path_format() {
+                lp_path=$LP_PATH_DEFAULT
+                lp_path_format="${LP_COLOR_PATH}${lp_path}${NO_COL}"
+            }
+        fi
+    fi
+
+    if [[ -n ${PROMPT_DIRTRIM-} ]] && (( ! LP_ENABLE_SHORTEN_PATH )); then
+        echo "liquidprompt: PROMPT_DIRTRIM support is deprecated. Update your config to set
+            LP_PATH_METHOD='truncate_chars_from_path_left' instead." >&2
+        # This does mostly the same thing, but with our formatting.
+        LP_ENABLE_SHORTEN_PATH=1
+        LP_PATH_METHOD="truncate_chars_from_path_left"
+        LP_PATH_KEEP=1
+    fi
+
+    if [[ $LP_PATH_KEEP == "-1" ]]; then
+        echo "liquidprompt: LP_PATH_KEEP set to '-1' is deprecated. Update your config to set
+              LP_PATH_METHOD='truncate_to_last_dir' instead." >&2
+        LP_PATH_METHOD="truncate_to_last_dir"
     fi
 }
 

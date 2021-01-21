@@ -17,6 +17,8 @@ _lp_powerline_theme_activate() {
     [[ -z ${POWERLINE_PATH_COLOR[@]+x}           ]] && POWERLINE_PATH_COLOR=(250 240 0 0 7 0)
     [[ -z ${POWERLINE_PATH_SEPARATOR_COLOR[@]+x} ]] && POWERLINE_PATH_SEPARATOR_COLOR=(245 240 0 0 7 0)
     [[ -z ${POWERLINE_PATH_LAST_COLOR[@]+x}      ]] && POWERLINE_PATH_LAST_COLOR=(252 240 1 0 7 0)
+    [[ -z ${POWERLINE_PATH_VCS_COLOR[@]+x}       ]] && POWERLINE_PATH_VCS_COLOR=(147 240 1 0 4 0)
+    [[ -z ${POWERLINE_PATH_SHORTENED_COLOR[@]+x} ]] && POWERLINE_PATH_SHORTENED_COLOR=(245 240 0 0 7 0)
     [[ -z ${POWERLINE_JOBS_COLOR[@]+x}           ]] && POWERLINE_JOBS_COLOR=(220 166 0 0 3 2)
     [[ -z ${POWERLINE_VCS_CLEAN_COLOR[@]+x}      ]] && POWERLINE_VCS_CLEAN_COLOR=(250 236 0 0 7 0)
     [[ -z ${POWERLINE_VCS_DIRTY_COLOR[@]+x}      ]] && POWERLINE_VCS_DIRTY_COLOR=(220 236 0 0 3 0)
@@ -58,6 +60,9 @@ _lp_powerline_theme_directory() {
         title+="@${_POWERLINE_HOSTNAME}"
     fi
 
+    local lp_path
+    __powerline_path_generate
+
     [[ -n $title ]] && title+=":"
     title+="${lp_path}"
 
@@ -76,7 +81,7 @@ _lp_powerline_theme_prompt() {
         __powerline_section "${POWERLINE_PYTHON_ENV_MARKER}${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
     fi
 
-    __powerline_path_section
+    __powerline_section "$_lp_powerline_path" "${POWERLINE_PATH_COLOR[@]}"
 
     local lp_running_jobs lp_stopped_jobs
     if _lp_jobcount; then
@@ -182,7 +187,7 @@ _lp_powerline_full_theme_prompt() {
 
     __powerline_section "${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME}" "${POWERLINE_HOST_COLOR[@]}"
 
-    __powerline_path_section
+    __powerline_section "$_lp_powerline_path" "${POWERLINE_PATH_COLOR[@]}"
 
     if _lp_dirstack; then
         __powerline_section "${LP_MARK_DIRSTACK}${lp_dirstack}" "${POWERLINE_DIRSTACK_COLOR[@]}"
@@ -276,28 +281,31 @@ __powerline_sub_section_format() {  # foreground_color, _, _, _, fallback_foregr
     sub_section_format="${lp_terminal_format}"
 }
 
-# This cannot use __powerline_section() as we generate colors inside
-# __powerline_path_split(), which forgets the old colors for the arrow. This
-# function lets the arrow go first.
-__powerline_path_section() {
-    local powerline_path section_arrow
-    __powerline_section_arrow "${POWERLINE_PATH_COLOR[@]}"
+# We don't want to generate the path every prompt, so create the full formatted
+# path once for each dir.
+__powerline_path_generate() {
+    local lp_terminal_format sub_section_format _lp_last_af_color _lp_last_ab_color
 
     lp_terminal_format "${POWERLINE_PATH_COLOR[@]}"
     local path_format=$lp_terminal_format
 
-    local sub_section_format
     __powerline_sub_section_format "${POWERLINE_PATH_SEPARATOR_COLOR[@]}"
     local separator_format=$sub_section_format
+
+    lp_terminal_format "${POWERLINE_PATH_SHORTENED_COLOR[@]}"
+    local shortened_format=$lp_terminal_format
+
+    lp_terminal_format "${POWERLINE_PATH_VCS_COLOR[@]}"
+    local vcs_format=$lp_terminal_format
 
     lp_terminal_format "${POWERLINE_PATH_LAST_COLOR[@]}"
     local last_dir_format=$lp_terminal_format
 
     local lp_path_format
-    _lp_path_format "$path_format" "$last_dir_format" "" '' \
+    _lp_path_format "$path_format" "$last_dir_format" "$vcs_format" "$shortened_format" \
         "${POWERLINE_SPACER}${POWERLINE_SOFT_DIVIDER}${POWERLINE_SPACER}" "$separator_format"
 
-    powerline_sections+="${section_arrow}${POWERLINE_SPACER}${lp_path_format}${POWERLINE_SPACER}"
+    _lp_powerline_path=${lp_path_format}
 }
 
 # Is this a dirty hack? Yes. Am I proud of it? Also yes.

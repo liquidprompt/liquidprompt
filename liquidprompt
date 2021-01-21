@@ -109,7 +109,7 @@ _LP_SED_EXTENDED=r
 # Load the user configuration and setup defaults.
 __lp_source_config() {
 
-    local af_color= ab_color=
+    local lp_terminal_format af_color= ab_color=
 
     # Colors: variables are local so they will have a value only
     # during config loading and will not conflict with other values
@@ -240,7 +240,14 @@ __lp_source_config() {
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
     LP_MARK_DIRSTACK="${LP_MARK_DIRSTACK:-"⚞"}"
 
-    LP_COLOR_PATH=${LP_COLOR_PATH:-$BOLD}
+    lp_terminal_format 255 0 0 0 7
+    LP_COLOR_PATH=${LP_COLOR_PATH:-$lp_terminal_format}
+    lp_terminal_format 245 0 0 0 7
+    LP_COLOR_PATH_SEPARATOR=${LP_COLOR_PATH_SEPARATOR:-$lp_terminal_format}
+    LP_COLOR_PATH_SHORTENED=${LP_COLOR_PATH_SHORTENED:-$lp_terminal_format}
+    lp_terminal_format 255 0 1 0 7
+    LP_COLOR_PATH_VCS_ROOT=${LP_COLOR_PATH_VCS_ROOT:-$lp_terminal_format}
+    LP_COLOR_PATH_LAST_DIR=${LP_COLOR_PATH_LAST_DIR:-$lp_terminal_format}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
     LP_COLOR_PROXY=${LP_COLOR_PROXY:-$BOLD_BLUE}
     LP_COLOR_JOB_D=${LP_COLOR_JOB_D:-$YELLOW}
@@ -2565,22 +2572,8 @@ _lp_default_theme_directory() {
         fi
     fi
 
-    LP_PWD="${LP_COLOR_PATH}${lp_path}${NO_COL}"
-
-    local lp_terminal_format
-    lp_terminal_format 250 240 0 0 7 0
-    local path_format=$lp_terminal_format
-    lp_terminal_format 245 240 0 0 7 0
-    local short_format=$lp_terminal_format
-    lp_terminal_format 245 240 0 0 7 0
-    local separator_format=$lp_terminal_format
-    lp_terminal_format 147 240 0 0 4 0
-    local vcs_format=$lp_terminal_format
-    lp_terminal_format 255 240 1 0 7 0
-    local last_format=$lp_terminal_format
-
     local lp_path_format
-    _lp_path_format "$path_format" "$last_format" "$vcs_format" "$short_format" "/" "$separator_format"
+    _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
 
     LP_PWD="${lp_path_format}${NO_COL}"
 }

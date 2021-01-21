@@ -798,8 +798,10 @@ __lp_end_path_left_shortening() {
             # This indescriminate adding of a separator can sometimes mean the path
             # is slightly longer than it should be, but it is more clear.
             lp_path_format+="${separator_format}${separator}"
+            lp_path+="${LP_MARK_SHORTEN_PATH}/"
         else
-            lp_path_format+=$unshortened_path_shorten_string
+            lp_path+=$unshortened_path_shorten_string
+            lp_path_format+=$unshortened_path_format_shorten_string
             shortened_path_length=$unshortened_path_length
         fi
         is_shortening=0
@@ -867,7 +869,7 @@ _lp_path_format() {
 
     local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0 needed_length
     local -i shortened_path_length=$path_length is_shortening=0 unshortened_path_length
-    local unshortened_path_shorten_string
+    local unshortened_path_shorten_string unshortened_path_format_shorten_string shortened_path
 
     while [[ -n $path_to_proccess ]]; do
 
@@ -888,10 +890,12 @@ _lp_path_format() {
         if [[ $current_path == $vcs_root_directory ]]; then
             __lp_end_path_left_shortening
             # No shortening
+            lp_path+=$current_directory
             lp_path_format+="${vcs_root_format}${current_directory}"
         elif [[ -z $path_to_proccess ]]; then
             __lp_end_path_left_shortening
             # Last directory
+            lp_path+=$current_directory
             lp_path_format+="${last_directory_format}${current_directory}"
         elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
             && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
@@ -899,6 +903,7 @@ _lp_path_format() {
             if [[ $LP_PATH_METHOD == "truncate_chars_to_unique_dir" ]] && \
                 __lp_get_unique_directory "$current_path"; then
 
+                lp_path+=$lp_unique_directory
                 lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
@@ -908,12 +913,14 @@ _lp_path_format() {
 
                 if (( ! is_shortening )); then
                     unshortened_path_shorten_string=
+                    unshortened_path_format_shorten_string=
                     unshortened_path_length=$shortened_path_length
                     shortened_path_length+=${#LP_MARK_SHORTEN_PATH}
                 fi
                 needed_length=$(( shortened_path_length - max_len ))
 
-                unshortened_path_shorten_string+="${path_format}${current_directory}${separator_format}${separator}"
+                unshortened_path_shorten_string+="${current_directory}/"
+                unshortened_path_format_shorten_string+="${path_format}${current_directory}${separator_format}${separator}"
 
                 if (( needed_length >= ${#current_directory} )); then
                     # One directory was not enough, need to shorten more.
@@ -925,33 +932,42 @@ _lp_path_format() {
                     # If we got to here, it wasn't a forced ending, which means it is.
                     shortened_path_length=$(( shortened_path_length - needed_length ))
 
-                    lp_path_format+="${shortened_directory_format}${LP_MARK_SHORTEN_PATH}"
-                    lp_path_format+=${current_directory:$needed_length}
+                    shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
+                    lp_path+=$shortened_path
+                    lp_path_format+="${shortened_directory_format}${shortened_path}"
 
                     is_shortening=0
                 fi
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_right" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP < ${#current_directory} )); then
 
-                lp_path_format+="${shortened_directory_format}${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
+                shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
+                lp_path+=$shortened_path
+                lp_path_format+="${shortened_directory_format}${shortened_path}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
 
-                lp_path_format+="${shortened_directory_format}${current_directory:0:$LP_PATH_CHARACTER_KEEP}"
-                lp_path_format+="${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
+                shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
+                lp_path+=$shortened_path
+                lp_path_format+="${shortened_directory_format}${shortened_path}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.
+                lp_path+=$current_directory
                 lp_path_format+="${path_format}${current_directory}"
             fi
         else
             __lp_end_path_left_shortening
+            lp_path+=$current_directory
             lp_path_format+="${path_format}${current_directory}"
         fi
 
         if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]] && (( ! is_shortening )); then
+            if [[ $current_path != "/" ]]; then
+                lp_path+="/"
+            fi
             lp_path_format+="${separator_format}${separator}"
         fi
     done
@@ -2572,7 +2588,7 @@ _lp_default_theme_directory() {
         fi
     fi
 
-    local lp_path_format
+    local lp_path lp_path_format
     _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
 
     LP_PWD="${lp_path_format}${NO_COL}"

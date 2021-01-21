@@ -127,50 +127,30 @@ OS
 Path
 ----
 
-.. function:: __lp_path() -> var:lp_path
+.. function:: __lp_end_path_left_shortening()
 
-   Sets :attr:`lp_path` to the current path. Internally, calls either
-   :func:`__lp_shorten_path` or :func:`__lp_set_dirtrim` to do so, depending on
-   the values of :attr:`LP_PATH_KEEP` and :attr:`LP_ENABLE_SHORTEN_PATH`.
-
-   Only :func:`__lp_shorten_path` actually sets ``lp_path``, other config
-   options will initialize ``lp_path`` with a shell escape sequence so the
-   shell will print the path.
+   Terminate a multi-directory shortening, checking if the shortening actually
+   made a shorter path, and if so, adding the shortened mark. If not, adds the
+   real path to the output. Only used internally by :func:`_lp_path_format`.
 
    .. versionadded:: 2.0
 
-.. function:: __lp_pwd_tilde() -> var:lp_pwd_tilde
+.. function:: __lp_get_unique_directory(path) -> var:lp_unique_directory
 
-   Returns :envvar:`PWD` with the user's home directory replace with a tilde
-   ("~").
+   Returns the shortest unique directory prefix matching the real directory
+   input. Only used internally by :func:`_lp_path_format`.
+
+   .. versionadded:: 2.0
+
+.. function:: __lp_pwd_tilde([path]) -> var:lp_pwd_tilde
+
+   Returns *path*, or :envvar:`PWD` if *path* is not set, with the user's home
+   directory replaced with a tilde ("~").
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_get_home_tilde_collapsed``.
       Return method changed from stdout.
-
-.. function:: __lp_set_dirtrim() -> var:PROMPT_DIRTRIM
-
-   In Bash shells, :envvar:`PROMPT_DIRTRIM` is the number of directories to keep
-   at the end of the displayed path (if "\w" is present in :envvar:`PS1`).
-   Liquid Prompt can calculate this number under two conditions, path shortening
-   must be disabled and :envvar:`PROMPT_DIRTRIM` must be already set.
-
-   .. versionchanged:: 2.0
-      Renamed from ``_lp_set_dirtrim``.
-
-.. function:: __lp_shorten_path() -> var:lp_shorten_path
-
-   Shorten the path of the current working directory if the path is longer than
-   :attr:`LP_PATH_LENGTH`. Show as much of the current working directory path as
-   possible. If shortened display a leading mark, such as ellipses, to indicate
-   that part is missing. Show at least :attr:`LP_PATH_KEEP` leading directories
-   and current directory.
-
-   .. versionchanged:: 2.0
-      Renamed from ``_lp_shorten_path``.
-      Removed handling of cases where no shortening is required, as that should
-      be handled by :attr:`__lp_path` on activate.
-      Return variable changed from ``LP_PWD``.
+      Optional parameter *path* added.
 
 Prompt
 ------

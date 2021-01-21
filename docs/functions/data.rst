@@ -274,6 +274,47 @@ OS
 
    .. versionadded:: 2.0
 
+Path
+----
+
+.. function:: _lp_path_format(path_format=$LP_COLOR_PATH, \
+   last_directory_format=$path_format, vcs_root_format=$last_directory_format, \
+   shortened_directory_format=$path_format, separator="/", \
+   [separator_format]) -> var:lp_path, var:lp_path_format
+
+   Returns a shortened and formatted string indicating the current working
+   directory path. *lp_path* contains the path without any formatting or custom
+   separators, intended for use in the terminal title. *lp_path_format* contains
+   the complete formatted path, to be inserted into the prompt.
+
+   The behavior of the shortening is controlled by
+   :attr:`LP_ENABLE_SHORTEN_PATH`, :attr:`LP_PATH_METHOD`,
+   :attr:`LP_PATH_LENGTH`, :attr:`LP_PATH_KEEP`, :attr:`LP_PATH_CHARACTER_KEEP`,
+   and :attr:`LP_PATH_VCS_ROOT`. See their descriptions for details on how they
+   change the output of this function.
+
+   The last directory in the displayed path will be shown with the
+   *last_directory_format*.
+
+   If a VCS repository is detected with :func:`_lp_find_vcs`, the root of the
+   VCS repository is formatted with *vcs_root_format*. The detection method is
+   the same as for all other VCS display, so if a VCS type or directory is
+   disabled, it will not be detected.
+
+   If the path shortening shortens a directory (or multiple consecutive
+   directories), they will be formatted with *shortened_directory_format*.
+
+   A custom *separator* will only be substituted in the *lp_path_format* output.
+   Note that this will cut into maximum path length if the separator is longer
+   than one character.
+
+   With no specified *separator_format*, each separator will take the format of
+   the directory section preceding it. Otherwise every separator will be
+   formatted with *separator_format*. Note that the root directory is treated as
+   a directory, and is formatted as such.
+
+   .. versionadded:: 2.0
+
 Runtime
 -------
 

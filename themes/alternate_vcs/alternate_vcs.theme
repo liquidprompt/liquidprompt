@@ -1,0 +1,141 @@
+
+_lp_alternate_vcs_theme_activate() {
+    _lp_default_theme_activate
+
+    LP_ALWAYS_ALT_VCS_TAG=${LP_ALWAYS_ALT_VCS_TAG:-0}
+    LP_ENABLE_ALT_VCS_COMMITS=${LP_ENABLE_ALT_VCS_COMMITS:-1}
+    LP_ENABLE_ALT_VCS_DIFF=${LP_ENABLE_ALT_VCS_DIFF:-1}
+    LP_ENABLE_ALT_VCS_STATUS=${LP_ENABLE_ALT_VCS_STATUS:-1}
+    LP_MARK_ALT_VCS_TAG=${LP_MARK_ALT_VCS_TAG:-"🔖"}
+}
+
+_lp_alternate_vcs_theme_directory() {
+    _lp_default_theme_directory
+}
+
+_lp_alternate_vcs_theme_prompt() {
+    _lp_default_theme_prompt_data
+
+    # TODO: This will run both VCS details, which will make this prompt slower
+    if _lp_find_vcs && _lp_alternate_vcs_details; then
+        LP_VCS=" $lp_alternate_vcs_details"
+    else
+        LP_VCS=
+    fi
+
+    _lp_default_theme_prompt_template
+}
+
+_lp_alternate_vcs_details() {
+    local branch
+    if _lp_vcs_branch; then
+        branch="$lp_vcs_branch"
+
+        if _lp_vcs_bookmark; then
+            branch+=": $lp_vcs_bookmark"
+        fi
+        if (( LP_ALWAYS_ALT_VCS_TAG )) && _lp_vcs_tag; then
+            branch+=" ${LP_MARK_ALT_VCS_TAG}${lp_vcs_tag}"
+        fi
+    elif _lp_vcs_bookmark; then
+        branch="$lp_vcs_bookmark"
+    elif _lp_vcs_tag; then
+        branch="${LP_MARK_ALT_VCS_TAG}${lp_vcs_tag}"
+    else
+        _lp_vcs_commit_id
+        branch="${lp_vcs_commit_id:0:7}"
+    fi
+
+    lp_alternate_vcs_details="$LP_COLOR_UP"
+
+    local has_commit=
+    if _lp_vcs_commits_off_remote; then
+        lp_alternate_vcs_details="$LP_COLOR_COMMITS_BEHIND"
+        if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS}+$lp_vcs_commit_ahead${NO_COL}/${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind"
+        elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS}$lp_vcs_commit_ahead"
+            lp_alternate_vcs_details="$LP_COLOR_COMMITS"
+        elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
+            has_commit="${LP_COLOR_COMMITS_BEHIND}-$lp_vcs_commit_behind"
+        fi
+        (( LP_ENABLE_ALT_VCS_COMMITS )) || has_commit=""
+    fi
+
+    local ret has_files=
+    if _lp_vcs_uncommitted_files; then
+        lp_alternate_vcs_details="$LP_COLOR_CHANGES"
+        if (( LP_ENABLE_ALT_VCS_STATUS )); then
+            _lp_vcs_unstaged_files; ret=$?
+            # Only show unstaged files if the VCS supports staging, otherwise
+            # show only uncommitted files
+            if (( ret == 0 )); then
+                local -i staged_files=$(( lp_vcs_uncommitted_files - lp_vcs_unstaged_files ))
+                if (( staged_files )); then
+                    has_files="${LP_COLOR_COMMITS}S${staged_files} "
+                fi
+                has_files+="${LP_COLOR_CHANGES}U${lp_vcs_unstaged_files}"
+            elif (( ret == 1 )); then
+                has_files="${LP_COLOR_COMMITS}S${lp_vcs_uncommitted_files}"
+            else
+                has_files="${LP_COLOR_CHANGES}U${lp_vcs_uncommitted_files}"
+            fi
+        fi
+    fi
+    if (( LP_ENABLE_ALT_VCS_STATUS )) && _lp_vcs_untracked_files; then
+        [[ -n $has_files ]] && has_files+=" "
+        has_files+="${LP_COLOR_CHANGES}?${lp_vcs_untracked_files}"
+    fi
+
+    local has_lines=
+    if (( LP_ENABLE_ALT_VCS_DIFF )) && _lp_vcs_uncommitted_lines; then
+        _lp_vcs_unstaged_lines; ret=$?
+        # Only show unstaged changes if the VCS supports staging, otherwise
+        # show uncommitted changes.
+        if (( ret == 0 )); then
+            has_lines="+$lp_vcs_unstaged_i_lines/-$lp_vcs_unstaged_d_lines"
+        elif (( ret == 1 )); then
+            # If the status is on, it would be redundant to say there are no unstaged lines.
+            if (( ! LP_ENABLE_ALT_VCS_STATUS )); then
+                has_lines="+0/-0"
+            fi
+        else
+            has_lines="+$lp_vcs_uncommitted_i_lines/-$lp_vcs_uncommitted_d_lines"
+        fi
+    fi
+
+    lp_alternate_vcs_details+="$branch"
+    if [[ -n $has_lines || -n $has_files || -n $has_commit ]]; then
+        lp_alternate_vcs_details+="${NO_COL}("
+        if [[ -n $has_files ]]; then
+            lp_alternate_vcs_details+="$has_files"
+            if [[ -n $has_lines || -n $has_commit ]]; then
+                lp_alternate_vcs_details+="${NO_COL} "
+            fi
+        fi
+        if [[ -n $has_lines ]]; then
+            lp_alternate_vcs_details+="${LP_COLOR_DIFF}${has_lines}"
+            if [[ -n $has_commit ]]; then
+                lp_alternate_vcs_details+="${NO_COL},"
+            fi
+        fi
+        lp_alternate_vcs_details+="${has_commit}${NO_COL})"
+    fi
+
+    if _lp_vcs_stash_count; then
+        lp_alternate_vcs_details+="${LP_COLOR_COMMITS}${LP_MARK_STASH}"
+    fi
+
+    if (( ! LP_ENABLE_ALT_VCS_STATUS )) && _lp_vcs_untracked_files; then
+        lp_alternate_vcs_details+="${LP_COLOR_CHANGES}${LP_MARK_UNTRACKED}"
+    fi
+
+    if _lp_vcs_head_status; then
+        lp_alternate_vcs_details+=" ${LP_COLOR_CHANGES}${lp_vcs_head_status}"
+        if [[ -n "${lp_vcs_head_details-}" ]]; then
+            lp_alternate_vcs_details+="(${lp_vcs_head_details})"
+        fi
+    fi
+
+    lp_alternate_vcs_details+="$NO_COL"
+}

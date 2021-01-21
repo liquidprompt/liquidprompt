@@ -50,13 +50,27 @@ Theme Functions
 
 .. function:: _lp_default_theme_prompt()
 
+   Runs :func:`_lp_default_theme_prompt_data` then
+   :func:`_lp_default_theme_prompt_template`.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_default_theme_prompt_data()
+
    Runs all of the below theme data functions, and writes values to the
-   :doc:`../theme/default` variables.
+   :doc:`../theme/default` variables. Can be used to generate all the default
+   theme sections, then modify them before running a user template.
+
+   .. versionadded:: 2.0
+
+.. function:: _lp_default_theme_prompt_template()
 
    If :attr:`LP_PS1_FILE` is set, sources it.
 
    Then, if :attr:`LP_PS1` is set, uses it as :envvar:`PS1`. Otherwise, uses the
-   default theme layout to construct :envvar:`PS1`.
+   default theme layout to construct :envvar:`PS1`. Can be used to set different
+   template sections than the default theme, but still use the same template
+   engine.
 
    .. versionadded:: 2.0
 

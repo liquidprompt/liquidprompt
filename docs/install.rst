@@ -67,6 +67,8 @@ To test the prompt immediately after download, run::
 Adjust the path if you installed to a different location that the suggested
 ``~/liquidprompt``.
 
+.. _shell-installation:
+
 Shell Installation
 ==================
 

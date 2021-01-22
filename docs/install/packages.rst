@@ -32,13 +32,43 @@ Archlinux
 Debian
 ------
 
+... and Debian derivatives.
+
 .. image:: https://repology.org/badge/version-for-repo/debian_stable/liquidprompt.svg
    :alt: Debian Stable package
    :target: https://packages.debian.org/stable/source/liquidprompt
 
+.. image:: https://repology.org/badge/version-for-repo/ubuntu_20_10/liquidprompt.svg
+   :alt: Ubuntu 20.10 package
+   :target: https://packages.ubuntu.com/source/groovy/liquidprompt
+
+.. image:: https://repology.org/badge/version-for-repo/mx_19_testing/liquidprompt.svg
+   :alt: MX Linux MX-19 Testing package
+   :target: http://mxrepo.com/mx/testrepo/pool/test/l/liquidprompt/
+
 .. code-block::
 
    apt-get install liquidprompt
+
+A small script, ``liquidprompt_activate`` (not to be confused with
+:func:`lp_activate`) is included to ease activation of the prompt, which can be
+used instead of the :ref:`shell-installation` instructions.
+
+This will set the required environment:
+
+* The files ``~/.bashrc`` and/or ``~/.zshrc`` are modified to load Liquidprompt
+  at startup.
+* If no previous ``~/.config/liquidpromptrc`` file exists, it will be created.
+
+So, to get Liquidprompt working simply run:
+
+.. code-block::
+
+   liquidprompt_activate
+   source ~/.bashrc  # or ~/.zshrc
+
+Be aware that multiple invocations of the ``liquidprompt_activate`` command may
+pollute ``~/.bashrc`` and/or ``~/.zshrc`` files.
 
 Homebrew
 --------
@@ -51,17 +81,6 @@ Homebrew
 
    brew install liquidprompt
 
-MX Linux
---------
-
-.. image:: https://repology.org/badge/version-for-repo/mx_19_testing/liquidprompt.svg
-   :alt: MX Linux MX-19 Testing package
-   :target: http://mxrepo.com/mx/testrepo/pool/test/l/liquidprompt/
-
-.. code-block::
-
-   apt-get install liquidprompt
-
 Nix
 ---
 
@@ -73,13 +92,3 @@ Nix
 
    nix-env -i liquidprompt
 
-Ubuntu
-------
-
-.. image:: https://repology.org/badge/version-for-repo/ubuntu_20_10/liquidprompt.svg
-   :alt: Ubuntu 20.10 package
-   :target: https://packages.ubuntu.com/source/groovy/liquidprompt
-
-.. code-block::
-
-   apt-get install liquidprompt

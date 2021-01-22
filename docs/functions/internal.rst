@@ -261,7 +261,8 @@ Utility
 
 .. function:: __lp_escape(string) -> var:ret
 
-   Escape shell escape characters so they print correctly in :envvar:`PS1`.
+   Escape shell escape characters and control characters so they print correctly
+   in :envvar:`PS1`.
 
    In Bash, backslashes (``\``) are used to escape codes, so backslashes are
    replaced by two backslashes.
@@ -269,9 +270,14 @@ Utility
    In Zsh, percents (``%``) are used to escape codes, so percents are replaced
    by two percents.
 
+   All unprintable control characters are replaced by printable string
+   representations, E.g. a newline character is replaced by the string '\n'.
+   Backslashes are replaced by two backslashes to prevent confusion.
+
    .. versionchanged:: 2.0
       Renamed from ``_lp_escape``.
       Return method changed from stdout.
+      Control characters are replaced by printable string representations.
 
 .. function:: __lp_is_function(function)
 

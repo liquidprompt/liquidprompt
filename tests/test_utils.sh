@@ -13,6 +13,34 @@ function test_as_text {
     "$(_lp_as_text "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}str${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing")"
 }
 
+function test_escape {
+  typeset ret
+
+  __lp_escape "a pretty normal string"
+  assertEquals "normal string" "a pretty normal string" "$ret"
+
+  __lp_escape 'a string with \backslashes and %percents'
+  if (( is_zsh )); then
+    assertEquals "backslash+percent string" 'a string with \\backslashes and %%percents' "$ret"
+  else
+    assertEquals "backslash+percent string" 'a string with \\\\backslashes and %percents' "$ret"
+  fi
+
+  __lp_escape $'a string with \nnewlines and \001others'
+  if (( is_zsh )); then
+    assertEquals "control chars string" 'a string with \nnewlines and \001others' "$ret"
+  else
+    assertEquals "control chars string" 'a string with \\nnewlines and \\001others' "$ret"
+  fi
+
+  __lp_escape $'a string with \abells and \177deletes and \eescapes \\rfalse alarms'
+  if (( is_zsh )); then
+    assertEquals "more control chars string" 'a string with \abells and \177deletes and \eescapes \\rfalse alarms' "$ret"
+  else
+    assertEquals "more control chars string" 'a string with \\abells and \\177deletes and \\eescapes \\\\rfalse alarms' "$ret"
+  fi
+}
+
 function test_line_count {
   typeset test_string="a normal string"
   __lp_line_count "$test_string"
@@ -72,6 +100,9 @@ function test_is_function {
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit
+  is_zsh=1
+else
+  is_zsh=0
 fi
 
 . ./shunit2

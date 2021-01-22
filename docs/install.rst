@@ -17,6 +17,10 @@ manager with our :doc:`install/packages`.
 
 To download to ``~/liquidprompt``, run::
 
+   git clone --branch stable https://github.com/nojhan/liquidprompt.git ~/liquidprompt
+
+Or, if you want to use the development (non-stable) branch::
+
    git clone https://github.com/nojhan/liquidprompt.git ~/liquidprompt
 
 If you do not have ``git``, you can download and extract the source in zip or

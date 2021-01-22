@@ -1,0 +1,24 @@
+name: Lint Documentation
+on:
+  push:
+    paths:
+      - 'docs/**'
+  pull_request:
+jobs:
+  docs-lint:
+    name: Lint Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Lint
+        run: |
+          cd docs/
+          python3 -m pip install -r requirements.txt
+          make dummy
+          make linkcheck

@@ -177,6 +177,10 @@ function test_path_format_from_path_left() {
   assertEquals "full directory with separator" ".../very/.../pathname" "$lp_path"
   assertEquals "full directory formatting with separator" "{s}...{^}^{v}very{^}^{s}...{^}^{l}pathname" "$lp_path_format"
 
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" ".../very/.../pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{s}...///{v}very///{s}...///{l}pathname" "$lp_path_format"
+
   LP_PATH_KEEP=2
   PWD="/tmp/averylong/superduperlong/obviouslytoolong/dir"
 
@@ -300,6 +304,10 @@ function test_path_format_from_dir_right {
   assertEquals "full directory" "/t./_./a/very/l./pathname" "$lp_path"
   assertEquals "full directory formatting" "{n}/{s}t./{s}_./{n}a/{v}very/{s}l./{l}pathname" "$lp_path_format"
 
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" "/t./_./a/very/l./pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{n}////{s}t.///{s}_.///{n}a///{v}very///{s}l.///{l}pathname" "$lp_path_format"
+
   LP_PATH_KEEP=2
   PWD="/tmp/averylong/superduperlong/obviouslytoolong/dir"
 
@@ -397,6 +405,10 @@ function test_path_format_from_dir_middle {
   _lp_path_format '{n}' '{l}' '{v}' '{s}'
   assertEquals "full directory" "/tmp/_lp/a/very/l.g/pathname" "$lp_path"
   assertEquals "full directory formatting" "{n}/{n}tmp/{n}_lp/{n}a/{v}very/{s}l.g/{l}pathname" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" "/tmp/_lp/a/very/l.g/pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{n}////{n}tmp///{n}_lp///{n}a///{v}very///{s}l.g///{l}pathname" "$lp_path_format"
 
   LP_PATH_KEEP=2
   PWD="/tmp/averylong/superduperlong/obviouslytoolong/dir"
@@ -499,6 +511,10 @@ function test_path_format_unique() {
   assertEquals "full directory with separator" "/t/_/a/very/l/pathname" "$lp_path"
   assertEquals "full directory formatting with separator" "{n}/{^}^{s}t{^}^{s}_{^}^{n}a{^}^{v}very{^}^{s}l{^}^{l}pathname" "$lp_path_format"
 
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" "/t/_/a/very/l/pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{n}////{s}t///{s}_///{n}a///{v}very///{s}l///{l}pathname" "$lp_path_format"
+
   pathTearDown
 }
 
@@ -570,6 +586,10 @@ function test_path_format_last_dir() {
   _lp_path_format '{n}' '{l}' '{v}' '{s}' '^' '{^}'
   assertEquals "full directory with separator" "pathname" "$lp_path"
   assertEquals "full directory formatting with separator" "{l}pathname" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" "pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
 }
 
 function test_is_function {

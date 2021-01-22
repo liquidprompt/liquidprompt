@@ -860,7 +860,7 @@ _lp_path_format() {
         fi
         if [[ ${#separator} > 1 ]]; then
             # Add length to account for multichar separators
-            local slash_count="${display_path//[!"/"]}"
+            local slash_count="${display_path//[!\/]}"
             path_length+=$(( ${#slash_count} * ( ${#separator} - 1 ) ))
         fi
     fi

@@ -489,7 +489,7 @@ lp_activate() {
     ###############
 
     _lp_user
-    local -i user=$?
+    local -i user="$?"
 
     if (( user < 2 )); then  # if user is not root
         # "sudo -n" is only supported from sudo 1.7.0
@@ -594,7 +594,7 @@ _lp_as_text() {
 # Store $2 (or $?) as a true/false value in variable named $1
 # Deprecated since v2.0.
 _lp_bool() {
-    local res=${2:-$?}
+    local res="${2:-$?}"
     if (( res )); then
         eval "$1=false"
     else
@@ -671,7 +671,10 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
     lp_terminal_format=
     (( LP_ENABLE_COLOR )) || return 2
 
-    local af_color ab_color fg=$1 bg=${2:-"-1"} previous_af_color=${_lp_last_af_color-}
+    local af_color ab_color fg bg previous_af_color
+    fg=$1
+    bg=${2:-"-1"}
+    previous_af_color=${_lp_last_af_color-}
 
     lp_terminal_format=${_LP_OPEN_ESC}${_LP_TI_RESET}
 
@@ -747,7 +750,8 @@ __lp_theme_list() {
 __lp_theme_bash_complete() {
     COMPREPLY=()
     local -a lp_theme_list
-    local theme partial_theme=${2-}
+    local theme partial_theme
+    partial_theme=${2-}
 
     __lp_theme_list
 
@@ -1102,7 +1106,9 @@ _lp_hostname_color() {
 _lp_dirstack() {
     (( LP_ENABLE_DIRSTACK )) || return 2
 
-    local count dir_stack=$(dirs -p; printf x)
+    local count dir_stack
+    dir_stack=$(dirs -p; printf x)
+
     __lp_line_count "${dir_stack%x}"
     lp_dirstack=$count
 
@@ -1501,7 +1507,7 @@ _lp_git_untracked_files() {
 
 # Get the number of changed files.
 __lp_git_diff_shortstat_files() {  # diff_shortstat
-    local stat=$1
+    local stat="$1"
 
     if [[ "$stat" = *changed* ]]; then
         stat="${stat/ file*}"
@@ -1513,7 +1519,7 @@ __lp_git_diff_shortstat_files() {  # diff_shortstat
 
 # Get the number of changed lines.
 __lp_git_diff_shortstat_lines() {  # diff_shortstat
-    local stat=$1
+    local stat="$1"
 
     stat=${stat/*changed, /} # removing "n file(s) changed"
 
@@ -1937,7 +1943,7 @@ _lp_bzr_commit_id() {
 _lp_bzr_stash_count() {
     local shelves count
     shelves="$(\bzr shelve --list 2>/dev/null)"
-    local -i ret=$?
+    local -i ret="$?"
 
     if (( ret == 0 )); then
         # No error code means no shelves.
@@ -2057,10 +2063,8 @@ esac
 _lp_battery_color() {
     (( LP_ENABLE_BATT )) || return 2
 
-    local mark=$LP_MARK_BATTERY
-    local chargingmark=$LP_MARK_ADAPTER
     _lp_battery
-    local -i _status=$?
+    local -i _status="$?"
 
     if (( _status >= 4 || lp_battery == 100 )); then
         # no battery support or battery full: nothing displayed
@@ -2068,18 +2072,18 @@ _lp_battery_color() {
     elif (( _status == 3 && lp_battery != 100 )); then
         # charging and above threshold and not 100%
         # green ⏚
-        lp_battery_color="${LP_COLOR_CHARGING_ABOVE}$chargingmark${NO_COL}"
+        lp_battery_color="${LP_COLOR_CHARGING_ABOVE}${LP_MARK_ADAPTER}${NO_COL}"
     elif (( _status == 2 )); then
         # charging but under threshold
         # yellow ⏚
-        lp_battery_color="${LP_COLOR_CHARGING_UNDER}$chargingmark${NO_COL}"
+        lp_battery_color="${LP_COLOR_CHARGING_UNDER}${LP_MARK_ADAPTER}${NO_COL}"
     elif (( _status == 1 )); then
         # discharging but above threshold
         # yellow ⌁
-        lp_battery_color="${LP_COLOR_DISCHARGING_ABOVE}$mark${NO_COL}"
+        lp_battery_color="${LP_COLOR_DISCHARGING_ABOVE}${LP_MARK_BATTERY}${NO_COL}"
     # discharging and under threshold
     else
-        lp_battery_color="${LP_COLOR_DISCHARGING_UNDER}${mark}${NO_COL}"
+        lp_battery_color="${LP_COLOR_DISCHARGING_UNDER}${LP_MARK_BATTERY}${NO_COL}"
 
         if (( LP_PERCENTS_ALWAYS )); then
             local -i idx
@@ -2405,7 +2409,7 @@ _lp_default_theme_activate() {
     LP_PERM=${LP_MARK_PERM}   # without color
 
     _lp_user
-    local -i user_type=$?
+    local -i user_type="$?"
 
     if (( user_type < 2 )); then  # if user is not root
         if (( LP_ENABLE_SUDO )); then
@@ -2586,7 +2590,7 @@ _lp_default_theme_prompt() {
 __lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
-    local -i lp_error=$?
+    local -i lp_error="$?"
 
     #TODO: unused?
     local GREP_OPTIONS=
@@ -2723,7 +2727,7 @@ prompt_OFF() {
 }
 
 lp_theme() {
-    local theme=${1-}
+    local theme="${1-}"
 
     if [[ $theme == '--list' ]]; then
         local -a lp_theme_list

@@ -59,6 +59,12 @@ if test -n "${BASH_VERSION-}"; then
         ret="${1//\\/\\\\}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
+    # Check for recent enough version of zsh.
+    if (( ${ZSH_VERSION:0:1} < 5 )); then
+        echo "liquidprompt: Zsh version $ZSH_VERSION not supported" 2>&1
+        return
+    fi
+
     _LP_SHELL_bash=0
     _LP_SHELL_zsh=1
     _LP_OPEN_ESC="%{"

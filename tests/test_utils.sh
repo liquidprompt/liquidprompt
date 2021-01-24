@@ -42,6 +42,55 @@ function test_line_count {
   assertEquals "null string" $(printf %s "$test_string" | wc -l) $count
 }
 
+function test_floating_scale {
+  typeset ret
+
+  __lp_floating_scale '1.23' 100
+  assertEquals "scaling 100" '123' "$ret"
+
+  __lp_floating_scale '1.00' 100
+  assertEquals "scaling 100" '100' "$ret"
+
+  __lp_floating_scale '1.' 100
+  assertEquals "scaling 100" '100' "$ret"
+
+  __lp_floating_scale '1' 100
+  assertEquals "scaling 100" '100' "$ret"
+
+  __lp_floating_scale '.01' 100
+  assertEquals "scaling 100" '1' "$ret"
+
+  __lp_floating_scale '.01' 100
+  assertEquals "scaling 100" '1' "$ret"
+
+  __lp_floating_scale '.10' 100
+  assertEquals "scaling 100" '10' "$ret"
+
+  __lp_floating_scale '.1' 100
+  assertEquals "scaling 100" '10' "$ret"
+
+  __lp_floating_scale '.001' 100
+  assertEquals "scaling 100" '0' "$ret"
+
+  __lp_floating_scale '1000001.001' 100
+  assertEquals "scaling 100" '100000100' "$ret"
+
+  __lp_floating_scale '11.1' 1000
+  assertEquals "scaling 1000" '11100' "$ret"
+
+  __lp_floating_scale '12.3' 1
+  assertEquals "scaling 1" '12' "$ret"
+
+  __lp_floating_scale '12.3' 10
+  assertEquals "scaling 10" '123' "$ret"
+
+  __lp_floating_scale '12.34' 10
+  assertEquals "scaling 10" '123' "$ret"
+
+  __lp_floating_scale '12.345' 10
+  assertEquals "scaling 10" '123' "$ret"
+}
+
 function test_pwd_tilde {
   typeset HOME="/home/user"
   typeset PWD="/a/test/path"

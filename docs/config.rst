@@ -264,20 +264,9 @@ Features
    :value: 1
 
    Display the load average over the past 5 minutes when above the threshold.
-   The value is expressed in centiload per CPU. For example, when using the
-   default value of 60, the load average will be displayed starting at:
 
-   * 0.61 on a single-core machine
-   * 1.22 on a dual-core machine
-   * 2.44 on a quad-core machine, and so on.
-
-   We are aware this is not ideal, and welcome feedback and ideas on our issue
-   for this topic: `issue #530`_.
-
-   See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_MARK_LOAD`, and
-   :attr:`LP_COLORMAP`.
-
-   .. _`issue #530`: https://github.com/nojhan/liquidprompt/issues/530#issuecomment-653712614
+   See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
+   :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.
 
 .. attribute:: LP_ENABLE_PERM
    :type: bool
@@ -442,8 +431,8 @@ Features
    :type: bool
    :value: 1
 
-   Display the percentages of load and batteries along with their corresponding
-   marks. Disable to only print the colored marks.
+   Display the actual values of load and batteries along with their
+   corresponding marks. Disable to only print the colored marks.
 
 .. attribute:: LP_TIME_ANALOG
    :type: bool
@@ -485,13 +474,33 @@ Thresholds
 
    :attr:`LP_ENABLE_BATT` must be enabled to have any effect.
 
-.. attribute:: LP_LOAD_THRESHOLD
-   :type: int
-   :value: 60
+.. attribute:: LP_LOAD_CAP
+   :type: float
+   :value: 1.0
 
-   Display the centiload average per CPU when above this threshold.
+   The value for load average per CPU to display with the max color scaling.
+   Values above this number will still be displayed, but the colors will not
+   increase in intensity.
 
    :attr:`LP_ENABLE_LOAD` must be enabled to have any effect.
+
+   See also: :attr:`LP_COLORMAP`.
+
+   .. versionadded:: 2.0
+
+.. attribute:: LP_LOAD_THRESHOLD
+   :type: float
+   :value: 0.60
+
+   Display the load average per CPU when above this threshold. For historical
+   reasons, this number must have a decimal point ('.'), or it will be treated
+   as a percentage.
+
+   :attr:`LP_ENABLE_LOAD` must be enabled to have any effect.
+
+   .. versionchanged:: 2.0
+      Accepts float values of actual load averages.
+      Integer values of centiload are still accepted, but deprecated.
 
 .. attribute:: LP_RUNTIME_THRESHOLD
    :type: int

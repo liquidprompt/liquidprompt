@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.1] - 2020-10-25
+### Fixed
+- **fossil**: fossil 1.11+ maching any directory as a valid repo and printing
+  3 error messages ([#626])
+
 ## [1.12.0] - 2020-07-17
 ### Added
 - **color**: Add `$MAGENTA`, `$BOLD_PURPLE`, and `$BOLD_MAGENTA` ([3fadce9])
@@ -318,6 +323,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
 [#615]: https://github.com/nojhan/liquidprompt/issues/615
+[#626]: https://github.com/nojhan/liquidprompt/issues/626
 
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
 [02bc49e]: https://github.com/nojhan/liquidprompt/commit/02bc49edf306749c47d7a389dc916cb68e992cc8

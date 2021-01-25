@@ -191,3 +191,4 @@ Thanks again to everyone for all of the help and support!
 * Gergo Szonyi (@gex)
 * Nolan Leake (@nolanl)
 * Éloi Rivard (@azmeuk)
+* Felix Eckhofer (@tribut)

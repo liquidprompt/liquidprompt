@@ -1109,7 +1109,7 @@ _lp_fossil_branch()
     branch=$(fossil branch list 2>/dev/null | sed -n -$_LP_SED_EXTENDED 's/^\*\s+(\w*)$/\1/p')
     if [[ -n "$branch" ]]; then
         echo -nE "$branch"
-    elif fossil info &>/dev/null ; then
+    elif fossil status &>/dev/null ; then
         echo -n "no-branch"
     fi
 }

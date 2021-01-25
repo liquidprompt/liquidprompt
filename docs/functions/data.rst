@@ -196,6 +196,14 @@ Environment
 
    .. versionadded:: 2.0
 
+.. function:: _lp_shell_level() -> var:lp_shell_level
+
+    Returns ``true`` if the shell is a nested shell inside another shell.
+
+    Can be disabled by :attr:`LP_ENABLE_SHLVL`.
+
+    .. versionadded:: 2.1
+
 .. function:: _lp_terminal_device() -> var:lp_terminal_device
 
    Returns the basename of the terminal device connected to the shell's standard

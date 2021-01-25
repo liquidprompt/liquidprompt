@@ -525,6 +525,16 @@ Features
 
    :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
 
+.. attribute:: LP_ENABLE_SHLVL
+   :type: bool
+   :value: 1
+
+   Show the value of ``$SHLVL``, which is the number of nested shells. For
+   example, if one runs ``bash`` inside their shell, it will open a new shell
+   inside their current shell, and this will display "2".
+
+   See also: :attr:`LP_MARK_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+
 .. attribute:: LP_ENABLE_SHORTEN_PATH
    :type: bool
    :value: 1
@@ -957,6 +967,14 @@ Marks
 
    See also: :attr:`LP_ENABLE_PROXY`.
 
+.. attribute:: LP_MARK_SHLVL
+   :type: string
+   :value: "└"
+
+   Mark used to indicate the shell is inside another shell.
+
+   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+
 .. attribute:: LP_MARK_SHORTEN_PATH
    :type: string
    :value: " … "
@@ -1302,6 +1320,14 @@ Valid preset color variables are:
    Color used for displaying the last command runtime.
 
    See also: :attr:`LP_ENABLE_RUNTIME`.
+
+.. attribute:: LP_COLOR_SHLVL
+   :type: string
+   :value: $BOLD_GREEN
+
+   Color used for displaying the nested shell level.
+
+   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_MARK_SHLVL`.
 
 .. attribute:: LP_COLOR_SSH
    :type: string

@@ -203,6 +203,13 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_shell_level_color() -> var:lp_shell_level_color
+
+    Returns :func:`_lp_shell_level`, prefixed with :attr:`LP_MARK_SHLVL`, all
+    colored with :attr:`LP_COLOR_SHLVL`.
+
+    .. versionadded:: 2.1
+
 .. function:: _lp_software_collections_color() -> var:lp_software_collections_color
 
    Returns :func:`_lp_software_collections` with color from

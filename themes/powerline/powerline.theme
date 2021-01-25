@@ -183,6 +183,9 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_RUNTIME_COLOR=( ${POWERLINE_RUNTIME_COLOR[@]+"${POWERLINE_RUNTIME_COLOR[@]}"} )
     [[ ${#POWERLINE_RUNTIME_COLOR[@]} == 0 ]] && POWERLINE_RUNTIME_COLOR=(226 17 0 0 3 4)
 
+    POWERLINE_SHLVL_COLOR=( ${POWERLINE_SHLVL_COLOR[@]+"${POWERLINE_SHLVL_COLOR[@]}"} )
+    [[ ${#POWERLINE_SHLVL_COLOR[@]} == 0 ]] && POWERLINE_SHLVL_COLOR=(231 58 0 0 7 2)
+
     POWERLINE_SOFTWARE_COLLECTIONS_COLOR=( ${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]+"${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]}"} )
     [[ ${#POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]} == 0 ]] && POWERLINE_SOFTWARE_COLLECTIONS_COLOR=(231 62 0 0 7 5)
 
@@ -248,6 +251,10 @@ _lp_powerline_full_theme_prompt() {
 
     if _lp_dirstack; then
         __powerline_section "${LP_MARK_DIRSTACK}${lp_dirstack}" "${POWERLINE_DIRSTACK_COLOR[@]}"
+    fi
+
+    if _lp_shell_level; then
+        __powerline_section "${LP_MARK_SHLVL}${lp_shell_level}" "${POWERLINE_SHLVL_COLOR[@]}"
     fi
 
     local lp_chroot

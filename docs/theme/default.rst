@@ -170,6 +170,11 @@ default order if the user does not configure a different template.
    If running in a terminal multiplexer, will be colored. See
    :attr:`LP_COLOR_IN_MULTIPLEXER`.
 
+.. attribute:: LP_SHLVL
+
+   The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored
+   with :attr:`LP_COLOR_SHLVL`. Can be disabled by attr:`LP_ENABLE_SHLVL`.
+
 .. attribute:: LP_SCLS
 
    The current Red Hat Software Collections environment. See

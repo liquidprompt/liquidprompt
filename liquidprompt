@@ -256,6 +256,7 @@ __lp_source_config() {
     LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
     LP_ENABLE_KUBECONTEXT=${LP_ENABLE_KUBECONTEXT:-0}
     LP_ENABLE_KUBE_NAMESPACE=${LP_ENABLE_KUBE_NAMESPACE:-0}
+    LP_ENABLE_SHLVL=${LP_ENABLE_SHLVL:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -278,6 +279,7 @@ __lp_source_config() {
     LP_MARK_PREFIX="${LP_MARK_PREFIX:-" "}"
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
     LP_MARK_DIRSTACK="${LP_MARK_DIRSTACK:-"⚞"}"
+    LP_MARK_SHLVL="${LP_MARK_SHLVL:-"└"}"
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$NO_COL}
     lp_terminal_format 8 -1 0 0 -1
@@ -323,6 +325,7 @@ __lp_source_config() {
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
+    LP_COLOR_SHLVL=${LP_COLOR_SHLVL:-$BOLD_GREEN}
 
     LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
     if [[ ${#LP_COLORMAP[@]} == 0 ]]; then
@@ -1471,6 +1474,20 @@ _lp_aws_profile_color() {
     _lp_aws_profile || return "$?"
 
     lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
+}
+
+_lp_shell_level() {
+    (( LP_ENABLE_SHLVL )) || return 2
+
+    lp_shell_level=${SHLVL:-1}
+
+    (( lp_shell_level > 1 ))
+}
+
+_lp_shell_level_color() {
+    _lp_shell_level || return "$?"
+
+    lp_shell_level_color="${LP_COLOR_SHLVL}${LP_MARK_SHLVL}${lp_shell_level}${NO_COL}"
 }
 
 ################
@@ -3008,6 +3025,12 @@ _lp_default_theme_prompt_data() {
         LP_PROXY=
     fi
 
+    if _lp_shell_level_color; then
+        LP_SHLVL="$lp_shell_level_color"
+    else
+        LP_SHLVL=
+    fi
+
     if _lp_python_env_color; then
         LP_VENV=" $lp_python_env_color"
     else
@@ -3075,7 +3098,7 @@ _lp_default_theme_prompt_template() {
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_JOBS}"
         # add user, host, permissions colon, working directory, and dirstack
-        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}"
+        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SHLVL}"
 
         PS1+="${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}${LP_PROXY}"
 

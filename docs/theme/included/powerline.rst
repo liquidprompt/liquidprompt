@@ -468,6 +468,12 @@ ______
 
    Color for the command runtime section.
 
+.. attribute:: POWERLINE_SHLVL_COLOR
+   :type: array<int>
+   :value: (231, 58, 0, 0, 7, 2)
+
+   Color for the nested shell level section.
+
 .. attribute:: POWERLINE_SOFTWARE_COLLECTIONS_COLOR
    :type: array<int>
    :value: (231, 62, 0, 0, 7, 5)

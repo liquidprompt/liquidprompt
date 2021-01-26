@@ -38,6 +38,9 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: false
+      - name: Get the tag name
+        id: tag_name
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
@@ -45,5 +48,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./.output/liquidprompt.tar.gz
-          asset_name: liquidprompt-${{ github.ref }}.tar.gz
+          asset_name: liquidprompt-${{ steps.tag_name.outputs.tag }}.tar.gz
           asset_content_type: application/gzip

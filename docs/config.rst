@@ -476,7 +476,7 @@ Thresholds
 
 .. attribute:: LP_LOAD_CAP
    :type: float
-   :value: 1.0
+   :value: 2.0
 
    The value for load average per CPU to display with the max color scaling.
    Values above this number will still be displayed, but the colors will not

@@ -203,6 +203,22 @@ These color config options take an array of integers, which are arguments to
 
    Color for the current working directory subsection separator.
 
+.. attribute:: POWERLINE_PATH_SHORTENED_COLOR
+   :type: array<int>
+   :value: (245, 240, 0, 0, 7, 0)
+
+   Color for any sections in the current working directory that are shortened to
+   make the path fit in :attr:`LP_PATH_LENGTH`.
+
+.. attribute:: POWERLINE_PATH_VCS_COLOR
+   :type: array<int>
+   :value: (147, 240, 1, 0, 4, 0)
+
+   Color for the current working directory segment corresponding to the current
+   VCS repository root directory.
+
+   :attr:`LP_PATH_VCS_ROOT` must be enabled to have any effect.
+
 .. attribute:: POWERLINE_PYTHON_ENV_COLOR
    :type: array<int>
    :value: (231, 74, 0, 0, 7, 4)

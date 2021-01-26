@@ -50,9 +50,19 @@ General
    parts of the prompt. Can be used to tag the prompt in a way that is less
    intrusive than :attr:`LP_PS1_PREFIX`.
 
+.. attribute:: LP_PATH_CHARACTER_KEEP
+   :type: int
+   :value: 3
+
+   The number of characters to save at the start and possibly the end of a
+   directory name when shortening the path. See :attr:`LP_PATH_METHOD` for
+   details of the specific methods.
+
 .. attribute:: LP_PATH_DEFAULT
    :type: string
-   :value: '\w' (Bash) or '%~' (Zsh)
+
+   .. deprecated:: 2.0
+      Use :attr:`LP_PATH_METHOD` set to "truncate_to_last_dir" instead.
 
    Used to define the string used for the path. Could be used to make use of
    shell path shortening features, like ``%2~`` in Zsh to keep the last two
@@ -64,17 +74,18 @@ General
    :type: int
    :value: 2
 
-   The number of directories (including '/') to display at the beginning of a
+   The number of directories (counting '/') to display at the beginning of a
    shortened path.
 
    Set to ``1``, will display only root. Set to ``0``, will keep nothing from the
    beginning of the path.
 
-   Set to ``-1``, will display only the last directory of the path.
-
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
-   See also: :attr:`LP_PATH_LENGTH`.
+   See also: :attr:`LP_PATH_LENGTH` and :attr:`LP_PATH_METHOD`.
+
+   .. versionchanged:: 2.0
+      No longer supports a value of ``-1``.
 
 .. attribute:: LP_PATH_LENGTH
    :type: int
@@ -86,7 +97,56 @@ General
 
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
-   See also: :attr:`LP_PATH_KEEP`.
+   .. note::
+      :attr:`LP_PATH_KEEP` and :attr:`LP_PATH_METHOD` have higher precedence
+      over this option. Important path parts, including directories saved by
+      :attr:`LP_PATH_KEEP`, :attr:`LP_PATH_VCS_ROOT`, and the last directory,
+      will always be displayed, even if the path does not fit in the maximum
+      length.
+
+.. attribute:: LP_PATH_METHOD
+   :type: string
+   :value: "truncate_chars_from_path_left"
+
+   Sets the method used for shortening the path display when it exceeds the
+   maximum length set by :attr:`LP_PATH_LENGTH`.
+
+   * **truncate_chars_from_path_left**: Truncates characters from the start of
+     the path, showing consecutive directories as one shortened section. E.g. in
+     a directory named ``~/MyProjects/Liquidprompt/tests``, it will be shortened
+     to ``...prompt/tests``. The shortened mark is :attr:`LP_MARK_SHORTEN_PATH`.
+   * **truncate_chars_from_dir_right**: Leaves the beginning of a directory name
+     untouched. E.g. directories will be shortened like so: ``~/Doc.../Office``.
+     How many characters will be untouched is set by
+     :attr:`LP_PATH_CHARACTER_KEEP`. The shortened mark is
+     :attr:`LP_MARK_SHORTEN_PATH`.
+   * **truncate_chars_from_dir_middle**:  Leaves the beginning and end of a
+     directory name untouched. E.g. in a directory named
+     ``~/MyProjects/Office``, then it will be shortened to
+     ``~/MyS...cts/Office``. How many characters will be untouched is set by
+     :attr:`LP_PATH_CHARACTER_KEEP`. The shortened mark is
+     :attr:`LP_MARK_SHORTEN_PATH`.
+   * **truncate_chars_to_unique_dir**: Truncate each directory to the shortest
+     unique starting portion of their name. E.g. in a folder
+     ``~/dev/liquidprompt``, it will be shortened to ``~/d/liquidprompt`` if
+     there is no other directory starting with 'd' in the home directory.
+   * **truncate_to_last_dir**: Only display the last directory in the path. In
+     other words, the current directory name.
+
+   All methods (other than 'truncate_to_last_dir') start at the far left of the
+   path (limited by :attr:`LP_PATH_KEEP`). Only the minimum number of
+   directories needed to fit inside :attr:`LP_PATH_LENGTH` will be shortened.
+
+   :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
+
+.. attribute:: LP_PATH_VCS_ROOT
+   :type: bool
+   :value: 1
+
+   Display the root directory of the current VCS repository with special
+   formatting, set by :attr:`LP_COLOR_PATH_VCS_ROOT`. If
+   :attr:`LP_ENABLE_SHORTEN_PATH` is enabled, also prevent the path shortening
+   from shortening or hidding the VCS root directory.
 
 .. attribute:: LP_PS1_POSTFIX
    :type: string
@@ -338,7 +398,8 @@ Features
    Use the shorten path feature if the path is too long to fit in the prompt
    line.
 
-   See also: :attr:`LP_PATH_LENGTH`, :attr:`LP_PATH_KEEP`, and
+   See also: :attr:`LP_PATH_METHOD`, :attr:`LP_PATH_LENGTH`,
+   :attr:`LP_PATH_KEEP`, :attr:`LP_PATH_CHARACTER_KEEP`, and
    :attr:`LP_MARK_SHORTEN_PATH`.
 
 .. attribute:: LP_ENABLE_SSH_COLORS
@@ -651,9 +712,11 @@ Marks
    :type: string
    :value: " … "
 
-   Mark used to indicate a portion of the path was hidden to save space.
+   Mark used to indicate a portion of the path was hidden to save space. Not all
+   shortening methods use this mark, some only use
+   :attr:`LP_COLOR_PATH_SHORTENED`.
 
-   See also: :attr:`LP_ENABLE_SHORTEN_PATH`.
+   See also: :attr:`LP_ENABLE_SHORTEN_PATH`, :attr:`LP_PATH_METHOD`.
 
 .. attribute:: LP_MARK_STASH
    :type: string
@@ -907,15 +970,53 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLOR_PATH
    :type: string
-   :value: $BOLD
+   :value: lp_terminal_format 255 0 0 0 7  # Bright white
 
    Color used for the current working directory.
+
+   If :attr:`LP_COLOR_PATH_LAST_DIR`, :attr:`LP_COLOR_PATH_VCS_ROOT`,
+   :attr:`LP_COLOR_PATH_SEPARATOR`, or :attr:`LP_COLOR_PATH_SHORTENED` are set,
+   their respective sections will be colored with them instead.
+
+   .. versionchanged:: 2.0
+      Default value changed from ``$BOLD``.
+
+.. attribute:: LP_COLOR_PATH_LAST_DIR
+   :type: string
+   :value: lp_terminal_format 255 0 1 0 7  # Bright bold white
+
+   Color used for the last path segment, which corresponds to the current
+   directory basename.
 
 .. attribute:: LP_COLOR_PATH_ROOT
    :type: string
    :value: $BOLD_YELLOW
 
    Color used in place of :attr:`LP_COLOR_PATH` when the current user is root.
+
+.. attribute:: LP_COLOR_PATH_SEPARATOR
+   :type: string
+   :value: lp_terminal_format 245 0 0 0 7  # Light grey
+
+   Color used for the separator ('/') between path segments. If set to the empty
+   string, the separator will take the format of the path segment before it.
+
+.. attribute:: LP_COLOR_PATH_SHORTENED
+   :type: string
+   :value: lp_terminal_format 245 0 0 0 7  # Light grey
+
+   Color used for path segments that have been shortened.
+
+   :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
+
+.. attribute:: LP_COLOR_PATH_VCS_ROOT
+   :type: string
+   :value: lp_terminal_format 255 0 1 0 7  # Bright bold white
+
+   Color used for the path segment corresponding to the current VCS repository
+   root directory.
+
+   :attr:`LP_PATH_VCS_ROOT` must be enabled to have any effect.
 
 .. attribute:: LP_COLOR_PROXY
    :type: string

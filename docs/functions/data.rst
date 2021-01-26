@@ -189,8 +189,8 @@ Load
 
 .. function:: _lp_cpu_load() -> var:lp_cpu_load
 
-   Returns a string of the system load average smallest increment, usually 5
-   minutes. The return code is not defined.
+   Returns a string of the system load average smallest increment, usually 1
+   minute. The return code is not defined.
 
 .. function:: _lp_load() -> var:lp_load, var:lp_load_adjusted
 

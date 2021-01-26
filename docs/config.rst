@@ -263,7 +263,7 @@ Features
    :type: bool
    :value: 1
 
-   Display the load average over the past 5 minutes when above the threshold.
+   Display the load average over the past 1 minutes when above the threshold.
 
    See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
    :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.

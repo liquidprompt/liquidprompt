@@ -21,13 +21,10 @@
 LP_BATTERY_THRESHOLD=75
 
 # Display the load average over the past minute when above this threshold.
-# The value is expressed in centiload per CPU. For example, when using the
-# default value of 60, the load average will be displayed starting at:
-# * 0.61 on a single-core machine, or
-# * 1.22 on a dual-core machine, or
-# * 2.44 on a quad-core machine, and so on.
-# Recommended value is 60
-LP_LOAD_THRESHOLD=60
+# This value is scaled per CPU, so on a quad-core machine, the load average
+# would need to be 2.40 or greater to be displayed.
+# Recommended value is 0.60
+LP_LOAD_THRESHOLD=0.60
 
 # Display the temperature when the temperate is above this threshold (in
 # degrees Celsius).
@@ -67,7 +64,7 @@ LP_ENABLE_FQDN=0
 # Default value is 1
 LP_USER_ALWAYS=1
 
-# Display the percentages of load/batteries along with their
+# Display the actual values of load/batteries along with their
 # corresponding marks. Set to 0 to only print the colored marks.
 # Defaults to 1 (display percentages)
 LP_PERCENTS_ALWAYS=1

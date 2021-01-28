@@ -189,15 +189,26 @@ Load
 
 .. function:: _lp_cpu_load() -> var:lp_cpu_load
 
-   Returns a string of the system load average smallest increment, usually 5
-   minutes. The return code is not defined.
+   Returns a string of the system load average smallest increment, usually 1
+   minute. The return code is not defined.
 
-.. function:: _lp_load() -> var:lp_load
+.. function:: _lp_load() -> var:lp_load, var:lp_load_adjusted
 
-   Returns ``true`` if the system load average in centiload is greater than the
-   threshold. Returns the system load average, divided by the number of CPU
-   cores, in centiload units. In other words, the load average is multiplied by
-   100, then divided by the number of CPU cores.
+   Returns ``true`` if the system load average scaled by CPU count is greater
+   than the threshold. Returns the system load average in *lp_load*, and the
+   average scaled by CPU count, multiplied by 100 in *lp_load_adjusted*. In
+   other words, the load average is multiplied by 100, then divided by the
+   number of CPU cores.
+
+   *lp_load* should be displayed to the user, while *lp_load_adjusted* should be
+   used to compare values between machines using :attr:`LP_LOAD_CAP`. The
+   default theme uses this to generate a color scale.
+
+   .. note::
+      :attr:`LP_LOAD_CAP` is a raw floating point configuration value that is
+      difficult to do math on. ``_LP_LOAD_CAP`` contains the same value, but
+      multiplied by 100 to make comparisons to *lp_load_adjusted* simple. Use
+      it along with *lp_load_adjusted* as arguments to :func:`_lp_color_map`.
 
    If the threshold is not surpassed, the load average is still returned.
 

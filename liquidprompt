@@ -178,7 +178,8 @@ __lp_source_config() {
 
     # Default values (globals)
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
-    LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
+    LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
+    LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
     LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
@@ -582,6 +583,19 @@ lp_activate() {
     if (( LP_ENABLE_LOAD )); then
         # Find and save the number of CPUs
         __lp_cpu_count
+
+        # Convert load config values into usable integers.
+        local ret
+        # if load threshold does not have a period in it.
+        if [[ -z ${LP_LOAD_THRESHOLD//[!\.]} ]]; then
+            # This is an old value, no need to convert
+            _LP_LOAD_THRESHOLD=$LP_LOAD_THRESHOLD
+        else
+            __lp_floating_scale "$LP_LOAD_THRESHOLD" 100
+            _LP_LOAD_THRESHOLD=$ret
+        fi
+        __lp_floating_scale "$LP_LOAD_CAP" 100
+        _LP_LOAD_CAP=$ret
     fi
 
     if [[ -n ${_LP_THEME_ACTIVATE_FUNCTION-} ]]; then
@@ -652,6 +666,26 @@ __lp_hostname_hash() {
     # cksum is separated with tab on SunOS, space on others
     local cksum="$(hostname | cksum)"
     lp_hostname_hash=${cksum%%[$' \t']*}
+}
+
+__lp_floating_scale() {
+    local integer decimal=0 scale=$(( ${#2} - 1 ))
+    integer=${1%\.*}
+
+    if [[ -n ${1//[!\.]} ]]; then
+        decimal=${1#*\.}
+        decimal=${decimal:0:$scale}
+
+        while (( ${#decimal} < scale )); do
+            decimal+='0'
+        done
+
+        while [[ ${decimal:0:1} == '0' ]]; do
+            decimal=${decimal:1}
+        done
+    fi
+
+    ret=$(( integer * $2 + decimal ))
 }
 
 # Return $PWD with $HOME at the start replaced by "~".
@@ -2348,15 +2382,18 @@ esac
 _lp_load() {
     (( LP_ENABLE_LOAD )) || return 2
 
+    local lp_cpu_load ret
+
     # Get value (OS-specific) into lp_cpu_load
     _lp_cpu_load
 
-    lp_load=${lp_cpu_load/./}   # Remove '.'
-    lp_load=${lp_load#0}    # Remove leading '0'
-    lp_load=${lp_load#0}    # Remove leading '0', again (ex: 0.09)
-    lp_load=$(( ${lp_load:-0} / _lp_CPUNUM ))
+    __lp_escape "${lp_cpu_load:-0}"
+    lp_load=$ret
 
-    (( lp_load > LP_LOAD_THRESHOLD ))
+    __lp_floating_scale "${lp_cpu_load:-0}" 100
+    lp_load_adjusted=$(( ret / _lp_CPUNUM ))
+
+    (( lp_load_adjusted >= _LP_LOAD_THRESHOLD ))
 }
 
 # Compute a gradient of background/forground colors depending on the load.
@@ -2364,11 +2401,11 @@ _lp_load_color() {
     _lp_load || return "$?"
 
     local ret
-    _lp_color_map "$lp_load"
+    _lp_color_map "$lp_load_adjusted" "$_LP_LOAD_CAP"
     lp_load_color="${ret}${LP_MARK_LOAD}"
 
     if (( LP_PERCENTS_ALWAYS )); then
-        lp_load_color+="${lp_load}${_LP_PERCENT}"
+        lp_load_color+="${lp_load}"
     fi
     lp_load_color+="$NO_COL"
 }

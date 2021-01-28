@@ -253,6 +253,16 @@ Utility
       Renamed from ``_lp_escape``.
       Return method changed from stdout.
 
+.. function:: __lp_floating_scale(number, scale) -> var:ret
+
+   Returns the input floating point *number* multiplied by the input *scale*.
+   The input *scale* must be a power of 10.
+
+   Shells do not support floating point math, so this is used to scale up
+   floating point numbers to integers with the needed precision.
+
+   .. versionadded:: 2.0
+
 .. function:: __lp_is_function(function)
 
    Returns ``true`` if *function* is the name of a function.

@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0-beta.2] - 2020-12-21
+## [2.0.0-rc.1] - 2021-01-28
 ### BREAKING CHANGES
 Note: these breaking changes are the only reason that this version is so much
 faster. They are also on private functions and variables, which the end user
@@ -31,8 +31,7 @@ for help.
 - **path**: `_lp_get_home_tilde_collapsed()` renamed to `__lp_pwd_tilde()` and return changed from
   stdout to `$lp_pwd_tilde` ([28c13f2])
 - **path**: `_lp_set_dirtrim()` renamed to `__lp_set_dirtrim()` ([decaece])
-- **path**: `_lp_shorten_path()` renamed to `__lp_shorten_path()` and return changed from stdout to
-  `$lp_shorten_path` without formatting ([decaece], [a35032f])
+- **path**: `_lp_shorten_path()` replaced by `_lp_path_format()` ([decaece], [a35032f], [ae769dc])
 - **runtime**: `_lp_runtime()` renamed to `_lp_runtime_color()` and return changed from stdout to
   `$lp_runtime_color` ([0f0fd37])
 - **runtime**: `_lp_runtime_after()` renamed to `__lp_runtime_after()` ([decaece])
@@ -53,6 +52,7 @@ for help.
 - **vcs**: `_lp_upwards_find()` removed, replaced by `_lp_find_vcs()` ([f434b6d])
 
 ### Deprecated
+- **path**: `LP_PATH_DEFAULT` is replaced by `LP_PATH_METHOD` ([ae769dc])
 - **title**: `_lp_title()` is replaced by `_lp_formatted_title()` ([46df995], [9604203], [#581])
 - **utils**: `_lp_bool()` is replaced by manually storing return codes ([82ee823]).
 - **utils**: `_lp_sb()` is replaced by data functions indicating if they
@@ -68,6 +68,7 @@ for help.
 
 ### Added
 - **general**: Sphinx documentation ([0d420d2], [c7b5003], [b523025], [f9fd12e])
+- **general**: Manual pages built from documentation ([#637], [13e128b])
 - **general**: Command line flag `--no-activate` to skip auto shell activation when sourcing
   liquidprompt ([e122d21])
 - **general**: `lp_activate()` function to reload config without needing to re-source
@@ -110,6 +111,8 @@ for help.
 - **git**: `_lp_git_active()` data function ([70b4ef6])
 - **git**: `_lp_git_commit_id()` data function ([70b4ef6])
 - **git**: `_lp_git_commits_off_remote()` data function ([309b443])
+- **git**: `_lp_git_staged_files()` data function ([#644], [9038ec8])
+- **git**: `_lp_git_staged_lines()` data function ([#644], [9038ec8])
 - **git**: `_lp_git_stash_count()` data function ([fe9919f], [bb19836])
 - **git**: `_lp_git_tag()` data function ([70b4ef6], [#506])
 - **git**: `_lp_git_uncommitted_files()` data function ([67dc0a9])
@@ -117,6 +120,7 @@ for help.
 - **git**: `_lp_git_unstaged_files()` data function ([67dc0a9])
 - **git**: `_lp_git_unstaged_lines()` data function ([70b4ef6])
 - **git**: `_lp_git_untracked_files()` data function ([fe9919f])
+- **git**: Caching for diff data functions that share targets (`files()` + `lines()`) ([8bf1772])
 - **hg**: `_lp_hg_active()` data function ([1a9fcd0])
 - **hg**: `_lp_hg_bookmark()` data function ([f4636e6])
 - **hg**: `_lp_hg_commit_id()` data function ([1a9fcd0])
@@ -126,12 +130,22 @@ for help.
 - **hg**: `_lp_hg_uncommitted_files()` data function ([1a9fcd0])
 - **hg**: `_lp_hg_uncommitted_lines()` data function ([1a9fcd0])
 - **hg**: `_lp_hg_untracked_files()` data function ([1a9fcd0])
+- **hostname**: `__lp_hostname_hash()` internal function ([8f730c8])
 - **jobs**: `$LP_ENABLE_DETACHED_SESSIONS` config option, separate from jobs ([f9038e0], [862dcfb], [#552])
 - **jobs**: `_lp_detached_sessions()` data function ([73f2057], [862dcfb])
 - **jobs**: `_lp_jobcount()` data function ([73f2057])
+- **load**: `LP_LOAD_CAP` config option ([#650], [#530], [e058b61])
 - **load**: `_lp_load()` data function ([8a987f4])
-- **path**: `$lp_path` data variable ([a35032f])
-- **path**: `__lp_path()` internal function ([a35032f])
+- **path**: `LP_COLOR_PATH_LAST_DIR` config option ([ae769dc])
+- **path**: `LP_COLOR_PATH_SEPARATOR` config option ([ae769dc])
+- **path**: `LP_COLOR_PATH_SHORTENED` config option ([ae769dc])
+- **path**: `LP_COLOR_PATH_VCS_ROOT` config option ([ae769dc])
+- **path**: `LP_PATH_CHARACTER_KEEP` config option ([ae769dc])
+- **path**: `LP_PATH_METHOD` config option ([ae769dc])
+- **path**: `LP_PATH_VCS_ROOT` config option ([ae769dc])
+- **path**: `_lp_path_format()` data function ([#648], [#349], [#149], [ae769dc])
+- **path**: `__lp_end_path_left_shortening()` internal function ([ae769dc])
+- **path**: `__lp_get_unique_directory()` internal function ([ae769dc])
 - **runtime**: `_lp_runtime_format()` data function ([0f0fd37])
 - **svn**: `_lp_svn_active()` data function ([4fff496])
 - **svn**: `_lp_svn_commit_id()` data function ([4fff496])
@@ -139,26 +153,36 @@ for help.
 - **svn**: `_lp_svn_uncommitted_lines()` data function ([4fff496])
 - **svn**: `_lp_svn_untracked_files()` data function ([4fff496])
 - **temperature**: `_lp_temperature()` as data function ([69c75a3])
+- **terminal**: `_lp_terminal_device()` data function ([5076dbe])
 - **tests**: Shunit2 testing suite ([#469], [46918f6], [44e3a6f], [1fe1559])
 - **tests**: Tests to check if a shell supports all features that Liquidprompt
   needs ([46918f6], [5a9293d], [cdb860])
 - **tests**: Tests for `_lp_as_text()` ([6cdb860])
-- **tests**: Tests for `_lp_battery()`/`pmset` ([c0e74b8], [9e205f5])
-- **tests**: Tests for `_lp_connection()`/`who`+`ps` ([23eb3f2])
-- **tests**: Tests for `_lp_detached_sessions()`/`screen`+`tmux` ([23eb3f2])
+- **tests**: Tests for `_lp_battery()`/`acpi` ([cef9cb1])
+- **tests**: Tests for `_lp_battery()`/`pmset` ([c0e74b8], [9e205f5], [37db052])
+- **tests**: Tests for `_lp_connection()`/`who`+`ps` ([23eb3f2], [37db052], [cef9cb1])
+- **tests**: Tests for `__lp_cpu_count()`/`ncpu` ([37db052])
+- **tests**: Tests for `_lp_cpu_load()`/`sysctl` ([37db052])
+- **tests**: Tests for `_lp_detached_sessions()`/`screen`+`tmux` ([23eb3f2], [37db052], [cef9cb1])
+- **tests**: Tests for `__lp_hostname_hash()` internal function ([8f730c8], [37db052])
 - **tests**: Tests for `__lp_is_function()` util function ([9b40ca1])
 - **tests**: Tests for `__lp_line_count()` util function ([a314677])
 - **tests**: Tests for `__lp_pwd_tilde()` path function ([28c13f2])
-- **tests**: Tests for `__lp_temp_sensors()`/`sensors` ([23eb3f2])
+- **tests**: Tests for `__lp_temp_sensors()`/`sensors` ([23eb3f2], [cef9cb1])
+- **tests**: Tests for `_lp_terminal_device()` data function ([5076dbe], [37db052], [cef9cb1])
 - **tests**: Github Actions build file ([#469], [05e0a50])
+- **tests**: Github Actions documentation linting ([#649], [30f977b])
 - **theme**: `__lp_theme_bash_complete()` to complete themes in Bash for `lp_theme()` ([884c069])
 - **theme**: `__lp_theme_list()` to list themes loaded in function memory ([884c069])
 - **theme**: `__lp_theme_zsh_complete()` to complete themes in Zsh for `lp_theme()` ([884c069])
 - **theme**: `_lp_default_theme_activate()` theme function ([40c4331], [45f8091])
 - **theme**: `_lp_default_theme_directory()` theme function ([40c4331], [45f8091])
-- **theme**: `_lp_default_theme_prompt()` theme function ([40c4331], [45f8091])
+- **theme**: `_lp_default_theme_prompt()` theme function ([40c4331], [45f8091], [acb5430])
+- **theme**: `_lp_default_theme_prompt_data()` theme function ([acb5430])
+- **theme**: `_lp_default_theme_prompt_template()` theme function ([acb5430])
 - **theme**: `lp_theme()` to switch themes without resourcing any
   files ([45f8091], [884c069], [#592])
+- **theme**: `alternate_vcs`, the default theme with modified VCS display ([#635], [#524], [2d659f0])
 - **theme**: `powerline_full`, the default theme order in Powerline style ([bcefaf3])
 - **theme**: `powerline`, a clone of the Powerline prompt ([af8382b], [8de1a72], [5ef795d], [#520])
 - **time**: `_lp_analog_time()` data function ([8cb609d], [bc120d5])
@@ -170,7 +194,7 @@ for help.
 - **title**: `_lp_raw_title()` sets persistent title without stripping terminal formatting
   sequences ([46df995])
 - **title**: `lp_title()` sets a manual title that overrides the theme set title ([46df995], [#609])
-- **tools**: `external-tool-tester.sh` script to generate test data ([b699dea], [9a00ead])
+- **tools**: `external-tool-tester.sh` script to generate test data ([b699dea], [9a00ead], [4b7fd88])
 - **tools**: `theme-preview.sh` script to generate standard prompt previews ([0b94b74])
 - **utils**: `__lp_is_function()` util function ([9b40ca1])
 - **utils**: `__lp_line_count()` util function ([a314677])
@@ -194,6 +218,8 @@ for help.
 ### Fixed
 - **general**: Issues with custom `$IFS` ([e48856b], [4ebc26e])
 - **general**: Liquidprompt is now `set -u` compatable ([#354], [a8aa8c9], [cb9d71b])
+- **acpi**: Temperature check printed each temp twice, slowing down check ([cf8bf97])
+- **acpi**: Temperature check used extended sed syntax without declaring extended language ([eb30942])
 - **battery**: Color display would break with custom `$LP_COLORMAP` array ([f3f20ec])
 - **runtime**: DEBUG trap was not unset if `$LP_ENABLE_RUNTIME_BELL` was disabled ([cb9d71b])
 - **sensors**: Redirect sensors error output to `/dev/null` ([#445], [4a52696])
@@ -213,13 +239,19 @@ for help.
 - **git**: `_lp_git_head_status()` add more matches from official git prompt, as well as details
   for partial rebases ([#527], [5c56e65])
 - **jobs**: Use `__lp_line_count()` instead of `wc -l` for data function ([fb123f4])
+- **load**: Display actual load average instead of normalized ([#650], [#530], [e058b61])
+- **load**: `LP_LOAD_THRESHOLD` accepts floats of actual load average instead of integer centiload ([#650], [#530], [e058b61])
+- **load**: Default color scale cap from 1.0 to 2.0 ([#650], [#530], [5069c22])
+- **path**: `LP_COLOR_PATH` default changed from `$BOLD` to `lp_terminal_format 255 0 0 0 7` (no longer bold) ([ae769dc])
 - **runtime**: Save bell escape sequence on startup to save time when sending bell to terminal
   with runtime bell ([3e615cd])
 - **svn**: `_lp_svn_branch()` prefixes tag with "tag/", no longer returns current directory if no
   match found ([4fff496])
+- **zsh**: Add check for Zsh >= 5.0, the versions now officially supported ([5bd80ce])
 
 ### Removed
 - **tests**: `pmset-simulator` file, now integrated into `pmset` tests above ([c0e74b8])
+- **tests**: `test.sh` file, unit tests integrated into `acpi` tests above ([f445eff])
 - **vcsh**: `$LP_ENABLE_VCSH` config option, which did nothing ([f86a097])
 
 ## [1.12.1] - 2020-10-25
@@ -424,8 +456,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.0-beta.1...master
-[2.0.0-beta.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0-beta.1
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.0-rc.1...master
+[2.0.0-rc.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0-rc.1
 [1.12.1]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.1
 [1.12.0]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.0
 [1.11]: https://github.com/nojhan/liquidprompt/releases/tag/v_1.11
@@ -444,6 +476,7 @@ for help.
 [#110]: https://github.com/nojhan/liquidprompt/issues/110
 [#117]: https://github.com/nojhan/liquidprompt/issues/117
 [#148]: https://github.com/nojhan/liquidprompt/issues/148
+[#149]: https://github.com/nojhan/liquidprompt/issues/149
 [#217]: https://github.com/nojhan/liquidprompt/issues/217
 [#237]: https://github.com/nojhan/liquidprompt/issues/237
 [#254]: https://github.com/nojhan/liquidprompt/pull/254
@@ -479,6 +512,7 @@ for help.
 [#335]: https://github.com/nojhan/liquidprompt/issues/335
 [#340]: https://github.com/nojhan/liquidprompt/pull/340
 [#345]: https://github.com/nojhan/liquidprompt/issues/345
+[#349]: https://github.com/nojhan/liquidprompt/issues/349
 [#354]: https://github.com/nojhan/liquidprompt/issues/354
 [#355]: https://github.com/nojhan/liquidprompt/pull/355
 [#357]: https://github.com/nojhan/liquidprompt/pull/357
@@ -538,7 +572,9 @@ for help.
 [#522]: https://github.com/nojhan/liquidprompt/issues/522
 [#523]: https://github.com/nojhan/liquidprompt/pull/523
 [#524]: https://github.com/nojhan/liquidprompt/issues/524
+[#524]: https://github.com/nojhan/liquidprompt/issues/524
 [#527]: https://github.com/nojhan/liquidprompt/issues/527
+[#530]: https://github.com/nojhan/liquidprompt/issues/530
 [#543]: https://github.com/nojhan/liquidprompt/issues/543
 [#548]: https://github.com/nojhan/liquidprompt/issues/548
 [#549]: https://github.com/nojhan/liquidprompt/pull/549
@@ -556,8 +592,14 @@ for help.
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
 [#615]: https://github.com/nojhan/liquidprompt/issues/615
-[#626]: https://github.com/nojhan/liquidprompt/pull/625
+[#625]: https://github.com/nojhan/liquidprompt/pull/625
 [#626]: https://github.com/nojhan/liquidprompt/issues/626
+[#635]: https://github.com/nojhan/liquidprompt/pull/635
+[#637]: https://github.com/nojhan/liquidprompt/pull/637
+[#644]: https://github.com/nojhan/liquidprompt/issues/644
+[#648]: https://github.com/nojhan/liquidprompt/pull/648
+[#649]: https://github.com/nojhan/liquidprompt/pull/649
+[#650]: https://github.com/nojhan/liquidprompt/pull/650
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -575,6 +617,7 @@ for help.
 [0e0cc87]: https://github.com/nojhan/liquidprompt/commit/0e0cc870c2dcf3fbfed1b2e187e918d74dd6d3db
 [0f0fd37]: https://github.com/nojhan/liquidprompt/commit/0f0fd3739a8dd9821b34b78859de13b47b2d856d
 [0f80162]: https://github.com/nojhan/liquidprompt/commit/0f80162f1f22277e497b69f243894a87fcaec643
+[13e128b]: https://github.com/nojhan/liquidprompt/commit/13e128bb320034a0303f7354fad66a5674c6b4da
 [1a56d58]: https://github.com/nojhan/liquidprompt/commit/1a56d58d4e63f395545fed820278c5b4561dfa95
 [1a9fcd0]: https://github.com/nojhan/liquidprompt/commit/1a9fcd0944711ccab20045e5a3f3bde9d7f0ec59
 [1c65748]: https://github.com/nojhan/liquidprompt/commit/1c657481fd3481720b54187f9aa464df0e62a3f2
@@ -585,8 +628,11 @@ for help.
 [23eb3f2]: https://github.com/nojhan/liquidprompt/commit/23eb3f23b633a8e849f91867948c96976108df6b
 [282359a]: https://github.com/nojhan/liquidprompt/commit/282359a4b7c80a6032ec043eddb1bf378084e64e
 [28c13f2]: https://github.com/nojhan/liquidprompt/commit/28c13f27e652b84373a7c73389cbd0a5a10b88c3
+[2d659f0]: https://github.com/nojhan/liquidprompt/commit/2d659f04628a804409e6262733f0f909c3c2675b
 [3079299]: https://github.com/nojhan/liquidprompt/commit/3079299f816ee2d893c2b7c2284e9e6034164d16
 [309b443]: https://github.com/nojhan/liquidprompt/commit/309b443461a25f552754663d3d67a5ee0f97571f
+[30f977b]: https://github.com/nojhan/liquidprompt/commit/30f977b09f6ee36c38e1ec07a272b5b0e621729f
+[37db052]: https://github.com/nojhan/liquidprompt/commit/37db052c18d99fc36f4c4a4ede798155e519e2ca
 [3e615cd]: https://github.com/nojhan/liquidprompt/commit/3e615cded01b583870a7e6e9529f341280eb40a6
 [3f57231]: https://github.com/nojhan/liquidprompt/commit/3f57231d73112ea1090e3a607539e515f21de794
 [3fadce9]: https://github.com/nojhan/liquidprompt/commit/3fadce962396d6d3a1f7c2c8e23c1d9fdc22c098
@@ -599,11 +645,15 @@ for help.
 [46df995]: https://github.com/nojhan/liquidprompt/commit/46df99503698c838ad6bb9c030a271e9fda87b15
 [48f1b02]: https://github.com/nojhan/liquidprompt/commit/48f1b022dd078ce45f786a28dbe75a8acea37031
 [4a52696]: https://github.com/nojhan/liquidprompt/commit/4a526965cba546978423a4d51bfbb0a2d1000246
+[4b7fd88]: https://github.com/nojhan/liquidprompt/commit/4b7fd88da0777d005d67d28d285be9255f1666c7
 [4ebc26e]: https://github.com/nojhan/liquidprompt/commit/4ebc26e92be20ddf5d068fb25d2cecfcf479c1ea
 [4fff496]: https://github.com/nojhan/liquidprompt/commit/4fff49644a86fe93f1373825f09e1b1fdfb20f54
+[5069c22]: https://github.com/nojhan/liquidprompt/commit/5069c22dbece5ef8726b1393df5ae91550a2b3fe
+[5076dbe]: https://github.com/nojhan/liquidprompt/commit/5076dbe68788586f317c4d0590e1ea60e4dec07a
 [5425a5e]: https://github.com/nojhan/liquidprompt/commit/5425a5eb56433d4332441d37eae69d159ab456c1
 [5813a71]: https://github.com/nojhan/liquidprompt/commit/5813a710fc0feb2970e1d1e6615f822777b111c7
 [5a9293d]: https://github.com/nojhan/liquidprompt/commit/5a9293db78cad4739f2b105e1c438d21372c25f1
+[5bd80ce]: https://github.com/nojhan/liquidprompt/commit/5bd80ce1da07adc501a46c375eae0ca741f3960e
 [5c56e65]: https://github.com/nojhan/liquidprompt/commit/5c56e65888d92f9f0239096c02ac86e568d53ad1
 [5cfd2c2]: https://github.com/nojhan/liquidprompt/commit/5cfd2c2e7a892d1435cfd7b61cce697d5658db5c
 [5ee3c53]: https://github.com/nojhan/liquidprompt/commit/5ee3c53cbbc95b5288fe5baf5a3c5b21d2a7212d
@@ -635,9 +685,12 @@ for help.
 [884c069]: https://github.com/nojhan/liquidprompt/commit/884c0697b71b0f87e2ea2a88159e08d33d3c6088
 [89540d3]: https://github.com/nojhan/liquidprompt/commit/89540d312543b897b3c116370deabdfe9db15dcb
 [8a987f4]: https://github.com/nojhan/liquidprompt/commit/8a987f436ffc6144eab1dadaacad9c460b9bfa1f
+[8bf1772]: https://github.com/nojhan/liquidprompt/commit/8bf1772d771904bd2095a974b35795c9db2c96cc
 [8cb609d]: https://github.com/nojhan/liquidprompt/commit/8cb609d49cc1ba92f09adc87e3fbed243d04626e
 [8da3314]: https://github.com/nojhan/liquidprompt/commit/8da33144c89075dfd2309feaa718ccf3fe693ff6
 [8de1a72]: https://github.com/nojhan/liquidprompt/commit/8de1a729f7190612d573218625dc1aaf4c2f78bf
+[8f730c8]: https://github.com/nojhan/liquidprompt/commit/8f730c8eb7b2488093db47045db1bcd239b02b9a
+[9038ec8]: https://github.com/nojhan/liquidprompt/commit/9038ec8884f11f7cf47fbfee1c86b9dbf6440307
 [93df016]: https://github.com/nojhan/liquidprompt/commit/93df0169499c4ca8563add267e95dcd343d95f12
 [9604203]: https://github.com/nojhan/liquidprompt/commit/9604203fb9f90b44a8c806f32e7746588b70a83b
 [9633ac8]: https://github.com/nojhan/liquidprompt/commit/9633ac83cad5f5702c1e853940c0ab2e166961bf
@@ -656,6 +709,8 @@ for help.
 [a8aa8c9]: https://github.com/nojhan/liquidprompt/commit/a8aa8c94ca6b3d6486195a2d03cf7868d995f3a2
 [a97c0da]: https://github.com/nojhan/liquidprompt/commit/a97c0da0e6a6f037a6038c427a51a9ee840b45f2
 [aa870b5]: https://github.com/nojhan/liquidprompt/commit/aa870b54d27cd6deda50a24f2030511d8a23c45e
+[acb5430]: https://github.com/nojhan/liquidprompt/commit/acb54302d9711c6b7b8b68bc8a692ef232fb09d4
+[ae769dc]: https://github.com/nojhan/liquidprompt/commit/ae769dc9a71df27c24025a6bd29e840f4d97ce08
 [af8382b]: https://github.com/nojhan/liquidprompt/commit/af8382b56833e8ce08834c61c70c6eda805b413f
 [afe3195]: https://github.com/nojhan/liquidprompt/commit/afe319526a14e6ab73fba175c06e7a45188a37c4
 [b1a3145]: https://github.com/nojhan/liquidprompt/commit/b1a3145ae5432e39ff85d144207eb490f3af341a
@@ -676,7 +731,9 @@ for help.
 [cafb8b2]: https://github.com/nojhan/liquidprompt/commit/cafb8b2e5388fd9336c316248908881a8d66a4a5
 [cb9d71b]: https://github.com/nojhan/liquidprompt/commit/cb9d71b952954006ebedd66a7ea63de7562f9676
 [cc1be7e]: https://github.com/nojhan/liquidprompt/commit/cc1be7e29d1b7fa6ef25e960e02da6612ff8bde9
+[cef9cb1]: https://github.com/nojhan/liquidprompt/commit/cef9cb1581a419f7c7248954069fd0d4e5966284
 [cf01d02]: https://github.com/nojhan/liquidprompt/commit/cf01d02445c38ee9504bad00f079af080a7bdfe2
+[cf8bf97]: https://github.com/nojhan/liquidprompt/commit/cf8bf97b01a83a939eadc31b9da806172c91c444
 [d485ed1]: https://github.com/nojhan/liquidprompt/commit/d485ed191fb6b896290a32848c4fefd0342e2046
 [d62bf31]: https://github.com/nojhan/liquidprompt/commit/d62bf310d0d5a30fac6d047f03d832b81070c884
 [d9cb55d]: https://github.com/nojhan/liquidprompt/commit/d9cb55da834720ac3cd4893bb4a35808ab67d376
@@ -684,6 +741,7 @@ for help.
 [dd9a024]: https://github.com/nojhan/liquidprompt/commit/dd9a024b485d9c017aa935809bd20e7436dff46c
 [debb794]: https://github.com/nojhan/liquidprompt/commit/debb794bf2f99ab53d539e5080f0b28579333cb8
 [decaece]: https://github.com/nojhan/liquidprompt/commit/decaece03b9bfe826d7f33a3fb56dfb33916884a
+[e058b61]: https://github.com/nojhan/liquidprompt/commit/e058b619ce80918d3cdf924e07220a7028a8bb1b
 [e122d21]: https://github.com/nojhan/liquidprompt/commit/e122d21ba14f2bdfe5fa88b70083249456c67b5b
 [e1f8bd5]: https://github.com/nojhan/liquidprompt/commit/e1f8bd585d5dfc41d21d4bf88343f3a30fb3d071
 [e2ba86e]: https://github.com/nojhan/liquidprompt/commit/e2ba86e0e5fc8bf5191cf8d8ac6aa1cd2b81a596
@@ -692,6 +750,7 @@ for help.
 [e843ccf]: https://github.com/nojhan/liquidprompt/commit/e843ccfd7c719f84baf7e628697f78ff59703e5d
 [e927985]: https://github.com/nojhan/liquidprompt/commit/e9279856c4af191d501e8e46898dde3b4447e6dd
 [e9c35dd]: https://github.com/nojhan/liquidprompt/commit/e9c35ddeb473da1ac24eb27331b8974f3ba05237
+[eb30942]: https://github.com/nojhan/liquidprompt/commit/eb309422009c8f8e2a105381317b71ace5d42e13
 [eb6dafc]: https://github.com/nojhan/liquidprompt/commit/eb6dafc314a3dc1fc5ca560d79c408db81af0288
 [ed4f383]: https://github.com/nojhan/liquidprompt/commit/ed4f3832fe2f7380ec1b7949777fffe2a7f63f34
 [edc490f]: https://github.com/nojhan/liquidprompt/commit/edc490f3a3e92e9b0a94e9021a0589d64c6a7881
@@ -702,6 +761,7 @@ for help.
 [f3f20ec]: https://github.com/nojhan/liquidprompt/commit/f3f20ecbe0309842ab43d36c006e75928cd5dae4
 [f434b6d]: https://github.com/nojhan/liquidprompt/commit/f434b6dc663d704e9d616b8864908371862b9e23
 [f436867]: https://github.com/nojhan/liquidprompt/commit/f4368670bf258257fece5611a9aad17e88f10b5a
+[f445eff]: https://github.com/nojhan/liquidprompt/commit/f445eff684558e8bf200df2f3f897c09374b7d6c
 [f4636e6]: https://github.com/nojhan/liquidprompt/commit/f4636e66455a80586f20bb1ea9624a15299cea58
 [f4afc5d]: https://github.com/nojhan/liquidprompt/commit/f4afc5d0a8f776c96308001fcdae4a5aa1dac2bd
 [f681cdf]: https://github.com/nojhan/liquidprompt/commit/f681cdf9d8dd1d847aaf5f0b69222606a181c648

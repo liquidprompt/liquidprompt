@@ -36,6 +36,16 @@ To power the themes, all of the data sources in Liquidprompt have been broken
 out into individual data functions that can be called by themes. They are also
 documented in detail in :doc:`../functions/data`.
 
+Path Advanced Formatting
+========================
+
+The current directory path has had an overhaul, now supporting formatting for
+different path sections, highlighting the last directory and the VCS repository
+root directory. Any shortened directories are lowlighted instead. Multiple path
+shortening methods are now supported as well.
+
+See :attr:`LP_PATH_METHOD` and :attr:`LP_COLOR_PATH` for more information.
+
 Version Control Interface
 =========================
 
@@ -72,3 +82,16 @@ Documentation
 The often lacking README documentation has been re-written with Sphinx to make
 this much improved documentation source.
 
+Unit Tests
+==========
+
+A whole suite of unit tests has been added to test the data and untility
+functions. A handful of bugs were caught using the tests, so the investment has
+already paid off!
+
+Dirstack Feature
+================
+
+Shell directory stack display is now in the prompt! If there are directories on
+the stack (from ``pushd``), the number of directories in the stack is shown next
+to the current path. See :attr:`LP_ENABLE_DIRSTACK` for more information.

@@ -216,3 +216,7 @@ Thanks again to everyone for all of the help and support!
 * Otto Kekäläinen (@ottok)
 * Mike Simonson (@mikeSimonson)
 * Viorel-Cosmin Miron (@uhlhosting)
+* Dimitrie Hoekstra (@dimitrieh)
+* Hynek Vychodil (@pichi)
+* Ned Batchelder (@nedbat)
+* Gary Wolfman (@OldCrow)

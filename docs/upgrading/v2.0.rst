@@ -1,11 +1,12 @@
 Version 2.0 Upgrade Notes
 *************************
 
-Most of the changes in 2.0 are in private functions and variables.
-There are three public API changes that could impact users:
-:ref:`$lp_err <lp_err>`, :ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`,
-and :ref:`_lp_title() <lp_title>`.
-The rest are private API changes, but are still documented here.
+Most of the changes in 2.0 are in private functions and variables.  There are a
+few public API changes that could impact users: :ref:`$lp_err <lp_err>`,
+:ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`, :ref:`$LP_PATH_DEFAULT
+<lp_path_default>`, :ref:`$PROMPT_DIRTRIM <prompt_dirtrim>`,
+:ref:`$LP_PATH_KEEP=-1 <lp_path_keep>`, and :ref:`_lp_title() <lp_title>`.  The
+rest are private API changes, but are still documented here.
 
 .. contents::
    :local:
@@ -416,11 +417,7 @@ Recommended to not use this internal function.
 _lp_shorten_path()
 ------------------
 
-Renamed to :func:`__lp_shorten_path`.
-
-Recommended that :attr:`lp_path` is used instead.
-
-Return changed from stdout to ``$lp_shorten_path``
+Removed and replaced by :func:`_lp_path_format`.
 
 Replace assignment statements like::
 
@@ -428,9 +425,9 @@ Replace assignment statements like::
 
 with::
 
-   local lp_shorten_path
-   __lp_shorten_path
-   cwd=$lp_shorten_path
+   local lp_path_format
+   _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
+   cwd=$lp_path_format
 
 _lp_smart_mark()
 ----------------
@@ -622,6 +619,32 @@ with::
 
    LP_DISABLED_VCS_PATHS=("/my/one/path" "/my/other/path")
 
+.. _lp_path_default:
+
+$LP_PATH_DEFAULT
+----------------
+
+Replaced by :attr:`LP_PATH_METHOD`.
+
+If one of the many new shortening methods does not effectively replace your use
+case, please open an enhancement request.
+
+.. _prompt_dirtrim:
+
+$PROMPT_DIRTRIM
+---------------
+
+``$PROMPT_DIRTRIM`` calculation is no longer supported. Replaced by
+:attr:`LP_PATH_METHOD` set to ``truncate_chars_from_path_left``.
+
+.. _lp_path_keep:
+
+$LP_PATH_KEEP=-1
+----------------
+
+:attr:`LP_PATH_KEEP` set to ``-1`` is replaced by :attr:`LP_PATH_METHOD` set to
+``truncate_to_last_dir``.
+
 .. _lp_title:
 
 _lp_title()
@@ -658,11 +681,11 @@ If the function returns a more complicated return code, you can store it like
 this::
 
    _lp_user
-   local -i code=$?
+   local -i code="$?"
 
 or like this if the code only matters if it is not zero::
 
-   _lp_user || local -i code=$?
+   _lp_user || local -i code="$?"
 
 _lp_sb()
 --------

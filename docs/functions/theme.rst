@@ -117,6 +117,14 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_container_color() -> var:_lp_container_color
+
+    Returns :func:`_lp_container`, surrounded by « and »
+    colored with :attr:`LP_COLOR_CONTAINER` if the value is true.
+    Returns no data if the value is false.
+
+    .. versionadded:: 2.1
+
 .. function:: _lp_dirstack_color() -> var:lp_dirstack_color
 
     Returns :func:`_lp_dirstack`, prefixed with :attr:`LP_MARK_DIRSTACK`, all

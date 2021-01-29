@@ -243,6 +243,23 @@ Features
 
    .. versionadded:: 2.0
 
+.. attribute:: LP_ENABLE_CONTAINER
+   :type: bool
+   :value: 0
+
+   Indicate if the shell is running in a container environment (e.g.
+   Docker, Podman, LXC, Singularity)
+
+   Note: Containers may inherit some or even no variables from their parent
+   shell, so this may behave inconsisently with different container software.
+   For example, Docker doesn't inherit anything unless explicitly told to.
+   Singularity in many configurations inherits may of variables and
+   functions, but removes the PROMPT_COMMAND that makes liquidprompt update.
+
+   See also: :attr:`LP_COLOR_CONTAINER`.
+
+   .. versionadded: 2.1
+
 .. attribute:: LP_ENABLE_DETACHED_SESSIONS
    :type: bool
    :value: 1
@@ -872,6 +889,12 @@ Valid preset color variables are:
    branch that the remote tracking branch does not.
 
    Also used to color :attr:`LP_MARK_STASH`.
+
+.. attribute:: LP_COLOR_CONTAINER
+   :type: string
+   :value: $BOLD_BLUE
+
+   Color used to indicate that the current shell is running in a container
 
 .. attribute:: LP_COLOR_DIFF
    :type: string

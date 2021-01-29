@@ -175,6 +175,11 @@ default order if the user does not configure a different template.
    The current Red Hat Software Collections environment. See
    :attr:`LP_ENABLE_SCLS`.
 
+.. attribute:: LP_CONTAINER
+
+   The container status for the current shell.  See
+   :attr:`LP_ENABLE_CONTAINER`.
+
 .. attribute:: LP_VENV
 
    The current Python (or Conda) virtual environment. See

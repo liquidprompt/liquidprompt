@@ -99,6 +99,23 @@ Environment
    .. versionchanged:: 2.0
       Return method changed from stdout.
 
+.. function:: _lp_container() -> var:lp_container
+
+   Returns ``true`` if the shell is running in a container.  In that case,
+   the return variable is set to a string matching the container type. Valid
+   values:
+
+   * ``Singlrty`` - running in a Singularity container
+   * ``Podman`` - running in a Podman container
+   * ``Docker`` - running in a Docker container
+   * ``LXC`` - running in an LXC container
+
+   It is not possible to detect more than one containerization type to be
+   returned.  The containers are checked in the order listed above, and the
+   first one found will be returned.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_dirstack() -> var:lp_dirstack
 
     Returns ``true`` if directory stack support is enabled and the directory

@@ -127,16 +127,21 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
 
     # Load default colors if not already defined
+
+    # Define the NEUTRAL color first, so we can use it in other contexts.
+    [[ -z ${POWERLINE_NEUTRAL_COLOR[@]+x}              ]] && POWERLINE_NEUTRAL_COLOR=(252 234 0 0 7 0)
+
+    # Load other colors in alphabetical order
     [[ -z ${POWERLINE_BATTERY_COLOR[@]+x}              ]] && POWERLINE_BATTERY_COLOR=(-1 238 0 0 -1 0)
     [[ -z ${POWERLINE_CHROOT_COLOR[@]+x}               ]] && POWERLINE_CHROOT_COLOR=(219 30 0 0 7 4)
+    [[ -z ${POWERLINE_CONTAINER_COLOR[@]+x}            ]] && POWERLINE_CONTAINER_COLOR=("${POWERLINE_NEUTRAL_COLOR[@]}")
+    [[ -z ${POWERLINE_DIRSTACK_COLOR[@]+x}             ]] && POWERLINE_DIRSTACK_COLOR=("${POWERLINE_NEUTRAL_COLOR[@]}")
     [[ -z ${POWERLINE_LOAD_COLOR[@]+x}                 ]] && POWERLINE_LOAD_COLOR=(-1 148 0 0 -1 3)
-    [[ -z ${POWERLINE_NEUTRAL_COLOR[@]+x}              ]] && POWERLINE_NEUTRAL_COLOR=(252 234 0 0 7 0)
     [[ -z ${POWERLINE_PROXY_COLOR[@]+x}                ]] && POWERLINE_PROXY_COLOR=(21 219 1 0 4 7)
     [[ -z ${POWERLINE_RUNTIME_COLOR[@]+x}              ]] && POWERLINE_RUNTIME_COLOR=(226 17 0 0 3 4)
     [[ -z ${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]+x} ]] && POWERLINE_SOFTWARE_COLLECTIONS_COLOR=(231 62 0 0 7 5)
     [[ -z ${POWERLINE_TEMPERATURE_COLOR[@]+x}          ]] && POWERLINE_TEMPERATURE_COLOR=(-1 240 0 0 -1 0)
     [[ -z ${POWERLINE_TIME_COLOR[@]+x}                 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
-    [[ -z ${POWERLINE_DIRSTACK_COLOR[@]+x}             ]] && POWERLINE_DIRSTACK_COLOR=("${POWERLINE_NEUTRAL_COLOR[@]}")
 }
 
 _lp_powerline_full_theme_directory() {

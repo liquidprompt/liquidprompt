@@ -213,6 +213,7 @@ __lp_source_config() {
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     LP_ENABLE_RUNTIME_BELL=${LP_ENABLE_RUNTIME_BELL:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
+    LP_ENABLE_CONTAINER=${LP_ENABLE_CONTAINER:-0}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
@@ -288,6 +289,7 @@ __lp_source_config() {
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
+    LP_COLOR_CONTAINER=${LP_COLOR_CONTAINER:-$BOLD_BLUE}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
 
     if [[ -z "${LP_COLORMAP-}" ]]; then
@@ -1107,7 +1109,7 @@ _lp_python_env() {
 
     local ret
 
-    # Why are these trunkated to the last '/' section? It has always been this
+    # Why are these truncated to the last '/' section? It has always been this
     # way, and the original author didn't explain why.
     if [[ -n "${VIRTUAL_ENV-}" ]]; then
         __lp_escape "${VIRTUAL_ENV##*/}"
@@ -2571,6 +2573,40 @@ _lp_time_color() {
     lp_time_color="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
 }
 
+#######################
+# Container detection #
+#######################
+_lp_container() {
+    (( LP_ENABLE_CONTAINER )) || return 2
+
+    lp_container=""
+
+    if [[ -n "${SINGULARITY_CONTAINER-}" || -n "${SINGULARITY_NAME-}" ]]; then
+        lp_container="Singlrty"
+
+    elif [[ -e /run/.containerenv ]]; then
+        lp_container="Podman"
+
+    elif [[ -e /proc/self/cgroup ]]; then
+        if  grep -q "docker" /proc/self/cgroup ; then
+	        lp_container="Docker"
+
+        elif  grep -q "lxc" /proc/self/cgroup ; then
+            lp_container="LXC"
+        fi
+    fi
+
+    if [[ -z $lp_container ]] ; then
+	    return 1
+    fi
+}
+
+_lp_container_color() {
+    _lp_container || return "$?"
+
+    lp_container_color="«${LP_COLOR_CONTAINER}${lp_container}${NO_COL}»"
+}
+
 #################
 # Default theme #
 #################
@@ -2691,6 +2727,12 @@ _lp_default_theme_prompt_data() {
         LP_VENV=
     fi
 
+    if _lp_container_color; then
+        LP_CONTAINER=" $lp_container_color"
+    else
+        LP_CONTAINER=
+    fi
+
     if _lp_software_collections_color; then
         LP_SCLS=" $lp_software_collections_color"
     else
@@ -2730,7 +2772,7 @@ _lp_default_theme_prompt_template() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_VENV}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_CONTAINER}${LP_VENV}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

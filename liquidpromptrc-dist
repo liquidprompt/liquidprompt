@@ -154,6 +154,14 @@ LP_ENABLE_VIRTUALENV=1
 # Recommended value is 1
 LP_ENABLE_SCLS=1
 
+# Show current Kubernetes kubectl context
+LP_ENABLE_KUBECONTEXT=0
+
+# Delimiter to shorten kubectl context.
+# E.g. when your context names are dev-cluster and test-cluster, set to "-"
+# in order to output "dev" and "test" in prompt.
+LP_DELIMITER_KUBECONTEXT=
+
 # Show highest system temperature
 LP_ENABLE_TEMP=1
 

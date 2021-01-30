@@ -158,6 +158,13 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_kubernetes_context_color() -> var:lp_kubernetes_context_color
+
+   Returns data from :func:`_lp_kubernetes_context`, colored with
+   :attr:`LP_COLOR_KUBECONTEXT` and using mark :attr:`LP_MARK_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_load_color() -> var:lp_load_color
 
    Returns :func:`_lp_load` with color from :attr:`LP_COLORMAP` and mark from

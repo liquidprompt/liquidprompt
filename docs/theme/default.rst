@@ -180,6 +180,13 @@ default order if the user does not configure a different template.
    The current Python (or Conda) virtual environment. See
    :attr:`LP_ENABLE_VIRTUALENV`.
 
+.. attribute:: LP_KUBECONTEXT
+
+   The current Kubernetes context. See
+   :attr:`LP_ENABLE_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_PROXY
 
    A ↥ (:attr:`LP_MARK_PROXY`) if an HTTP proxy is in use. See

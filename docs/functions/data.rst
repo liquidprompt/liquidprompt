@@ -47,6 +47,17 @@ Battery
 Development Environment
 -----------------------
 
+.. function:: _lp_kubernetes_context() -> var:lp_kubernetes_context
+
+   Returns ``true`` if a Kubernetes context is found.
+   Returns the Kubernetes context name or the first name component.
+
+   Splitting long context names into components is defined by :attr:`LP_DELIMITER_KUBECONTEXT`.
+
+   Can be disabled by :attr:`LP_ENABLE_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_python_env() -> var:lp_python_env
 
    Retuns ``true`` if a Python or Conda environment is detected. Returns the

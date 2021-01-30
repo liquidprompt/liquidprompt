@@ -177,6 +177,28 @@ General
 Features
 --------
 
+.. attribute:: LP_DELIMITER_KUBECONTEXT
+   :type: string
+   :value: ""
+
+   Delimiter to shorten the Kubernetes context.
+
+   Usage example:
+
+   * if your context names are dev-cluster and test-cluster,
+     then set this to "-" in order to output "dev" and "test" in prompt.
+   * if your context names are dev.k8s.example.com and test.k8s.example.com,
+     then set this to "." in order to output "dev" and "test" in prompt.
+   * if using OpenShift then set this to "/" to show only the project name
+     without the cluster and user parts.
+
+   If set to the empty string no truncating will occur (this is the default).
+
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`, :attr:`LP_COLOR_KUBECONTEXT`,
+   and :attr:`LP_MARK_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_DISABLED_VCS_PATH
    :type: string
    :value: ""
@@ -330,6 +352,19 @@ Features
    Display the number of running and sleeping shell jobs.
 
    See also: :attr:`LP_COLOR_JOB_R` and :attr:`LP_COLOR_JOB_Z`.
+
+.. attribute:: LP_ENABLE_KUBECONTEXT
+   :type: bool
+   :value: 0
+
+   Display the current `Kubernetes <https://kubernetes.io/>`_ `context`_.
+
+   .. _`context`: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
+
+   See also: :attr:`LP_DELIMITER_KUBECONTEXT`, :attr:`LP_COLOR_KUBECONTEXT`,
+   and :attr:`LP_MARK_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_LOAD
    :type: bool
@@ -702,6 +737,26 @@ Marks
 
    See also: :attr:`LP_ENABLE_HG`.
 
+.. attribute:: LP_MARK_KUBECONTEXT
+   :type: string
+   :value: "⎈"
+
+   Mark used to prefix the current Kubernetes context.
+
+   Used to visually distinguish the Kubernetes context from other
+   context fields like the Python virtual environment (see
+   :attr:`LP_ENABLE_VIRTUALENV`) and the Red Hat Software Collection
+   (see :attr:`LP_ENABLE_SCLS`).
+
+   The display of Unicode characters varies among Terminal and Font settings,
+   so you might try alternative marks. Single symbol alternatives to the
+   default "⎈" (U+2388, Helm Symbol) are "☸" (U+2638, Wheel of Dharma)
+   or "κ" (U+03BA, Greek Small Letter Kappa).
+
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_MARK_LOAD
    :type: string
    :value: "⌂"
@@ -957,6 +1012,16 @@ Valid preset color variables are:
    Color used for sleeping shell jobs.
 
    See also: :attr:`LP_ENABLE_JOBS`.
+
+.. attribute:: LP_COLOR_KUBECONTEXT
+   :type: string
+   :value: $CYAN
+
+   Color used for the current Kubernetes context.
+
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_MARK
    :type: string

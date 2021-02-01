@@ -31,6 +31,15 @@ start from this file for your config::
 
     cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc
 
+In the event that you synchronize your configuration file across multiple
+computers, or if you have an ``/etc/liquidpromptrc`` system-wide from which
+you'd like to make minor deviations in an individual user account, you can
+augment the primary config to add in any local modifications using lines such
+as these::
+
+    LOCAL_RCFILE=$HOME/.liquidpromptrc.local
+    [ -f "$LOCAL_RCFILE" ] && source "$LOCAL_RCFILE"
+
 .. note::
    The example config file does not include every config option, and the
    comments describing the options are less verbose than the descriptions on

@@ -35,6 +35,15 @@ following line in your ``.zshrc`` after activating Antigen::
 
    antigen bundle nojhan/liquidprompt
 
+Installation via Zinit
+----------------------
+
+To install via `Zinit <https://github.com/zdharma/zinit>`_, simply add the
+following lines in your ``.zshrc`` after activating Zinit::
+
+    zinit ice ver"stable" lucid nocd
+    zinit light nojhan/liquidprompt
+
 Dependencies
 ============
 

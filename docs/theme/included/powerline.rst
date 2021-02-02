@@ -83,9 +83,11 @@ The following Liquidprompt config options are respected:
 * :attr:`LP_ENABLE_VCS_ROOT`
 * :attr:`LP_ENABLE_VIRTUALENV`
 * :attr:`LP_HOSTNAME_ALWAYS`
-* :attr:`LP_PATH_DEFAULT`
+* :attr:`LP_PATH_CHARACTER_KEEP`
 * :attr:`LP_PATH_KEEP`
 * :attr:`LP_PATH_LENGTH`
+* :attr:`LP_PATH_METHOD`
+* :attr:`LP_PATH_VCS_ROOT`
 * :attr:`LP_RUNTIME_BELL_THRESHOLD`
 * :attr:`LP_USER_ALWAYS`
 

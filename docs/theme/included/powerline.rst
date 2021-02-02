@@ -40,7 +40,7 @@ Git repository on a server:
 When Liquidprompt is displaying nearly everything, it may look like this:
 
 .. image:: powerline-long.png
-   :alt:   server  user  (e) pyenv  ~ …   code  liquidprompt  3   main  ST 1  125  
+   :alt:   server  user  (e) pyenv  ~   …   liquidprompt   …   theme  3   main  ST 1  125  
 
 .. note::
    The above "everything" image looks like it is missing some parts because this
@@ -275,12 +275,12 @@ If you are running a background command and are also in the "main" branch of a
 Git repository on a server:
 
 .. image:: powerline_full-med.png
-   :alt:   server  user  ~  liquidprompt  1   main  
+   :alt:  1&  user   server  ~  liquidprompt  main  
 
 When Liquidprompt is displaying nearly everything, it may look like this:
 
 .. image:: powerline_full-long.png
-   :alt:   server  user  (e) pyenv  ~ …   code  liquidprompt  3   main  ST 1  125  
+   :alt:  🕤  ⌁24%  ⌂1.68  θ90°  3d/2&/1z  user   server  ~   …   liquidprompt   …   theme  ⚞3  (e) pyenv  main(+10/-5,+3/-1)+*  20s  125  
 
 Setup
 =====

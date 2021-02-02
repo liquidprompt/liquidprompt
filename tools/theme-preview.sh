@@ -37,7 +37,7 @@ _LP_CLOSE_ESC=""
 # Configure options
 
 LP_ENABLE_PERM=0
-LP_ENABLE_SHORTEN_PATH=1
+LP_ENABLE_SHORTEN_PATH=0
 LP_ENABLE_PROXY=0
 LP_ENABLE_TEMP=0
 LP_ENABLE_JOBS=0
@@ -151,6 +151,11 @@ printf 'Medium prompt:\n\n  %s  \n\n' "$PS1"
 # Configure options
 
 _config() {
+  LP_ENABLE_SHORTEN_PATH=1
+  LP_PATH_LENGTH=29
+  COLUMNS=100
+  LP_PATH_KEEP=1
+  LP_PATH_VCS_ROOT=1
   LP_ENABLE_TIME=1
   LP_TIME_ANALOG=1
   LP_ENABLE_BATT=1
@@ -161,6 +166,7 @@ _config() {
   LP_ENABLE_VIRTUALENV=1
   LP_ENABLE_RUNTIME=1
   LP_ENABLE_ERROR=1
+  LP_ENABLE_DIRSTACK=1
   LP_PERCENTS_ALWAYS=1
 }
 _config
@@ -174,7 +180,8 @@ _lp_battery() {
   lp_battery=24
 }
 _lp_load() {
-  lp_load=42
+  lp_load=1.68
+  lp_load_adjusted=42
 }
 _lp_temperature() {
   lp_temperature=90
@@ -186,11 +193,15 @@ _lp_jobcount() {
   lp_running_jobs=2
   lp_stopped_jobs=1
 }
-__lp_shorten_path() {
-  lp_shorten_path="~${LP_MARK_SHORTEN_PATH}/code/liquidprompt"
-}
 _lp_python_env() {
   lp_python_env=pyenv
+}
+_lp_find_vcs() {
+  lp_vcs_type=git
+  lp_vcs_root="${HOME}/code/liquidprompt"
+}
+_lp_git_uncommitted_files() {
+  lp_vcs_uncommitted_files=2
 }
 _lp_git_uncommitted_lines() {
   lp_vcs_uncommitted_i_lines=10
@@ -212,6 +223,13 @@ _lp_runtime_format() {
 _lp_error() {
   lp_error=125
 }
+_lp_dirstack() {
+  lp_dirstack=3
+}
+
+# Setup Env
+
+PWD="${HOME}/code/liquidprompt/docs/theme"
 
 # Activate and generate
 

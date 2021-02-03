@@ -57,7 +57,10 @@ General
 
    String added directly before :attr:`LP_MARK_DEFAULT`, after all other
    parts of the prompt. Can be used to tag the prompt in a way that is less
-   intrusive than :attr:`LP_PS1_PREFIX`.
+   intrusive than :attr:`LP_PS1_PREFIX`, or add a newline before the prompt
+   mark. For example::
+
+      LP_MARK_PREFIX=$'\n'
 
 .. attribute:: LP_PATH_CHARACTER_KEEP
    :type: int

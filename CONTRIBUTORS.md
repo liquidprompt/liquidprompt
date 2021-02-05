@@ -107,6 +107,7 @@ Thanks again to everyone for all of the help and support!
 * David Pape (@zyzzyxdonta)
 * Aksel Sjögren (@akselsjogren)
 * Raina Otoni (@rotoni)
+* Munif Tanjim (@MunifTanjim)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -119,6 +120,13 @@ Thanks again to everyone for all of the help and support!
 * Matt Kelly (@mattkelly)
 * Colin Lieberman (@colinlieberman)
 * Bryce Jasmer (@b-jazz)
+
+### Documentation changes / clarifications
+* Arturo Borrero Gonzalez (@aborrero)
+* Brad Beyenhof (@augmentedfourth)
+* John Hamelink (@johnhamelink)
+* @YouthfulIndiscretion
+* Imran Munshi (@imran27)
 
 ### Bug reports / Feature requests
 * @skanx
@@ -220,3 +228,4 @@ Thanks again to everyone for all of the help and support!
 * Hynek Vychodil (@pichi)
 * Ned Batchelder (@nedbat)
 * Gary Wolfman (@OldCrow)
+* @Orgams

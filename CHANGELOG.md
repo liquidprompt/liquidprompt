@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0-rc.1] - 2021-01-28
+## [2.0.0] - 2021-02-05
 ### BREAKING CHANGES
 Note: these breaking changes are the only reason that this version is so much
 faster. They are also on private functions and variables, which the end user
@@ -36,10 +36,10 @@ for help.
   `$lp_runtime_color` ([0f0fd37])
 - **runtime**: `_lp_runtime_after()` renamed to `__lp_runtime_after()` ([decaece])
 - **runtime**: `_lp_runtime_before()` renamed to `__lp_runtime_before()` ([decaece])
-- **temperature**: `_lp_temp_acpi()` renamed to `__lp_temp_acpi()` and return chagned from
+- **temperature**: `_lp_temp_acpi()` renamed to `__lp_temp_acpi()` and return changed from
   `$temperature` to `$lp_temperature` ([69c75a3])
 - **temperature**: `_lp_temp_detect()` renamed to `__lp_temp_detect()` ([69c75a3])
-- **temperature**: `_lp_temp_sensors()` renamed to `__lp_temp_sensors()` and return chagned from
+- **temperature**: `_lp_temp_sensors()` renamed to `__lp_temp_sensors()` and return changed from
   `$temperature` to `$lp_temperature` ([69c75a3])
 - **temperature**: `_lp_temperature()` changed to data function, replaced by
   `_lp_temperature_color()` and return changed from stdout to `$lp_temperature_color` ([69c75a3])
@@ -156,7 +156,7 @@ for help.
 - **terminal**: `_lp_terminal_device()` data function ([5076dbe])
 - **tests**: Shunit2 testing suite ([#469], [46918f6], [44e3a6f], [1fe1559])
 - **tests**: Tests to check if a shell supports all features that Liquidprompt
-  needs ([46918f6], [5a9293d], [cdb860])
+  needs ([46918f6], [5a9293d], [1fe1559])
 - **tests**: Tests for `_lp_as_text()` ([6cdb860])
 - **tests**: Tests for `_lp_battery()`/`acpi` ([cef9cb1])
 - **tests**: Tests for `_lp_battery()`/`pmset` ([c0e74b8], [9e205f5], [37db052])
@@ -456,8 +456,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.0-rc.1...master
-[2.0.0-rc.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0-rc.1
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.0...master
+[2.0.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0
 [1.12.1]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.1
 [1.12.0]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.0
 [1.11]: https://github.com/nojhan/liquidprompt/releases/tag/v_1.11

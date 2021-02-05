@@ -64,6 +64,9 @@ to process that data.
 Examples
 ========
 
+The :doc:`included/alternate_vcs` is a good example of creating a theme based on
+the default theme.
+
 The :doc:`included/powerline` is a good example of creating a detailed theme.
 
 Sharing Your Theme

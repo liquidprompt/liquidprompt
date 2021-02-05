@@ -14,8 +14,8 @@ A new feature, similar to the displayed last command runtime, is to ring the
 terminal bell when the running command exits, if the runtime was over a
 threshold. This can be used to notify when a long running command has finished.
 
-See the :attr:`LP_RUNTIME_BELL` and :attr:`LP_RUNTIME_BELL_THRESHOLD` config
-options.
+See the :attr:`LP_ENABLE_RUNTIME_BELL` and :attr:`LP_RUNTIME_BELL_THRESHOLD`
+config options.
 
 Permissions Mark
 ================

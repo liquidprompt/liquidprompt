@@ -116,7 +116,7 @@ their config.
 .. function:: prompt_OFF()
 
    Same as :func:`prompt_off`, except instead of restoring the previous
-   :envvar:`PS1`, it is set to "$ " on Bash, "% " on Zsh.
+   :envvar:`PS1`, it is set to "$ " on Bash, "% " on Zsh.
 
 .. function:: prompt_tag([prefix_string])
 

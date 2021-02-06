@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 
-. liquidprompt --no-activate
+. ./liquidprompt --no-activate
 
 # If a theme was given, use the theme and source all other arguments.
 if [[ -z ${1-} || $1 == --help ]]; then
@@ -80,7 +80,7 @@ PWD=$HOME
 
 lp_activate --no-config
 # Only needs to be done once
-lp_theme "$theme"
+lp_theme "$theme" || exit "$?"
 __lp_set_prompt
 
 printf 'Short prompt:\n\n  %s  \n\n' "$PS1"

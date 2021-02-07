@@ -1155,7 +1155,7 @@ _lp_user() {
     if (( EUID == 0 )); then
         # user is root
         return 2
-    elif [[ "${USER}" != "$(logname 2>/dev/null || printf '%s' "${LOGNAME-}")" ]]; then
+    elif [[ "${USER-}" != "$(logname 2>/dev/null || printf '%s' "${LOGNAME-}")" ]]; then
         # user is not login user
         return 1
     else

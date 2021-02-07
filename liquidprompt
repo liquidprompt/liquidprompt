@@ -219,7 +219,7 @@ __lp_source_config() {
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
-    LP_DISABLED_VCS_PATHS=("${LP_DISABLED_VCS_PATHS[@]-}")
+    LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
@@ -443,7 +443,7 @@ lp_activate() {
             # OpenBSD
             __lp_foreground_color() { af_color="${_lp_af_colors[$1+1]:=$(tput AF "$1" 0 0)}"; }
         else
-            echo "liquidprompt: terminal $TERM does not support foreground colors" >&2
+            echo "liquidprompt: terminal '${TERM-}' does not support foreground colors" >&2
         fi
         if tput setab 0 >/dev/null 2>&1; then
             __lp_background_color() { ab_color="${_lp_ab_colors[$1+1]:=$(tput setab "$1")}"; }
@@ -454,7 +454,7 @@ lp_activate() {
             # OpenBSD
             __lp_background_color() { ab_color="${_lp_ab_colors[$1+1]:=$(tput AB "$1" 0 0)}"; }
         else
-            echo "liquidprompt: terminal $TERM does not support background colors" >&2
+            echo "liquidprompt: terminal '${TERM-}' does not support background colors" >&2
         fi
     fi
 
@@ -508,7 +508,7 @@ lp_activate() {
         LP_TITLE_CLOSE=$'\a'
     fi
 
-    [[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
+    [[ "_${TERM-}" == _linux* ]] && LP_ENABLE_TITLE=0
 
     # update_terminal_cwd is a shell function available on MacOS X Lion that
     # will update an icon of the directory displayed in the title of the terminal
@@ -1076,7 +1076,7 @@ _lp_multiplexer() {
     if [[ -n ${TMUX-} ]]; then
         lp_mulitplexer=tmux
         return 0
-    elif [[ "$TERM" == screen* ]]; then
+    elif [[ "${TERM-}" == screen* ]]; then
         lp_mulitplexer=screen
         return 0
     fi
@@ -1154,7 +1154,7 @@ _lp_user() {
     if (( EUID == 0 )); then
         # user is root
         return 2
-    elif [[ "${USER}" != "$(logname 2>/dev/null || printf '%s' "${LOGNAME-}")" ]]; then
+    elif [[ "${USER-}" != "$(logname 2>/dev/null || printf '%s' "${LOGNAME-}")" ]]; then
         # user is not login user
         return 1
     else
@@ -1354,7 +1354,7 @@ _lp_jobcount_color() {
 
 _lp_are_vcs_enabled() {
     local _path
-    for _path in "${LP_DISABLED_VCS_PATHS[@]}"; do
+    for _path in ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"}; do
         if [[ -n "$_path" && "$PWD" == "$_path"* ]]; then
             return 1
         fi
@@ -1375,7 +1375,7 @@ _lp_find_vcs() {
 
     lp_vcs_root="$PWD"
     while [[ -n "$lp_vcs_root" ]]; do
-        for vcs in "${_LP_ENABLED_VCSS[@]}"; do
+        for vcs in ${_LP_ENABLED_VCSS[@]+"${_LP_ENABLED_VCSS[@]}"}; do
             if [[ -d "$lp_vcs_root/.$vcs" ]]; then
                 lp_vcs_type="$vcs"
                 return 0
@@ -2771,7 +2771,7 @@ __lp_set_prompt() {
     # bash: execute the old prompt hook
     eval "$LP_OLD_PROMPT_COMMAND"
 
-    if (( LP_ENABLE_RUNTIME_BELL && _LP_RUNTIME_SECONDS >= LP_RUNTIME_BELL_THRESHOLD )); then
+    if (( LP_ENABLE_RUNTIME_BELL && ${_LP_RUNTIME_SECONDS-0} >= LP_RUNTIME_BELL_THRESHOLD )); then
         printf '%s' "$_LP_TI_BELL"
     fi
 

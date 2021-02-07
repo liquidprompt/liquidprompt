@@ -444,7 +444,7 @@ lp_activate() {
             # OpenBSD
             __lp_foreground_color() { af_color="${_lp_af_colors[$1+1]:=$(tput AF "$1" 0 0)}"; }
         else
-            echo "liquidprompt: terminal $TERM does not support foreground colors" >&2
+            echo "liquidprompt: terminal '${TERM-}' does not support foreground colors" >&2
         fi
         if tput setab 0 >/dev/null 2>&1; then
             __lp_background_color() { ab_color="${_lp_ab_colors[$1+1]:=$(tput setab "$1")}"; }
@@ -455,7 +455,7 @@ lp_activate() {
             # OpenBSD
             __lp_background_color() { ab_color="${_lp_ab_colors[$1+1]:=$(tput AB "$1" 0 0)}"; }
         else
-            echo "liquidprompt: terminal $TERM does not support background colors" >&2
+            echo "liquidprompt: terminal '${TERM-}' does not support background colors" >&2
         fi
     fi
 
@@ -509,7 +509,7 @@ lp_activate() {
         LP_TITLE_CLOSE=$'\a'
     fi
 
-    [[ "_$TERM" == _linux* ]] && LP_ENABLE_TITLE=0
+    [[ "_${TERM-}" == _linux* ]] && LP_ENABLE_TITLE=0
 
     # update_terminal_cwd is a shell function available on MacOS X Lion that
     # will update an icon of the directory displayed in the title of the terminal
@@ -1077,7 +1077,7 @@ _lp_multiplexer() {
     if [[ -n ${TMUX-} ]]; then
         lp_mulitplexer=tmux
         return 0
-    elif [[ "$TERM" == screen* ]]; then
+    elif [[ "${TERM-}" == screen* ]]; then
         lp_mulitplexer=screen
         return 0
     fi

@@ -991,7 +991,7 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLOR_PATH
    :type: string
-   :value: lp_terminal_format 255 0 0 0 7  # Bright white
+   :value: ""
 
    Color used for the current working directory.
 
@@ -1000,11 +1000,11 @@ Valid preset color variables are:
    their respective sections will be colored with them instead.
 
    .. versionchanged:: 2.0
-      Default value changed from ``$BOLD``.
+      Default value changed from ``$BOLD`` to the default color.
 
 .. attribute:: LP_COLOR_PATH_LAST_DIR
    :type: string
-   :value: lp_terminal_format 255 0 1 0 7  # Bright bold white
+   :value: $BOLD
 
    Color used for the last path segment, which corresponds to the current
    directory basename.
@@ -1017,14 +1017,14 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLOR_PATH_SEPARATOR
    :type: string
-   :value: lp_terminal_format 245 0 0 0 7  # Light grey
+   :value: lp_terminal_format 8 -1 0 0 -1  # Grey
 
    Color used for the separator ('/') between path segments. If set to the empty
    string, the separator will take the format of the path segment before it.
 
 .. attribute:: LP_COLOR_PATH_SHORTENED
    :type: string
-   :value: lp_terminal_format 245 0 0 0 7  # Light grey
+   :value: lp_terminal_format 8 -1 0 0 -1  # Grey
 
    Color used for path segments that have been shortened.
 
@@ -1032,7 +1032,7 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLOR_PATH_VCS_ROOT
    :type: string
-   :value: lp_terminal_format 255 0 1 0 7  # Bright bold white
+   :value: $BOLD
 
    Color used for the path segment corresponding to the current VCS repository
    root directory.

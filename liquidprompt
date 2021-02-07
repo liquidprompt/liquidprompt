@@ -247,12 +247,11 @@ __lp_source_config() {
     LP_MARK_PERM="${LP_MARK_PERM:-":"}"
     LP_MARK_DIRSTACK="${LP_MARK_DIRSTACK:-"⚞"}"
 
-    lp_terminal_format 255 0 0 0 7
-    LP_COLOR_PATH=${LP_COLOR_PATH:-$lp_terminal_format}
-    lp_terminal_format 245 0 0 0 7
+    LP_COLOR_PATH=${LP_COLOR_PATH:-$NO_COL}
+    lp_terminal_format 8 -1 0 0 -1
     LP_COLOR_PATH_SEPARATOR=${LP_COLOR_PATH_SEPARATOR:-$lp_terminal_format}
     LP_COLOR_PATH_SHORTENED=${LP_COLOR_PATH_SHORTENED:-$lp_terminal_format}
-    lp_terminal_format 255 0 1 0 7
+    lp_terminal_format -1 -1 1 0
     LP_COLOR_PATH_VCS_ROOT=${LP_COLOR_PATH_VCS_ROOT:-$lp_terminal_format}
     LP_COLOR_PATH_LAST_DIR=${LP_COLOR_PATH_LAST_DIR:-$lp_terminal_format}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}

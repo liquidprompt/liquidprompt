@@ -94,9 +94,20 @@ their config.
    When setting *foreground_color* or *background_color* to negative inputs,
    these options are never checked.
 
+   For example, to set the error color to a bright, bold pink, with a fallback
+   color of red::
+
+      lp_terminal_format 204 -1 1 0 1
+      LP_COLOR_ERR=$lp_terminal_format
+
+   To set the prompt mark color to black on a white background::
+
+      lp_terminal_format 0 7
+      LP_COLOR_MARK=$lp_terminal_format
+
    .. versionadded:: 2.0
 
-    .. _`ANSI escape color code`: https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+   .. _`ANSI escape color code`: https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
 .. function:: prompt_on()
 

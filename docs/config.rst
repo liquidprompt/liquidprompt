@@ -247,14 +247,16 @@ Features
    :type: bool
    :value: 0
 
-   Indicate if the shell is running in a container environment (e.g.
-   Docker, Podman, LXC, Singularity)
+   Indicate if the shell is running in a container environment (e.g. Docker, 
+   Podman, LXC, Singularity).
 
-   Note: Containers may inherit some or even no variables from their parent
-   shell, so this may behave inconsisently with different container software.
-   For example, Docker doesn't inherit anything unless explicitly told to.
-   Singularity in many configurations inherits may of variables and
-   functions, but removes the PROMPT_COMMAND that makes liquidprompt update.
+   .. note::
+      Containers may inherit some or even no variables from their parent shell,
+      so this may behave inconsisently with different container software.  For 
+      example, Docker doesn't inherit anything unless explicitly told to.  
+      Singularity in many configurations inherits most variables but bash 
+      functions and zsh hooks might not make it in.  For full functionality, 
+      liquidprompt may need to be sourced inside the child container.
 
    See also: :attr:`LP_COLOR_CONTAINER`.
 

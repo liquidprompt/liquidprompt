@@ -753,7 +753,7 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
     (( LP_ENABLE_COLOR )) || return 2
 
     local af_color ab_color fg bg previous_af_color
-    fg=$1
+    fg=${1:-"-1"}
     bg=${2:-"-1"}
     previous_af_color=${_lp_last_af_color-}
 

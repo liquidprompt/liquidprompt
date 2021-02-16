@@ -1382,6 +1382,11 @@ _lp_find_vcs() {
             fi
         done
 
+        if (( LP_ENABLE_GIT )) && [[ -f "$lp_vcs_root/.git" ]]; then
+            lp_vcs_type="git"
+            return 0
+        fi
+
         if (( LP_ENABLE_FOSSIL)) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
             lp_vcs_type="fossil"
             return 0

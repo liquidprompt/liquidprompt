@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2021-02-22
+### Fixed
+- **git**: Git worktrees not being detected ([#658])
+
 ## [2.0.1] - 2021-02-07
 ### Added
 - **docs**: Example for `lp_terminal_format()` ([#657], [954bace])
@@ -476,7 +480,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.1...master
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.2...master
+[2.0.2]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.2
 [2.0.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.1
 [2.0.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0
 [1.12.1]: https://github.com/nojhan/liquidprompt/releases/tag/v1.12.1
@@ -623,6 +628,7 @@ for help.
 [#650]: https://github.com/nojhan/liquidprompt/pull/650
 [#656]: https://github.com/nojhan/liquidprompt/issues/656
 [#657]: https://github.com/nojhan/liquidprompt/issues/657
+[#658]: https://github.com/nojhan/liquidprompt/issues/658
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

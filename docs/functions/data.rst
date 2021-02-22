@@ -114,6 +114,8 @@ Environment
    returned.  The containers are checked in the order listed above, and the
    first one found will be returned.
 
+    Can be enabled by :attr:`LP_ENABLE_CONTAINER`.
+ 
    .. versionadded:: 2.1
 
 .. function:: _lp_dirstack() -> var:lp_dirstack
@@ -404,4 +406,3 @@ Time
    ``0``.
 
    .. versionadded:: 2.0
-

@@ -254,7 +254,7 @@ Features
       Containers may inherit some or even no variables from their parent shell,
       so this may behave inconsisently with different container software.  For 
       example, Docker doesn't inherit anything unless explicitly told to.  
-      Singularity in many configurations inherits most variables but bash 
+      Singularity in many configurations inherits most variables but shell
       functions and zsh hooks might not make it in.  For full functionality, 
       liquidprompt may need to be sourced inside the child container.
 
@@ -1168,4 +1168,3 @@ Valid preset color variables are:
    :value: $GREEN
 
    Color used for indicating that a display is connected.
-

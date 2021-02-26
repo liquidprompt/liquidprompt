@@ -228,6 +228,20 @@ Features
 
    See also: :attr:`LP_MARK_DISABLED`.
 
+.. attribute:: LP_ENABLE_AWS_PROFILE
+   :type: bool
+   :value: 1
+
+   Display the current value of :envvar:`AWS_PROFILE` or 
+   :envvar:`AWS_DEFAULT_PROFILE`. These variables are used to switch between
+   configuration profiles by the `AWS CLI`_.
+
+   .. _`AWS CLI`: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+
+   See also: :attr:`LP_COLOR_AWS_PROFILE`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_BATT
    :type: bool
    :value: 1
@@ -889,6 +903,16 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`, and
    :attr:`LP_ENABLE_TEMP`.
+
+.. attribute:: LP_COLOR_AWS_PROFILE
+   :type: string
+   :value: $YELLOW
+
+   Color used to display the current active AWS Profile.
+
+   See also: :attr:`LP_ENABLE_AWS_PROFILE`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_CHANGES
    :type: string

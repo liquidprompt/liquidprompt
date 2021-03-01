@@ -174,6 +174,17 @@ General
    A string displayed at the start of the prompt. Can also be set with
    :func:`prompt_tag`.
 
+.. attribute:: LP_TIME_FORMAT
+   :type: string
+   :value: "%H:%M:%S"
+
+   The formatting string passed to :manpage:`date(1)` using formatting from
+   :manpage:`strftime(3)` used to display the current date and/or time.
+
+   See also: :attr:`LP_ENABLE_TIME`.
+
+   .. versionadded:: 2.1
+
 Features
 --------
 
@@ -503,7 +514,8 @@ Features
    :type: bool
    :value: 0
 
-   Displays the time at which the prompt was shown.
+   Displays the time at which the prompt was shown. The format can be configured
+   with :attr:`LP_TIME_FORMAT`.
 
    See also: :attr:`LP_TIME_ANALOG` and :attr:`LP_COLOR_TIME`.
 

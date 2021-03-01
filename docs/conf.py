@@ -39,6 +39,9 @@ man_pages = [
     ('theme', 'liquidprompt', 'Liquidprompt theming', [], 7),
 ]
 
+# A URL to cross-reference manpage directives
+manpages_url = 'https://manpages.debian.org/{path}'
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.

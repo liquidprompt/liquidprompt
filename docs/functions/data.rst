@@ -386,25 +386,22 @@ Time
 .. function:: _lp_time() -> var:lp_time
 
    Returns ``true`` if digital time is enabled. Returns the current digital time
-   string.
+   string, formatting set by :attr:`LP_TIME_FORMAT`.
 
-   .. note::
-
-      The returned string is not the real time, instead it is the shell escape
-      code for time, so the shell will substitute the real current time when it
-      evaluates :envvar:`PS1`.
-
-   Can be disabled by :attr:`LP_ENABLE_TIME` or :attr:`LP_TIME_ANALOG` set to
+   Can be disabled by :attr:`LP_ENABLE_TIME`, or :attr:`LP_TIME_ANALOG` set to
    ``1``.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.1
+      Returns the actual time instead of a shell prompt escape code.
 
 .. function:: _lp_analog_time() -> var:lp_analog_time
 
    Returns ``true`` if analog time is enabled. Returns the current analog time
    as a single Unicode character, accurate to the closest 30 minutes.
 
-   Can be disabled by :attr:`LP_ENABLE_TIME` or :attr:`LP_TIME_ANALOG` set to
+   Can be disabled by :attr:`LP_ENABLE_TIME`, or :attr:`LP_TIME_ANALOG` set to
    ``0``.
 
    .. versionadded:: 2.0

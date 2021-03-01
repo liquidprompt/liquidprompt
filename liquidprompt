@@ -39,7 +39,6 @@ if test -n "${BASH_VERSION-}"; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_FQDN_SYMBOL="\H"
-    _LP_TIME_SYMBOL="\t"
     _LP_MARK_SYMBOL='$'
 
     _LP_FIRST_INDEX=0
@@ -71,7 +70,6 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_USER_SYMBOL="%n"
     _LP_HOST_SYMBOL="%m"
     _LP_FQDN_SYMBOL="%M"
-    _LP_TIME_SYMBOL="%*"
     _LP_MARK_SYMBOL='%%'
 
     _LP_FIRST_INDEX=1
@@ -177,6 +175,7 @@ __lp_source_config() {
 
 
     # Default values (globals)
+    LP_TIME_FORMAT=${LP_TIME_FORMAT:-"%H:%M:%S"}
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
     LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
@@ -2618,13 +2617,15 @@ _lp_analog_time_color() {
 _lp_time() {
     (( LP_ENABLE_TIME && ! LP_TIME_ANALOG )) || return 2
 
-    lp_time=${_LP_TIME_SYMBOL}
+    local ret
+    __lp_escape "$(date "+${LP_TIME_FORMAT}")"
+    lp_time=$ret
 }
 
 _lp_time_color() {
     _lp_time || return "$?"
 
-    lp_time_color="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+    lp_time_color="${LP_COLOR_TIME}${lp_time}${NO_COL}"
 }
 
 #################
@@ -2670,12 +2671,6 @@ _lp_default_theme_activate() {
 
     _lp_terminal_device
     LP_TTYN=$lp_terminal_device
-
-    if _lp_time_color; then
-        LP_TIME="${lp_time_color} "
-    else
-        LP_TIME=
-    fi
 }
 
 _lp_default_theme_directory() {
@@ -2720,8 +2715,12 @@ _lp_default_theme_prompt_data() {
         LP_BATT=
     fi
 
-    if _lp_analog_time_color; then
+    if _lp_time_color; then
+        LP_TIME="$lp_time_color "
+    elif _lp_analog_time_color; then
         LP_TIME="$lp_analog_time_color "
+    else
+        LP_TIME=
     fi
 
     if _lp_sudo_active_color; then

@@ -40,7 +40,7 @@ if test -n "${BASH_VERSION-}"; then
     _LP_HOST_SYMBOL="\h"
     _LP_FQDN_SYMBOL="\H"
     _LP_TIME_SYMBOL="\t"
-    _LP_MARK_SYMBOL='\$'
+    _LP_MARK_SYMBOL='$'
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
@@ -72,7 +72,7 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_HOST_SYMBOL="%m"
     _LP_FQDN_SYMBOL="%M"
     _LP_TIME_SYMBOL="%*"
-    _LP_MARK_SYMBOL='%(!.#.%%)'
+    _LP_MARK_SYMBOL='%%'
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
@@ -556,6 +556,8 @@ lp_activate() {
         if (( ! LP_ENABLE_VCS_ROOT )); then
             LP_DISABLED_VCS_PATHS=("/")
         fi
+
+        LP_MARK_DEFAULT='#'
 
         LP_COLOR_MARK=$LP_COLOR_MARK_ROOT
         LP_COLOR_PATH=$LP_COLOR_PATH_ROOT

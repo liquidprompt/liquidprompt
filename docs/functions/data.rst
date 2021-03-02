@@ -256,18 +256,13 @@ OS
 
    Returns the hostname string.
 
-   .. note::
-
-      The returned string is not the real hostname, instead it is the shell
-      escape code for hostname, so the shell will substitute the real user ID
-      when it evaluates :envvar:`PS1`.
-
-   .. deprecated:: 2.0
-      Also sets :attr:`LP_HOST_SYMBOL` to the same return string.
-
    Can be disabled by :attr:`LP_HOSTNAME_ALWAYS` set to ``-1``.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.1
+      Returns the actual hostname instead of a shell prompt escape code.
+      No longer sets :attr:`LP_HOST_SYMBOL` to the same return string.
 
 .. function:: _lp_sudo_active()
 

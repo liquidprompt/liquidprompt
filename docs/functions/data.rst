@@ -296,15 +296,12 @@ OS
 
    Returns the current user ID.
 
-   .. note::
-
-      The returned string is not a real user ID, instead it is the shell escape
-      code for user, so the shell will substitute the real user ID when it
-      evaluates :envvar:`PS1`.
-
    Can be disabled by :attr:`LP_USER_ALWAYS` set to ``-1``.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.1
+      Returns the actual username instead of a shell prompt escape code.
 
 Path
 ----

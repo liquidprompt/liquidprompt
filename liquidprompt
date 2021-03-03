@@ -212,6 +212,7 @@ __lp_source_config() {
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
+    LP_ENABLE_TITLE_COMMAND=${LP_ENABLE_TITLE_COMMAND:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
@@ -391,10 +392,10 @@ __lp_source_config() {
 # Initialize features based on the user config.
 lp_activate() {
     if (( _LP_SHELL_bash )); then
-        # Disable the DEBUG trap used by the RUNTIME feature
+        # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
         # (in case we are reloading LP in the same shell after disabling
         # the feature in .liquidpromptrc)
-        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} )) && trap - DEBUG
+        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )) && trap - DEBUG
 
         complete -F __lp_theme_bash_complete lp_theme
     else # zsh
@@ -406,7 +407,7 @@ lp_activate() {
         {
             add-zsh-hook -d precmd  __lp_set_prompt
             add-zsh-hook -d preexec __lp_runtime_before
-            add-zsh-hook -d precmd  __lp_runtime_after
+            add-zsh-hook -d preexec __lp_print_title_command
         } >/dev/null
 
         # Enable the autocomplete if the autocomplete system is initialized.
@@ -510,6 +511,9 @@ lp_activate() {
 
     [[ "_${TERM-}" == _linux* ]] && LP_ENABLE_TITLE=0
 
+    # Can not show title command if the title feature is disabled.
+    (( LP_ENABLE_TITLE )) || LP_ENABLE_TITLE_COMMAND=0
+
     # update_terminal_cwd is a shell function available on MacOS X Lion that
     # will update an icon of the directory displayed in the title of the terminal
     # window.
@@ -562,16 +566,16 @@ lp_activate() {
 
     _LP_RUNTIME_LAST_SECONDS=$SECONDS
 
-    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
-        if (( _LP_SHELL_zsh )); then
-            add-zsh-hook preexec __lp_runtime_before
-            add-zsh-hook precmd  __lp_runtime_after
-        else
+    if (( _LP_SHELL_zsh )); then
+        (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )) && add-zsh-hook preexec __lp_runtime_before
+        (( LP_ENABLE_TITLE_COMMAND )) && add-zsh-hook preexec __lp_print_title_command
+    else
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
             _LP_AT_PROMPT=0
-            # __lp_runtime_before gets called just before bash executes a command,
+            # __lp_before_command gets called just before bash executes a command,
             # including $PROMPT_COMMAND
             # Pass $_ to this call, because it sets $_ to what it already was
-            trap '__lp_runtime_before "$_"' DEBUG
+            trap '__lp_before_command "$_"' DEBUG
         fi
     fi
 
@@ -2375,29 +2379,10 @@ _lp_runtime_format() {
     fi
 }
 
-if (( _LP_SHELL_zsh )); then
-    __lp_runtime_before() {
-      _LP_RUNTIME_LAST_SECONDS=$SECONDS
-    }
-else
-    __lp_runtime_before() {
-        # For debugging
-        #echo "XXX $BASH_COMMAND"
-
-        # If this is the first time after the user submitted the command,
-        # record the time
-        if (( _LP_AT_PROMPT )); then
-            _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
-        fi
-        # If this is when the prompt is being drawn, the command is done,
-        # so calculate the time. Note these two events could be at the same
-        # time, so no elif is used
-        if [[ "$BASH_COMMAND" == "${PROMPT_COMMAND-}" ]]; then
-            _LP_AT_PROMPT=1
-            __lp_runtime_after
-        fi
-    }
-fi
+__lp_runtime_before() {
+    _LP_RUNTIME_LAST_SECONDS=$SECONDS
+    _LP_RUNTIME_SECONDS=-1
+}
 
 # Compute number of seconds since the command was started
 __lp_runtime_after() {
@@ -2584,6 +2569,29 @@ lp_title() {
     else
         unset _lp_manual_title
     fi
+}
+
+if (( _LP_SHELL_zsh )); then
+    __lp_get_last_command_line() {
+        command=$history[$HISTCMD]
+    }
+else
+    __lp_get_last_command_line() {
+        command=$(HISTTIMEFORMAT= builtin history 1 2>/dev/null)
+        command=${command#*[[:digit:]][* ] }
+
+        # Fallback measure if something goes wrong.
+        if [[ -z $command ]]; then
+            command=$BASH_COMMAND
+        fi
+    }
+fi
+
+__lp_print_title_command() {
+    local command
+    __lp_get_last_command_line
+
+    printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL+"$SHELL \$ "}}}${command}${LP_TITLE_CLOSE}"
 }
 
 ###################
@@ -2851,6 +2859,10 @@ __lp_set_prompt() {
     #TODO: unused?
     local GREP_OPTIONS=
 
+    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+        __lp_runtime_after
+    fi
+
     # bash: execute the old prompt hook
     eval "$LP_OLD_PROMPT_COMMAND"
 
@@ -2878,8 +2890,35 @@ __lp_set_prompt() {
     "$_LP_THEME_PROMPT_FUNCTION"
 
     if (( LP_ENABLE_TITLE )); then
-        PS1="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}${PS1}"
+        printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}"
     fi
+}
+
+__lp_before_command() {
+    # For debugging
+    #printf 'XXX %s\n' "$BASH_COMMAND"
+
+    # If this is the first time after the user submitted the command,
+    # execute the hooks.
+    if (( _LP_AT_PROMPT )); then
+        _LP_AT_PROMPT=0
+
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+            __lp_runtime_before
+        fi
+
+        if (( LP_ENABLE_TITLE_COMMAND )); then
+            __lp_print_title_command
+        fi
+    fi
+
+    # If this is when the prompt is being drawn, the command is done,
+    # so mark the next trap. Note these two events could be at the same
+    # time, so no elif is used.
+    if [[ "$BASH_COMMAND" == __lp_set_prompt ]]; then
+        _LP_AT_PROMPT=1
+    fi
+
 }
 
 prompt_tag() {

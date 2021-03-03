@@ -531,6 +531,17 @@ Features
    .. warning::
       This may not work properly on exotic terminals. Please report any issues.
 
+.. attribute:: LP_ENABLE_TITLE_COMMAND
+   :type: bool
+   :value: 1
+
+   Postpend the currently running command to the terminal title while the
+   command is running.
+
+   :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_VCS_ROOT
    :type: bool
    :value: 0

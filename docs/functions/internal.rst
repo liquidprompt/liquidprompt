@@ -155,6 +155,14 @@ Path
 Prompt
 ------
 
+.. function:: __lp_before_command()
+
+   Used only by Bash to hack the DEBUG trap to run functions before the user
+   command executes.
+
+   .. versionchanged:: 2.1
+      Renamed from the Bash version of ``__lp_runtime_before``.
+
 .. function:: __lp_set_prompt()
 
    Setup features that need to be handled outside of the themes, like
@@ -179,8 +187,9 @@ Runtime
 
 .. function:: __lp_runtime_after()
 
-   Hooks into the shell to run directly after the user command returns, to
-   record the current time, and calculate how long the command ran for.
+   Called by :func:`__lp_set_prompt` to run directly after the user command
+   returns, to record the current time and calculate how long the command ran
+   for.
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_runtime_after``.
@@ -208,6 +217,22 @@ Theme
    :func:`lp_theme`.
 
    .. versionadded:: 2.0
+
+Title
+-----
+
+.. function:: __lp_get_last_command_line() -> var:command
+
+   Returns the whole command line most recently submitted by the user.
+
+   .. versionadded:: 2.1
+
+.. function:: __lp_print_title_command()
+
+   Sets the terminal title to the normal set title, postpended with the
+   currently running command.
+
+   .. versionadded:: 2.1
 
 Temperature
 -----------

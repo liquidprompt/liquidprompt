@@ -870,6 +870,8 @@ _lp_path_format() {
     lp_path=
     lp_path_format=
 
+    local ret
+
     local lp_pwd_tilde
     __lp_pwd_tilde
     local display_path=$lp_pwd_tilde
@@ -885,10 +887,12 @@ _lp_path_format() {
 
     if [[ $path_length == 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
         if [[ $path_length > 1 ]]; then
-            lp_path=${display_path##*/}
+            __lp_escape "${display_path##*/}"
+            lp_path=$ret
         else
             # only root or home to show
-            lp_path=$display_path
+            __lp_escape "$display_path"
+            lp_path=$ret
         fi
 
         if [[ $display_path == $vcs_root_directory ]]; then
@@ -935,21 +939,24 @@ _lp_path_format() {
         if [[ $current_path == $vcs_root_directory ]]; then
             __lp_end_path_left_shortening
             # No shortening
-            lp_path+=$current_directory
-            lp_path_format+="${vcs_root_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path+=$ret
+            lp_path_format+="${vcs_root_format}${ret}"
         elif [[ -z $path_to_proccess ]]; then
             __lp_end_path_left_shortening
             # Last directory
-            lp_path+=$current_directory
-            lp_path_format+="${last_directory_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path+=$ret
+            lp_path_format+="${last_directory_format}${ret}"
         elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
             && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
 
             if [[ $LP_PATH_METHOD == "truncate_chars_to_unique_dir" ]] && \
                 __lp_get_unique_directory "$current_path"; then
 
-                lp_path+=$lp_unique_directory
-                lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
+                __lp_escape "$lp_unique_directory"
+                lp_path+=$ret
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
                 # The only way to know if this consecutive directory shortening
@@ -978,8 +985,9 @@ _lp_path_format() {
                     shortened_path_length=$(( shortened_path_length - needed_length ))
 
                     shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
-                    lp_path+=$shortened_path
-                    lp_path_format+="${shortened_directory_format}${shortened_path}"
+                    __lp_escape "$shortened_path"
+                    lp_path+=$ret
+                    lp_path_format+="${shortened_directory_format}${ret}"
 
                     is_shortening=0
                 fi
@@ -987,26 +995,30 @@ _lp_path_format() {
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP < ${#current_directory} )); then
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
-                lp_path+=$shortened_path
-                lp_path_format+="${shortened_directory_format}${shortened_path}"
+                __lp_escape "$shortened_path"
+                lp_path+=$ret
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
-                lp_path+=$shortened_path
-                lp_path_format+="${shortened_directory_format}${shortened_path}"
+                __lp_escape "$shortened_path"
+                lp_path+=$ret
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.
-                lp_path+=$current_directory
-                lp_path_format+="${path_format}${current_directory}"
+                __lp_escape "$current_directory"
+                lp_path+=$ret
+                lp_path_format+="${path_format}${ret}"
             fi
         else
             __lp_end_path_left_shortening
-            lp_path+=$current_directory
-            lp_path_format+="${path_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path+=$ret
+            lp_path_format+="${path_format}${ret}"
         fi
 
         if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]] && (( ! is_shortening )); then

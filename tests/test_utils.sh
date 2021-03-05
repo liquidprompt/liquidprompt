@@ -275,6 +275,17 @@ function test_path_format_from_path_left() {
   LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
   _lp_path_format ''
   assertEquals "no shortening" "/tmp/a/b/c/last" "$lp_path_format"
+
+  PWD=$'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline'
+  LP_PATH_LENGTH=${#PWD}
+  _lp_path_format ''
+  if (( _LP_SHELL_zsh )); then
+    assertEquals "shell escapes" $'/a_fake_\\n_newline/and_%%100_fresh/and_a_real_\n_newline' "$lp_path"
+    assertEquals "shell escapes format" $'/a_fake_\\n_newline/and_%%100_fresh/and_a_real_\n_newline' "$lp_path_format"
+  else
+    assertEquals "shell escapes" $'/a_fake_\\\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path"
+    assertEquals "shell escapes format" $'/a_fake_\\\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path_format"
+  fi
 }
 
 function test_path_format_from_dir_right {

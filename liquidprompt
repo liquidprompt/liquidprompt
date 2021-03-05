@@ -73,8 +73,7 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
     __lp_escape() {
-        local arg="${1//\\/\\\\}"
-        ret="${arg//\%/$_LP_PERCENT}"
+        ret="${1//\%/$_LP_PERCENT}"
     }
 else
     echo "liquidprompt: shell not supported" >&2

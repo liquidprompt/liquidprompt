@@ -34,7 +34,7 @@ version 3](LICENSE).
 * The window's title escape sequence may not work properly on some terminals
   (like `xterm-256`).
 * The analog clock requires a Unicode-aware terminal and at least a
-  sufficiently complete font on your system. The [Symbola](http://users.teilar.gr/~g1951d/)
+  sufficiently complete font on your system. The [Symbola](https://dn-works.com/ufas/)
   font, designed by Georges Douros, is known to work well. On Debian or Ubuntu
   install try the `fonts-symbola` or `ttf-ancient-fonts` package.
 * The "sudo" feature is disabled by default as there is no way to detect

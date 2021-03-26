@@ -54,7 +54,8 @@ if test -n "${BASH_VERSION-}"; then
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
     __lp_escape() {
-        ret="${1//\\/\\\\}"
+        local arg="${1//\\/\\\\}"
+        ret="${arg//\$/\\\$}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
     # Check for recent enough version of zsh.
@@ -2884,7 +2885,6 @@ prompt_on() {
         LP_OLD_PS1="$PS1"
         if (( _LP_SHELL_bash )); then
             LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
-            _LP_OLD_SHOPT="$(shopt -p promptvars)"
         else # zsh
             LP_OLD_PROMPT_COMMAND=""
             _LP_ZSH_PROMPT_THEME=""
@@ -2916,8 +2916,6 @@ prompt_on() {
             declare -g +x PROMPT_COMMAND
         fi
 
-        # Disable parameter/command expansion from PS1
-        shopt -u promptvars
         PROMPT_COMMAND=__lp_set_prompt
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
@@ -2943,7 +2941,6 @@ prompt_on() {
 prompt_off() {
     PS1=$LP_OLD_PS1
     if (( _LP_SHELL_bash )); then
-        eval "$_LP_OLD_SHOPT"
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
@@ -2956,7 +2953,6 @@ prompt_off() {
 prompt_OFF() {
     PS1="$_LP_MARK_SYMBOL "
     if (( _LP_SHELL_bash )); then
-        shopt -u promptvars
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd "$_LP_ZSH_HOOK"

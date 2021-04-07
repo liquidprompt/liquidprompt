@@ -28,8 +28,8 @@ like this:
 
 See :ref:`Templates <templates>` for what each section will look like.
 
-Configuation
-============
+Configuration
+=============
 
 As the default theme, all of the normal :doc:`../config` are respected.
 

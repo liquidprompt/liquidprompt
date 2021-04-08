@@ -53,12 +53,8 @@ __powerline_username_generate() {
 _lp_powerline_theme_directory() {
     # Not all terminals support Powerline special characters in the title
     local title=
-    if [[ -n $_POWERLINE_USERNAME ]]; then
-        title+=${_POWERLINE_USERNAME}
-    fi
-    if [[ -n $_POWERLINE_HOSTNAME ]]; then
-        title+="@${_POWERLINE_HOSTNAME}"
-    fi
+    title+=${lp_username_raw-}
+    title+="${lp_hostname_raw+@}${lp_hostname_raw-}"
 
     local lp_path
     __powerline_path_generate
@@ -66,7 +62,8 @@ _lp_powerline_theme_directory() {
     [[ -n $title ]] && title+=":"
     title+="${lp_path}"
 
-    _lp_raw_title "$title"
+    # Include a trailing space to pad for the title command.
+    _lp_raw_title "$title "
 }
 
 _lp_powerline_theme_prompt() {

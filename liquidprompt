@@ -40,7 +40,6 @@ if test -n "${BASH_VERSION-}"; then
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
-    _LP_BACKSLASH='\\' # must be escaped on bash
 
     # Sed expression using extended regexp to match terminal
     # escape sequences with their wrappers
@@ -68,12 +67,11 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
-    _LP_BACKSLASH="\\"
 
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
     __lp_escape() {
-        ret="${1//\%/$_LP_PERCENT}"
+        ret="${1//\%/%%}"
     }
 else
     echo "liquidprompt: shell not supported" >&2
@@ -502,8 +500,7 @@ lp_activate() {
     if _lp_multiplexer; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         LP_TITLE_OPEN=$'\Ek'
-        # "\e\" but on bash \ must be escaped
-        LP_TITLE_CLOSE=$'\E'"$_LP_BACKSLASH"
+        LP_TITLE_CLOSE=$'\E\\'
     else
         LP_TITLE_OPEN=$'\E]0;'
         LP_TITLE_CLOSE=$'\a'
@@ -891,18 +888,18 @@ _lp_path_format() {
 
     if [[ $path_length == 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
         if [[ $path_length > 1 ]]; then
-            __lp_escape "${display_path##*/}"
-            lp_path=$ret
+            lp_path=${display_path##*/}
         else
             # only root or home to show
-            __lp_escape "$display_path"
-            lp_path=$ret
+            lp_path=$display_path
         fi
 
+        __lp_escape "$lp_path"
+
         if [[ $display_path == $vcs_root_directory ]]; then
-            lp_path_format="${vcs_root_format}${lp_path}"
+            lp_path_format="${vcs_root_format}${ret}"
         else
-            lp_path_format="${last_directory_format}${lp_path}"
+            lp_path_format="${last_directory_format}${ret}"
         fi
         return
     else
@@ -943,14 +940,14 @@ _lp_path_format() {
         if [[ $current_path == $vcs_root_directory ]]; then
             __lp_end_path_left_shortening
             # No shortening
+            lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path+=$ret
             lp_path_format+="${vcs_root_format}${ret}"
         elif [[ -z $path_to_proccess ]]; then
             __lp_end_path_left_shortening
             # Last directory
+            lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path+=$ret
             lp_path_format+="${last_directory_format}${ret}"
         elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
             && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
@@ -958,8 +955,8 @@ _lp_path_format() {
             if [[ $LP_PATH_METHOD == "truncate_chars_to_unique_dir" ]] && \
                 __lp_get_unique_directory "$current_path"; then
 
+                lp_path+=$lp_unique_directory
                 __lp_escape "$lp_unique_directory"
-                lp_path+=$ret
                 lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
@@ -989,8 +986,8 @@ _lp_path_format() {
                     shortened_path_length=$(( shortened_path_length - needed_length ))
 
                     shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
+                    lp_path+=$shortened_path
                     __lp_escape "$shortened_path"
-                    lp_path+=$ret
                     lp_path_format+="${shortened_directory_format}${ret}"
 
                     is_shortening=0
@@ -999,29 +996,29 @@ _lp_path_format() {
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP < ${#current_directory} )); then
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
+                lp_path+=$shortened_path
                 __lp_escape "$shortened_path"
-                lp_path+=$ret
                 lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
+                lp_path+=$shortened_path
                 __lp_escape "$shortened_path"
-                lp_path+=$ret
                 lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.
+                lp_path+=$current_directory
                 __lp_escape "$current_directory"
-                lp_path+=$ret
                 lp_path_format+="${path_format}${ret}"
             fi
         else
             __lp_end_path_left_shortening
+            lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path+=$ret
             lp_path_format+="${path_format}${ret}"
         fi
 
@@ -1206,22 +1203,20 @@ _lp_user() {
 _lp_username() {
     if (( LP_USER_ALWAYS == -1 )); then
         # No username ever
-        lp_username=''
         return 2
     elif (( LP_USER_ALWAYS )) || ! _lp_user; then
-        lp_username=${USER:-${USERNAME:-${LOGNAME-}}}
+        lp_username_raw=${USER:-${USERNAME:-${LOGNAME-}}}
 
-        if [[ -z $lp_username ]]; then
-            lp_username=$(id -nu 2>/dev/null)
+        if [[ -z $lp_username_raw ]]; then
+            lp_username_raw=$(id -nu 2>/dev/null)
         fi
 
         local ret
-        __lp_escape "$lp_username"
+        __lp_escape "$lp_username_raw"
         lp_username=$ret
 
         return 0
     else
-        lp_username=''
         return 1
     fi
 }
@@ -1259,15 +1254,15 @@ _lp_hostname() {
             return 1
         fi
 
-        lp_hostname=${HOSTNAME:-${HOST-}}
+        lp_hostname_raw=${HOSTNAME:-${HOST-}}
 
         # Truncate to the first subdomain
         if ! (( LP_ENABLE_FQDN )); then
-            lp_hostname=${lp_hostname%%.*}
+            lp_hostname_raw=${lp_hostname_raw%%.*}
         fi
 
         local ret
-        __lp_escape "$lp_hostname"
+        __lp_escape "$lp_hostname_raw"
         lp_hostname=$ret
     else
         return 2
@@ -2709,7 +2704,7 @@ _lp_default_theme_directory() {
         fi
     fi
 
-    local lp_path lp_path_format
+    local lp_path_format
     _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
 
     LP_PWD="${lp_path_format}${NO_COL}"
@@ -2830,8 +2825,8 @@ _lp_default_theme_prompt_template() {
         # add return code and prompt mark
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
-        # Get the current prompt on the fly and make it a title
-        _lp_formatted_title "$PS1"
+        # Get the core sections without prompt escapes and make them into a title.
+        _lp_formatted_title "${LP_PS1_PREFIX}${LP_MARK_BRACKET_OPEN}${lp_username_raw-}${lp_hostname_raw+@}${lp_hostname_raw-}${LP_MARK_PERM}${lp_path-}${LP_MARK_BRACKET_CLOSE}${LP_MARK_PREFIX}${lp_smart_mark} ${LP_PS1_POSTFIX}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C

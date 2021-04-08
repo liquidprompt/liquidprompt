@@ -249,12 +249,15 @@ OS
 
    .. versionadded:: 2.0
 
-.. function:: _lp_hostname() -> var:lp_hostname
+.. function:: _lp_hostname() -> var:lp_hostname, var:lp_hostname_raw
 
    Returns ``true`` if a hostname should be displayed. Returns ``1`` if the
    connection type is local and :attr:`LP_HOSTNAME_ALWAYS` is not ``1``.
 
-   Returns the hostname string.
+   Returns the hostname string in *lp_hostname*.
+
+   Returns the hostname string not passed through :func:`__lp_escape` in
+   *lp_hostname_raw*.
 
    Can be disabled by :attr:`LP_HOSTNAME_ALWAYS` set to ``-1``.
 
@@ -262,6 +265,7 @@ OS
 
    .. versionchanged:: 2.1
       Returns the actual hostname instead of a shell prompt escape code.
+      Added *lp_hostname_raw* return value.
       No longer sets :attr:`LP_HOST_SYMBOL` to the same return string.
 
 .. function:: _lp_sudo_active()
@@ -284,12 +288,15 @@ OS
 
    .. versionadded:: 2.0
 
-.. function:: _lp_username() -> var:lp_username
+.. function:: _lp_username() -> var:lp_username, var:lp_username_raw
 
    Returns ``true`` if a username should be displayed. Returns ``1`` if the
    user is the login user and :attr:`LP_USER_ALWAYS` is not ``1``.
 
-   Returns the current user ID.
+   Returns the current user ID in *lp_username*.
+
+   Returns the current user ID not passed through :func:`__lp_escape` in
+   *lp_username_raw*.
 
    Can be disabled by :attr:`LP_USER_ALWAYS` set to ``-1``.
 
@@ -297,6 +304,7 @@ OS
 
    .. versionchanged:: 2.1
       Returns the actual username instead of a shell prompt escape code.
+      Added *lp_username_raw* return value.
 
 Path
 ----
@@ -307,9 +315,10 @@ Path
    [separator_format]) -> var:lp_path, var:lp_path_format
 
    Returns a shortened and formatted string indicating the current working
-   directory path. *lp_path* contains the path without any formatting or custom
-   separators, intended for use in the terminal title. *lp_path_format* contains
-   the complete formatted path, to be inserted into the prompt.
+   directory path. *lp_path* contains the path without any formatting, custom
+   separators, or shell escapes, intended for use in the terminal title.
+   *lp_path_format* contains the complete formatted path, to be inserted into
+   the prompt.
 
    The behavior of the shortening is controlled by
    :attr:`LP_ENABLE_SHORTEN_PATH`, :attr:`LP_PATH_METHOD`,
@@ -338,6 +347,9 @@ Path
    a directory, and is formatted as such.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.1
+      Changed *lp_path* to no longer contain shell escapes.
 
 Runtime
 -------

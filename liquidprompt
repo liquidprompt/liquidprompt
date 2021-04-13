@@ -298,7 +298,8 @@ __lp_source_config() {
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
 
-    if [[ -z "${LP_COLORMAP-}" ]]; then
+    LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
+    if [[ ${#LP_COLORMAP[@]} == 0 ]]; then
         LP_COLORMAP=(
             ""               # 0
             "$GREEN"         # 1

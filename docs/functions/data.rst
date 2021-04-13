@@ -60,7 +60,7 @@ Development Environment
 
 .. function:: _lp_python_env() -> var:lp_python_env
 
-   Retuns ``true`` if a Python or Conda environment is detected. Returns the
+   Returns ``true`` if a Python or Conda environment is detected. Returns the
    virtual environment name.
 
    If the environment name contains a forward slash (``/``), only the substring

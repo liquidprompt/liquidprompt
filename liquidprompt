@@ -215,6 +215,9 @@ __lp_source_config() {
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
     LP_ENABLE_RUNTIME_BELL=${LP_ENABLE_RUNTIME_BELL:-0}
     LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
+    LP_ENABLE_RUBY_VENV=${LP_ENABLE_RUBY_VENV:-1}
+    LP_RUBY_RVM_PROMPT_OPTIONS=( ${LP_RUBY_RVM_PROMPT_OPTIONS[@]+"${LP_RUBY_RVM_PROMPT_OPTIONS[@]}"} )
+    [[ ${#LP_RUBY_RVM_PROMPT_OPTIONS[@]} == 0 ]] && LP_RUBY_RVM_PROMPT_OPTIONS=(i v g s)
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_AWS_PROFILE=${LP_ENABLE_AWS_PROFILE:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -496,6 +499,21 @@ lp_activate() {
     _lp_require_tool KUBECONTEXT kubectl
 
     unset -f _lp_require_tool
+
+    # LP_ENABLE_RUBY_VENV depends either from rvm or rbenv. Thus we cannot
+    # directly use _lp_require_tool for it.
+    # Also, to avoid to check twice which is the current ruby virtual env
+    # program in use, we set here an internal variable holding its name if we
+    # detect one of them.
+    if (( LP_ENABLE_RUBY_VENV )) ; then
+        if command -v rvm-prompt >/dev/null ; then
+            _LP_RUBY_VENV_PROGRAM=rvm
+        elif command -v rbenv >/dev/null ; then
+            _LP_RUBY_VENV_PROGRAM=rbenv
+        else
+            LP_ENABLE_RUBY_VENV=0
+        fi
+    fi
 
     if (( LP_ENABLE_DETACHED_SESSIONS )); then
         command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
@@ -1131,6 +1149,30 @@ _lp_python_env_color() {
     _lp_python_env || return "$?"
 
     lp_python_env_color="[${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}]"
+}
+
+_lp_ruby_env() {
+    (( LP_ENABLE_RUBY_VENV )) || return 2
+
+    local ret
+
+    if [[ "$_LP_RUBY_VENV_PROGRAM" = "rvm" ]] ; then
+        __lp_escape "$(rvm-prompt "${LP_RUBY_RVM_PROMPT_OPTIONS[@]}")"
+        lp_ruby_env=$ret
+    elif [[ "$_LP_RUBY_VENV_PROGRAM" = "rbenv" ]] ; then
+        local rbenv_ver="$(rbenv version)"
+        # Only first word is necessary
+        __lp_escape "${rbenv_ver%% (set*}"
+        lp_ruby_env=$ret
+    else
+        return 1
+    fi
+}
+
+_lp_ruby_env_color() {
+    _lp_ruby_env || return "$?"
+
+    lp_ruby_env_color="[${LP_COLOR_VIRTUALENV}${lp_ruby_env}${NO_COL}]"
 }
 
 _lp_software_collections() {
@@ -2745,6 +2787,12 @@ _lp_default_theme_prompt_data() {
         LP_VENV=
     fi
 
+    if _lp_ruby_env_color; then
+        LP_RUBY_VENV=" $lp_ruby_env_color"
+    else
+        LP_RUBY_VENV=
+    fi
+
     if _lp_kubernetes_context_color; then
         LP_KUBECONTEXT=" $lp_kubernetes_context_color"
     else
@@ -2796,7 +2844,7 @@ _lp_default_theme_prompt_template() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_KUBECONTEXT}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_RUBY_VENV}${LP_KUBECONTEXT}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

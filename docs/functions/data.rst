@@ -70,6 +70,18 @@ Development Environment
 
    .. versionadded:: 2.0
 
+.. function:: _lp_ruby_env() -> var:lp_ruby_env
+
+   Returns ``true`` if a RVM or RBENV ruby environment is detected. Returns the
+   virtual environment name.
+
+   In the case of a RVM environment, the label displayed can be customized
+   with the :attr:`LP_RUBY_RVM_PROMPT_OPTIONS`.
+
+   Can be disabled by :attr:`LP_ENABLE_RUBY_VENV`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_software_collections() -> var:lp_software_collections
 
    Returns ``true`` if a `Red Hat Software Collection`_ is enabled. Returns the

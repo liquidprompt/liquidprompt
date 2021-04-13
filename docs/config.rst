@@ -537,6 +537,18 @@ Features
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
+.. attribute:: LP_ENABLE_RUBY_VENV
+   :type: bool
+   :value: 1
+
+   Display the currently activated RVM_ or RBENV_ virtual environment.
+
+   See also: :attr:`LP_RUBY_RVM_PROMPT_OPTIONS` and
+   :attr:`LP_COLOR_VIRTUALENV`.
+
+   .. _RVM: https://rvm.io/
+   .. _RBENV: https://github.com/rbenv/rbenv
+
 .. attribute:: LP_HOSTNAME_ALWAYS
    :type: int
    :value: 0
@@ -555,6 +567,17 @@ Features
 
    Display the actual values of load and batteries along with their
    corresponding marks. Disable to only print the colored marks.
+
+.. attribute:: LP_RUBY_RVM_PROMPT_OPTIONS
+   :type: array<string>
+   :value: (i v g s)
+
+   An array of single letter switches to customize the `RVM prompt`_ output.
+
+   Will only have an effect if :attr:`LP_ENABLE_RUBY_VENV` is enabled and you
+   are using RVM (i.e. no effect with RBENV).
+
+   .. _`RVM prompt`: https://rvm.io/workflow/prompt
 
 .. attribute:: LP_TIME_ANALOG
    :type: bool

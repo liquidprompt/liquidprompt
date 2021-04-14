@@ -1522,10 +1522,10 @@ _lp_vcs_details_color() {
     if _lp_vcs_branch; then
         branch="$lp_vcs_branch"
 
-        if _lp_vcs_bookmark; then
+        if _lp_vcs_bookmark > /dev/null; then
             branch+=": $lp_vcs_bookmark"
         fi
-    elif _lp_vcs_bookmark; then
+    elif _lp_vcs_bookmark > /dev/null; then
         branch="$lp_vcs_bookmark"
     elif _lp_vcs_tag; then
         branch="tag: $lp_vcs_tag"

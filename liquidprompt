@@ -1163,7 +1163,7 @@ _lp_ruby_env() {
     elif [[ "$_LP_RUBY_VENV_PROGRAM" = "rbenv" ]] ; then
         local rbenv_ver="$(rbenv version)"
         # Only first word is necessary
-        __lp_escape "${rbenv_ver%% (set*}"
+        __lp_escape "${rbenv_ver%%" (set"*}"
         lp_ruby_env=$ret
     else
         return 1

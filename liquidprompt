@@ -713,7 +713,7 @@ __lp_floating_scale() {
 __lp_pwd_tilde() {  # [path]
     # Needs to be in a variable, as different versions of Bash treat '~' in a
     # substitution differently
-    local _path=${1:-$PWD} tilde="~"
+    local _path="${1:-$PWD}" tilde="~"
     lp_pwd_tilde="${_path/#$HOME/$tilde}"
 }
 
@@ -841,7 +841,7 @@ __lp_theme_zsh_complete() {
 ##########################
 
 __lp_get_unique_directory() {
-    local directory=${1##*/} root=${1%/*}
+    local directory="${1##*/}" root="${1%/*}"
     local -a matching
     local -i i
     for (( i=1; i < ${#directory}; i++ )); do
@@ -880,12 +880,12 @@ __lp_end_path_left_shortening() {
 #   truncate_chars_to_unique_dir
 #   truncate_to_last_dir
 _lp_path_format() {
-    local path_format=${1-$LP_COLOR_PATH}
-    local last_directory_format=${2:-$path_format}
-    local vcs_root_format=${3:-$last_directory_format}
-    local shortened_directory_format=${4:-$path_format}
-    local separator=${5-"/"}
-    local separator_format=${6-}
+    local path_format="${1-$LP_COLOR_PATH}"
+    local last_directory_format="${2:-$path_format}"
+    local vcs_root_format="${3:-$last_directory_format}"
+    local shortened_directory_format="${4:-$path_format}"
+    local separator="${5-"/"}"
+    local separator_format="${6-}"
 
     lp_path=
     lp_path_format=
@@ -894,9 +894,9 @@ _lp_path_format() {
 
     local lp_pwd_tilde
     __lp_pwd_tilde
-    local display_path=$lp_pwd_tilde
+    local display_path="$lp_pwd_tilde"
 
-    local -i path_length=${#display_path}
+    local -i path_length="${#display_path}"
 
     local lp_vcs_root lp_vcs_type
     local vcs_root_directory=
@@ -937,7 +937,7 @@ _lp_path_format() {
     local path_to_proccess="${display_path}/" current_path="" current_directory="" lp_unique_directory
 
     local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0 needed_length
-    local -i shortened_path_length=$path_length is_shortening=0 unshortened_path_length
+    local -i shortened_path_length="$path_length" is_shortening=0 unshortened_path_length
     local unshortened_path_shorten_string unshortened_path_format_shorten_string shortened_path
 
     while [[ -n $path_to_proccess ]]; do

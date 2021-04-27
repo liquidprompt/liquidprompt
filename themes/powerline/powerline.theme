@@ -228,7 +228,7 @@ _lp_powerline_full_theme_prompt() {
 }
 
 __powerline_section() {  # string, (color array)
-    local section_arrow lp_terminal_format string=${1-}
+    local section_arrow lp_terminal_format string="${1-}"
     shift
 
     [[ -z $string ]] && return 1
@@ -241,7 +241,7 @@ __powerline_section() {  # string, (color array)
 
 # Same as __powerline_section(), but it resets formatting after the input string
 __powerline_formatted_section() {
-    local section_arrow lp_terminal_format string=${1-}
+    local section_arrow lp_terminal_format string="${1-}"
     shift
 
     [[ -z $string ]] && return 1
@@ -284,19 +284,19 @@ __powerline_path_generate() {
     local lp_terminal_format sub_section_format _lp_last_af_color _lp_last_ab_color
 
     lp_terminal_format "${POWERLINE_PATH_COLOR[@]}"
-    local path_format=$lp_terminal_format
+    local path_format="$lp_terminal_format"
 
     __powerline_sub_section_format "${POWERLINE_PATH_SEPARATOR_COLOR[@]}"
-    local separator_format=$sub_section_format
+    local separator_format="$sub_section_format"
 
     lp_terminal_format "${POWERLINE_PATH_SHORTENED_COLOR[@]}"
-    local shortened_format=$lp_terminal_format
+    local shortened_format="$lp_terminal_format"
 
     lp_terminal_format "${POWERLINE_PATH_VCS_COLOR[@]}"
-    local vcs_format=$lp_terminal_format
+    local vcs_format="$lp_terminal_format"
 
     lp_terminal_format "${POWERLINE_PATH_LAST_COLOR[@]}"
-    local last_dir_format=$lp_terminal_format
+    local last_dir_format="$lp_terminal_format"
 
     local lp_path_format
     _lp_path_format "$path_format" "$last_dir_format" "$vcs_format" "$shortened_format" \
@@ -321,7 +321,7 @@ __powerline_vcs_section() {
         __powerline_section_arrow "${POWERLINE_VCS_CLEAN_COLOR[@]}"
         lp_terminal_format "${POWERLINE_VCS_CLEAN_COLOR[@]}"
 
-        local lp_vcs_details_color NO_COL=$lp_terminal_format
+        local lp_vcs_details_color NO_COL="$lp_terminal_format"
         _lp_vcs_details_color
 
         powerline_sections+="${section_arrow}${lp_terminal_format}${POWERLINE_SPACER}${lp_vcs_details_color}${POWERLINE_SPACER}"

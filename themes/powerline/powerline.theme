@@ -262,7 +262,7 @@ __powerline_end_terminator() {
 }
 
 __powerline_section_arrow() {  # _, background_color, _, _, _, fallback_background_color
-    if [[ -n ${first_section+x} ]]; then
+    if [[ -n ${first_section-} ]]; then
         local lp_terminal_format
         lp_terminal_format -3 "${2-}" 0 0 -1 "${6-}"
         section_arrow="${lp_terminal_format}${POWERLINE_HARD_DIVIDER}"

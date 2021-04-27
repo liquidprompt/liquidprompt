@@ -360,6 +360,13 @@ _______
 
    The marker string used to indicate the following string is a chroot.
 
+.. attribute:: POWERLINE_KUBECONTEXT_MARKER
+   :type: string
+   :value: $LP_MARK_KUBECONTEXT
+
+   The marker string used to indicate the following string is the name of a
+   kubectl context.
+
 .. attribute:: POWERLINE_PROXY_MARKER
    :type: string
    :value: "proxy: "
@@ -393,6 +400,12 @@ ______
    :value: $POWERLINE_NEUTRAL_COLOR
 
    Color for the directory stack section.
+
+.. attribute:: POWERLINE_KUBECONTEXT_COLOR
+   :type: array<int>
+   :value: (231 74 0 0 7 4)
+
+   Color for the Kubernetes context section.
 
 .. attribute:: POWERLINE_LOAD_COLOR
    :type: array<int>

@@ -91,6 +91,40 @@ function test_floating_scale {
   assertEquals "scaling 10" '123' "$ret"
 }
 
+function test_get_last_command_line() {
+  if (( _LP_SHELL_zsh )); then
+    # This is simpler, and only shows one test as skipped instead of per assert.
+    startSkipping
+    assertTrue ''
+    endSkipping
+    return
+  fi
+
+  builtin() {
+    printf '%s\n' "$history_line"
+  }
+
+  local command
+
+  history_line=' 100  command'
+  __lp_get_last_command_line
+  assertEquals "normal history" 'command' "$command"
+
+  history_line='1000  a command'
+  __lp_get_last_command_line
+  assertEquals "no leading space" 'a command' "$command"
+
+  history_line='    0  a different command'
+  __lp_get_last_command_line
+  assertEquals "single digit index" 'a different command' "$command"
+
+  history_line='  119* a modified command'
+  __lp_get_last_command_line
+  assertEquals "modified history" 'a modified command' "$command"
+
+  unset -f builtin
+}
+
 function test_pwd_tilde {
   typeset HOME="/home/user"
   typeset PWD="/a/test/path"
@@ -275,6 +309,17 @@ function test_path_format_from_path_left() {
   LP_PATH_LENGTH=$(( ${#PWD} - 1 ))
   _lp_path_format ''
   assertEquals "no shortening" "/tmp/a/b/c/last" "$lp_path_format"
+
+  PWD=$'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline'
+  LP_PATH_LENGTH=${#PWD}
+  _lp_path_format ''
+  if (( _LP_SHELL_zsh )); then
+    assertEquals "shell escapes" $'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path"
+    assertEquals "shell escapes format" $'/a_fake_\\n_newline/and_%%100_fresh/and_a_real_\n_newline' "$lp_path_format"
+  else
+    assertEquals "shell escapes" $'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path"
+    assertEquals "shell escapes format" $'/a_fake_\\\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path_format"
+  fi
 }
 
 function test_path_format_from_dir_right {

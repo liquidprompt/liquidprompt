@@ -36,15 +36,10 @@ if test -n "${BASH_VERSION-}"; then
     _LP_OPEN_ESC="\["
     _LP_CLOSE_ESC="\]"
 
-    _LP_USER_SYMBOL="\u"
-    _LP_HOST_SYMBOL="\h"
-    _LP_FQDN_SYMBOL="\H"
-    _LP_TIME_SYMBOL="\t"
-    _LP_MARK_SYMBOL='\$'
+    _LP_MARK_SYMBOL='$'
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
-    _LP_BACKSLASH='\\' # must be escaped on bash
 
     # Sed expression using extended regexp to match terminal
     # escape sequences with their wrappers
@@ -68,21 +63,15 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_OPEN_ESC="%{"
     _LP_CLOSE_ESC="%}"
 
-    _LP_USER_SYMBOL="%n"
-    _LP_HOST_SYMBOL="%m"
-    _LP_FQDN_SYMBOL="%M"
-    _LP_TIME_SYMBOL="%*"
-    _LP_MARK_SYMBOL='%(!.#.%%)'
+    _LP_MARK_SYMBOL='%%'
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
-    _LP_BACKSLASH="\\"
 
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
     __lp_escape() {
-        local arg="${1//\\/\\\\}"
-        ret="${arg//\%/$_LP_PERCENT}"
+        ret="${1//\%/%%}"
     }
 else
     echo "liquidprompt: shell not supported" >&2
@@ -177,6 +166,7 @@ __lp_source_config() {
 
 
     # Default values (globals)
+    LP_TIME_FORMAT=${LP_TIME_FORMAT:-"%H:%M:%S"}
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
     LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
@@ -223,6 +213,7 @@ __lp_source_config() {
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
+    LP_ENABLE_TITLE_COMMAND=${LP_ENABLE_TITLE_COMMAND:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
@@ -403,10 +394,10 @@ __lp_source_config() {
 # Initialize features based on the user config.
 lp_activate() {
     if (( _LP_SHELL_bash )); then
-        # Disable the DEBUG trap used by the RUNTIME feature
+        # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
         # (in case we are reloading LP in the same shell after disabling
         # the feature in .liquidpromptrc)
-        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} )) && trap - DEBUG
+        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )) && trap - DEBUG
 
         complete -F __lp_theme_bash_complete lp_theme
     else # zsh
@@ -418,7 +409,7 @@ lp_activate() {
         {
             add-zsh-hook -d precmd  __lp_set_prompt
             add-zsh-hook -d preexec __lp_runtime_before
-            add-zsh-hook -d precmd  __lp_runtime_after
+            add-zsh-hook -d preexec __lp_print_title_command
         } >/dev/null
 
         # Enable the autocomplete if the autocomplete system is initialized.
@@ -528,14 +519,16 @@ lp_activate() {
     if _lp_multiplexer; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         LP_TITLE_OPEN=$'\Ek'
-        # "\e\" but on bash \ must be escaped
-        LP_TITLE_CLOSE=$'\E'"$_LP_BACKSLASH"
+        LP_TITLE_CLOSE=$'\E\\'
     else
         LP_TITLE_OPEN=$'\E]0;'
         LP_TITLE_CLOSE=$'\a'
     fi
 
     [[ "_${TERM-}" == _linux* ]] && LP_ENABLE_TITLE=0
+
+    # Can not show title command if the title feature is disabled.
+    (( LP_ENABLE_TITLE )) || LP_ENABLE_TITLE_COMMAND=0
 
     # update_terminal_cwd is a shell function available on MacOS X Lion that
     # will update an icon of the directory displayed in the title of the terminal
@@ -576,6 +569,8 @@ lp_activate() {
             LP_DISABLED_VCS_PATHS=("/")
         fi
 
+        LP_MARK_DEFAULT='#'
+
         LP_COLOR_MARK=$LP_COLOR_MARK_ROOT
         LP_COLOR_PATH=$LP_COLOR_PATH_ROOT
         LP_COLOR_USER=$LP_COLOR_USER_ROOT
@@ -587,16 +582,16 @@ lp_activate() {
 
     _LP_RUNTIME_LAST_SECONDS=$SECONDS
 
-    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL)); then
-        if (( _LP_SHELL_zsh )); then
-            add-zsh-hook preexec __lp_runtime_before
-            add-zsh-hook precmd  __lp_runtime_after
-        else
+    if (( _LP_SHELL_zsh )); then
+        (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )) && add-zsh-hook preexec __lp_runtime_before
+        (( LP_ENABLE_TITLE_COMMAND )) && add-zsh-hook preexec __lp_print_title_command
+    else
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
             _LP_AT_PROMPT=0
-            # __lp_runtime_before gets called just before bash executes a command,
+            # __lp_before_command gets called just before bash executes a command,
             # including $PROMPT_COMMAND
             # Pass $_ to this call, because it sets $_ to what it already was
-            trap '__lp_runtime_before "$_"' DEBUG
+            trap '__lp_before_command "$_"' DEBUG
         fi
     fi
 
@@ -895,6 +890,8 @@ _lp_path_format() {
     lp_path=
     lp_path_format=
 
+    local ret
+
     local lp_pwd_tilde
     __lp_pwd_tilde
     local display_path=$lp_pwd_tilde
@@ -916,10 +913,12 @@ _lp_path_format() {
             lp_path=$display_path
         fi
 
+        __lp_escape "$lp_path"
+
         if [[ $display_path == $vcs_root_directory ]]; then
-            lp_path_format="${vcs_root_format}${lp_path}"
+            lp_path_format="${vcs_root_format}${ret}"
         else
-            lp_path_format="${last_directory_format}${lp_path}"
+            lp_path_format="${last_directory_format}${ret}"
         fi
         return
     else
@@ -961,12 +960,14 @@ _lp_path_format() {
             __lp_end_path_left_shortening
             # No shortening
             lp_path+=$current_directory
-            lp_path_format+="${vcs_root_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path_format+="${vcs_root_format}${ret}"
         elif [[ -z $path_to_proccess ]]; then
             __lp_end_path_left_shortening
             # Last directory
             lp_path+=$current_directory
-            lp_path_format+="${last_directory_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path_format+="${last_directory_format}${ret}"
         elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
             && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
 
@@ -974,7 +975,8 @@ _lp_path_format() {
                 __lp_get_unique_directory "$current_path"; then
 
                 lp_path+=$lp_unique_directory
-                lp_path_format+="${shortened_directory_format}${lp_unique_directory}"
+                __lp_escape "$lp_unique_directory"
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
                 # The only way to know if this consecutive directory shortening
@@ -1004,7 +1006,8 @@ _lp_path_format() {
 
                     shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
                     lp_path+=$shortened_path
-                    lp_path_format+="${shortened_directory_format}${shortened_path}"
+                    __lp_escape "$shortened_path"
+                    lp_path_format+="${shortened_directory_format}${ret}"
 
                     is_shortening=0
                 fi
@@ -1013,25 +1016,29 @@ _lp_path_format() {
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
                 lp_path+=$shortened_path
-                lp_path_format+="${shortened_directory_format}${shortened_path}"
+                __lp_escape "$shortened_path"
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
 
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
                 lp_path+=$shortened_path
-                lp_path_format+="${shortened_directory_format}${shortened_path}"
+                __lp_escape "$shortened_path"
+                lp_path_format+="${shortened_directory_format}${ret}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.
                 lp_path+=$current_directory
-                lp_path_format+="${path_format}${current_directory}"
+                __lp_escape "$current_directory"
+                lp_path_format+="${path_format}${ret}"
             fi
         else
             __lp_end_path_left_shortening
             lp_path+=$current_directory
-            lp_path_format+="${path_format}${current_directory}"
+            __lp_escape "$current_directory"
+            lp_path_format+="${path_format}${ret}"
         fi
 
         if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]] && (( ! is_shortening )); then
@@ -1239,13 +1246,20 @@ _lp_user() {
 _lp_username() {
     if (( LP_USER_ALWAYS == -1 )); then
         # No username ever
-        lp_username=''
         return 2
     elif (( LP_USER_ALWAYS )) || ! _lp_user; then
-        lp_username=${_LP_USER_SYMBOL}
+        lp_username_raw=${USER:-${USERNAME:-${LOGNAME-}}}
+
+        if [[ -z $lp_username_raw ]]; then
+            lp_username_raw=$(id -nu 2>/dev/null)
+        fi
+
+        local ret
+        __lp_escape "$lp_username_raw"
+        lp_username=$ret
+
         return 0
     else
-        lp_username=''
         return 1
     fi
 }
@@ -1277,21 +1291,22 @@ _lp_sudo_active_color() {
 _lp_hostname() {
     # Only process hostname elements if we haven't turned them off
     if (( LP_HOSTNAME_ALWAYS != -1 )); then
-
-        # Which host symbol should we use?
-        if (( LP_ENABLE_FQDN )); then
-            LP_HOST_SYMBOL="${_LP_FQDN_SYMBOL}"
-        else
-            LP_HOST_SYMBOL="${_LP_HOST_SYMBOL}"
-        fi
-
-        lp_hostname=${LP_HOST_SYMBOL}
-
         _lp_connection
         if [[ $lp_connection == lcl ]] && ! (( LP_HOSTNAME_ALWAYS )); then
             # no hostname if local
             return 1
         fi
+
+        lp_hostname_raw=${HOSTNAME:-${HOST-}}
+
+        # Truncate to the first subdomain
+        if ! (( LP_ENABLE_FQDN )); then
+            lp_hostname_raw=${lp_hostname_raw%%.*}
+        fi
+
+        local ret
+        __lp_escape "$lp_hostname_raw"
+        lp_hostname=$ret
     else
         return 2
     fi
@@ -2402,29 +2417,10 @@ _lp_runtime_format() {
     fi
 }
 
-if (( _LP_SHELL_zsh )); then
-    __lp_runtime_before() {
-      _LP_RUNTIME_LAST_SECONDS=$SECONDS
-    }
-else
-    __lp_runtime_before() {
-        # For debugging
-        #echo "XXX $BASH_COMMAND"
-
-        # If this is the first time after the user submitted the command,
-        # record the time
-        if (( _LP_AT_PROMPT )); then
-            _LP_RUNTIME_SECONDS=-1 _LP_RUNTIME_LAST_SECONDS=$SECONDS _LP_AT_PROMPT=0
-        fi
-        # If this is when the prompt is being drawn, the command is done,
-        # so calculate the time. Note these two events could be at the same
-        # time, so no elif is used
-        if [[ "$BASH_COMMAND" == "${PROMPT_COMMAND-}" ]]; then
-            _LP_AT_PROMPT=1
-            __lp_runtime_after
-        fi
-    }
-fi
+__lp_runtime_before() {
+    _LP_RUNTIME_LAST_SECONDS=$SECONDS
+    _LP_RUNTIME_SECONDS=-1
+}
 
 # Compute number of seconds since the command was started
 __lp_runtime_after() {
@@ -2613,6 +2609,29 @@ lp_title() {
     fi
 }
 
+if (( _LP_SHELL_zsh )); then
+    __lp_get_last_command_line() {
+        command=$history[$HISTCMD]
+    }
+else
+    __lp_get_last_command_line() {
+        command=$(HISTTIMEFORMAT= builtin history 1 2>/dev/null)
+        command=${command#*[[:digit:]][* ] }
+
+        # Fallback measure if something goes wrong.
+        if [[ -z $command ]]; then
+            command=$BASH_COMMAND
+        fi
+    }
+fi
+
+__lp_print_title_command() {
+    local command
+    __lp_get_last_command_line
+
+    printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL+"$SHELL \$ "}}}${command}${LP_TITLE_CLOSE}"
+}
+
 ###################
 # CURRENT TIME    #
 ###################
@@ -2659,13 +2678,15 @@ _lp_analog_time_color() {
 _lp_time() {
     (( LP_ENABLE_TIME && ! LP_TIME_ANALOG )) || return 2
 
-    lp_time=${_LP_TIME_SYMBOL}
+    local ret
+    __lp_escape "$(date "+${LP_TIME_FORMAT}")"
+    lp_time=$ret
 }
 
 _lp_time_color() {
     _lp_time || return "$?"
 
-    lp_time_color="${LP_COLOR_TIME}${_LP_TIME_SYMBOL}${NO_COL}"
+    lp_time_color="${LP_COLOR_TIME}${lp_time}${NO_COL}"
 }
 
 #################
@@ -2711,12 +2732,6 @@ _lp_default_theme_activate() {
 
     _lp_terminal_device
     LP_TTYN=$lp_terminal_device
-
-    if _lp_time_color; then
-        LP_TIME="${lp_time_color} "
-    else
-        LP_TIME=
-    fi
 }
 
 _lp_default_theme_directory() {
@@ -2732,7 +2747,7 @@ _lp_default_theme_directory() {
         fi
     fi
 
-    local lp_path lp_path_format
+    local lp_path_format
     _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
 
     LP_PWD="${lp_path_format}${NO_COL}"
@@ -2761,8 +2776,12 @@ _lp_default_theme_prompt_data() {
         LP_BATT=
     fi
 
-    if _lp_analog_time_color; then
+    if _lp_time_color; then
+        LP_TIME="$lp_time_color "
+    elif _lp_analog_time_color; then
         LP_TIME="$lp_analog_time_color "
+    else
+        LP_TIME=
     fi
 
     if _lp_sudo_active_color; then
@@ -2855,8 +2874,8 @@ _lp_default_theme_prompt_template() {
         # add return code and prompt mark
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
-        # Get the current prompt on the fly and make it a title
-        _lp_formatted_title "$PS1"
+        # Get the core sections without prompt escapes and make them into a title.
+        _lp_formatted_title "${LP_PS1_PREFIX}${LP_MARK_BRACKET_OPEN}${lp_username_raw-}${lp_hostname_raw+@}${lp_hostname_raw-}${LP_MARK_PERM}${lp_path-}${LP_MARK_BRACKET_CLOSE}${LP_MARK_PREFIX}${lp_smart_mark} ${LP_PS1_POSTFIX}"
 
         # Glue the bash prompt always go to the first column.
         # Avoid glitches after interrupting a command with Ctrl-C
@@ -2883,6 +2902,10 @@ __lp_set_prompt() {
 
     #TODO: unused?
     local GREP_OPTIONS=
+
+    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+        __lp_runtime_after
+    fi
 
     # bash: execute the old prompt hook
     eval "$LP_OLD_PROMPT_COMMAND"
@@ -2911,8 +2934,35 @@ __lp_set_prompt() {
     "$_LP_THEME_PROMPT_FUNCTION"
 
     if (( LP_ENABLE_TITLE )); then
-        PS1="${_LP_OPEN_ESC}${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}${PS1}"
+        printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}"
     fi
+}
+
+__lp_before_command() {
+    # For debugging
+    #printf 'XXX %s\n' "$BASH_COMMAND"
+
+    # If this is the first time after the user submitted the command,
+    # execute the hooks.
+    if (( _LP_AT_PROMPT )); then
+        _LP_AT_PROMPT=0
+
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+            __lp_runtime_before
+        fi
+
+        if (( LP_ENABLE_TITLE_COMMAND )); then
+            __lp_print_title_command
+        fi
+    fi
+
+    # If this is when the prompt is being drawn, the command is done,
+    # so mark the next trap. Note these two events could be at the same
+    # time, so no elif is used.
+    if [[ "$BASH_COMMAND" == __lp_set_prompt ]]; then
+        _LP_AT_PROMPT=1
+    fi
+
 }
 
 prompt_tag() {

@@ -174,6 +174,17 @@ General
    A string displayed at the start of the prompt. Can also be set with
    :func:`prompt_tag`.
 
+.. attribute:: LP_TIME_FORMAT
+   :type: string
+   :value: "%H:%M:%S"
+
+   The formatting string passed to :manpage:`date(1)` using formatting from
+   :manpage:`strftime(3)` used to display the current date and/or time.
+
+   See also: :attr:`LP_ENABLE_TIME`.
+
+   .. versionadded:: 2.1
+
 Features
 --------
 
@@ -503,7 +514,8 @@ Features
    :type: bool
    :value: 0
 
-   Displays the time at which the prompt was shown.
+   Displays the time at which the prompt was shown. The format can be configured
+   with :attr:`LP_TIME_FORMAT`.
 
    See also: :attr:`LP_TIME_ANALOG` and :attr:`LP_COLOR_TIME`.
 
@@ -518,6 +530,17 @@ Features
 
    .. warning::
       This may not work properly on exotic terminals. Please report any issues.
+
+.. attribute:: LP_ENABLE_TITLE_COMMAND
+   :type: bool
+   :value: 1
+
+   Postpend the currently running command to the terminal title while the
+   command is running.
+
+   :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_VCS_ROOT
    :type: bool

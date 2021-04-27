@@ -144,6 +144,7 @@ _lp_powerline_full_theme_activate() {
     _lp_powerline_theme_activate
 
     # Load default markers if not already defined
+    POWERLINE_AWS_PROFILE_MARKER=${POWERLINE_AWS_PROFILE_MARKER:-"AWS: "}
     POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
     POWERLINE_KUBECONTEXT_MARKER=${POWERLINE_KUBECONTEXT_MARKER:-$LP_MARK_KUBECONTEXT}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
@@ -152,6 +153,9 @@ _lp_powerline_full_theme_activate() {
     # Load default colors if not already defined
     POWERLINE_NEUTRAL_COLOR=( ${POWERLINE_NEUTRAL_COLOR[@]+"${POWERLINE_NEUTRAL_COLOR[@]}"} )
     [[ ${#POWERLINE_NEUTRAL_COLOR[@]} == 0 ]] && POWERLINE_NEUTRAL_COLOR=(252 234 0 0 7 0)
+
+    POWERLINE_AWS_PROFILE_COLOR=( ${POWERLINE_AWS_PROFILE_COLOR[@]+"${POWERLINE_AWS_PROFILE_COLOR[@]}"} )
+    [[ ${#POWERLINE_AWS_PROFILE_COLOR[@]} == 0 ]] && POWERLINE_AWS_PROFILE_COLOR=(190 236 0 0 3 0)
 
     POWERLINE_BATTERY_COLOR=( ${POWERLINE_BATTERY_COLOR[@]+"${POWERLINE_BATTERY_COLOR[@]}"} )
     [[ ${#POWERLINE_BATTERY_COLOR[@]} == 0 ]] && POWERLINE_BATTERY_COLOR=(-1 238 0 0 -1 0)
@@ -246,6 +250,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_software_collections
     if _lp_software_collections; then
         __powerline_section "${POWERLINE_SOFTWARE_COLLECTION_MARKER}${lp_software_collections}" "${POWERLINE_SOFTWARE_COLLECTIONS_COLOR[@]}"
+    fi
+
+    local lp_aws_profile
+    if _lp_aws_profile; then
+        __powerline_section "${POWERLINE_AWS_PROFILE_MARKER}${lp_aws_profile}" "${POWERLINE_AWS_PROFILE_COLOR[@]}"
     fi
 
     local lp_python_env

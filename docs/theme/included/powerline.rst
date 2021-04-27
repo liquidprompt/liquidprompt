@@ -354,6 +354,13 @@ Powerline Full adds these config options:
 Markers
 _______
 
+.. attribute:: POWERLINE_AWS_PROFILE_MARKER
+   :type: string
+   :value: "AWS: "
+
+   The marker string used to indicate the following string is the name of an
+   AWS profile.
+
 .. attribute:: POWERLINE_CHROOT_MARKER
    :type: string
    :value: "chroot: "
@@ -382,6 +389,12 @@ _______
 
 Colors
 ______
+
+.. attribute:: POWERLINE_AWS_PROFILE_COLOR
+   :type: array<int>
+   :value: (190 236 0 0 3 0)
+
+   Color for the AWS profile section.
 
 .. attribute:: POWERLINE_BATTERY_COLOR
    :type: array<int>

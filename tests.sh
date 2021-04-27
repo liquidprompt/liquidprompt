@@ -1,6 +1,10 @@
 #!/bin/bash
 
-shells=(bash zsh)
+if [[ -n ${1+x} ]]; then
+  shells=("$@")
+else
+  shells=(bash zsh)
+fi
 
 cd "${0%/*}/tests"
 
@@ -13,17 +17,18 @@ typeset -a testing_shells
 for shell in "${shells[@]}"; do
   if command -v "$shell" >/dev/null; then
     testing_shells+=("$shell")
+    printf 'shell "%s": version "%s"\n' "$shell" "$("$shell" --version)"
   else
     printf "Cannot find shell '%s', skipping tests\n" "$shell" >&2
   fi
 done
 
-fail=0
+typeset -i fail=0
 
 for test_file in ./test_*.sh; do
   for shell in "${testing_shells[@]}"; do
     printf "\nRunning shell '%s' with test '%s'\n" "$shell" "$test_file"
-    "$shell" "$test_file" || fail=$?
+    "$shell" "$test_file" || fail+=1
   done
 done
 

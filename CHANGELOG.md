@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **aws**: AWS profile display ([#496], [4c8ac92])
+- **env**: Return unescaped hostname in `_lp_hostname()` ([#665], [a23af79])
+- **env**: Return unescaped username in `_lp_username()` ([#665], [a23af79])
+- **k8s**: kubectl current context display ([#578], [d41b5c8])
+- **path**: Return unescaped path in *lp_path* in `_lp_path_format()` ([a23af79])
+- **ruby**: Ruby environment display ([#628], [239a574])
+- **title**: Title command feature ([#609], [#665], [0c23a33], [a23af79])
+
+### Fixed
+- **color**: `LP_COLORMAP` reverting to default value ([145f146])
+- **docs**: Outdated link to Symbola font project page ([#662])
+- **docs**: Small typos ([#664], [66d1d2b])
+- **path**: Add `__lp_escape()` calls to `_lp_path_format()` ([36ab8fa], [a23af79])
+- **powerline**: First character color issue in Zsh and Bash-3.2 ([70ce708])
+- **powerline**: Array issues in Bash-3.2 ([77dc561])
+- **ruby**: Zsh crash on rbenv output parse ([#667])
+- **zsh**: `local` bugs in Zsh-5.0 ([7db4ada])
+
+### Changed
+- **general**: Directly generate prompt mark instead of escape code ([#665], [1a22e1e])
+- **general**: Remove backslash escaping from Zsh `__lp_escape()` ([658ce84])
+- **env**: Lookup hostname instead of escape code ([#665], [0368523])
+- **env**: Lookup username instead of escape code ([#665], [61df03a])
+- **time**: Call `date` to generate time instead of escape code ([#665], [dd1f8f8])
+- **tests**: All included themes run through theme-preview tester ([3b75185])
+- **tests**: test.sh accepts shells as arguments ([9a2c067])
 
 ## [2.0.2] - 2021-02-22
 ### Fixed
@@ -586,6 +613,7 @@ for help.
 [#479]: https://github.com/nojhan/liquidprompt/issues/479
 [#480]: https://github.com/nojhan/liquidprompt/pull/480
 [#486]: https://github.com/nojhan/liquidprompt/issues/486
+[#496]: https://github.com/nojhan/liquidprompt/pull/496
 [#497]: https://github.com/nojhan/liquidprompt/pull/497
 [#499]: https://github.com/nojhan/liquidprompt/issues/499
 [#501]: https://github.com/nojhan/liquidprompt/issues/501
@@ -608,6 +636,7 @@ for help.
 [#563]: https://github.com/nojhan/liquidprompt/issues/563
 [#564]: https://github.com/nojhan/liquidprompt/issues/564
 [#571]: https://github.com/nojhan/liquidprompt/pull/571
+[#578]: https://github.com/nojhan/liquidprompt/pull/578
 [#581]: https://github.com/nojhan/liquidprompt/issues/581
 [#582]: https://github.com/nojhan/liquidprompt/pull/582
 [#592]: https://github.com/nojhan/liquidprompt/issues/592
@@ -620,6 +649,7 @@ for help.
 [#615]: https://github.com/nojhan/liquidprompt/issues/615
 [#625]: https://github.com/nojhan/liquidprompt/pull/625
 [#626]: https://github.com/nojhan/liquidprompt/issues/626
+[#628]: https://github.com/nojhan/liquidprompt/pull/628
 [#635]: https://github.com/nojhan/liquidprompt/pull/635
 [#637]: https://github.com/nojhan/liquidprompt/pull/637
 [#644]: https://github.com/nojhan/liquidprompt/issues/644
@@ -629,11 +659,16 @@ for help.
 [#656]: https://github.com/nojhan/liquidprompt/issues/656
 [#657]: https://github.com/nojhan/liquidprompt/issues/657
 [#658]: https://github.com/nojhan/liquidprompt/issues/658
+[#662]: https://github.com/nojhan/liquidprompt/pull/662
+[#664]: https://github.com/nojhan/liquidprompt/pull/664
+[#665]: https://github.com/nojhan/liquidprompt/pull/665
+[#667]: https://github.com/nojhan/liquidprompt/issues/667
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
 [02bc49e]: https://github.com/nojhan/liquidprompt/commit/02bc49edf306749c47d7a389dc916cb68e992cc8
 [03434d3]: https://github.com/nojhan/liquidprompt/commit/03434d388686792b6ed2aa0bf0e09851c90a7479
+[0368523]: https://github.com/nojhan/liquidprompt/commit/036852371680a9e92d7e341be604088e8dc0519b
 [03c73fe]: https://github.com/nojhan/liquidprompt/commit/03c73fe05e5a3b48252a9f527e6e62666afbd726
 [0548290]: https://github.com/nojhan/liquidprompt/commit/05482901fe86788032ab4089525c415384937a24
 [05e0a50]: https://github.com/nojhan/liquidprompt/commit/05e0a502e8ae4e2a4711f5222f39c2589c6f582f
@@ -641,12 +676,15 @@ for help.
 [07d18d4]: https://github.com/nojhan/liquidprompt/commit/07d18d4ca3f4a77377591d62dc054e00f4616cc7
 [09cfced]: https://github.com/nojhan/liquidprompt/commit/09cfced24745dd7aea086a292ab042f070ce4fbb
 [0b94b74]: https://github.com/nojhan/liquidprompt/commit/0b94b74d02046077a21d3fb83842c6a1fe74f6e5
+[0c23a33]: https://github.com/nojhan/liquidprompt/commit/0c23a33eacc6ced0febc1a750c748010c3a87ad5
 [0d420d2]: https://github.com/nojhan/liquidprompt/commit/0d420d2f3ac84a83e150110f9e09fc21e919df7f
 [0e0cc12]: https://github.com/nojhan/liquidprompt/commit/0e0cc12fabc474b6c0cfed7abf80c9f61efb68fc
 [0e0cc87]: https://github.com/nojhan/liquidprompt/commit/0e0cc870c2dcf3fbfed1b2e187e918d74dd6d3db
 [0f0fd37]: https://github.com/nojhan/liquidprompt/commit/0f0fd3739a8dd9821b34b78859de13b47b2d856d
 [0f80162]: https://github.com/nojhan/liquidprompt/commit/0f80162f1f22277e497b69f243894a87fcaec643
 [13e128b]: https://github.com/nojhan/liquidprompt/commit/13e128bb320034a0303f7354fad66a5674c6b4da
+[145f146]: https://github.com/nojhan/liquidprompt/commit/145f146e9cb4fb3c30a22e6c35529120f4650a28
+[1a22e1e]: https://github.com/nojhan/liquidprompt/commit/1a22e1ec54ad46a311ed9bdd65ed2bd1459e606e
 [1a56d58]: https://github.com/nojhan/liquidprompt/commit/1a56d58d4e63f395545fed820278c5b4561dfa95
 [1a9fcd0]: https://github.com/nojhan/liquidprompt/commit/1a9fcd0944711ccab20045e5a3f3bde9d7f0ec59
 [1c65748]: https://github.com/nojhan/liquidprompt/commit/1c657481fd3481720b54187f9aa464df0e62a3f2
@@ -654,6 +692,7 @@ for help.
 [1fe1559]: https://github.com/nojhan/liquidprompt/commit/1fe1559ebb18ae2ff39e1c4703a06d35f0f6538f
 [22dd760]: https://github.com/nojhan/liquidprompt/commit/22dd760926c3a7b8e4f4fa28902d43b06e68e6a8
 [230c9d7]: https://github.com/nojhan/liquidprompt/commit/230c9d7d45c10b8f319b9d5c64b4fd59261c8008
+[239a574]: https://github.com/nojhan/liquidprompt/commit/239a5740866962a40a614057065188810830207d
 [23eb3f2]: https://github.com/nojhan/liquidprompt/commit/23eb3f23b633a8e849f91867948c96976108df6b
 [282359a]: https://github.com/nojhan/liquidprompt/commit/282359a4b7c80a6032ec043eddb1bf378084e64e
 [28c13f2]: https://github.com/nojhan/liquidprompt/commit/28c13f27e652b84373a7c73389cbd0a5a10b88c3
@@ -661,7 +700,9 @@ for help.
 [3079299]: https://github.com/nojhan/liquidprompt/commit/3079299f816ee2d893c2b7c2284e9e6034164d16
 [309b443]: https://github.com/nojhan/liquidprompt/commit/309b443461a25f552754663d3d67a5ee0f97571f
 [30f977b]: https://github.com/nojhan/liquidprompt/commit/30f977b09f6ee36c38e1ec07a272b5b0e621729f
+[36ab8fa]: https://github.com/nojhan/liquidprompt/commit/36ab8fa8ff7c27284163aebbfcb9f82fc2f572ac
 [37db052]: https://github.com/nojhan/liquidprompt/commit/37db052c18d99fc36f4c4a4ede798155e519e2ca
+[3b75185]: https://github.com/nojhan/liquidprompt/commit/3b751856bfe701f38f842e8ae96d803a3990f13d
 [3e615cd]: https://github.com/nojhan/liquidprompt/commit/3e615cded01b583870a7e6e9529f341280eb40a6
 [3f57231]: https://github.com/nojhan/liquidprompt/commit/3f57231d73112ea1090e3a607539e515f21de794
 [3fadce9]: https://github.com/nojhan/liquidprompt/commit/3fadce962396d6d3a1f7c2c8e23c1d9fdc22c098
@@ -676,6 +717,7 @@ for help.
 [48f1b02]: https://github.com/nojhan/liquidprompt/commit/48f1b022dd078ce45f786a28dbe75a8acea37031
 [4a52696]: https://github.com/nojhan/liquidprompt/commit/4a526965cba546978423a4d51bfbb0a2d1000246
 [4b7fd88]: https://github.com/nojhan/liquidprompt/commit/4b7fd88da0777d005d67d28d285be9255f1666c7
+[4c8ac92]: https://github.com/nojhan/liquidprompt/commit/4c8ac9219f4191a458a9d472360f54d24060f2d6
 [4ebc26e]: https://github.com/nojhan/liquidprompt/commit/4ebc26e92be20ddf5d068fb25d2cecfcf479c1ea
 [4fff496]: https://github.com/nojhan/liquidprompt/commit/4fff49644a86fe93f1373825f09e1b1fdfb20f54
 [5069c22]: https://github.com/nojhan/liquidprompt/commit/5069c22dbece5ef8726b1393df5ae91550a2b3fe
@@ -691,9 +733,12 @@ for help.
 [5ef795d]: https://github.com/nojhan/liquidprompt/commit/5ef795d262839e99183db00a3dc7572e06f9b610
 [5f8fcc4]: https://github.com/nojhan/liquidprompt/commit/5f8fcc46eade20015291833118055b7cd76a5c0a
 [5fa9054]: https://github.com/nojhan/liquidprompt/commit/5fa905481c9c7c4579cadc0065648b6617b9c775
+[61df03a]: https://github.com/nojhan/liquidprompt/commit/61df03a02367e29f80d470196b4cc193729ef37a
 [62f0270]: https://github.com/nojhan/liquidprompt/commit/62f0270888ec668ec50df2af826727ca8ba9d6c6
 [63b9f73]: https://github.com/nojhan/liquidprompt/commit/63b9f73d72218d4e72c0d43bc6a60a82ea0e15e8
 [64029ad]: https://github.com/nojhan/liquidprompt/commit/64029ad75d108a0619958c337fd64fe18560988e
+[658ce84]: https://github.com/nojhan/liquidprompt/commit/658ce84cc81c283b840355b4f1afdac035abd3b7
+[66d1d2b]: https://github.com/nojhan/liquidprompt/commit/66d1d2ba3baade138d7470317aca527c138732fe
 [67dc0a9]: https://github.com/nojhan/liquidprompt/commit/67dc0a9ae9eebf0c2b85b4ee6fc2d6b5562b6412
 [695d629]: https://github.com/nojhan/liquidprompt/commit/695d629dd5cf7109e8892075d4cf7fadd8c17d94
 [6961f99]: https://github.com/nojhan/liquidprompt/commit/6961f998b83f491995ce731bd232c5170cf4be5f
@@ -702,12 +747,15 @@ for help.
 [6d94db6]: https://github.com/nojhan/liquidprompt/commit/6d94db6de7de879c14da842df535163a57dce638
 [6ea54e9]: https://github.com/nojhan/liquidprompt/commit/6ea54e91f84be1c491314c3680e82b06d769218e
 [70b4ef6]: https://github.com/nojhan/liquidprompt/commit/70b4ef65c034c5050173dbe70178b459e5acddc2
+[70ce708]: https://github.com/nojhan/liquidprompt/commit/70ce708b8142d71647c14817cb40801c5dfdb756
 [73f2057]: https://github.com/nojhan/liquidprompt/commit/73f205748fe6f09abcfe01ec150a456518aecc18
 [7402f79]: https://github.com/nojhan/liquidprompt/commit/7402f79a7518e74e16d36c74e8b5943d11f390d7
 [7602c09]: https://github.com/nojhan/liquidprompt/commit/7602c09fd7754f371db98bfad15bc075ef1ec93a
+[77dc561]: https://github.com/nojhan/liquidprompt/commit/77dc561c707a88ab9158f3f00231137f8f34c624
 [782fad0]: https://github.com/nojhan/liquidprompt/commit/782fad08fd37cbf2144ea203430f37608b156ae8
 [78dee3c]: https://github.com/nojhan/liquidprompt/commit/78dee3c70ab73eee04a5e869172e5f07ac916774
 [7c21470]: https://github.com/nojhan/liquidprompt/commit/7c214708d72a4fa7d298678167450693a1ffbc00
+[7db4ada]: https://github.com/nojhan/liquidprompt/commit/7db4ada711c5e9859ea79a11a1d03ca7d7311547
 [7e7734e]: https://github.com/nojhan/liquidprompt/commit/7e7734e6247a1b32d636b5e39fe99d8d23dde669
 [81b080e]: https://github.com/nojhan/liquidprompt/commit/81b080e2a6e6c24a3bab9348c187fb308c25ffe8
 [82ee823]: https://github.com/nojhan/liquidprompt/commit/82ee823e9cd2fb8581b653b38c4ea501b795a607
@@ -727,12 +775,14 @@ for help.
 [9604203]: https://github.com/nojhan/liquidprompt/commit/9604203fb9f90b44a8c806f32e7746588b70a83b
 [9633ac8]: https://github.com/nojhan/liquidprompt/commit/9633ac83cad5f5702c1e853940c0ab2e166961bf
 [9a00ead]: https://github.com/nojhan/liquidprompt/commit/9a00eada113cb1d5e33aa177f5b9180c25d6a843
+[9a2c067]: https://github.com/nojhan/liquidprompt/commit/9a2c06709544ce7609b432aa03d81f7cf4750283
 [9b40ca1]: https://github.com/nojhan/liquidprompt/commit/9b40ca139a43e51b4d0fbdc780d0661bfffbf6ae
 [9ba5d28]: https://github.com/nojhan/liquidprompt/commit/9ba5d2824571d41c1aa7a3573a3cf17ed729f2bb
 [9ba6e86]: https://github.com/nojhan/liquidprompt/commit/9ba6e86f8200c08543502185447185a5a4089685
 [9c1c8a3]: https://github.com/nojhan/liquidprompt/commit/9c1c8a378846c23e0a39be2aadd11531c2ecf196
 [9c6d073]: https://github.com/nojhan/liquidprompt/commit/9c6d073e3cc7a49cfce209ce4307881d70340161
 [9e205f5]: https://github.com/nojhan/liquidprompt/commit/9e205f51db459443e5c2ead0efa76f6a33c47c24
+[a23af79]: https://github.com/nojhan/liquidprompt/commit/a23af79232fc3b716dc54bc3927b3e05bd777189
 [a314677]: https://github.com/nojhan/liquidprompt/commit/a314677b8031804130c69de94d4604e9c319575a
 [a35032f]: https://github.com/nojhan/liquidprompt/commit/a35032fe03ab3d84093141c403a7c6615f7c38d9
 [a70e80f]: https://github.com/nojhan/liquidprompt/commit/a70e80f0f501031ef97ea8baf88ca6d7ef56ad8a
@@ -766,11 +816,13 @@ for help.
 [cef9cb1]: https://github.com/nojhan/liquidprompt/commit/cef9cb1581a419f7c7248954069fd0d4e5966284
 [cf01d02]: https://github.com/nojhan/liquidprompt/commit/cf01d02445c38ee9504bad00f079af080a7bdfe2
 [cf8bf97]: https://github.com/nojhan/liquidprompt/commit/cf8bf97b01a83a939eadc31b9da806172c91c444
+[d41b5c8]: https://github.com/nojhan/liquidprompt/commit/d41b5c8361381fcc785494f5552a2b5319c3c9d1
 [d485ed1]: https://github.com/nojhan/liquidprompt/commit/d485ed191fb6b896290a32848c4fefd0342e2046
 [d62bf31]: https://github.com/nojhan/liquidprompt/commit/d62bf310d0d5a30fac6d047f03d832b81070c884
 [d9cb55d]: https://github.com/nojhan/liquidprompt/commit/d9cb55da834720ac3cd4893bb4a35808ab67d376
 [dc11eb4]: https://github.com/nojhan/liquidprompt/commit/dc11eb48ecb133930355f396578e5c9b06b49afc
 [dc7be25]: https://github.com/nojhan/liquidprompt/commit/dc7be2540d677600a484dcd0c2d05dc0945382e5
+[dd1f8f8]: https://github.com/nojhan/liquidprompt/commit/dd1f8f873e6d71b9dc9d9a820cd7fe1a3f313c67
 [dd9a024]: https://github.com/nojhan/liquidprompt/commit/dd9a024b485d9c017aa935809bd20e7436dff46c
 [debb794]: https://github.com/nojhan/liquidprompt/commit/debb794bf2f99ab53d539e5080f0b28579333cb8
 [decaece]: https://github.com/nojhan/liquidprompt/commit/decaece03b9bfe826d7f33a3fb56dfb33916884a

@@ -148,6 +148,7 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
     POWERLINE_KUBECONTEXT_MARKER=${POWERLINE_KUBECONTEXT_MARKER:-$LP_MARK_KUBECONTEXT}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
+    POWERLINE_RUBY_ENV_MARKER=${POWERLINE_RUBY_ENV_MARKER:-"ruby: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
 
     # Load default colors if not already defined
@@ -174,6 +175,9 @@ _lp_powerline_full_theme_activate() {
 
     POWERLINE_PROXY_COLOR=( ${POWERLINE_PROXY_COLOR[@]+"${POWERLINE_PROXY_COLOR[@]}"} )
     [[ ${#POWERLINE_PROXY_COLOR[@]} == 0 ]] && POWERLINE_PROXY_COLOR=(21 219 1 0 4 7)
+
+    POWERLINE_RUBY_ENV_COLOR=( ${POWERLINE_RUBY_ENV_COLOR[@]+"${POWERLINE_RUBY_ENV_COLOR[@]}"} )
+    [[ ${#POWERLINE_RUBY_ENV_COLOR[@]} == 0 ]] && POWERLINE_RUBY_ENV_COLOR=(231 38 0 0 7 4)
 
     POWERLINE_RUNTIME_COLOR=( ${POWERLINE_RUNTIME_COLOR[@]+"${POWERLINE_RUNTIME_COLOR[@]}"} )
     [[ ${#POWERLINE_RUNTIME_COLOR[@]} == 0 ]] && POWERLINE_RUNTIME_COLOR=(226 17 0 0 3 4)
@@ -260,6 +264,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_python_env
     if _lp_python_env; then
         __powerline_section "${POWERLINE_PYTHON_ENV_MARKER}${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+    fi
+
+    local lp_ruby_env
+    if _lp_ruby_env; then
+        __powerline_section "${POWERLINE_RUBY_ENV_MARKER}${lp_ruby_env}" "${POWERLINE_RUBY_ENV_COLOR[@]}"
     fi
 
     local lp_kubernetes_context

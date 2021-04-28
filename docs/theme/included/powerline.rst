@@ -380,6 +380,13 @@ _______
 
    The marker string used to indicate the following string is a HTTP proxy.
 
+.. attribute:: POWERLINE_RUBY_ENV_MARKER
+   :type: string
+   :value: "ruby: "
+
+   The marker string used to indicate the following string is a Ruby
+   environment.
+
 .. attribute:: POWERLINE_SOFTWARE_COLLECTION_MARKER
    :type: string
    :value: "(sc) "
@@ -438,6 +445,12 @@ ______
    :value: (21, 219, 1, 0, 4, 7)
 
    Color for the HTTP proxy section.
+
+.. attribute:: POWERLINE_RUBY_ENV_COLOR
+   :type: array<int>
+   :value: (231 38 0 0 7 4)
+
+   Color for the Ruby environment section.
 
 .. attribute:: POWERLINE_RUNTIME_COLOR
    :type: array<int>

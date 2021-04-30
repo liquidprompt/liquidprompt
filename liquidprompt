@@ -470,6 +470,7 @@ __lp_source_config() {
     LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
     LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
     LP_ENABLE_OS_COLORS=${LP_ENABLE_OS_COLORS:-1}
+    LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -1007,6 +1008,11 @@ _lp_create_link_path() { # path
     else # No link.
         lp_link_path="$path"
     fi
+
+    local ret
+    __lp_escape "$1"
+
+    link="$_LP_OPEN_ESC"$'\E]8;;'"${1}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${2}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
 }
 
 # Return true if the input is the name of a function.
@@ -1399,7 +1405,7 @@ _lp_path_format() {
     lp_path=
     lp_path_format=
 
-    local ret lp_link_path
+    local ret link
 
     local lp_pwd_tilde
     __lp_pwd_tilde
@@ -1428,8 +1434,13 @@ _lp_path_format() {
             _lp_create_link_path "${ret}"
             lp_path_format="${vcs_root_format}$lp_link_path"
         else
-            _lp_create_link_path "${ret}"
-            lp_path_format="${last_directory_format}$lp_link_path"
+            lp_path_format="${last_directory_format}"
+        fi
+
+        if _lp_create_link "file://${PWD}/" "$ret"; then
+            lp_path_format+=$link
+        else
+            lp_path_format+=$ret
         fi
 
         return
@@ -1554,9 +1565,11 @@ _lp_path_format() {
         fi
 
         if (( ! is_shortening )); then
-
-            _lp_create_link_path "$ret"
-            lp_path_format+="$lp_link_path"
+            if _lp_create_link "file://${current_path/#"~/"/"$HOME/"}/" "$ret"; then
+                lp_path_format+=$link
+            else
+                lp_path_format+=$ret
+            fi
 
             if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then
                 if [[ $current_path != "/" ]]; then

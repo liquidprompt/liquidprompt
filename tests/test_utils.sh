@@ -191,6 +191,7 @@ function test_path_format_from_path_left() {
   }
 
   LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
   LP_PATH_KEEP=0
@@ -339,6 +340,7 @@ function test_path_format_from_dir_right {
   }
 
   LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
   LP_PATH_KEEP=0
@@ -433,6 +435,7 @@ function test_path_format_from_dir_middle {
   }
 
   LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
   LP_PATH_KEEP=0
@@ -537,6 +540,7 @@ function test_path_format_unique() {
   }
 
   LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
   LP_PATH_LENGTH=100
   LP_PATH_KEEP=0
@@ -629,6 +633,7 @@ function test_path_format_last_dir() {
   }
 
   LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
   LP_PATH_VCS_ROOT=1
   LP_PATH_METHOD=truncate_to_last_dir
 

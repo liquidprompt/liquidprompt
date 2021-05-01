@@ -234,6 +234,12 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_terraform_env_color() -> var:lp_terraform_env_color
+
+   Returns :func:`_lp_terraform_env` with color from :attr:`LP_COLOR_TERRAFORM`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_time_color() -> var:lp_time_color
 
    Returns :func:`_lp_time` with color from :attr:`LP_COLOR_TIME`.

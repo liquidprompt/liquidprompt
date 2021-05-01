@@ -150,6 +150,7 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
     POWERLINE_RUBY_ENV_MARKER=${POWERLINE_RUBY_ENV_MARKER:-"ruby: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
+    POWERLINE_TERRAFORM_ENV_MARKER=${POWERLINE_TERRAFORM_ENV_MARKER:-"(tf) "}
 
     # Load default colors if not already defined
     POWERLINE_NEUTRAL_COLOR=( ${POWERLINE_NEUTRAL_COLOR[@]+"${POWERLINE_NEUTRAL_COLOR[@]}"} )
@@ -187,6 +188,9 @@ _lp_powerline_full_theme_activate() {
 
     POWERLINE_TEMPERATURE_COLOR=( ${POWERLINE_TEMPERATURE_COLOR[@]+"${POWERLINE_TEMPERATURE_COLOR[@]}"} )
     [[ ${#POWERLINE_TEMPERATURE_COLOR[@]} == 0 ]] && POWERLINE_TEMPERATURE_COLOR=(-1 240 0 0 -1 0)
+
+    POWERLINE_TERRAFORM_ENV_COLOR=( ${POWERLINE_TERRAFORM_ENV_COLOR[@]+"${POWERLINE_TERRAFORM_ENV_COLOR[@]}"} )
+    [[ ${#POWERLINE_TERRAFORM_ENV_COLOR[@]} == 0 ]] && POWERLINE_TERRAFORM_ENV_COLOR=(231 182 0 0 7 4)
 
     POWERLINE_TIME_COLOR=( ${POWERLINE_TIME_COLOR[@]+"${POWERLINE_TIME_COLOR[@]}"} )
     [[ ${#POWERLINE_TIME_COLOR[@]} == 0 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
@@ -274,6 +278,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_kubernetes_context
     if _lp_kubernetes_context; then
         __powerline_section "${POWERLINE_KUBECONTEXT_MARKER}${lp_kubernetes_context}" "${POWERLINE_KUBECONTEXT_COLOR[@]}"
+    fi
+
+    local lp_terraform_env
+    if _lp_terraform_env; then
+        __powerline_section "${POWERLINE_TERRAFORM_ENV_MARKER}${lp_terraform_env}" "${POWERLINE_TERRAFORM_ENV_COLOR[@]}"
     fi
 
     local lp_http_proxy

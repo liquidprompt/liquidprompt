@@ -59,8 +59,8 @@ See the `Powerline Fonts installation docs`_ for help.
 
 .. _`Powerline fonts installation docs`: https://powerline.readthedocs.io/en/latest/installation.html#fonts-installation
 
-Configuation
-============
+Configuration
+=============
 
 Liquidprompt Configuration
 --------------------------
@@ -288,8 +288,8 @@ Setup
 Like the ``powerline`` theme, you will need a compatible font.
 See the `Powerline Fonts installation docs`_ for help.
 
-Configuation
-============
+Configuration
+=============
 
 Liquidprompt Configuration
 --------------------------

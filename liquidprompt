@@ -208,6 +208,7 @@ __lp_source_config() {
     LP_ENABLE_RUBY_VENV=${LP_ENABLE_RUBY_VENV:-1}
     LP_RUBY_RVM_PROMPT_OPTIONS=( ${LP_RUBY_RVM_PROMPT_OPTIONS[@]+"${LP_RUBY_RVM_PROMPT_OPTIONS[@]}"} )
     [[ ${#LP_RUBY_RVM_PROMPT_OPTIONS[@]} == 0 ]] && LP_RUBY_RVM_PROMPT_OPTIONS=(i v g s)
+    LP_ENABLE_TERRAFORM=${LP_ENABLE_TERRAFORM:-0}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_AWS_PROFILE=${LP_ENABLE_AWS_PROFILE:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -285,6 +286,7 @@ __lp_source_config() {
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
+    LP_COLOR_TERRAFORM=${LP_COLOR_TERRAFORM:-$PINK}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
@@ -489,6 +491,7 @@ lp_activate() {
     fi
 
     _lp_require_tool KUBECONTEXT kubectl
+    _lp_require_tool TERRAFORM terraform
 
     unset -f _lp_require_tool
 
@@ -1181,6 +1184,31 @@ _lp_ruby_env_color() {
     _lp_ruby_env || return "$?"
 
     lp_ruby_env_color="[${LP_COLOR_VIRTUALENV}${lp_ruby_env}${NO_COL}]"
+}
+
+_lp_terraform_env() {
+    (( LP_ENABLE_TERRAFORM )) || return 2
+
+    local ret
+
+    if [[ -d .terraform ]]; then
+        local _tf_workspace
+        _tf_workspace="$(\terraform workspace show 2>/dev/null)"
+        if [[ -n "$_tf_workspace" ]]; then
+            __lp_escape "${_tf_workspace}"
+            lp_terraform_env=$ret
+        else
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+
+_lp_terraform_env_color() {
+    _lp_terraform_env || return "$?"
+
+    lp_terraform_env_color="[${LP_COLOR_TERRAFORM}${lp_terraform_env}${NO_COL}]"
 }
 
 _lp_software_collections() {
@@ -2819,6 +2847,12 @@ _lp_default_theme_prompt_data() {
         LP_KUBECONTEXT=
     fi
 
+    if _lp_terraform_env_color; then
+        LP_TFSPACE=" $lp_terraform_env_color"
+    else
+        LP_TFSPACE=
+    fi
+
     if _lp_software_collections_color; then
         LP_SCLS=" $lp_software_collections_color"
     else
@@ -2864,7 +2898,7 @@ _lp_default_theme_prompt_template() {
         # add user, host and permissions colon
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}"
 
-        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_RUBY_VENV}${LP_KUBECONTEXT}${LP_PROXY}"
+        PS1+="${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

@@ -95,6 +95,16 @@ Development Environment
 
    .. _`Red Hat Software Collection`: https://developers.redhat.com/products/softwarecollections/overview
 
+.. function:: _lp_terraform_env() -> var:lp_terraform_env
+
+   Returns ``true`` if a Terraform workspace is detected. Returns the workspace
+   name.
+
+   Can be enabled by :attr:`LP_ENABLE_TERRAFORM`.
+
+   .. versionadded:: 2.1
+
+
 Environment
 -----------
 

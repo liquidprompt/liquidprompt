@@ -194,6 +194,12 @@ default order if the user does not configure a different template.
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_TFSPACE
+
+   The current Terraform workspace. See :attr:`LP_ENABLE_TERRAFORM`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_PROXY
 
    A ↥ (:attr:`LP_MARK_PROXY`) if an HTTP proxy is in use. See

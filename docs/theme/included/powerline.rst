@@ -59,8 +59,8 @@ See the `Powerline Fonts installation docs`_ for help.
 
 .. _`Powerline fonts installation docs`: https://powerline.readthedocs.io/en/latest/installation.html#fonts-installation
 
-Configuation
-============
+Configuration
+=============
 
 Liquidprompt Configuration
 --------------------------
@@ -288,8 +288,8 @@ Setup
 Like the ``powerline`` theme, you will need a compatible font.
 See the `Powerline Fonts installation docs`_ for help.
 
-Configuation
-============
+Configuration
+=============
 
 Liquidprompt Configuration
 --------------------------
@@ -313,6 +313,7 @@ All Liquidprompt config options are respected, **except for**:
 * :attr:`LP_COLOR_SSH`
 * :attr:`LP_COLOR_SU`
 * :attr:`LP_COLOR_TELNET`
+* :attr:`LP_COLOR_TERRAFORM`
 * :attr:`LP_COLOR_TIME`
 * :attr:`LP_COLOR_USER_ALT`
 * :attr:`LP_COLOR_USER_LOGGED`
@@ -394,6 +395,15 @@ _______
    The marker string used to indicate the following string is a Red Hat Software
    Collection.
 
+.. attribute:: POWERLINE_TERRAFORM_ENV_MARKER
+   :type: string
+   :value: "(tf) "
+
+   The marker string used to indicate the following string is a Terraform
+   workspace.
+
+   .. versionadded:: 2.1
+
 Colors
 ______
 
@@ -469,6 +479,14 @@ ______
    :value: (-1, 240, 0, 0, -1, 0)
 
    Color for the temperature section.
+
+.. attribute:: POWERLINE_TERRAFORM_ENV_COLOR
+   :type: array<int>
+   :value: (231 182 0 0 7 4)
+
+   Color for the Terraform workspace.
+
+   .. versionadded:: 2.1
 
 .. attribute:: POWERLINE_TIME_COLOR
    :type: array<int>

@@ -159,6 +159,10 @@ LP_ENABLE_RUBY_VENV=1
 # Warning, this variable must be a shell array.
 LP_RUBY_RVM_PROMPT_OPTIONS=(i v g s)
 
+# Display the terraform workspace that is currently activated, if any
+# Recommended value is 0
+LP_ENABLE_TERRAFORM=0
+
 # Display the enabled software collections, if any
 # Recommended value is 1
 LP_ENABLE_SCLS=1

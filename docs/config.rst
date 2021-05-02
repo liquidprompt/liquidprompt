@@ -243,7 +243,7 @@ Features
    :type: bool
    :value: 1
 
-   Display the current value of :envvar:`AWS_PROFILE` or 
+   Display the current value of :envvar:`AWS_PROFILE` or
    :envvar:`AWS_DEFAULT_PROFILE`. These variables are used to switch between
    configuration profiles by the `AWS CLI`_.
 
@@ -571,6 +571,18 @@ Features
 
    .. _RVM: https://rvm.io/
    .. _RBENV: https://github.com/rbenv/rbenv
+
+.. attribute:: LP_ENABLE_TERRAFORM
+   :type: bool
+   :value: 0
+
+   Display the currently activated `Terraform`_ workspace.
+
+   See also: :attr:`LP_COLOR_TERRAFORM`.
+
+   .. _Terraform: https://www.terraform.io/docs/language/index.html
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_HOSTNAME_ALWAYS
    :type: int
@@ -1215,6 +1227,16 @@ Valid preset color variables are:
    Color used for displaying the hostname when connected with Telnet.
 
    See also: :attr:`LP_HOSTNAME_ALWAYS`.
+
+.. attribute:: LP_COLOR_TERRAFORM
+   :type: string
+   :value: $PINK
+
+   Color used for displaying a Terraform workspace.
+
+   See also: :attr:`LP_ENABLE_TERRAFORM`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_TIME
    :type: string

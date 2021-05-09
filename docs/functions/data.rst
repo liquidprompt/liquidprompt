@@ -398,6 +398,9 @@ Temperature
 
    If the threshold is not surpassed, the highest temperature is still returned.
 
+   If no temperature data is found, returns ``false`` and *lp_temperature* will
+   not be set.
+
    The threshold is configured with :attr:`LP_TEMP_THRESHOLD`.
 
    Can be disabled by :attr:`LP_ENABLE_TEMP`.

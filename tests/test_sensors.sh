@@ -8,6 +8,10 @@ typeset -a outputs values
 
 # Add test cases to these arrays like below
 
+# No output
+outputs+=("")
+values+=("")
+
 # Linux 4.18.0-193.19.1.el8_2.x86_64 #1 SMP Mon Sep 14 14:37:00 UTC 2020 x86_64 GNU/Linux CentOS Linux release 8.2.2004 (Core)
 outputs+=(
 "k10temp-pci-00c3
@@ -239,15 +243,36 @@ values+=(48)
 
 function test_sensors {
 
+  LP_ENABLE_TEMP=1
+  LP_TEMP_THRESHOLD=-1000000
+
   sensors() {
     printf '%s\n' "$__output"
   }
 
   for (( index=0; index < ${#values[@]}; index++ )); do
     __output=${outputs[$index]}
-    local lp_temperature=0
+    unset lp_temperature
     __lp_temp_sensors
-    assertEquals "Sensors temperature output at index ${index}" "${values[$index]}" "$lp_temperature"
+    assertEquals "Sensors temperature output at index ${index}" "${values[$index]}" "${lp_temperature-}"
+
+    if [[ -n ${values[$index]} ]]; then
+      valid=0
+    else
+      valid=1
+    fi
+
+    __lp_temp_detect sensors
+    assertEquals "Sensors temperature detect at index ${index}" "$valid" "$?"
+
+    # Set the temp function in case the above detect said it was invalid.
+    # While we should never be in this situation, might as well make sure
+    # it doesn't crash.
+    _LP_TEMP_FUNCTION=__lp_temp_sensors
+    unset lp_temperature
+    _lp_temperature
+    assertEquals "Sensors temperature return at index ${index}" "$valid" "$?"
+    assertEquals "Sensors temperature return output at index ${index}" "${values[$index]}" "${lp_temperature-}"
   done
 }
 

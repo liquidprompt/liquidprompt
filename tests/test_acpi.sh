@@ -34,8 +34,13 @@ battery_values+=(55)
 temp_outputs+=(
 "Thermal 0: ok, -267.8 degrees C"
 )
-temp_values+=(0)
+temp_values+=(-267)
 
+# VPS at OVH
+temp_outputs+=(
+""
+)
+temp_values+=("")
 
 function test_acpi_battery {
 
@@ -63,15 +68,38 @@ function test_acpi_battery {
 
 function test_acpi_temperature {
 
+  LP_ENABLE_TEMP=1
+  LP_TEMP_THRESHOLD=-1000000
+
   acpi() {
     printf '%s\n' "$__temp_output"
   }
 
+  local valid
+
   for (( index=0; index < ${#temp_values[@]}; index++ )); do
     __temp_output=${temp_outputs[$index]}
-    local lp_temperature=0
+    unset lp_temperature
     __lp_temp_acpi
-    assertEquals "ACPI temperature output at index ${index}" "${temp_values[$index]}" "$lp_temperature"
+    assertEquals "ACPI temperature output at index ${index}" "${temp_values[$index]}" "${lp_temperature-}"
+
+    if [[ -n ${temp_values[$index]} ]]; then
+      valid=0
+    else
+      valid=1
+    fi
+
+    __lp_temp_detect acpi
+    assertEquals "ACPI temperature detect at index ${index}" "$valid" "$?"
+
+    # Set the temp function in case the above detect said it was invalid.
+    # While we should never be in this situation, might as well make sure
+    # it doesn't crash.
+    _LP_TEMP_FUNCTION=__lp_temp_acpi
+    unset lp_temperature
+    _lp_temperature
+    assertEquals "ACPI temperature return at index ${index}" "$valid" "$?"
+    assertEquals "ACPI temperature return output at index ${index}" "${temp_values[$index]}" "${lp_temperature-}"
   done
 }
 

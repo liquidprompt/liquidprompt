@@ -2428,7 +2428,9 @@ __lp_temp_sensors() {
     local IFS=$' \t\n'
     for i in $(LC_ALL=C \sensors -u 2>/dev/null |
             sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-        (( $i > ${lp_temperature:-0} )) && lp_temperature=$i
+        if [[ -z ${lp_temperature-} ]] || (( $i > ${lp_temperature:-0} )); then
+            lp_temperature=$i
+        fi
     done
 }
 
@@ -2439,7 +2441,9 @@ __lp_temp_acpi() {
     # Only the integer part is retained
     for i in $(LC_ALL=C \acpi -t |
             sed -n 's/.* \(-\{0,1\}[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-        (( $i > ${lp_temperature:-0} )) && lp_temperature=$i
+        if [[ -z ${lp_temperature-} ]] || (( $i > ${lp_temperature:-0} )); then
+            lp_temperature=$i
+        fi
     done
 }
 
@@ -2458,7 +2462,7 @@ __lp_temp_detect() {
         # Check that we can retrieve temperature at least once
         "$_LP_TEMP_FUNCTION" 2>/dev/null
         # If $lp_temperature is set, success!
-        [[ -n "$lp_temperature" ]] && return 0
+        [[ -n "${lp_temperature-}" ]] && return 0
         unset _LP_TEMP_FUNCTION
     done
     return 1
@@ -2468,9 +2472,9 @@ __lp_temp_detect() {
 _lp_temperature() {
     (( LP_ENABLE_TEMP )) || return 2
 
-    lp_temperature=0
     "$_LP_TEMP_FUNCTION"
 
+    [[ -z ${lp_temperature-} ]] && return 1
     (( lp_temperature >= LP_TEMP_THRESHOLD ))
 }
 

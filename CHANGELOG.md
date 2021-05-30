@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.3] - 2021-05-30
+### Fixed
+- **hg**: Stash count erroring with no function defined ([#671])
+- **fossil**: Stash count erroring with no function defined ([#671])
+- **fossil**: Uncommited files erroring with no function defined ([#671])
+- **fossil**: Untracked files erroring with no function defined ([#671])
+- **svn**: Uncommited files erroring with no function defined ([#671])
+- **temp**: Temperature erroring if tool returns no data with `set -u` ([#670])
+
 ## [2.0.2] - 2021-02-22
 ### Fixed
 - **git**: Git worktrees not being detected ([#658])
@@ -629,6 +638,8 @@ for help.
 [#656]: https://github.com/nojhan/liquidprompt/issues/656
 [#657]: https://github.com/nojhan/liquidprompt/issues/657
 [#658]: https://github.com/nojhan/liquidprompt/issues/658
+[#670]: https://github.com/nojhan/liquidprompt/issues/670
+[#671]: https://github.com/nojhan/liquidprompt/pull/671
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

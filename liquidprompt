@@ -2005,7 +2005,7 @@ _lp_hg_head_status() {
 _lp_hg_stash_count() {
     local shelves count
     shelves="$(\hg shelve --list 2>/dev/null; printf x)"
-    _lp_line_count "${shelves%x}"
+    __lp_line_count "${shelves%x}"
     lp_vcs_stash_count="$count"
     (( lp_vcs_stash_count ))
 }
@@ -2093,7 +2093,7 @@ _lp_svn_uncommitted_files() {
     # svn status is unsafe with newline chars in filenames, which will throw
     # off this count
     files="$(\svn status --quiet 2>/dev/null; printf x)"
-    _lp_line_count "${files%x}"
+    __lp_line_count "${files%x}"
     lp_vcs_uncommitted_files="$count"
     (( lp_vcs_uncommitted_files ))
 }
@@ -2170,7 +2170,7 @@ _lp_fossil_head_status() {
 _lp_fossil_stash_count() {
     local stashes count
     stashes="$(\fossil stash list 2>/dev/null; printf x)"
-    _lp_line_count "${stashes%x}"
+    __lp_line_count "${stashes%x}"
     # Each stash takes up two lines, and no stashes is one line
     lp_vcs_stash_count=$(( count / 2 ))
     (( lp_vcs_stash_count ))
@@ -2180,7 +2180,7 @@ _lp_fossil_stash_count() {
 _lp_fossil_untracked_files() {
     local extras count
     extras="$(\fossil extras 2>/dev/null; printf x)"
-    _lp_line_count "${extras%x}"
+    __lp_line_count "${extras%x}"
     lp_vcs_untracked_files=$count
     (( lp_vcs_untracked_files ))
 }
@@ -2189,7 +2189,7 @@ _lp_fossil_untracked_files() {
 _lp_fossil_uncommitted_files() {
     local files
     files="$(\fossil changes 2>/dev/null; printf x)"
-    _lp_line_count "${files%x}"
+    __lp_line_count "${files%x}"
     lp_vcs_uncommitted_files=$count
     (( lp_vcs_uncommitted_files ))
 }

@@ -75,7 +75,15 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
 
     __lp_escape() {
-        ret="${1//\%/%%}"
+        ret="${1//\\/\\\\}"
+        ret="${ret//\%/%%}"
+        if [[ -o promptbang ]]; then
+            ret="${ret//!/!!}"
+        fi
+        if [[ -o promptsubst ]]; then
+            ret="${ret//\$/\\\$}"
+            ret="${ret//\`/\\\`}"
+        fi
     }
 else
     echo "liquidprompt: shell not supported" >&2
@@ -3040,7 +3048,7 @@ prompt_on() {
             fi
             _LP_OLD_SETOPT=()
             # Dump option names: echo ${(ko)options}
-            for o in promptpercent promptbang promptsubst
+            for o in promptpercent
             do
                 if [[ "${options[$o]}" = on ]]; then
                     _LP_OLD_SETOPT+=("$o")
@@ -3065,9 +3073,8 @@ prompt_on() {
         (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
     else # zsh
         [[ -n "${_LP_ZSH_HOOK-}" ]] && add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
-        # Set options that affect PS1 evaluation
-        # Disable parameter/command expansion; enable percent expansion
-        setopt promptpercent nopromptbang nopromptsubst
+        # Set options that affect PS1 evaluation; enable percent expansion
+        setopt promptpercent
         # 'time' doesn't seem to work on shell functions: no time output
         #if (( LP_DEBUG_TIME )); then
         #    _lp_main_precmd() {
@@ -3101,7 +3108,7 @@ prompt_OFF() {
         PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
     else # zsh
         add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
-        setopt promptpercent nopromptbang nopromptsubst
+        setopt promptpercent
     fi
 }
 

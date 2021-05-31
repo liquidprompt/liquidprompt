@@ -315,7 +315,7 @@ function test_path_format_from_path_left() {
   _lp_path_format ''
   if (( _LP_SHELL_zsh )); then
     assertEquals "shell escapes" $'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path"
-    assertEquals "shell escapes format" $'/a_fake_\\n_newline/and_%%100_fresh/and_a_real_\n_newline' "$lp_path_format"
+    assertEquals "shell escapes format" $'/a_fake_\\\\n_newline/and_%%100_fresh/and_a_real_\n_newline' "$lp_path_format"
   else
     assertEquals "shell escapes" $'/a_fake_\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path"
     assertEquals "shell escapes format" $'/a_fake_\\\\n_newline/and_%100_fresh/and_a_real_\n_newline' "$lp_path_format"

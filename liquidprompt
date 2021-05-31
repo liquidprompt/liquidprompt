@@ -49,8 +49,11 @@ if test -n "${BASH_VERSION-}"; then
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
     __lp_escape() {
-        local arg="${1//\\/\\\\}"
-        ret="${arg//\$/\\\$}"
+        ret="${1//\\/\\\\}"
+        if shopt -q promptvars ; then
+            ret="${ret//\$/\\\$}"
+            ret="${ret//\`/\\\`}"
+        fi
     }
 elif test -n "${ZSH_VERSION-}" ; then
     # Check for recent enough version of zsh.

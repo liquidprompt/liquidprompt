@@ -409,27 +409,17 @@ __lp_source_config() {
 # Initialize features based on the user config.
 lp_activate() {
     if (( _LP_SHELL_bash )); then
-        # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
-        # (in case we are reloading LP in the same shell after disabling
-        # the feature in .liquidpromptrc)
-        (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )) && trap - DEBUG
-
         complete -F __lp_theme_bash_complete lp_theme
     else # zsh
         # For ZSH, autoload required functions
         autoload -Uz add-zsh-hook
 
-        # Disable previous hooks as options that set them
-        # may have changed
-        {
-            add-zsh-hook -d precmd  __lp_set_prompt
-            add-zsh-hook -d preexec __lp_runtime_before
-            add-zsh-hook -d preexec __lp_print_title_command
-        } >/dev/null
-
         # Enable the autocomplete if the autocomplete system is initialized.
         __lp_is_function compdef && compdef __lp_theme_zsh_complete lp_theme
     fi
+
+    # Disable hooks that we don't need if features will be disabled.
+    __lp_disable_hooks
 
     # TermInfo feature detection
     _lp_af_colors=() _lp_ab_colors=()
@@ -595,21 +585,6 @@ lp_activate() {
     #################
     # Where are we? #
     #################
-
-    _LP_RUNTIME_LAST_SECONDS=$SECONDS
-
-    if (( _LP_SHELL_zsh )); then
-        (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )) && add-zsh-hook preexec __lp_runtime_before
-        (( LP_ENABLE_TITLE_COMMAND )) && add-zsh-hook preexec __lp_print_title_command
-    else
-        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
-            _LP_AT_PROMPT=0
-            # __lp_before_command gets called just before bash executes a command,
-            # including $PROMPT_COMMAND
-            # Pass $_ to this call, because it sets $_ to what it already was
-            trap '__lp_before_command "$_"' DEBUG
-        fi
-    fi
 
     if (( LP_ENABLE_TEMP )); then
         # Try each _lp_temp method
@@ -3036,29 +3011,13 @@ prompt_on() {
     # if Liquid Prompt has not been already set
     if [[ -z "${LP_OLD_PS1-}" ]]; then
         LP_OLD_PS1="$PS1"
-        if (( _LP_SHELL_bash )); then
-            LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
-        else # zsh
-            LP_OLD_PROMPT_COMMAND=""
-            _LP_ZSH_PROMPT_THEME=""
-            if [[ -n "${prompt_theme-}" && "$prompt_theme" != off ]]; then
-                _LP_ZSH_PROMPT_THEME="$prompt_theme"
-                # Disable the prompt to disable its precmd hook
-                prompt off
-            fi
-            _LP_OLD_SETOPT=()
-            # Dump option names: echo ${(ko)options}
-            for o in promptpercent
-            do
-                if [[ "${options[$o]}" = on ]]; then
-                    _LP_OLD_SETOPT+=("$o")
-                else
-                    _LP_OLD_SETOPT+=("no$o")
-                fi
-            done
-        fi
     fi
+
     if (( _LP_SHELL_bash )); then
+        if [[ -z ${LP_OLD_PROMPT_COMMAND+x} ]]; then
+            LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
+        fi
+
         # Prevent some cases where the user shoots in his own foot.
         # PROMPT_COMMAND is not exported by default, but some users
         # incorrectly export it from their profile/bashrc (GitHub #450),
@@ -3070,46 +3029,96 @@ prompt_on() {
         fi
 
         PROMPT_COMMAND=__lp_set_prompt
-        (( LP_DEBUG_TIME )) && PROMPT_COMMAND="time $PROMPT_COMMAND" || true
+        if (( LP_DEBUG_TIME )); then
+            PROMPT_COMMAND="time $PROMPT_COMMAND"
+        fi
+
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
+            _LP_AT_PROMPT=0
+            _LP_RUNTIME_LAST_SECONDS=$SECONDS
+            # __lp_before_command gets called just before bash executes a command,
+            # including $PROMPT_COMMAND
+            # Pass $_ to this call, because it sets $_ to what it already was
+            trap '__lp_before_command "$_"' DEBUG
+        fi
     else # zsh
-        [[ -n "${_LP_ZSH_HOOK-}" ]] && add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
+        LP_OLD_PROMPT_COMMAND=""
+
+        if [[ -n "${prompt_theme-}" && "$prompt_theme" != off ]]; then
+            _LP_ZSH_PROMPT_THEME="$prompt_theme"
+            # Disable the prompt to disable its precmd hook
+            prompt off
+        fi
+
+        _LP_OLD_SETOPT=(${_LP_OLD_SETOPT[@]+"${_LP_OLD_SETOPT[@]}"})
+        if (( ! ${#_LP_OLD_SETOPT} )); then
+            # Dump option names: echo ${(ko)options}
+            for o in promptpercent
+            do
+                if [[ "${options[$o]}" = on ]]; then
+                    _LP_OLD_SETOPT+=("$o")
+                else
+                    _LP_OLD_SETOPT+=("no$o")
+                fi
+            done
+        fi
+
         # Set options that affect PS1 evaluation; enable percent expansion
         setopt promptpercent
-        # 'time' doesn't seem to work on shell functions: no time output
-        #if (( LP_DEBUG_TIME )); then
-        #    _lp_main_precmd() {
-        #        local TIMEFMT='Liquid Prompt build time: %*E'
-        #        time __lp_set_prompt
-        #    }
-        #    _LP_ZSH_HOOK=_lp_main_precmd
-        #else
-            _LP_ZSH_HOOK=__lp_set_prompt
-        #fi
-        add-zsh-hook precmd "$_LP_ZSH_HOOK"
+
+        add-zsh-hook precmd __lp_set_prompt
+
+        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+            _LP_RUNTIME_LAST_SECONDS=$SECONDS
+            add-zsh-hook preexec __lp_runtime_before
+        fi
+        if (( LP_ENABLE_TITLE_COMMAND )); then
+            add-zsh-hook preexec __lp_print_title_command
+        fi
+    fi
+}
+
+__lp_disable_hooks() {
+    if (( _LP_SHELL_bash )); then
+        PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
+        unset LP_OLD_PROMPT_COMMAND
+
+        # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
+        if (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )); then
+            trap - DEBUG
+        fi
+    else # zsh
+        # Disable previous hooks as options that set them
+        # may have changed
+        {
+            add-zsh-hook -d precmd  __lp_set_prompt
+            add-zsh-hook -d preexec __lp_runtime_before
+            add-zsh-hook -d preexec __lp_print_title_command
+        } >/dev/null
     fi
 }
 
 # Come back to the old prompt
 prompt_off() {
+    __lp_disable_hooks
+
     PS1=$LP_OLD_PS1
-    if (( _LP_SHELL_bash )); then
-        PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
-    else # zsh
-        add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
+
+    if (( _LP_SHELL_zsh )); then
         setopt "${_LP_OLD_SETOPT[@]}"
-        (( ${#_LP_ZSH_PROMPT_THEME} )) && prompt "$_LP_ZSH_PROMPT_THEME"
+
+        if [[ -n ${_LP_ZSH_PROMPT_THEME-} ]]; then
+            prompt "$_LP_ZSH_PROMPT_THEME"
+            unset _LP_ZSH_PROMPT_THEME
+        fi
     fi
 }
 
 # Use an empty prompt: just the \$ mark
 prompt_OFF() {
+    __lp_disable_hooks
+
     PS1="$_LP_MARK_SYMBOL "
-    if (( _LP_SHELL_bash )); then
-        PROMPT_COMMAND="$LP_OLD_PROMPT_COMMAND"
-    else # zsh
-        add-zsh-hook -d precmd "$_LP_ZSH_HOOK"
-        setopt promptpercent
-    fi
 }
 
 lp_theme() {

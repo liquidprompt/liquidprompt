@@ -188,24 +188,52 @@ General
 Features
 --------
 
-.. attribute:: LP_DELIMITER_KUBECONTEXT
+.. attribute:: LP_DELIMITER_KUBECONTEXT_PREFIX
    :type: string
    :value: ""
 
-   Delimiter to shorten the Kubernetes context.
+   Delimiter to shorten the Kubernetes context by removing a prefix.
+
+   Usage example:
+
+   * if your context names are cluster-dev and cluster-test,
+     then set this to "-" in order to output "dev" and "test" in prompt.
+   * if using AWS EKS then set this to '/' to show only the cluster name,
+     without the rest of the ARN
+     (arn:aws:eks:$AWS_REGION:$ACCOUNT_ID:cluster/$CLUSTER_NAME)
+   * alternatively, if using AWS EKS, set this to ':' to show only
+     "cluster/$CLUSTER_NAME".  (Note: the prefix removed is a greedy match - it
+     contains all the ":"s in the input.)
+
+   If set to the empty string no truncating will occur (this is the default).
+
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX`, :attr:`LP_COLOR_KUBECONTEXT`,
+   and :attr:`LP_MARK_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_DELIMITER_KUBECONTEXT_SUFFIX
+   :type: string
+   :value: ""
+
+   Delimiter to shorten the Kubernetes context by removing a suffix.
 
    Usage example:
 
    * if your context names are dev-cluster and test-cluster,
      then set this to "-" in order to output "dev" and "test" in prompt.
    * if your context names are dev.k8s.example.com and test.k8s.example.com,
-     then set this to "." in order to output "dev" and "test" in prompt.
+     then set this to "." in order to output "dev" and "test" in prompt. (Note:
+     the suffix removed is a greedy match - it contains all the "."s in the
+     input.)
    * if using OpenShift then set this to "/" to show only the project name
      without the cluster and user parts.
 
    If set to the empty string no truncating will occur (this is the default).
 
-   See also: :attr:`LP_ENABLE_KUBECONTEXT`, :attr:`LP_COLOR_KUBECONTEXT`,
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`, :attr:`LP_COLOR_KUBECONTEXT`,
    and :attr:`LP_MARK_KUBECONTEXT`.
 
    .. versionadded:: 2.1
@@ -386,7 +414,10 @@ Features
 
    .. _`context`: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
 
-   See also: :attr:`LP_DELIMITER_KUBECONTEXT`, :attr:`LP_COLOR_KUBECONTEXT`,
+   See also: :attr:`LP_DELIMITER_KUBECONTEXT`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX`,
+   :attr:`LP_COLOR_KUBECONTEXT`,
    and :attr:`LP_MARK_KUBECONTEXT`.
 
    .. versionadded:: 2.1
@@ -1303,4 +1334,3 @@ Valid preset color variables are:
    :value: $GREEN
 
    Color used for indicating that a display is connected.
-

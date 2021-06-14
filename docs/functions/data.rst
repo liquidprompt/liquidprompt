@@ -52,7 +52,10 @@ Development Environment
    Returns ``true`` if a Kubernetes context is found.
    Returns the Kubernetes context name or the first name component.
 
-   Splitting long context names into components is defined by :attr:`LP_DELIMITER_KUBECONTEXT`.
+   Splitting long context names into components is defined by
+   :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX` and
+   :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`. Both use greedy matches - see
+   :doc:`../config` for examples.
 
    Can be disabled by :attr:`LP_ENABLE_KUBECONTEXT`.
 
@@ -434,4 +437,3 @@ Time
    ``0``.
 
    .. versionadded:: 2.0
-

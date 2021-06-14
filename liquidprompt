@@ -185,7 +185,8 @@ __lp_source_config() {
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
-    LP_DELIMITER_KUBECONTEXT=${LP_DELIMITER_KUBECONTEXT:-""}
+    LP_DELIMITER_KUBECONTEXT_SUFFIX=${LP_DELIMITER_KUBECONTEXT_SUFFIX:-""}
+    LP_DELIMITER_KUBECONTEXT_PREFIX=${LP_DELIMITER_KUBECONTEXT_PREFIX:-""}
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
@@ -1236,8 +1237,12 @@ _lp_kubernetes_context() {
     local kubernetes_context
     kubernetes_context=$(kubectl config current-context 2>/dev/null) || return 1
 
-    if [[ -n "$LP_DELIMITER_KUBECONTEXT" ]]; then
-        kubernetes_context="${kubernetes_context%%${LP_DELIMITER_KUBECONTEXT}*}"
+    if [[ -n "$LP_DELIMITER_KUBECONTEXT_PREFIX" ]]; then
+        kubernetes_context="${kubernetes_context##*${LP_DELIMITER_KUBECONTEXT_PREFIX}}"
+    fi
+
+    if [[ -n "$LP_DELIMITER_KUBECONTEXT_SUFFIX" ]]; then
+        kubernetes_context="${kubernetes_context%%${LP_DELIMITER_KUBECONTEXT_SUFFIX}*}"
     fi
 
     local ret

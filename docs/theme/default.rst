@@ -187,16 +187,23 @@ default order if the user does not configure a different template.
    The current Python (or Conda) virtual environment. See
    :attr:`LP_ENABLE_VIRTUALENV`.
 
-.. attribute:: LP_KUBECONTEXT
+.. attribute:: LP_RUBY_VENV
 
-   The current Kubernetes context. See
-   :attr:`LP_ENABLE_KUBECONTEXT`.
+   The current Ruby virtual environment. See
+   :attr:`LP_ENABLE_RUBY_VENV`.
 
    .. versionadded:: 2.1
 
 .. attribute:: LP_TFSPACE
 
    The current Terraform workspace. See :attr:`LP_ENABLE_TERRAFORM`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_KUBECONTEXT
+
+   The current Kubernetes context. See
+   :attr:`LP_ENABLE_KUBECONTEXT`.
 
    .. versionadded:: 2.1
 

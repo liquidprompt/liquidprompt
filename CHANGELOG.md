@@ -268,7 +268,7 @@ for help.
 
 ### Fixed
 - **general**: Issues with custom `$IFS` ([e48856b], [4ebc26e])
-- **general**: Liquidprompt is now `set -u` compatable ([#354], [a8aa8c9], [cb9d71b])
+- **general**: Liquidprompt is now `set -u` compatible ([#354], [a8aa8c9], [cb9d71b])
 - **acpi**: Temperature check printed each temp twice, slowing down check ([cf8bf97])
 - **acpi**: Temperature check used extended sed syntax without declaring extended language ([eb30942])
 - **battery**: Color display would break with custom `$LP_COLORMAP` array ([f3f20ec])
@@ -307,7 +307,7 @@ for help.
 
 ## [1.12.1] - 2020-10-25
 ### Fixed
-- **fossil**: fossil 2.11+ maching any directory as a valid repo and printing
+- **fossil**: fossil 2.11+ matching any directory as a valid repo and printing
   3 error messages ([#626])
 
 ## [1.12.0] - 2020-07-17
@@ -340,7 +340,7 @@ for help.
 - **hg**: modifications incorrectly showing as untracked files ([#509])
 - **hostname**: regression in `$LP_ENABLE_FQDN` implementation ([#472])
 - **hostname/SunOS**: `$LP_COLOR_HOST_HASH` erroring ([#461], [#462], [9c1c8a3])
-- **jobs**: mispelled variable local declaration ([#564])
+- **jobs**: misspelled variable local declaration ([#564])
 - **root**: `$LP_MARK_DEFAULT` being ignored if root ([#501], [5ee3c53])
 - **runtime**: when runtime enabled, `$_` would evaluate as
   `_lp_runtime_before` ([#451])
@@ -442,7 +442,7 @@ for help.
 - **zsh**: disable `$PROMPT_COMMAND` hacks and only use zsh built in
   hooks ([5fa9054])
 - **zsh**: disable existing hooks at startup ([454112f])
-- **zsh**: explicitely set the shell options we need (instead of relying on
+- **zsh**: explicitly set the shell options we need (instead of relying on
   the shell default settings) ([282359a])
 
 ## [1.9] - 2014-11-12 - dolmen (Olivier Mengué)
@@ -453,7 +453,7 @@ for help.
 - **venv**: support for Software Collections ([#299], [#300], [cc1be7e])
 
 ### Fixed
-- **general**: lots of varable quoting fixes
+- **general**: lots of variable quoting fixes
 - **general**: save user IFS and restore it to avoid echo ([#267], [782fad0])
 - **bash**: save and set shell option promptvars ([62f0270])
 - **bash**: workaround broken pattern substitution in bash

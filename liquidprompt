@@ -336,7 +336,7 @@ __lp_source_config() {
         fi
     done
 
-    # Deprecations and compatability shims
+    # Deprecations and compatibility shims
 
     if [[ -n "${LP_DISABLED_VCS_PATH-}" ]]; then
         echo "liquidprompt: LP_DISABLED_VCS_PATH is deprecated. Update your config to use LP_DISABLED_VCS_PATHS array." >&2
@@ -681,7 +681,7 @@ __lp_is_function() {
     fi
 }
 
-# Count the number of lines in the input string. A faster subsitute for 'wc -l'.
+# Count the number of lines in the input string. A faster substitute for 'wc -l'.
 __lp_line_count() {
   local var="${1//[!$'\n']}"
   count=${#var}

@@ -23,6 +23,12 @@ details on installing and configuring Liquidprompt.
 Liquid Prompt is distributed under the [GNU Affero General Public License
 version 3](LICENSE).
 
+To comply with the AGPL clauses, anybody offering Liquid Prompt over the network
+is required to also offer access to the source code of it and allow further use
+and modifications. As Liquid Prompt is implemented purely in shell script,
+anybody using it over SSH or equivalent terminal connection automatically also
+has access to the source code, so it is easy to comply with the license.
+
 
 ## Known Limitations and Bugs
 

@@ -16,7 +16,7 @@ assignees: ''
   `echo $ZSH_VERSION`
   Example: "bash 4.4.19(1)-release"
 -->
-Shell: 
+Shell:
 <!---
   Operating system name and version.
   Find with
@@ -25,7 +25,7 @@ Shell:
   `lsb_release -a` or `cat /etc/*release` or `cat /etc/issue*` or `cat /proc/version`
   Example: "Linux 4.18.0-147.8.1.el8_1.x86_64, CentOS release 8.1.1911 (Core)"
 -->
-Operating system: 
+Operating system:
 <!---
   Liquidprompt version, tag, or commit.
   Find with `git describe --tags --exact-match`

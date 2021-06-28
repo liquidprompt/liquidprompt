@@ -123,7 +123,7 @@ LP_ENABLE_HG=1
 LP_ENABLE_FOSSIL=1
 
 # Enable the Bazaar special features.
-# Recommanded value is 1
+# Recommended value is 1
 LP_ENABLE_BZR=1
 
 # Show time of when the current prompt was displayed.

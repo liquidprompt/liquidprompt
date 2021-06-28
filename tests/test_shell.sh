@@ -97,7 +97,7 @@ function test_local {
   function local_function {
     assertEquals "c should inherit from outer scope" 5 "$c"
     typeset c=4
-    assertEquals "c should be overriden by inner scope" 4 "$c"
+    assertEquals "c should be overridden by inner scope" 4 "$c"
   }
 
   c=5

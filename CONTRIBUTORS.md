@@ -132,6 +132,7 @@ Thanks again to everyone for all of the help and support!
 * Imran Munshi (@imran27)
 * Dugan Chen (@duganchen)
 * Aleksey Tsalolikhin (@atsalolikhin-spokeo)
+* Otto Kekäläinen (@ottok)
 
 ### Bug reports / Feature requests
 * @skanx
@@ -236,5 +237,4 @@ Thanks again to everyone for all of the help and support!
 * @Orgams
 * Andrei Matei (@andreimatei)
 * Tiziano Santoro (@tiziano88)
-* Otto Kekäläinen (@ottok)
 * Michael Louis Thaler (@mithaler)

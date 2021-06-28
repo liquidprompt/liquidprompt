@@ -158,7 +158,7 @@ General
    Display the root directory of the current VCS repository with special
    formatting, set by :attr:`LP_COLOR_PATH_VCS_ROOT`. If
    :attr:`LP_ENABLE_SHORTEN_PATH` is enabled, also prevent the path shortening
-   from shortening or hidding the VCS root directory.
+   from shortening or hiding the VCS root directory.
 
 .. attribute:: LP_PS1_POSTFIX
    :type: string

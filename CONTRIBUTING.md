@@ -108,7 +108,7 @@ for our standards on shell language.
 
 3. Good commit message:
      - first line must be 50 chars max and is a summary of the commit. The
-       first charcter should be capitalized, no ending period. Use the
+       first character should be capitalized, no ending period. Use the
        imperative mood ("fix thing", not "fixes thing" or "fixing thing" or
        "fixed thing")
      - second line must be empty
@@ -162,7 +162,7 @@ on this than what was happening before.
 
 If a stable version is released while your pull request has still not been
 merged on any working branch of the main repo, it would be helpful to ease
-the maitainer's work by rebasing your branch on top of the latest `master`
+the maintainer's work by rebasing your branch on top of the latest `master`
 and push it again to your GitHub repo. Be careful (for example create a
 branch or a tag before your rebase) because your may lose all your work in
 that process.

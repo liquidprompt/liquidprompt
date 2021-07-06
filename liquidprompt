@@ -1414,7 +1414,7 @@ _lp_aws_profile() {
 
     local ret
 
-    local aws_profile="${AWS_PROFILE-${AWS_DEFAULT_PROFILE-}}"
+    local aws_profile="${AWS_PROFILE-${AWS_DEFAULT_PROFILE-${AWS_VAULT-}}}"
     if [[ -n $aws_profile ]]; then
         __lp_escape "${aws_profile}"
         lp_aws_profile=$ret

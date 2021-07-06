@@ -271,11 +271,14 @@ Features
    :type: bool
    :value: 1
 
-   Display the current value of :envvar:`AWS_PROFILE` or
-   :envvar:`AWS_DEFAULT_PROFILE`. These variables are used to switch between
-   configuration profiles by the `AWS CLI`_.
+   Display the current value of :envvar:`AWS_PROFILE`,
+   :envvar:`AWS_DEFAULT_PROFILE`, or :envvar:`AWS_VAULT`. AWS_PROFILE and
+   AWS_DEFAULT_PROFILE are used to switch between configuration profiles by
+   the `AWS CLI`_. AWS_VAULT is used by `aws-vault`_ to specify the AWS
+   profile in use.
 
    .. _`AWS CLI`: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+   .. _`aws-vault`: https://github.com/99designs/aws-vault
 
    See also: :attr:`LP_COLOR_AWS_PROFILE`.
 

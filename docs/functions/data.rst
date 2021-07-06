@@ -113,9 +113,9 @@ Environment
 
 .. function:: _lp_aws_profile() -> var:lp_aws_profile
 
-   Returns ``true`` if the :envvar:`AWS_PROFILE` or :envvar:`AWS_DEFAULT_PROFILE`
-   variables are found in the environment (in that order of preference).
-   Returns the contents of the variable.
+   Returns ``true`` if the :envvar:`AWS_PROFILE`, :envvar:`AWS_DEFAULT_PROFILE`,
+   or :envvar:`AWS_VAULT` variables are found in the environment
+   (in that order of preference). Returns the contents of the variable.
 
    Can be disabled by :attr:`LP_ENABLE_AWS_PROFILE`.
 

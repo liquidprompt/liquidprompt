@@ -9,7 +9,7 @@ if [[ -z ${1-} || $1 == --help ]]; then
 Usage: %s theme [sourced files...]
 
 Print out example prompts based on a standard set of input conditions. Designed
-to showcase Liquidprompt themes.
+to showcase Liquid Prompt themes.
 
 Example usage: %s powerline themes/powerline/powerline.theme
 ' "$0" "$0"
@@ -25,7 +25,7 @@ else
   done
 fi
 
-# Liquidprompt depends on PS1 being set to detect if it has installed itself.
+# Liquid Prompt depends on PS1 being set to detect if it has installed itself.
 PS1="$ "
 
 # Since the shell is not evaluating PS1, we don't need these.

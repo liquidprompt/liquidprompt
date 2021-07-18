@@ -1,7 +1,7 @@
 # liquidprompt/contrib Policy
 
 This directory contains files that have been contributed by contributors
-but that the core Liquidprompt maintainers do not maintain.
+but that the core Liquid Prompt maintainers do not maintain.
 So they are probably outdated and possibly poor quality (because the maintainers
 may not have the knowledge to properly review them).
 

@@ -4,9 +4,9 @@ Config Options
 .. contents::
    :local:
 
-Almost every feature in Liquidprompt can be turned on or off using these config
-options. They can either be set before sourcing Liquidprompt (in ``.bashrc`` or
-``.zshrc``), or set in a Liquidprompt config file.
+Almost every feature in Liquid Prompt can be turned on or off using these config
+options. They can either be set before sourcing Liquid Prompt (in ``.bashrc`` or
+``.zshrc``), or set in a Liquid Prompt config file.
 
 .. note::
    Config variables set in a config file take precedence over variables set in the
@@ -26,7 +26,7 @@ The config file is searched for in the following locations:
 
 The first file found is sourced.
 
-Liquidprompt ships with an example config file, ``liquidpromptrc-dist``. You can
+Liquid Prompt ships with an example config file, ``liquidpromptrc-dist``. You can
 start from this file for your config::
 
     cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc
@@ -127,7 +127,7 @@ General
 
    * **truncate_chars_from_path_left**: Truncates characters from the start of
      the path, showing consecutive directories as one shortened section. E.g. in
-     a directory named ``~/MyProjects/Liquidprompt/tests``, it will be shortened
+     a directory named ``~/MyProjects/liquidprompt/tests``, it will be shortened
      to ``...prompt/tests``. The shortened mark is :attr:`LP_MARK_SHORTEN_PATH`.
    * **truncate_chars_from_dir_right**: Leaves the beginning of a directory name
      untouched. E.g. directories will be shortened like so: ``~/Doc.../Office``.
@@ -344,7 +344,7 @@ Features
       example, Docker doesn't inherit anything unless explicitly told to.
       Singularity in many configurations inherits most variables but shell
       functions and zsh hooks might not make it in.  For full functionality,
-      liquidprompt may need to be sourced inside the child container.
+      ``liquidprompt`` may need to be sourced inside the child container.
 
    See also: :attr:`LP_COLOR_CONTAINER`.
 

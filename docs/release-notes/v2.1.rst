@@ -10,7 +10,7 @@ fixes.
 Title Command
 =============
 
-Liquidprompt can now display the currently running command as part of the
+Liquid Prompt can now display the currently running command as part of the
 terminal title. See :attr:`LP_ENABLE_TITLE_COMMAND` for more information.
 
 Development Environments
@@ -61,7 +61,7 @@ few issues, and will help prevent regressions.
 Bash-preexec Compatibility
 ==========================
 
-Liquidprompt now supports running along side `bash-preexec`_. Simply load
-Liquidprompt `after` bash-preexec.
+Liquid Prompt now supports running along side `bash-preexec`_. Simply load
+Liquid Prompt `after` bash-preexec.
 
 .. _bash-preexec: https://github.com/rcaloras/bash-preexec

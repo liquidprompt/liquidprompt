@@ -263,7 +263,7 @@ for help.
 - **temperature**: `_lp_temperature()` as data function ([69c75a3])
 - **terminal**: `_lp_terminal_device()` data function ([5076dbe])
 - **tests**: Shunit2 testing suite ([#469], [46918f6], [44e3a6f], [1fe1559])
-- **tests**: Tests to check if a shell supports all features that Liquidprompt
+- **tests**: Tests to check if a shell supports all features that Liquid Prompt
   needs ([46918f6], [5a9293d], [1fe1559])
 - **tests**: Tests for `_lp_as_text()` ([6cdb860])
 - **tests**: Tests for `_lp_battery()`/`acpi` ([cef9cb1])
@@ -325,7 +325,7 @@ for help.
 
 ### Fixed
 - **general**: Issues with custom `$IFS` ([e48856b], [4ebc26e])
-- **general**: Liquidprompt is now `set -u` compatible ([#354], [a8aa8c9], [cb9d71b])
+- **general**: Liquid Prompt is now `set -u` compatible ([#354], [a8aa8c9], [cb9d71b])
 - **acpi**: Temperature check printed each temp twice, slowing down check ([cf8bf97])
 - **acpi**: Temperature check used extended sed syntax without declaring extended language ([eb30942])
 - **battery**: Color display would break with custom `$LP_COLORMAP` array ([f3f20ec])

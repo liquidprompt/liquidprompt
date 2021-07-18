@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Liquidprompt
+about: Suggest an idea for Liquid Prompt
 title: ''
 labels: 'enhancement'
 assignees: ''
@@ -17,4 +17,3 @@ assignees: ''
 
 ### Example prompt
 <!--- Show us what a prompt with this feature enabled would look like -->
-

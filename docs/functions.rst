@@ -8,7 +8,7 @@ Functions starting with ``_lp`` are **theme** level functions, designed to be us
 by themes. These include data, theme, and utility functions.
 
 Functions starting with ``__lp`` are **internal** functions, designed to be used
-only by Liquidprompt internals. These functions should not be used by users or
+only by Liquid Prompt internals. These functions should not be used by users or
 themes, as they are not guaranteed to not change between versions.
 
 .. toctree::

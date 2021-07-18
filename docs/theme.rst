@@ -1,21 +1,21 @@
 Theming
 *******
 
-Liquidprompt has a strong data and theming engine, allowing it to be extremely
+Liquid Prompt has a strong data and theming engine, allowing it to be extremely
 flexible and customizable.
 
 The :doc:`theme/default` has a templating engine (previously called "themes" in
-Liquidprompt version 1), that allows for custom prompt ordering in the default
+Liquid Prompt version 1), that allows for custom prompt ordering in the default
 theme.
 
-Liquidprompt ships with some :doc:`theme/included` other than the default as
+Liquid Prompt ships with some :doc:`theme/included` other than the default as
 well.
 
-See the `Liquidprompt Theme List`_ on the wiki for user created themes.
+See the `Liquid Prompt Theme List`_ on the wiki for user created themes.
 
 If you want to create your own theme, see :doc:`theme/custom`.
 
-.. _`Liquidprompt Theme List`: https://github.com/nojhan/liquidprompt/wiki/Themes
+.. _`Liquid Prompt Theme List`: https://github.com/nojhan/liquidprompt/wiki/Themes
 
 .. toctree::
    :maxdepth: 2
@@ -30,7 +30,7 @@ If you want to create your own theme, see :doc:`theme/custom`.
 Switching Themes
 ----------------
 
-Liquidprompt can switch between themes on the fly. The shell does not need to be
+Liquid Prompt can switch between themes on the fly. The shell does not need to be
 reloaded, and no files need to be sourced after the initial source.
 
 To load (but not activate) a theme, simply source the theme file. For example,

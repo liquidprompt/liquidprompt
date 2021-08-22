@@ -1236,11 +1236,14 @@ _lp_kubernetes_context() {
     (( LP_ENABLE_KUBECONTEXT )) || return 2
 
     local kubernetes_context
-    kubernetes_context=$(kubectl config current-context 2>/dev/null) || return 1
 
     if (( LP_ENABLE_KUBE_NAMESPACE )); then
-        local kubernetes_namespace
-        kubernetes_namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}') || return 1
+        local line kubernetes_namespace
+        line=$(kubectl config view --minify --output 'jsonpath={.current-context}{"/"}{..namespace}')
+        kubernetes_context=${line%/*}
+        kubernetes_namespace=${line##*/}
+    else
+        kubernetes_context=$(kubectl config current-context 2>/dev/null) || return 1
     fi
 
     if [[ -n "$LP_DELIMITER_KUBECONTEXT_PREFIX" ]]; then

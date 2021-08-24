@@ -417,7 +417,24 @@ Features
 
    .. _`context`: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
 
-   See also: :attr:`LP_DELIMITER_KUBECONTEXT`,
+   See also: :attr:`LP_ENABLE_KUBE_NAMESPACE`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`,
+   :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX`,
+   :attr:`LP_COLOR_KUBECONTEXT`,
+   and :attr:`LP_MARK_KUBECONTEXT`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_ENABLE_KUBE_NAMESPACE
+   :type: bool
+   :value: 0
+
+   Display the current `Kubernetes <https://kubernetes.io/>`_ default
+   `namespace`_ in the current context.
+
+   .. _`namespace`: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#setting-the-namespace-preference
+
+   See also: :attr:`LP_ENABLE_KUBECONTEXT`,
    :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`,
    :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX`,
    :attr:`LP_COLOR_KUBECONTEXT`,

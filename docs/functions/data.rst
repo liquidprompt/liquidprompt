@@ -47,7 +47,7 @@ Battery
 Development Environment
 -----------------------
 
-.. function:: _lp_kubernetes_context() -> var:lp_kubernetes_context
+.. function:: _lp_kubernetes_context() -> var:lp_kubernetes_context, var:lp_kubernetes_namespace
 
    Returns ``true`` if a Kubernetes context is found.
    Returns the Kubernetes context name or the first name component.
@@ -56,6 +56,9 @@ Development Environment
    :attr:`LP_DELIMITER_KUBECONTEXT_SUFFIX` and
    :attr:`LP_DELIMITER_KUBECONTEXT_PREFIX`. Both use greedy matches - see
    :doc:`../config` for examples.
+
+   If enabled by :attr:`LP_ENABLE_KUBE_NAMESPACE`, will also return the default
+   namespace for the current context, if one is set.
 
    Can be disabled by :attr:`LP_ENABLE_KUBECONTEXT`.
 

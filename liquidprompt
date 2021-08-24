@@ -236,6 +236,7 @@ __lp_source_config() {
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
     LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
     LP_ENABLE_KUBECONTEXT=${LP_ENABLE_KUBECONTEXT:-0}
+    LP_ENABLE_KUBE_NAMESPACE=${LP_ENABLE_KUBE_NAMESPACE:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -1222,7 +1223,15 @@ _lp_kubernetes_context() {
     (( LP_ENABLE_KUBECONTEXT )) || return 2
 
     local kubernetes_context
-    kubernetes_context=$(kubectl config current-context 2>/dev/null) || return 1
+
+    if (( LP_ENABLE_KUBE_NAMESPACE )); then
+        local line kubernetes_namespace
+        line=$(kubectl config view --minify --output 'jsonpath={.current-context}{"/"}{..namespace}')
+        kubernetes_context=${line%/*}
+        kubernetes_namespace=${line##*/}
+    else
+        kubernetes_context=$(kubectl config current-context 2>/dev/null) || return 1
+    fi
 
     if [[ -n "$LP_DELIMITER_KUBECONTEXT_PREFIX" ]]; then
         kubernetes_context="${kubernetes_context##*${LP_DELIMITER_KUBECONTEXT_PREFIX}}"
@@ -1235,12 +1244,19 @@ _lp_kubernetes_context() {
     local ret
     __lp_escape "$kubernetes_context"
     lp_kubernetes_context=$ret
+
+    if [[ -n ${kubernetes_namespace-} ]]; then
+        __lp_escape "$kubernetes_namespace"
+        lp_kubernetes_namespace=$ret
+    else
+        unset lp_kubernetes_namespace
+    fi
 }
 
 _lp_kubernetes_context_color() {
     _lp_kubernetes_context || return "$?"
 
-    lp_kubernetes_context_color="[${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${NO_COL}]"
+    lp_kubernetes_context_color="[${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}]"
 }
 
 # Same as bash '\l', but can be inlined as a constant as the value will not

@@ -12,7 +12,7 @@ if [[ -z ${BASH_VERSION-} ]]; then
 fi
 
 # Install bash-preexec.sh
-if [[ ! -f bash-prexec.sh ]]; then
+if [[ ! -f bash-preexec.sh ]]; then
   echo "Installing bash-preexec.sh in $(pwd)..."
   bash_preexec_version=0.4.1
   curl -O https://raw.githubusercontent.com/rcaloras/bash-preexec/$bash_preexec_version/bash-preexec.sh

@@ -90,6 +90,24 @@ else
     return
 fi
 
+__lp_use_bash_preexec() {
+    # If https://github.com/rcaloras/bash-preexec is present, we can (and should, because it interferes with
+    # PROMPT_COMMAND and DEBUG) use the zsh-hook like behavior it provides.
+    [[ "${__bp_imported-}" == "defined" ]]
+}
+
+__lp_array_contains() {
+    local target="$1"
+    shift
+
+    for element; do
+        if [[ $element == "$target" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 ###############
 # OS specific #
 ###############
@@ -3044,18 +3062,53 @@ prompt_on() {
             declare -g +x PROMPT_COMMAND
         fi
 
-        PROMPT_COMMAND=__lp_set_prompt
-        if (( LP_DEBUG_TIME )); then
-            PROMPT_COMMAND="time $PROMPT_COMMAND"
-        fi
+        if ! __lp_use_bash_preexec; then
+            PROMPT_COMMAND=__lp_set_prompt
 
-        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
-            _LP_AT_PROMPT=0
-            _LP_RUNTIME_LAST_SECONDS=$SECONDS
-            # __lp_before_command gets called just before bash executes a command,
-            # including $PROMPT_COMMAND
-            # Pass $_ to this call, because it sets $_ to what it already was
-            trap '__lp_before_command "$_"' DEBUG
+            if (( LP_DEBUG_TIME )); then
+                PROMPT_COMMAND="time $PROMPT_COMMAND"
+            fi
+
+            if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
+                _LP_AT_PROMPT=0
+                _LP_RUNTIME_LAST_SECONDS=$SECONDS
+                # __lp_before_command gets called just before bash executes a command,
+                # including $PROMPT_COMMAND
+                # Pass $_ to this call, because it sets $_ to what it already was
+                trap '__lp_before_command "$_"' DEBUG
+            fi
+        else
+            # We do not want __lp_set_prompt to show up twice in precmd_functions; if it does, then LP_ENABLE_ERROR
+            # breaks because even if the first call of __lp_set_prompt has $? != 0, the second one will have $? == 0.
+            # (Same for __lp_debug_timed_lp_set_prompt.)
+
+            # This conditional is intended to check  $precmd_functions for the presence of '__lp_set_prompt' or
+            # '__lp_debug_timed_lp_set_prompt' so they get added at most once
+            if ! ( __lp_array_contains __lp_set_prompt ${precmd_functions[@]+"${precmd_functions[@]}"} \
+                || __lp_array_contains __lp_debug_timed_set_prompt ${precmd_functions[@]+"${precmd_functions[@]}"} );
+            then
+                if (( LP_DEBUG_TIME )); then
+                    __lp_debug_timed_lp_set_prompt() {
+                        time __lp_set_prompt
+                    }
+                    precmd_functions+=(__lp_debug_timed_lp_set_prompt)
+                else
+                    precmd_functions+=(__lp_set_prompt)
+                fi
+            fi
+            if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+                _LP_RUNTIME_LAST_SECONDS=$SECONDS
+                # It's less bad to have this be duped than __lp_set_prompt, but let's be sure
+                if ! ( __lp_array_contains __lp_runtime_before ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
+                    preexec_functions+=(__lp_runtime_before)
+                fi
+            fi
+            if (( LP_ENABLE_TITLE_COMMAND )); then
+                # It's less bad to have this be duped than __lp_set_prompt, but let's be sure
+                if ! ( __lp_array_contains __lp_title_command ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
+                    preexec_functions+=(__lp_title_command)
+                fi
+            fi
         fi
     else # zsh
         LP_OLD_PROMPT_COMMAND=""
@@ -3096,12 +3149,31 @@ prompt_on() {
 
 __lp_disable_hooks() {
     if (( _LP_SHELL_bash )); then
-        PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
-        unset LP_OLD_PROMPT_COMMAND
+        if __lp_use_bash_preexec; then
+            # Disable previous hooks as options that set them
+            # may have changed
+            # (This is "remove the specified value(s) from the array", which bash does not make easy.)
+            local -a new_precmd_functions=()
+            for value in ${precmd_functions[@]+"${precmd_functions[@]}"}; do
+                [[ "$value" != "__lp_set_prompt" ]] && new_precmd_functions+=("$value")
+            done
+            precmd_functions=(${new_precmd_functions[@]+"${new_precmd_functions[@]}"})
 
-        # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
-        if (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )); then
-            trap - DEBUG
+            # Now repeat for preexec (not precmd) functions
+            local -a new_preexec_functions=()
+            for value in ${preexec_functions[@]+"${preexec_functions[@]}"}; do
+                [[ "$value" != "__lp_runtime_before" ]] &&
+                [[ "$value" != "__lp_title_command" ]] && new_preexec_functions+=("$value")
+            done
+            preexec_functions=(${new_preexec_functions[@]+"${new_preexec_functions[@]}"})
+        else
+            PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
+            unset LP_OLD_PROMPT_COMMAND
+
+            # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
+            if (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )); then
+                trap - DEBUG
+            fi
         fi
     else # zsh
         # Disable previous hooks as options that set them

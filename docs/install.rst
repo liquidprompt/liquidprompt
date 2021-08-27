@@ -101,4 +101,14 @@ Adjust the path if you installed to a different location that the suggested
    source Liquidprompt to avoid history and timing issues. Do not export
    :envvar:`PROMPT_COMMAND`.
 
+.. warning::
+   If you are using `bash-preexec <https://github.com/rcaloras/bash-preexec>`_, be
+   aware that bash-preexec **must** come **before** liquidprompt in your
+   ``.bashrc``. This
+   contradicts their documentation, which says `"[bash-preexec] must be the last
+   thing imported in your bash profile"
+   <https://github.com/rcaloras/bash-preexec/blob/master/README.md#install>`_,
+   but since Liquid Prompt special-cases bash-preexec, it must be loaded after
+   bash-preexec.
+
 Next up are the :doc:`config`.

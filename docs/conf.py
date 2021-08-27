@@ -60,3 +60,10 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = ['_static']
+
+# linkchecker dislikes anchor tags in github links: https://github.com/sphinx-doc/sphinx/issues/9016
+# breezy-vcs.org has been having intermittent dns problems ("Temporary failure in name # resolution") for a while now
+linkcheck_ignore = [
+        r'^https://github.com/rcaloras/bash-preexec/blob/master/README.md#install$',
+        r'^https://www.breezy-vcs.org/$'
+]

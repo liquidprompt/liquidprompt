@@ -6,18 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- **aws**: AWS profile display ([#496], [4c8ac92])
+- **aws**: AWS profile display ([#496], [#679], [4c8ac92])
+- **bash**: Compatibility with bash-preexec ([#672])
 - **env**: Return unescaped hostname in `_lp_hostname()` ([#665], [a23af79])
 - **env**: Return unescaped username in `_lp_username()` ([#665], [a23af79])
-- **k8s**: kubectl current context display ([#578], [d41b5c8])
+- **k8s**: kubectl current context display ([#578], [#673], [#681], [d41b5c8])
 - **path**: Return unescaped path in *lp_path* in `_lp_path_format()` ([a23af79])
-- **ruby**: Ruby environment display ([#628], [239a574])
+- **ruby**: Ruby environment display ([#628], [239a574], [#676])
+- **terraform**: Terraform workspace support ([#669])
 - **title**: Title command feature ([#609], [#665], [0c23a33], [a23af79])
 
 ### Fixed
 - **color**: `LP_COLORMAP` reverting to default value ([145f146])
 - **docs**: Outdated link to Symbola font project page ([#662])
-- **docs**: Small typos ([#664], [66d1d2b])
+- **docs**: Small typos and license clarification ([#664], [#678], [66d1d2b])
 - **path**: Add `__lp_escape()` calls to `_lp_path_format()` ([36ab8fa], [a23af79])
 - **powerline**: First character color issue in Zsh and Bash-3.2 ([70ce708])
 - **powerline**: Array issues in Bash-3.2 ([77dc561])
@@ -27,11 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **general**: Directly generate prompt mark instead of escape code ([#665], [1a22e1e])
 - **general**: Remove backslash escaping from Zsh `__lp_escape()` ([658ce84])
+- **general**: Refactor internal shell hooking implementation ([0ce7646])
+- **bash**: Avoid setting any shell options ([#663], [a1d0a54])
 - **env**: Lookup hostname instead of escape code ([#665], [0368523])
 - **env**: Lookup username instead of escape code ([#665], [61df03a])
 - **time**: Call `date` to generate time instead of escape code ([#665], [dd1f8f8])
 - **tests**: All included themes run through theme-preview tester ([3b75185])
 - **tests**: test.sh accepts shells as arguments ([9a2c067])
+- **zsh**: Avoid setting any shell options except for promptpercent ([58969b2])
 
 ## [2.0.2] - 2021-02-22
 ### Fixed
@@ -660,9 +665,17 @@ for help.
 [#657]: https://github.com/nojhan/liquidprompt/issues/657
 [#658]: https://github.com/nojhan/liquidprompt/issues/658
 [#662]: https://github.com/nojhan/liquidprompt/pull/662
+[#663]: https://github.com/nojhan/liquidprompt/pull/663
 [#664]: https://github.com/nojhan/liquidprompt/pull/664
 [#665]: https://github.com/nojhan/liquidprompt/pull/665
 [#667]: https://github.com/nojhan/liquidprompt/issues/667
+[#669]: https://github.com/nojhan/liquidprompt/pull/669
+[#672]: https://github.com/nojhan/liquidprompt/pull/672
+[#673]: https://github.com/nojhan/liquidprompt/pull/673
+[#676]: https://github.com/nojhan/liquidprompt/issues/676
+[#678]: https://github.com/nojhan/liquidprompt/pull/678
+[#679]: https://github.com/nojhan/liquidprompt/pull/679
+[#681]: https://github.com/nojhan/liquidprompt/pull/681
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -677,6 +690,7 @@ for help.
 [09cfced]: https://github.com/nojhan/liquidprompt/commit/09cfced24745dd7aea086a292ab042f070ce4fbb
 [0b94b74]: https://github.com/nojhan/liquidprompt/commit/0b94b74d02046077a21d3fb83842c6a1fe74f6e5
 [0c23a33]: https://github.com/nojhan/liquidprompt/commit/0c23a33eacc6ced0febc1a750c748010c3a87ad5
+[0ce7646]: https://github.com/nojhan/liquidprompt/commit/0ce764653a5f000598b6ad11c974fcefb65832da
 [0d420d2]: https://github.com/nojhan/liquidprompt/commit/0d420d2f3ac84a83e150110f9e09fc21e919df7f
 [0e0cc12]: https://github.com/nojhan/liquidprompt/commit/0e0cc12fabc474b6c0cfed7abf80c9f61efb68fc
 [0e0cc87]: https://github.com/nojhan/liquidprompt/commit/0e0cc870c2dcf3fbfed1b2e187e918d74dd6d3db
@@ -725,6 +739,7 @@ for help.
 [5425a5e]: https://github.com/nojhan/liquidprompt/commit/5425a5eb56433d4332441d37eae69d159ab456c1
 [5813a71]: https://github.com/nojhan/liquidprompt/commit/5813a710fc0feb2970e1d1e6615f822777b111c7
 [58693b0]: https://github.com/nojhan/liquidprompt/commit/58693b0664964e2a06b46fa8d5bdffd23ada417f
+[58969b2]: https://github.com/nojhan/liquidprompt/commit/58969b205f484dbf9ac5c151db81a2cc4c3762d6
 [5a9293d]: https://github.com/nojhan/liquidprompt/commit/5a9293db78cad4739f2b105e1c438d21372c25f1
 [5bd80ce]: https://github.com/nojhan/liquidprompt/commit/5bd80ce1da07adc501a46c375eae0ca741f3960e
 [5c56e65]: https://github.com/nojhan/liquidprompt/commit/5c56e65888d92f9f0239096c02ac86e568d53ad1
@@ -782,6 +797,7 @@ for help.
 [9c1c8a3]: https://github.com/nojhan/liquidprompt/commit/9c1c8a378846c23e0a39be2aadd11531c2ecf196
 [9c6d073]: https://github.com/nojhan/liquidprompt/commit/9c6d073e3cc7a49cfce209ce4307881d70340161
 [9e205f5]: https://github.com/nojhan/liquidprompt/commit/9e205f51db459443e5c2ead0efa76f6a33c47c24
+[a1d0a54]: https://github.com/nojhan/liquidprompt/commit/a1d0a54027dba5efc5acccc630b2be432e705f67
 [a23af79]: https://github.com/nojhan/liquidprompt/commit/a23af79232fc3b716dc54bc3927b3e05bd777189
 [a314677]: https://github.com/nojhan/liquidprompt/commit/a314677b8031804130c69de94d4604e9c319575a
 [a35032f]: https://github.com/nojhan/liquidprompt/commit/a35032fe03ab3d84093141c403a7c6615f7c38d9

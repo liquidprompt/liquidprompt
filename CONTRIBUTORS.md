@@ -111,6 +111,9 @@ Thanks again to everyone for all of the help and support!
 * Martin Schütte (@mschuett)
 * Sam Pearson (@sagepe)
 * Ken Crowell (@oeuftete)
+* Ian Smith (@ismith)
+* Emil Lerch (@elerch)
+* Michael Livshin (@cmm)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -238,3 +241,4 @@ Thanks again to everyone for all of the help and support!
 * Andrei Matei (@andreimatei)
 * Tiziano Santoro (@tiziano88)
 * Michael Louis Thaler (@mithaler)
+* Michael Große (@micgro42)

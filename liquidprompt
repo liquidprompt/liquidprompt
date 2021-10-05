@@ -2615,6 +2615,7 @@ __lp_temp_detect() {
 _lp_temperature() {
     (( LP_ENABLE_TEMP )) || return 2
 
+    unset lp_temperature
     "$_LP_TEMP_FUNCTION"
 
     [[ -z ${lp_temperature-} ]] && return 1

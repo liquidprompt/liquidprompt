@@ -269,7 +269,10 @@ function test_sensors {
     # While we should never be in this situation, might as well make sure
     # it doesn't crash.
     _LP_TEMP_FUNCTION=__lp_temp_sensors
-    unset lp_temperature
+
+    # This is to test that _lp_temperature() ignores previous high values
+    lp_temperature=10000
+
     _lp_temperature
     assertEquals "Sensors temperature return at index ${index}" "$valid" "$?"
     assertEquals "Sensors temperature return output at index ${index}" "${values[$index]}" "${lp_temperature-}"

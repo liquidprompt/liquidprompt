@@ -96,7 +96,10 @@ function test_acpi_temperature {
     # While we should never be in this situation, might as well make sure
     # it doesn't crash.
     _LP_TEMP_FUNCTION=__lp_temp_acpi
-    unset lp_temperature
+
+    # This is to test that _lp_temperature() ignores previous high values
+    lp_temperature=10000
+
     _lp_temperature
     assertEquals "ACPI temperature return at index ${index}" "$valid" "$?"
     assertEquals "ACPI temperature return output at index ${index}" "${temp_values[$index]}" "${lp_temperature-}"

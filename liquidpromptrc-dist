@@ -20,7 +20,7 @@
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 
-# Use particular battery IDwhen multiple batteries are reported by ACPI
+# Use particular battery ID when multiple batteries are reported by ACPI
 # and the default one is wrong.
 # Example of such behaviour is when using Logitech Unified Receiver
 # and ACPI reports keyboard and mouse batteries first, and laptop battery last

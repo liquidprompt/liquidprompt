@@ -2352,6 +2352,7 @@ case "$LP_OS" in
                 # Find the desired battery by it's ID
                 if [[ $line =~ Battery\ $LP_BATTERY_ID ]]; then
                     acpi=$line # Use only desired battery output
+                    break
                 fi
             done <<<"$acpi"
         fi

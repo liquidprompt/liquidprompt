@@ -44,6 +44,9 @@ Battery
 
    Can be disabled by :attr:`LP_ENABLE_BATT`.
 
+   .. versionchanged:: 2.1
+      :attr:`LP_BATTERY_ID` can be used to specify which battery to monitor.
+
 Development Environment
 -----------------------
 

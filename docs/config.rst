@@ -187,6 +187,20 @@ General
 
 Features
 --------
+.. attribute:: LP_BATTERY_ID
+   :type: int
+   :value: 0
+
+   Select which battery to use when monitoring level and charging status.
+   Works only with ACPI method of obtaining battery information.
+   Usage example:
+   
+   * Default value for this option is ``0``, meaning default battery will
+     be used when monitoring battery level and charging status.
+   * Any other value must be a valid battery ID. Can be obtained by running
+     ``acpi --battery`` and getting the appropriate ID from the printout.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_DELIMITER_KUBECONTEXT_PREFIX
    :type: string

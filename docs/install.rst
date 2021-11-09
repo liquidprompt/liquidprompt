@@ -38,8 +38,8 @@ following line in your ``.zshrc`` after activating Antigen::
 Installation via Zinit
 ----------------------
 
-To install via `Zinit <https://github.com/zdharma/zinit>`_, simply add the
-following lines in your ``.zshrc`` after activating Zinit::
+To install via `Zinit <https://github.com/zdharma-continuum/zinit>`_, simply
+add the following lines in your ``.zshrc`` after activating Zinit::
 
     zinit ice ver"stable" lucid nocd
     zinit light nojhan/liquidprompt

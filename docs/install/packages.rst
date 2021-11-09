@@ -34,9 +34,9 @@ Debian
 
 ... and Debian derivatives.
 
-.. image:: https://repology.org/badge/version-for-repo/debian_stable/liquidprompt.svg
-   :alt: Debian Stable package
-   :target: https://packages.debian.org/stable/source/liquidprompt
+.. image:: https://repology.org/badge/version-for-repo/debian_unstable/liquidprompt.svg
+   :alt: Debian Unstable package
+   :target: https://packages.debian.org/unstable/source/liquidprompt
 
 .. image:: https://repology.org/badge/version-for-repo/ubuntu_20_10/liquidprompt.svg
    :alt: Ubuntu 20.10 package

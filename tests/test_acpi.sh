@@ -9,6 +9,7 @@ uname() { printf 'Linux'; }
 unset -f uname
 
 LP_ENABLE_BATT=1
+_LP_BATTERY_FUNCTION=__lp_battery_acpi
 
 typeset -a battery_outputs battery_statuses battery_values temp_outputs temp_values battery_ids
 
@@ -19,7 +20,6 @@ battery_outputs+=(
 ""
 )
 battery_statuses+=(4)
-battery_ids+=("")
 battery_values+=("")
 temp_outputs+=(
 "Thermal 0: ok, 23.0 degrees C"
@@ -32,7 +32,6 @@ battery_outputs+=(
 )
 battery_statuses+=(0)
 battery_values+=(55)
-battery_ids+=(0)
 temp_outputs+=(
 "Thermal 0: ok, -267.8 degrees C"
 )
@@ -40,13 +39,12 @@ temp_values+=(-267)
 
 # Multiple batteries
 battery_outputs+=(
-"Battery 0: Discharging, 0%, rate information unavailable
+"Battery 0: Discharging, 5%, rate information unavailable
 Battery 1: Discharging, 0%, rate information unavailable
 Battery 2: Discharging, 53%, 02:35:00 remaining"
 )
 battery_statuses+=(0)
-battery_values+=(53)
-battery_ids+=(2)
+battery_values+=(5)
 temp_outputs+=(
 "Thermal 0: ok, 39.0 degrees C"
 )
@@ -66,7 +64,6 @@ function test_acpi_battery {
 
   for (( index=0; index < ${#battery_values[@]}; index++ )); do
     __battery_output=${battery_outputs[$index]}
-    LP_BATTERY_ID=${battery_ids[$index]}
 
     LP_BATTERY_THRESHOLD=100
     _lp_battery

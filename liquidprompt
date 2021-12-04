@@ -2342,6 +2342,10 @@ _lp_wifi() {
 case "$LP_OS" in
     Linux)
     __lp_battery_sysfs() {
+        if (( _LP_SHELL_zsh )); then
+            setopt local_options nullglob
+        fi
+
         local power_supply
         for power_supply in "${_LP_LINUX_POWERSUPPLY_PATH}/"*; do
             if ! [[ -r "${power_supply}/type" && -r "${power_supply}/present" && \

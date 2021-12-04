@@ -3,6 +3,13 @@
 # Do NOT error on failed commands
 set +e
 
+# Don't error (or do anything) for no matching globs.
+if [ -n "${ZSH_VERSION-}" ]; then
+  setopt nullglob
+else  # Bash
+  shopt -s nullglob
+fi
+
 # Error if the output is a terminal
 if [ -t 1 ]; then
   printf 'This script must be redirected to a file, or special characters will be lost
@@ -64,6 +71,11 @@ test_tool logname
 test_tool screen -ls
 test_tool tmux list-sessions
 
+for power_supply in "/sys/class/power_supply/"*; do
+  for interface in "${power_supply}/"*; do
+    test_tool cat "$interface"
+  done
+done
 test_tool acpi --battery
 test_tool pmset -g batt
 

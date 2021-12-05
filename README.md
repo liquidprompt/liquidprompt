@@ -9,7 +9,30 @@ when you need it. It shows you what you need when you need it.
 You will notice what changes *when* it changes, saving time and frustration.
 You can even use it with your favorite shell – Bash or zsh.
 
-![Screenshot](https://raw.github.com/nojhan/liquidprompt/master/demo.png)
+![Screenshot of the default theme](https://raw.github.com/nojhan/liquidprompt/master/docs/demo.png)
+
+On top of the classical information of a classical prompt,
+Liquid Prompt displays the state of many of the tools that you like to operate
+from the command line, for example:
+* numerous information from various version control systems (Git, Mercurial, Fossil, etc.), when you are in a code repository;
+* whether you're remotely connected by SSH, in a terminal multiplexer (screen or tmux), with graphical support;
+* permissions on the current directory, whether you have sudo rights or not;
+* information about virtual environments, web proxy;
+* information about jobs attached to the current terminal;
+* alerts about the battery or the load;
+* etc., etc., etc.
+
+Liquid Prompt has been carrefuly designed to highlight the *relevant*
+information, at *the right time*.
+It does not clutter your prompt with useless eye candy and helps you detect
+important alerts right away.
+Moreover, Liquid Prompt is highly configurable: you can disable useless features
+and change any alert thresholds to suit your needs.
+On top of this, it comes with several themes, from the discrete default to the
+most colorful and fancy one, àla powerline.
+
+![Screenshot of the Dotmatrix
+theme](https://raw.github.com/nojhan/liquidprompt/master/docs/demo_dotmatrix.png)
 
 
 ## Documentation

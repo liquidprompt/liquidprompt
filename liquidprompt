@@ -339,7 +339,7 @@ __lp_source_config() {
         )
     fi
 
-    LP_BATTERY_ID=${LP_BATTERY_ID:-0}
+    _LP_LINUX_POWERSUPPLY_PATH="/sys/class/power_supply"
 
     # Debugging flags
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
@@ -510,8 +510,8 @@ lp_activate() {
 
     if [[ "$LP_OS" = Darwin ]]; then
         _lp_require_tool BATT pmset
-    else
-        _lp_require_tool BATT acpi
+    elif (( LP_ENABLE_BATT )); then
+        __lp_battery_detect || LP_ENABLE_BATT=0
     fi
 
     _lp_require_tool KUBECONTEXT kubectl
@@ -2341,37 +2341,84 @@ _lp_wifi() {
 # Get the battery status in percent.
 case "$LP_OS" in
     Linux)
-    _lp_battery() {
-        (( LP_ENABLE_BATT )) || return 5
+    __lp_battery_sysfs() {
+        if (( _LP_SHELL_zsh )); then
+            setopt local_options nullglob
+        fi
+
+        local power_supply
+        for power_supply in "${_LP_LINUX_POWERSUPPLY_PATH}/"*; do
+            if ! [[ -r "${power_supply}/type" && -r "${power_supply}/present" && \
+                -r "${power_supply}/status" && -r "${power_supply}/capacity" ]]; then
+                continue
+            fi
+
+            local power_supply_type power_supply_present power_supply_scope
+            IFS= read -r power_supply_type <"${power_supply}/type"
+            [[ $power_supply_type == 'Battery' ]] || continue
+            IFS= read -r power_supply_present <"${power_supply}/present"
+            [[ $power_supply_present == '1' ]] || continue
+
+            # Scope is a property of a power supply
+            # Scope = System or missing - power supply powers the system
+            # Scope = Device - power supply powers a device
+            if [[ -r "${power_supply}/scope" ]]; then
+                IFS= read -r power_supply_scope <"${power_supply}/scope"
+                [[ $power_supply_scope == 'System' ]] || continue
+            fi
+
+            IFS= read -r lp_battery_status <"${power_supply}/status"
+            IFS= read -r lp_battery <"${power_supply}/capacity"
+            return 0
+        done
+        return 1
+    }
+
+    __lp_battery_acpi() {
         local acpi
         acpi="$(acpi --battery 2>/dev/null)"
-
-        # Check if we want a battery other than the default one
-        if [[ $LP_BATTERY_ID -gt 0 ]]; then
-            while IFS=$'\n' read -r line; do
-                # Find the desired battery by it's ID
-                if [[ $line =~ Battery\ $LP_BATTERY_ID ]]; then
-                    acpi=$line # Use only desired battery output
-                    break
-                fi
-            done <<<"$acpi"
-        fi
 
         # Extract the battery load value in percent
         # First, remove the beginning of the line...
         lp_battery="${acpi#Battery *, }"
         lp_battery="${lp_battery%%%*}" # remove everything starting at '%'
+        lp_battery_status="${acpi}"
+    }
 
-        if [[ -z "${lp_battery}" ]]; then
+    __lp_battery_detect() {
+        local lp_battery lp_battery_status
+        unset _LP_BATTERY_FUNCTION
+
+        # First check SYSFS way.
+        _LP_BATTERY_FUNCTION=__lp_battery_sysfs
+        "$_LP_BATTERY_FUNCTION" 2>/dev/null
+        [[ -n "${lp_battery-}" ]] && return 0
+
+        # Try with ACPI.
+        _LP_BATTERY_FUNCTION=__lp_battery_acpi
+        "$_LP_BATTERY_FUNCTION" 2>/dev/null
+        [[ -n "${lp_battery-}" ]] && return 0
+
+        unset _LP_BATTERY_FUNCTION
+        return 1
+    }
+
+    _lp_battery() {
+        (( LP_ENABLE_BATT )) || return 5
+
+        unset lp_battery lp_battery_status
+        "$_LP_BATTERY_FUNCTION"
+
+        if [[ -z "${lp_battery-}" ]]; then
             # no battery level found
             return 4
         fi
         # discharging
-        if [[ "$acpi" == *"Discharging"* ]]; then
+        if [[ "$lp_battery_status" == *"Discharging"* ]]; then
             # under => 0, above => 1
             return "$(( lp_battery > LP_BATTERY_THRESHOLD ))"
         # not charging
-        elif [[ "$acpi" == *"Not charging"* ]]; then
+        elif [[ "$lp_battery_status" == *"Not charging"* ]]; then
             return 4
         # charging
         else

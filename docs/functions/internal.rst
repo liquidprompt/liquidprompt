@@ -54,6 +54,26 @@ Formatting
 
 .. _`ANSI escape color code`: https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
+Battery
+-------
+
+.. function:: __lp_battery_acpi() -> var:lp_battery, var:lp_battery_status
+
+   Returns the status and remaining capacity of the battery, as reported by
+   the `acpi` tool. This function is available only on Linux, and requires
+   `acpi` to be installed.
+
+   .. versionadded:: 2.1
+
+.. function:: __lp_battery_sysfs() -> var:lp_battery, var:lp_battery_status
+
+   Returns the status and remaining capacity of the battery, using `sysfs`.
+   This is the default method. If multiple batteries are present, returns the
+   status of the first battery found. This function is available only on Linux
+   systems.
+
+   .. versionadded:: 2.1
+
 Git
 ---
 

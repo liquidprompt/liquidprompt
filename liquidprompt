@@ -2391,13 +2391,15 @@ case "$LP_OS" in
 
         # First check SYSFS way.
         _LP_BATTERY_FUNCTION=__lp_battery_sysfs
-        "$_LP_BATTERY_FUNCTION" 2>/dev/null
-        [[ -n "${lp_battery-}" ]] && return 0
+        "$_LP_BATTERY_FUNCTION" 2>/dev/null && \
+            [[ -n "${lp_battery-}" ]] && return 0
 
         # Try with ACPI.
-        _LP_BATTERY_FUNCTION=__lp_battery_acpi
-        "$_LP_BATTERY_FUNCTION" 2>/dev/null
-        [[ -n "${lp_battery-}" ]] && return 0
+        if command -v apci >/dev/null; then
+            _LP_BATTERY_FUNCTION=__lp_battery_acpi
+            "$_LP_BATTERY_FUNCTION" 2>/dev/null && \
+                [[ -n "${lp_battery-}" ]] && return 0
+        fi
 
         unset _LP_BATTERY_FUNCTION
         return 1

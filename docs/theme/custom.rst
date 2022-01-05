@@ -57,7 +57,7 @@ user.
 Getting Data
 ============
 
-A theme must call :doc:`../functions/data` to be able to display useful
+A themes must call :doc:`../functions/data` to be able to display useful
 information to the user. A theme might also need to use :doc:`../functions/util`
 to process that data.
 

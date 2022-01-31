@@ -1246,7 +1246,8 @@ _lp_kubernetes_context() {
 
     if (( LP_ENABLE_KUBE_NAMESPACE )); then
         local line kubernetes_namespace
-        line=$(kubectl config view --minify --output 'jsonpath={.current-context}{"/"}{..namespace}')
+        line=$(kubectl config view --minify --output \
+            'jsonpath={.current-context}{"/"}{..namespace}' 2>/dev/null) || return 1
         kubernetes_context=${line%/*}
         kubernetes_namespace=${line##*/}
     else

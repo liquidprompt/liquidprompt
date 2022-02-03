@@ -33,6 +33,7 @@ _lp_dotmatrix_theme_activate() {
         [[ -z ${DOTMATRIX_OPEN[@]+x} ]] && DOTMATRIX_OPEN=("▙" " ▚ " "▜")
         [[ -z ${DOTMATRIX_DANG[@]+x} ]] && DOTMATRIX_DANG=("▙" " □ " "▜")
         [[ -z ${DOTMATRIX_ENDS[@]+x} ]] && DOTMATRIX_ENDS=("▛▞▗ ▝" "▖ ▘▞▟")
+        [[ -z ${DOTMATRIX_ITEMS[@]+x} ]] && DOTMATRIX_ITEMS=("┫" "┃" "┣")
 
     elif [[ "${DOTMATRIX_VARIANT}" == "text" ]] ; then
         DOTMATRIX_SPACED=${DOTMATRIX_SPACED:-0}
@@ -51,6 +52,7 @@ _lp_dotmatrix_theme_activate() {
         [[ -z ${DOTMATRIX_OPEN[@]+x} ]] && DOTMATRIX_OPEN=("▌" "<<" "▐")
         [[ -z ${DOTMATRIX_DANG[@]+x} ]] && DOTMATRIX_DANG=("▌" "<<<" "▐")
         [[ -z ${DOTMATRIX_ENDS[@]+x} ]] && DOTMATRIX_ENDS=("▌···" "···▐")
+        [[ -z ${DOTMATRIX_ITEMS[@]+x} ]] && DOTMATRIX_ITEMS=("┫" "┃" "┣")
 
 
     elif [[ "${DOTMATRIX_VARIANT}" == "chevron"  ]] ; then
@@ -69,6 +71,7 @@ _lp_dotmatrix_theme_activate() {
         [[ -z ${DOTMATRIX_OPEN[@]+x} ]] && DOTMATRIX_OPEN=("" ""  "")
         [[ -z ${DOTMATRIX_DANG[@]+x} ]] && DOTMATRIX_DANG=("" "" "")
         [[ -z ${DOTMATRIX_ENDS[@]+x} ]] && DOTMATRIX_ENDS=("" "")
+        [[ -z ${DOTMATRIX_ITEMS[@]+x} ]] && DOTMATRIX_ITEMS=("" "┃" "")
 
     elif [[ "${DOTMATRIX_VARIANT}" == "round"  ]] ; then
         DOTMATRIX_SPACED=${DOTMATRIX_SPACED:-1}
@@ -86,6 +89,7 @@ _lp_dotmatrix_theme_activate() {
         [[ -z ${DOTMATRIX_OPEN[@]+x} ]] && DOTMATRIX_OPEN=("█" "" "")
         [[ -z ${DOTMATRIX_DANG[@]+x} ]] && DOTMATRIX_DANG=("█" "" "")
         [[ -z ${DOTMATRIX_ENDS[@]+x} ]] && DOTMATRIX_ENDS=("" "")
+        [[ -z ${DOTMATRIX_ITEMS[@]+x} ]] && DOTMATRIX_ITEMS=("" "┃" "")
 
     elif [[ "${DOTMATRIX_VARIANT}" == "slant"  ]] ; then
         DOTMATRIX_SPACED=${DOTMATRIX_SPACED:-1}
@@ -103,6 +107,7 @@ _lp_dotmatrix_theme_activate() {
         [[ -z ${DOTMATRIX_OPEN[@]+x} ]] && DOTMATRIX_OPEN=("" "" "")
         [[ -z ${DOTMATRIX_DANG[@]+x} ]] && DOTMATRIX_DANG=("" "" "")
         [[ -z ${DOTMATRIX_ENDS[@]+x} ]] && DOTMATRIX_ENDS=("" "")
+        [[ -z ${DOTMATRIX_ITEMS[@]+x} ]] && DOTMATRIX_ITEMS=("" "┃" "")
 
     fi
 
@@ -112,17 +117,20 @@ _lp_dotmatrix_theme_activate() {
         DOTMATRIX_SPACE_FILL=""
         DOTMATRIX_SPACE_PATH=${DOTMATRIX_SPACE_PATH:-""}
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
+        DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-""}
 
     elif [[ ${DOTMATRIX_SPACED} == 1 ]] ; then
         DOTMATRIX_SPACE_VOID=" "
         DOTMATRIX_SPACE_FILL="█"
         DOTMATRIX_SPACE_PATH=${DOTMATRIX_SPACE_PATH:-" "}
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
+        DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-" "}
     else
         DOTMATRIX_SPACE_VOID=$(printf '%0.s ' $(seq 1 ${DOTMATRIX_SPACED})) # Regular space
         DOTMATRIX_SPACE_FILL=$(printf '%0.s█' $(seq 1 ${DOTMATRIX_SPACED})) # Inverted space
         DOTMATRIX_SPACE_PATH=${DOTMATRIX_SPACE_PATH:-"${DOTMATRIX_SPACE_VOID}"}
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
+        DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-""}
     fi
 
 
@@ -308,23 +316,24 @@ _lp_dotmatrix_theme_prompt() {
     # IN LINE
     ####################################################################
 
-    inline="$LP_PS1_PREFIX"
+    inline="$LP_PS1_PREFIX${NO_COL}"
 
     local lp_terminal_format
     lp_terminal_format "${DOTMATRIX_COLOR_LINE[@]}"
 
     local inline_width
     if _lp_software_collections ; then
-        inline+="${inline} ${lp_software_collections} "
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_python_env ; then
-        inline+="${inline} ${lp_python_env} "
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     local as_text="$(_lp_as_text "${inline}")"
     inline_width=$((${COLUMNS}-${#as_text}))
 
     # Fill up the remaining space.
     inline+="${lp_terminal_format}$(printf "%.0s${DOTMATRIX_LINE}" $(seq ${inline_width}))"
+    inline+="${NO_COL}"
 
     # Gradient line: too slow (or not enough optimized? check COLUMNS change before recompute?)
     # for i in $(seq ${inline_width}) ; do

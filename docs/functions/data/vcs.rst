@@ -58,14 +58,8 @@ this.
 
 .. note::
 
-   All following generic functions can exit with return codes higher than their
-   normal disabled exit code. If the active VCS does not support a feature, the
-   data function will not be defined, and therefore the shell will return an
-   error code much higher than ``2``. Compare using greater-or-equal if checking
-   for not supported error codes.
-
    Unless otherwise documented, the following functions return ``0`` for good
-   data, ``1`` for no data, and ``2`` or higher for unsupported function.
+   data, ``1`` for no data, and ``2`` for unsupported function.
 
 .. function:: _lp_vcs_bookmark() -> var:lp_vcs_bookmark
 
@@ -582,7 +576,7 @@ Mercurial
 
 .. function:: _lp_hg_commits_off_remote()
 
-   Returns ``3`` (disabled).
+   Returns ``2`` (disabled).
 
    Mercurial does not keep a local copy of the remote state, so checking this
    will require a connection to the remote server. This means it is often

@@ -33,9 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **bash**: Avoid setting any shell options ([#663], [a1d0a54])
 - **env**: Lookup hostname instead of escape code ([#665], [0368523])
 - **env**: Lookup username instead of escape code ([#665], [61df03a])
+- **hg**: `_lp_hg_commits_off_remote()` returns `2` instead of `3` ([#696])
 - **time**: Call `date` to generate time instead of escape code ([#665], [dd1f8f8])
 - **tests**: All included themes run through theme-preview tester ([3b75185])
 - **tests**: test.sh accepts shells as arguments ([9a2c067])
+- **vcs**: Unsupported VCS functions defined as empty functions ([#696])
 - **zsh**: Avoid setting any shell options except for promptpercent ([58969b2])
 
 ## [2.0.2] - 2021-02-22
@@ -676,6 +678,7 @@ for help.
 [#678]: https://github.com/nojhan/liquidprompt/pull/678
 [#679]: https://github.com/nojhan/liquidprompt/pull/679
 [#681]: https://github.com/nojhan/liquidprompt/pull/681
+[#696]: https://github.com/nojhan/liquidprompt/issues/696
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

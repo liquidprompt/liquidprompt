@@ -1667,78 +1667,78 @@ _lp_vcs_details_color() {
 # Check if the detected VCS is enabled in Liquidprompt and the current
 # directory is a valid repository of that type.
 _lp_vcs_active() {
-    "_lp_${lp_vcs_type}_active" 2>/dev/null
+    "_lp_${lp_vcs_type}_active"
 }
 
 # Get the branch name of the repo in the current directory.
 _lp_vcs_branch() {
-    "_lp_${lp_vcs_type}_branch" 2>/dev/null
+    "_lp_${lp_vcs_type}_branch"
 }
 
 # Get the bookmark name of the repo in the current directory.
 _lp_vcs_bookmark() {
-    "_lp_${lp_vcs_type}_bookmark" 2>/dev/null
+    "_lp_${lp_vcs_type}_bookmark"
 }
 
 # Get a tag name of the repo in the current directory.
 _lp_vcs_tag() {
-    "_lp_${lp_vcs_type}_tag" 2>/dev/null
+    "_lp_${lp_vcs_type}_tag"
 }
 
 # Get the current commit string for the repo in the current directory.
 _lp_vcs_commit_id() {
-    "_lp_${lp_vcs_type}_commit_id" 2>/dev/null
+    "_lp_${lp_vcs_type}_commit_id"
 }
 
 # Get additional information if the repo is in a special or unusual state.
 _lp_vcs_head_status() {
-    "_lp_${lp_vcs_type}_head_status" 2>/dev/null
+    "_lp_${lp_vcs_type}_head_status"
     # TODO: set lp_vcs_head_details if not set?
 }
 
 # Get the number of stashes in the repo.
 _lp_vcs_stash_count() {
-    "_lp_${lp_vcs_type}_stash_count" 2>/dev/null
+    "_lp_${lp_vcs_type}_stash_count"
 }
 
 # Get the number of commits ahead and behind the upstream branch.
 _lp_vcs_commits_off_remote() {
-    "_lp_${lp_vcs_type}_commits_off_remote" 2>/dev/null
+    "_lp_${lp_vcs_type}_commits_off_remote"
 }
 
 # Get the number of untracked aka extra files in the repo.
 _lp_vcs_untracked_files() {
-    "_lp_${lp_vcs_type}_untracked_files" 2>/dev/null
+    "_lp_${lp_vcs_type}_untracked_files"
 }
 
 # Get the number of changed files compared to the last or checked out commit.
 _lp_vcs_uncommitted_files() {
-    "_lp_${lp_vcs_type}_uncommitted_files" 2>/dev/null
+    "_lp_${lp_vcs_type}_uncommitted_files"
 }
 
 # Get the number of changed lines compared to the last or checked out commit.
 _lp_vcs_uncommitted_lines() {
-    "_lp_${lp_vcs_type}_uncommitted_lines" 2>/dev/null
+    "_lp_${lp_vcs_type}_uncommitted_lines"
 }
 
 # Get the number of changed files compared to staging.
 _lp_vcs_unstaged_files() {
-    "_lp_${lp_vcs_type}_unstaged_files" 2>/dev/null
+    "_lp_${lp_vcs_type}_unstaged_files"
 }
 
 # Get the number of changed lines compared to staging.
 _lp_vcs_unstaged_lines() {
-    "_lp_${lp_vcs_type}_unstaged_lines" 2>/dev/null
+    "_lp_${lp_vcs_type}_unstaged_lines"
 }
 
 # Get the number of changed files in staging compared to the last or checked out commit.
 _lp_vcs_staged_files() {
-    "_lp_${lp_vcs_type}_staged_files" 2>/dev/null
+    "_lp_${lp_vcs_type}_staged_files"
 }
 
 # Get the number of changed lines in staging compared to the last or checked out commit.
 _lp_vcs_staged_lines() {
-    "_lp_${lp_vcs_type}_staged_lines" 2>/dev/null
+    "_lp_${lp_vcs_type}_staged_lines"
 }
 
 # GIT #
@@ -1762,6 +1762,9 @@ _lp_git_branch() {
         return 1
     fi
 }
+
+# Git does not support bookmarks.
+_lp_git_bookmark() { return 2 ; }
 
 # Get a tag name of the Git repo in the current directory.
 _lp_git_tag() {
@@ -1958,7 +1961,6 @@ _lp_git_staged_lines() {
 }
 
 # MERCURIAL #
-# Note that Mercurial has no staging area
 
 # Check if Mercurial is enabled in Liquidprompt and the current directory is a
 # valid Mercurial repository.
@@ -2040,10 +2042,10 @@ _lp_hg_stash_count() {
 }
 
 # https://github.com/nojhan/liquidprompt/issues/217
-# return: always false (3: disabled).
+# return: always false (2: disabled).
 _lp_hg_commits_off_remote() {
     #commits=$(\hg outgoing --no-merges 2>/dev/null | \grep -c '\(^changeset\:\)')
-    return 3
+    return 2
 }
 
 # Get the number of untracked files in the Mercurial repo.
@@ -2070,9 +2072,13 @@ _lp_hg_uncommitted_lines() {
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
+# Mercurial does not support a staging area.
+_lp_hg_unstaged_files() { return 2 ; }
+_lp_hg_unstaged_lines() { return 2 ; }
+_lp_hg_staged_files() { return 2 ; }
+_lp_hg_staged_lines() { return 2 ; }
+
 # SUBVERSION #
-# Note that Subversion has no tags, stashes, or staging area. It also has no
-# concept of a remote, since it is not distributed and always must be in sync.
 
 # Check if Subversion is enabled in Liquidprompt and the current directory is a
 # valid Subversion repository.
@@ -2105,10 +2111,28 @@ _lp_svn_branch() {
     fi
 }
 
+# Subversion does not support bookmarks.
+_lp_svn_bookmark() { return 2 ; }
+
+# Subversion does not support tags. What are generally agreed upon as
+# being tags are internally branches. These are returned by _lp_svn_branch().
+_lp_svn_tag() { return 2 ; }
+
 # Get the current revision number for the repo in the current directory.
 _lp_svn_commit_id() {
     lp_vcs_commit_id="$(\svn info --show-item revision 2>/dev/null)"
 }
+
+# Subversion does not have extra head statuses. A Subversion merge is no different
+# than a manual file change, so the repository has no extra state to track.
+_lp_svn_head_status() { return 2 ; }
+
+# Subversion does not support stashes.
+_lp_svn_stash_count() { return 2 ; }
+
+# Subversion does not support remote tracking branches (as it is not a
+# distributed version control system).
+_lp_svn_commits_off_remote() { return 2 ; }
 
 # Get the number of untracked files in the Subversion repo.
 _lp_svn_untracked_files() {
@@ -2141,8 +2165,13 @@ _lp_svn_uncommitted_lines() {
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
+# Subversion does not support a staging area.
+_lp_svn_unstaged_files() { return 2 ; }
+_lp_svn_unstaged_lines() { return 2 ; }
+_lp_svn_staged_files() { return 2 ; }
+_lp_svn_staged_lines() { return 2 ; }
+
 # FOSSIL #
-# Note that Fossil has no staging area, bookmarks, or unique tags.
 
 # Check if Fossil is enabled in Liquidprompt and the current directory is a
 # valid Fossil repository.
@@ -2178,6 +2207,13 @@ _lp_fossil_branch() {
     fi
 }
 
+# Fossil does not support bookmarks.
+_lp_fossil_bookmark() { return 2 ; }
+
+# Fossil does not support unique tags. Fossil tags can refer to multiple checkin IDs,
+# so a matching tag is not a useful unique ID.
+_lp_fossil_tag() { return 2 ; }
+
 # Get the current full commit hash of the Fossil repo in the current directory.
 _lp_fossil_commit_id() {
     lp_vcs_commit_id="$(LC_ALL=C \fossil status 2>/dev/null | sed -n 's/^checkout:[[:space:]]*\([^[:space:]]*\).*/\1/p')"
@@ -2204,6 +2240,11 @@ _lp_fossil_stash_count() {
     lp_vcs_stash_count=$(( count / 2 ))
     (( lp_vcs_stash_count ))
 }
+
+# Fossil does not support remote tracking branches. Fossil by default keeps the local
+# repository in sync with the remote. Even if a user disables that, it is not possible
+# to have a local and remote branch named the same not in sync.
+_lp_fossil_commits_off_remote() { return 2 ; }
 
 # Get the number of extra files in the Fossil repo.
 _lp_fossil_untracked_files() {
@@ -2237,8 +2278,13 @@ _lp_fossil_uncommitted_lines() {
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
 
+# Fossil does not support a staging area.
+_lp_fossil_unstaged_files() { return 2 ; }
+_lp_fossil_unstaged_lines() { return 2 ; }
+_lp_fossil_staged_files() { return 2 ; }
+_lp_fossil_staged_lines() { return 2 ; }
+
 # Bazaar #
-# Note that Bazaar has no staging area, bookmarks, remote tracking branches, or extra statuses.
 
 # Check if Bazaar is enabled in Liquidprompt and the current directory is a
 # valid Bazaar repository. This check should be done before running any other
@@ -2259,6 +2305,10 @@ _lp_bzr_branch() {
     fi
 }
 
+# Bazaar does not support bookmarks. A nick is somewhat like a bookmark, but there is
+# no command to view a naked branch name, so the nick command is used for branches.
+_lp_bzr_bookmark() { return 2 ; }
+
 # Get the most recent tag that refers to the current revision.
 _lp_bzr_tag() {
     local tag ret eol
@@ -2275,6 +2325,10 @@ _lp_bzr_tag() {
 _lp_bzr_commit_id() {
     lp_vcs_commit_id="$(\bzr revno 2>/dev/null)"
 }
+
+# Bazaar does not have extra head statuses. A Bazaar merge can be partially complete,
+# but there is no command to test for it.
+_lp_bzr_head_status() { return 2 ; }
 
 # Get the number of Bazaar shelves in the repo.
 _lp_bzr_stash_count() {
@@ -2296,6 +2350,10 @@ _lp_bzr_stash_count() {
 
     (( lp_vcs_stash_count ))
 }
+
+# Bazaar does not support getting details of remote tracking branches. Bazaar does not
+# keep a local copy of the remote state, so checking this would be impossible anyway.
+_lp_bzr_commits_off_remote() { return 2 ; }
 
 # Get the number of unknown files in the repo.
 _lp_bzr_untracked_files() {
@@ -2324,6 +2382,12 @@ _lp_bzr_uncommitted_lines() {
 
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }
+
+# Bazaar does not support a staging area.
+_lp_fossil_unstaged_files() { return 2 ; }
+_lp_fossil_unstaged_lines() { return 2 ; }
+_lp_fossil_staged_files() { return 2 ; }
+_lp_fossil_staged_lines() { return 2 ; }
 
 ####################
 # Wifi link status #

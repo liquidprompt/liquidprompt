@@ -40,6 +40,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **vcs**: Unsupported VCS functions defined as empty functions ([#696])
 - **zsh**: Avoid setting any shell options except for promptpercent ([58969b2])
 
+## [2.0.4] - 2022-02-07
+### Changed
+- **hg**: `_lp_hg_commits_off_remote()` returns `2` instead of `3` ([#696])
+- **vcs**: Unsupported VCS functions defined as empty functions ([#696])
+
+## [2.0.3] - 2021-05-30
+### Fixed
+- **hg**: Stash count erroring with no function defined ([#671])
+- **fossil**: Stash count erroring with no function defined ([#671])
+- **fossil**: Uncommited files erroring with no function defined ([#671])
+- **fossil**: Untracked files erroring with no function defined ([#671])
+- **svn**: Uncommited files erroring with no function defined ([#671])
+- **temp**: Temperature erroring if tool returns no data with `set -u` ([#670])
+
 ## [2.0.2] - 2021-02-22
 ### Fixed
 - **git**: Git worktrees not being detected ([#658])
@@ -514,7 +528,9 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.2...master
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.0.4...master
+[2.0.4]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.4
+[2.0.3]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.3
 [2.0.2]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.2
 [2.0.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.1
 [2.0.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.0
@@ -672,6 +688,8 @@ for help.
 [#665]: https://github.com/nojhan/liquidprompt/pull/665
 [#667]: https://github.com/nojhan/liquidprompt/issues/667
 [#669]: https://github.com/nojhan/liquidprompt/pull/669
+[#670]: https://github.com/nojhan/liquidprompt/issues/670
+[#671]: https://github.com/nojhan/liquidprompt/pull/671
 [#672]: https://github.com/nojhan/liquidprompt/pull/672
 [#673]: https://github.com/nojhan/liquidprompt/pull/673
 [#676]: https://github.com/nojhan/liquidprompt/issues/676

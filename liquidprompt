@@ -230,6 +230,7 @@ __lp_source_config() {
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
+    LP_HG_COMMAND=${LP_HG_COMMAND:-hg}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_TIME_ANALOG=${LP_TIME_ANALOG:-0}
@@ -499,7 +500,7 @@ lp_activate() {
     _lp_require_tool GIT git
     _lp_require_tool SVN svn
     _lp_require_tool FOSSIL fossil
-    _lp_require_tool HG hg
+    _lp_require_tool HG "$LP_HG_COMMAND"
     _lp_require_tool BZR bzr
 
     _LP_ENABLED_VCSS=()
@@ -1966,13 +1967,13 @@ _lp_git_staged_lines() {
 # valid Mercurial repository.
 _lp_hg_active() {
     (( LP_ENABLE_HG )) || return 2
-    \hg root >/dev/null 2>&1 || return 1
+    "$LP_HG_COMMAND" root >/dev/null 2>&1 || return 1
 }
 
 # Get the branch name of the Mercurial repo in the current directory.
 _lp_hg_branch() {
     local branch ret
-    if branch="$(\hg branch 2>/dev/null)"; then
+    if branch="$("$LP_HG_COMMAND" branch 2>/dev/null)"; then
         __lp_escape "$branch"
         lp_vcs_branch="$ret"
     else
@@ -1986,7 +1987,7 @@ _lp_hg_branch() {
 # Get the bookmark name of the Mercurial repo in the current directory.
 _lp_hg_bookmark() {
     local bookmark ret
-    if bookmark="$(\hg bookmark --list --quiet . 2>/dev/null)"; then
+    if bookmark="$("$LP_HG_COMMAND" bookmark --list --quiet . 2>/dev/null)"; then
         __lp_escape "$bookmark"
         lp_vcs_bookmark="$ret"
     else
@@ -1997,7 +1998,7 @@ _lp_hg_bookmark() {
 # Get the most recent tag that refers to the current revision.
 _lp_hg_tag() {
     local tags ret
-    tags="$(\hg identify --template='{tags}' 2>/dev/null)"
+    tags="$("$LP_HG_COMMAND" identify --template='{tags}' 2>/dev/null)"
     if [[ -n "$tags" ]]; then
         # Tags are separated by ':', get the first one
         __lp_escape "${tags%%:*}"
@@ -2009,7 +2010,7 @@ _lp_hg_tag() {
 
 # Get the current global revision id for the repo in the current directory.
 _lp_hg_commit_id() {
-    lp_vcs_commit_id="$(\hg identify --id 2>/dev/null)"
+    lp_vcs_commit_id="$("$LP_HG_COMMAND" identify --id 2>/dev/null)"
 }
 
 # Get additional information if the repo is in any unfinished state.
@@ -2035,7 +2036,7 @@ _lp_hg_head_status() {
 # Get the number of Mercurial shelves in the repo.
 _lp_hg_stash_count() {
     local shelves count
-    shelves="$(\hg shelve --list 2>/dev/null; printf x)"
+    shelves="$("$LP_HG_COMMAND" shelve --list 2>/dev/null; printf x)"
     __lp_line_count "${shelves%x}"
     lp_vcs_stash_count="$count"
     (( lp_vcs_stash_count ))
@@ -2044,14 +2045,14 @@ _lp_hg_stash_count() {
 # https://github.com/nojhan/liquidprompt/issues/217
 # return: always false (2: disabled).
 _lp_hg_commits_off_remote() {
-    #commits=$(\hg outgoing --no-merges 2>/dev/null | \grep -c '\(^changeset\:\)')
+    #commits=$("$LP_HG_COMMAND" outgoing --no-merges 2>/dev/null | \grep -c '\(^changeset\:\)')
     return 2
 }
 
 # Get the number of untracked files in the Mercurial repo.
 _lp_hg_untracked_files() {
     local untracked
-    untracked="$(\hg status --unknown --template '{status}' 2>/dev/null)"
+    untracked="$("$LP_HG_COMMAND" status --unknown --template '{status}' 2>/dev/null)"
     lp_vcs_untracked_files="${#untracked}"
     (( lp_vcs_untracked_files ))
 }
@@ -2059,7 +2060,7 @@ _lp_hg_untracked_files() {
 # Get the number of changed files compared to the base revision.
 _lp_hg_uncommitted_files() {
     local files
-    files="$(\hg status --modified --template '{status}' 2>/dev/null)"
+    files="$("$LP_HG_COMMAND" status --modified --template '{status}' 2>/dev/null)"
     lp_vcs_uncommitted_files="${#files}"
     (( lp_vcs_uncommitted_files ))
 }
@@ -2067,7 +2068,7 @@ _lp_hg_uncommitted_files() {
 # Get the number of changed lines compared to the base revision.
 _lp_hg_uncommitted_lines() {
     IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
-        <<<"$(\hg diff --stat 2>/dev/null | sed -n '$ s/^.*, \([0-9]*\) .*, \([0-9]*\).*$/\1 \2/p')"
+        <<<"$("$LP_HG_COMMAND" diff --stat 2>/dev/null | sed -n '$ s/^.*, \([0-9]*\) .*, \([0-9]*\).*$/\1 \2/p')"
 
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
 }

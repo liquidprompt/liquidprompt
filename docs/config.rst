@@ -413,7 +413,7 @@ Features
 
    Will be disabled if ``hg`` is not found.
 
-   See also: :attr:`LP_MARK_HG`.
+   See also: :attr:`LP_MARK_HG` and :attr:`LP_HG_COMMAND`.
 
 .. attribute:: LP_ENABLE_JOBS
    :type: bool
@@ -649,6 +649,17 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_HG_COMMAND
+   :type: string
+   :value: "hg"
+
+   The command to use for Mercurial commands. Can be used to replace ``hg``
+   with ``rhg`` or ``chg``.
+
+   See also: :attr:`LP_ENABLE_HG` and :attr:`LP_MARK_HG`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_HOSTNAME_ALWAYS
    :type: int
    :value: 0
@@ -872,7 +883,7 @@ Marks
    Mark used instead of :attr:`LP_MARK_DEFAULT` to indicate that the current
    directory is inside of a Mercurial repository.
 
-   See also: :attr:`LP_ENABLE_HG`.
+   See also: :attr:`LP_ENABLE_HG` and :attr:`LP_HG_COMMAND`.
 
 .. attribute:: LP_MARK_KUBECONTEXT
    :type: string

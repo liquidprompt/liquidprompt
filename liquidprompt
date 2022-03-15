@@ -251,6 +251,7 @@ __lp_source_config() {
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
+    LP_USE_SUDO_VALIDATE=${LP_USE_SUDO_VALIDATE:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
     LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
@@ -1331,9 +1332,14 @@ _lp_username_color() {
 # Test the code with the commands:
 #   sudo id   # sudo, enter your credentials
 #   sudo -K   # revoke your credentials
+#   sudo -v   # return non-zero when no credentials are cached
 _lp_sudo_active() {
     (( LP_ENABLE_SUDO )) || return 2
-    \sudo -n true 2>/dev/null || return 1
+    if (( LP_USE_SUDO_VALIDATE )); then
+        \sudo -nv 2>/dev/null || return 1
+    else
+        \sudo -n true 2>/dev/null || return 1
+    fi
 }
 
 _lp_sudo_active_color() {

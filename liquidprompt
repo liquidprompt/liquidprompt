@@ -1331,9 +1331,10 @@ _lp_username_color() {
 # Test the code with the commands:
 #   sudo id   # sudo, enter your credentials
 #   sudo -K   # revoke your credentials
+#   sudo -v   # return non-zero when no credentials are cached
 _lp_sudo_active() {
     (( LP_ENABLE_SUDO )) || return 2
-    \sudo -n true 2>/dev/null || return 1
+    \sudo -nv 2>/dev/null || return 1
 }
 
 _lp_sudo_active_color() {

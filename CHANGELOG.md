@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **aws**: AWS profile display ([#496], [#679], [4c8ac92])
 - **bash**: Compatibility with bash-preexec ([#672])
+- **battery**: Linux sysfs backend ([#689])
+- **battery**: ACPI backend option to choose battery ([#687])
 - **env**: Return unescaped hostname in `_lp_hostname()` ([#665], [a23af79])
 - **env**: Return unescaped username in `_lp_username()` ([#665], [a23af79])
-- **k8s**: kubectl current context display ([#578], [#673], [#681], [d41b5c8])
+- **hg**: `LP_HG_COMMAND` config option to customize `hg` binary ([#701])
+- **k8s**: kubectl current context display ([#578], [#673], [#681], [#695], [d41b5c8])
 - **path**: Return unescaped path in *lp_path* in `_lp_path_format()` ([a23af79])
 - **ruby**: Ruby environment display ([#628], [239a574], [#676])
 - **terraform**: Terraform workspace support ([#669])
@@ -24,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **powerline**: First character color issue in Zsh and Bash-3.2 ([70ce708])
 - **powerline**: Array issues in Bash-3.2 ([77dc561])
 - **ruby**: Zsh crash on rbenv output parse ([#667])
+- **temp**: High temp values would stick ([#686])
+- **term**: Early exit on `TERM=unknown` ([#688])
 - **zsh**: `local` bugs in Zsh-5.0 ([7db4ada])
 
 ### Changed
@@ -34,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **env**: Lookup hostname instead of escape code ([#665], [0368523])
 - **env**: Lookup username instead of escape code ([#665], [61df03a])
 - **hg**: `_lp_hg_commits_off_remote()` returns `2` instead of `3` ([#696])
+- **sudo**: Use the `--validate` flag instead of running `true` ([#702])
 - **time**: Call `date` to generate time instead of escape code ([#665], [dd1f8f8])
 - **tests**: All included themes run through theme-preview tester ([3b75185])
 - **tests**: test.sh accepts shells as arguments ([9a2c067])
@@ -696,7 +702,15 @@ for help.
 [#678]: https://github.com/nojhan/liquidprompt/pull/678
 [#679]: https://github.com/nojhan/liquidprompt/pull/679
 [#681]: https://github.com/nojhan/liquidprompt/pull/681
+[#686]: https://github.com/nojhan/liquidprompt/issues/686
+[#687]: https://github.com/nojhan/liquidprompt/pull/687
+[#688]: https://github.com/nojhan/liquidprompt/pull/688
+[#689]: https://github.com/nojhan/liquidprompt/pull/689
+[#690]: https://github.com/nojhan/liquidprompt/issues/690
+[#695]: https://github.com/nojhan/liquidprompt/issues/695
 [#696]: https://github.com/nojhan/liquidprompt/issues/696
+[#701]: https://github.com/nojhan/liquidprompt/issues/701
+[#702]: https://github.com/nojhan/liquidprompt/pull/702
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

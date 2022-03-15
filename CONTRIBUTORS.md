@@ -114,6 +114,9 @@ Thanks again to everyone for all of the help and support!
 * Ian Smith (@ismith)
 * Emil Lerch (@elerch)
 * Michael Livshin (@cmm)
+* Slobodan Todorov (@todorowww)
+* Simon Chopin (@schopin-pro)
+* @Mice7R
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -242,3 +245,6 @@ Thanks again to everyone for all of the help and support!
 * Tiziano Santoro (@tiziano88)
 * Michael Louis Thaler (@mithaler)
 * Michael Große (@micgro42)
+* Niko Storni (@nikooo777)
+* Chris Weyl (@rsrchboy)
+* Federico Stra (@FedericoStra)

@@ -551,17 +551,7 @@ Features
       run ``sudo`` once each prompt. This is likely to make your sysadmin hate
       you.
 
-   See also: :attr:`LP_COLOR_MARK_SUDO`, :attr:`LP_USE_SUDO_VALIDATE`.
-
-.. attribute:: LP_USE_SUDO_VALIDATE
-   :type: bool
-   :value: 0
-
-   Use sudo validate command ``sudo -v`` to check for valid credentials.
-
-   :attr:`LP_ENABLE_SUDO` must be enabled for this to have any effect.
-
-   See also: :attr:`LP_ENABLE_SUDO`.
+   See also: :attr:`LP_COLOR_MARK_SUDO`.
 
 .. attribute:: LP_ENABLE_SVN
    :type: bool

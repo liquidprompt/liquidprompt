@@ -2891,7 +2891,11 @@ _lp_container() {
     if [[ -n "${SINGULARITY_CONTAINER-}" || -n "${SINGULARITY_NAME-}" ]]; then
         lp_container="Singlrty"
     elif [[ -e /run/.containerenv ]]; then
-        lp_container="Podman"
+        if [[ -f /run/.toolboxenv ]]; then
+            lp_container="Toolbox"
+        else
+            lp_container="Podman"
+        fi
     elif [[ -e /proc/self/cgroup ]]; then
         local cgroup="$(< /proc/self/cgroup)"
 

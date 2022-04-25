@@ -158,11 +158,13 @@ Environment
    values:
 
    * ``Singlrty`` - running in a `Singularity`_ container
+   * ``Toolbox`` - running in a `Toolbox`_ container
    * ``Podman`` - running in a `Podman`_ container
    * ``Docker`` - running in a `Docker`_ container
    * ``LXC`` - running in an `LXC`_ container
 
    .. _Singularity: https://sylabs.io/guides/latest/user-guide/
+   .. _Toolbox: https://containertoolbx.org/
    .. _Podman: https://podman.io/
    .. _Docker: https://www.docker.com/
    .. _LXC: https://linuxcontainers.org/lxc/

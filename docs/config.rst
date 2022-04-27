@@ -389,8 +389,16 @@ Features
    :type: bool
    :value: 0
 
+   .. deprecated:: 2.1
+      Use :attr:`LP_HOSTNAME_METHOD` set to "full" instead.
+
    Use the fully qualified domain name (FQDN) instead of the short hostname when
    the hostname is displayed.
+
+   .. note::
+      This never functioned as intended, and would only show the FQDN if
+      ``/etc/hostname`` contained the full domain name. For a more portable and
+      reliable version, set :attr:`LP_HOSTNAME_METHOD` to "fqdn".
 
    See also: :attr:`LP_HOSTNAME_ALWAYS`.
 
@@ -671,6 +679,23 @@ Features
    * ``-1`` - never show the hostname
 
    See also: :attr:`LP_COLOR_HOST` and :attr:`LP_ENABLE_SSH_COLORS`.
+
+.. attribute:: LP_HOSTNAME_METHOD
+   :type: string
+   :value: "short"
+
+   Determine the method for displaying the hostname.
+
+   * **short**: show the first section of the hostname, what is before the first
+     dot. Equal to ``\h`` in Bash or ``%m`` in Zsh.
+   * **full**: show the full hostname, without any domain name. Equal to ``\H``
+     in Bash or ``%M`` in Zsh.
+   * **fqdn**: show the fully qualified domain name, if it exists. Defaults to
+     **full** if not.
+   * **pretty**: show the pretty hostname, also called "machine display name".
+     Defaults to **full** if one does not exist.
+
+   See also: :attr:`LP_HOSTNAME_ALWAYS`.
 
 .. attribute:: LP_PERCENTS_ALWAYS
    :type: bool

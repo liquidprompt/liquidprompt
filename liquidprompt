@@ -209,6 +209,7 @@ __lp_source_config() {
     LP_PATH_METHOD=${LP_PATH_METHOD:-truncate_chars_from_path_left}
     LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
+    LP_HOSTNAME_METHOD=${LP_HOSTNAME_METHOD:-short}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
@@ -248,7 +249,6 @@ __lp_source_config() {
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_TITLE_COMMAND=${LP_ENABLE_TITLE_COMMAND:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
-    LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
@@ -425,6 +425,12 @@ __lp_source_config() {
         echo "liquidprompt: LP_PATH_KEEP set to '-1' is deprecated. Update your config to set
               LP_PATH_METHOD='truncate_to_last_dir' instead." >&2
         LP_PATH_METHOD="truncate_to_last_dir"
+    fi
+
+    if [[ ${LP_ENABLE_FQDN-} == 1 ]]; then
+        echo "liquidprompt: LP_ENABLE_FQDN is deprecated. Update your config to set LP_HOSTNAME_METHOD=full
+              or LP_HOSTNAME_METHOD=fqdn instead." >&2
+        LP_HOSTNAME_METHOD="full"
     fi
 }
 
@@ -1356,10 +1362,22 @@ _lp_hostname() {
             return 1
         fi
 
-        lp_hostname_raw=${HOSTNAME:-${HOST-}}
+        if [[ $LP_HOSTNAME_METHOD == fqdn ]]; then
+            lp_hostname_raw=$(hostname -f 2>/dev/null)
+        elif [[ $LP_HOSTNAME_METHOD == pretty ]]; then
+            if [[ $LP_OS == Darwin ]]; then
+                lp_hostname_raw=$(scutil --get ComputerName 2>/dev/null)
+            else
+                lp_hostname_raw=$(hostnamectl --pretty 2>/dev/null)
+            fi
+        fi
+
+        if [[ -z ${lp_hostname_raw-} ]]; then
+            lp_hostname_raw=${HOSTNAME:-${HOST-}}
+        fi
 
         # Truncate to the first subdomain
-        if ! (( LP_ENABLE_FQDN )); then
+        if [[ $LP_HOSTNAME_METHOD == short ]]; then
             lp_hostname_raw=${lp_hostname_raw%%.*}
         fi
 

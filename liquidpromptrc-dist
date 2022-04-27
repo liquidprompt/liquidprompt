@@ -60,10 +60,6 @@ LP_PATH_KEEP=2
 # set to -1 if you want to never see the hostname
 LP_HOSTNAME_ALWAYS=0
 
-# Use the fully qualified domain name (FQDN) instead of the short hostname when
-# the hostname is displayed
-LP_ENABLE_FQDN=0
-
 # When to display the user name:
 # 1: always display the user name
 # 0: hide the logged user (always display different users)

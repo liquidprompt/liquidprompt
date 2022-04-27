@@ -298,6 +298,7 @@ OS
       Returns the actual hostname instead of a shell prompt escape code.
       Added *lp_hostname_raw* return value.
       No longer sets :attr:`LP_HOST_SYMBOL` to the same return string.
+      Added :attr:`LP_HOSTNAME_METHOD` to configure display method.
 
 .. function:: _lp_sudo_active()
 

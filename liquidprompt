@@ -242,6 +242,7 @@ __lp_source_config() {
     LP_RUBY_RVM_PROMPT_OPTIONS=( ${LP_RUBY_RVM_PROMPT_OPTIONS[@]+"${LP_RUBY_RVM_PROMPT_OPTIONS[@]}"} )
     [[ ${#LP_RUBY_RVM_PROMPT_OPTIONS[@]} == 0 ]] && LP_RUBY_RVM_PROMPT_OPTIONS=(i v g s)
     LP_ENABLE_TERRAFORM=${LP_ENABLE_TERRAFORM:-0}
+    LP_ENABLE_CONTAINER=${LP_ENABLE_CONTAINER:-0}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_AWS_PROFILE=${LP_ENABLE_AWS_PROFILE:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
@@ -322,6 +323,7 @@ __lp_source_config() {
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
     LP_COLOR_TERRAFORM=${LP_COLOR_TERRAFORM:-$PINK}
+    LP_COLOR_CONTAINER=${LP_COLOR_CONTAINER:-$BOLD_BLUE}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
@@ -2913,6 +2915,43 @@ _lp_time_color() {
     lp_time_color="${LP_COLOR_TIME}${lp_time}${NO_COL}"
 }
 
+#######################
+# Container detection #
+#######################
+_lp_container() {
+    (( LP_ENABLE_CONTAINER )) || return 2
+
+    lp_container=""
+
+    if [[ -n "${SINGULARITY_CONTAINER-}" || -n "${SINGULARITY_NAME-}" ]]; then
+        lp_container="Singlrty"
+    elif [[ -e /run/.containerenv ]]; then
+        if [[ -f /run/.toolboxenv ]]; then
+            lp_container="Toolbox"
+        else
+            lp_container="Podman"
+        fi
+    elif [[ -e /proc/self/cgroup ]]; then
+        local cgroup="$(< /proc/self/cgroup)"
+
+        if [[ "$cgroup" == *"docker"* ]]; then
+            lp_container="Docker"
+        elif [[ "$cgroup" == *"lxc"* ]]; then
+            lp_container="LXC"
+        else
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+
+_lp_container_color() {
+    _lp_container || return "$?"
+
+    lp_container_color="«${LP_COLOR_CONTAINER}${lp_container}${NO_COL}»"
+}
+
 #################
 # Default theme #
 #################
@@ -3055,6 +3094,12 @@ _lp_default_theme_prompt_data() {
         LP_TFSPACE=
     fi
 
+    if _lp_container_color; then
+        LP_CONTAINER=" $lp_container_color"
+    else
+        LP_CONTAINER=
+    fi
+
     if _lp_software_collections_color; then
         LP_SCLS=" $lp_software_collections_color"
     else
@@ -3100,7 +3145,7 @@ _lp_default_theme_prompt_template() {
         # add user, host, permissions colon, working directory, and dirstack
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SHLVL}"
 
-        PS1+="${LP_SCLS}${LP_AWS_PROFILE}${LP_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}${LP_PROXY}"
+        PS1+="${LP_SCLS}${LP_AWS_PROFILE}${LP_CONTAINER}${LP_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}${LP_PROXY}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

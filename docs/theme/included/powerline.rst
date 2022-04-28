@@ -425,6 +425,14 @@ ______
 
    Color for the chroot section.
 
+.. attribute:: POWERLINE_CONTAINER_COLOR
+   :type: array<int>
+   :value: $POWERLINE_NEUTRAL_COLOR
+
+   Color for the container indicator section.
+
+   .. versionadded:: 2.1
+
 .. attribute:: POWERLINE_DIRSTACK_COLOR
    :type: array<int>
    :value: $POWERLINE_NEUTRAL_COLOR
@@ -499,4 +507,3 @@ ______
    :value: (33, 17, 0, 0, 5, 4)
 
    Color for the current time section.
-

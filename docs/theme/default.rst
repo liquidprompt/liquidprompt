@@ -187,6 +187,12 @@ default order if the user does not configure a different template.
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_CONTAINER
+
+   The container status for the current shell. See :attr:`LP_ENABLE_CONTAINER`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_VENV
 
    The current Python (or Conda) virtual environment. See
@@ -271,4 +277,3 @@ default order if the user does not configure a different template.
 
    Not actually a part of the default theme, it is used in the default template
    as the final section. See :attr:`LP_PS1_POSTFIX` for details.
-

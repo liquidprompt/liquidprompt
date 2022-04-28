@@ -5,13 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Deprecated
+- **env**: `LP_ENABLE_FQDN` replaced with `LP_HOSTNAME_METHOD=full` ([#472])
+
 ### Added
 - **aws**: AWS profile display ([#496], [#679], [4c8ac92])
 - **bash**: Compatibility with bash-preexec ([#672])
 - **battery**: Linux sysfs backend ([#689])
 - **battery**: ACPI backend option to choose battery ([#687])
+- **container**: Container status data source ([#569], [#612])
 - **env**: Return unescaped hostname in `_lp_hostname()` ([#665], [a23af79])
 - **env**: Return unescaped username in `_lp_username()` ([#665], [a23af79])
+- **env**: `LP_HOSTNAME_METHOD=fqdn` displays true FQDN ([#472])
+- **env**: `LP_HOSTNAME_METHOD=pretty` shows display name ([#596])
+- **env**: Nested shell level data source ([#606])
 - **hg**: `LP_HG_COMMAND` config option to customize `hg` binary ([#701])
 - **k8s**: kubectl current context display ([#578], [#673], [#681], [#695], [d41b5c8])
 - **path**: Return unescaped path in *lp_path* in `_lp_path_format()` ([a23af79])
@@ -642,6 +649,7 @@ for help.
 [#463]: https://github.com/nojhan/liquidprompt/issues/463
 [#469]: https://github.com/nojhan/liquidprompt/issues/469
 [#472]: https://github.com/nojhan/liquidprompt/issues/472
+[#472]: https://github.com/nojhan/liquidprompt/issues/472
 [#474]: https://github.com/nojhan/liquidprompt/issues/474
 [#476]: https://github.com/nojhan/liquidprompt/pull/476
 [#479]: https://github.com/nojhan/liquidprompt/issues/479
@@ -669,15 +677,19 @@ for help.
 [#552]: https://github.com/nojhan/liquidprompt/issues/552
 [#563]: https://github.com/nojhan/liquidprompt/issues/563
 [#564]: https://github.com/nojhan/liquidprompt/issues/564
+[#569]: https://github.com/nojhan/liquidprompt/issues/569
 [#571]: https://github.com/nojhan/liquidprompt/pull/571
 [#578]: https://github.com/nojhan/liquidprompt/pull/578
 [#581]: https://github.com/nojhan/liquidprompt/issues/581
 [#582]: https://github.com/nojhan/liquidprompt/pull/582
 [#592]: https://github.com/nojhan/liquidprompt/issues/592
+[#596]: https://github.com/nojhan/liquidprompt/issues/596
 [#604]: https://github.com/nojhan/liquidprompt/pull/604
 [#605]: https://github.com/nojhan/liquidprompt/pull/605
+[#606]: https://github.com/nojhan/liquidprompt/issues/606
 [#607]: https://github.com/nojhan/liquidprompt/issues/607
 [#609]: https://github.com/nojhan/liquidprompt/issues/609
+[#612]: https://github.com/nojhan/liquidprompt/issues/612
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
 [#615]: https://github.com/nojhan/liquidprompt/issues/615

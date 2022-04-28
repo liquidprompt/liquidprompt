@@ -117,6 +117,7 @@ Thanks again to everyone for all of the help and support!
 * Slobodan Todorov (@todorowww)
 * Simon Chopin (@schopin-pro)
 * @Mice7R
+* Alan Hoyle (@alanhoyle)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -248,3 +249,8 @@ Thanks again to everyone for all of the help and support!
 * Niko Storni (@nikooo777)
 * Chris Weyl (@rsrchboy)
 * Federico Stra (@FedericoStra)
+* Roman (@hatifnatt)
+* Alan Hoyle (@alanhoyle)
+* Janne Himanka (@jhimanka)
+* Peter van Dijk (@Habbie)
+* Martin Blanchard (@t-chaik)

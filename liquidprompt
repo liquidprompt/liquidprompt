@@ -1087,21 +1087,16 @@ _lp_connection() {
     if [[ -n "${SSH_CLIENT-}${SSH2_CLIENT-}${SSH_TTY-}" ]]; then
         lp_connection=ssh
         return
-    fi
-
-    # tmux: see GH #304
-    # TODO check on *BSD
-    local whoami="$(LC_ALL=C who am i)"
-    if [[ x"$whoami" != *'('* || x"$whoami" = *'(:'* || x"$whoami" = *'(tmux'* ]]; then
-        lp_connection=lcl  # Local
+    elif [[ -n ${REMOTEHOST-} ]]; then
+        lp_connection=tel  # Telnet
         return
     fi
 
     local sess_parent="$(ps -o comm= -p "$PPID" 2> /dev/null)"
     if [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
-        lp_connection=su   # Remote su/sudo
+        lp_connection=su   # su/sudo
     else
-        lp_connection=tel  # Telnet
+        lp_connection=lcl  # Local
     fi
 }
 

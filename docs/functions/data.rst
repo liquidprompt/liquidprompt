@@ -138,9 +138,9 @@ Environment
    Returns a string matching the connection context of the shell. Valid values:
 
    * ``ssh`` - connected over OpenSSH
-   * ``lcl`` - running in a local terminal
-   * ``su`` - running in a ``su`` or ``sudo`` shell
    * ``tel`` - connected over Telnet
+   * ``su`` - running in a ``su`` or ``sudo`` shell
+   * ``lcl`` - running in a local terminal
 
    It is not possible for more than one context to be returned. The contexts
    are checked in the order listed above, and the first one found will be

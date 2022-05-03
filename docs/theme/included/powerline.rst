@@ -483,9 +483,11 @@ ______
 
 .. attribute:: POWERLINE_RUBY_ENV_COLOR
    :type: array<int>
-   :value: (231 38 0 0 7 4)
+   :value: $POWELINE_PYTHON_ENV_COLOR
 
    Color for the Ruby environment section.
+
+   .. versionadded:: 2.1
 
 .. attribute:: POWERLINE_RUNTIME_COLOR
    :type: array<int>

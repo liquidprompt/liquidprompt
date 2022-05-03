@@ -521,6 +521,20 @@ Features
 
    See also: :attr:`LP_COLOR_PROXY`.
 
+.. attribute:: LP_ENABLE_RUBY_VENV
+   :type: bool
+   :value: 1
+
+   Display the currently activated RVM_ or RBENV_ virtual environment.
+
+   See also: :attr:`LP_RUBY_RVM_PROMPT_OPTIONS` and
+   :attr:`LP_COLOR_RUBY_VENV`.
+
+   .. _RVM: https://rvm.io/
+   .. _RBENV: https://github.com/rbenv/rbenv
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_RUNTIME
    :type: bool
    :value: 1
@@ -674,18 +688,6 @@ Features
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
-.. attribute:: LP_ENABLE_RUBY_VENV
-   :type: bool
-   :value: 1
-
-   Display the currently activated RVM_ or RBENV_ virtual environment.
-
-   See also: :attr:`LP_RUBY_RVM_PROMPT_OPTIONS` and
-   :attr:`LP_COLOR_VIRTUALENV`.
-
-   .. _RVM: https://rvm.io/
-   .. _RBENV: https://github.com/rbenv/rbenv
-
 .. attribute:: LP_ENABLE_TERRAFORM
    :type: bool
    :value: 0
@@ -755,6 +757,8 @@ Features
    are using RVM (i.e. no effect with RBENV).
 
    .. _`RVM prompt`: https://rvm.io/workflow/prompt
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_TIME_ANALOG
    :type: bool
@@ -1361,6 +1365,16 @@ Valid preset color variables are:
    Color used for :attr:`LP_MARK_PROXY`.
 
    See also: :attr:`LP_ENABLE_PROXY`.
+
+.. attribute:: LP_COLOR_RUBY_VENV
+   :type: string
+   :value: $LP_COLOR_VIRTUALENV
+
+   Color used for displaying a Ruby virtual env.
+
+   See also: :attr:`LP_ENABLE_RUBY_VENV`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_RUNTIME
    :type: string

@@ -204,7 +204,7 @@ specific text and formatting may change.
 
 .. function:: _lp_ruby_env_color() -> var:lp_ruby_env_color
 
-   Returns :func:`_lp_ruby_env` with color from :attr:`LP_COLOR_VIRTUALENV`.
+   Returns :func:`_lp_ruby_env` with color from :attr:`LP_COLOR_RUBY_VENV`.
 
    .. versionadded:: 2.1
 

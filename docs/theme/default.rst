@@ -206,8 +206,7 @@ default order if the user does not configure a different template.
 
 .. attribute:: LP_RUBY_VENV
 
-   The current Ruby virtual environment. See
-   :attr:`LP_ENABLE_RUBY_VENV`.
+   The current Ruby virtual environment. See :attr:`LP_ENABLE_RUBY_VENV`.
 
    .. versionadded:: 2.1
 

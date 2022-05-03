@@ -324,6 +324,7 @@ __lp_source_config() {
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
     LP_COLOR_NODE_VENV=${LP_COLOR_NODE_VENV:-$LP_COLOR_VIRTUALENV}
+    LP_COLOR_RUBY_VENV=${LP_COLOR_RUBY_VENV:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_TERRAFORM=${LP_COLOR_TERRAFORM:-$PINK}
     LP_COLOR_CONTAINER=${LP_COLOR_CONTAINER:-$BOLD_BLUE}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
@@ -1220,7 +1221,7 @@ _lp_ruby_env() {
 _lp_ruby_env_color() {
     _lp_ruby_env || return "$?"
 
-    lp_ruby_env_color="[${LP_COLOR_VIRTUALENV}${lp_ruby_env}${NO_COL}]"
+    lp_ruby_env_color="[${LP_COLOR_RUBY_VENV}${lp_ruby_env}${NO_COL}]"
 }
 
 _lp_terraform_env() {

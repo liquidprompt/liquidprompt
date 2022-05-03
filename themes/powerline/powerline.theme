@@ -147,6 +147,7 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_AWS_PROFILE_MARKER=${POWERLINE_AWS_PROFILE_MARKER:-"AWS: "}
     POWERLINE_CHROOT_MARKER=${POWERLINE_CHROOT_MARKER:-"chroot: "}
     POWERLINE_KUBECONTEXT_MARKER=${POWERLINE_KUBECONTEXT_MARKER:-$LP_MARK_KUBECONTEXT}
+    POWERLINE_NODE_ENV_MARKER=${POWERLINE_NODE_ENV_MARKER:-"node: "}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
     POWERLINE_RUBY_ENV_MARKER=${POWERLINE_RUBY_ENV_MARKER:-"ruby: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
@@ -176,6 +177,9 @@ _lp_powerline_full_theme_activate() {
 
     POWERLINE_LOAD_COLOR=( ${POWERLINE_LOAD_COLOR[@]+"${POWERLINE_LOAD_COLOR[@]}"} )
     [[ ${#POWERLINE_LOAD_COLOR[@]} == 0 ]] && POWERLINE_LOAD_COLOR=(-1 148 0 0 -1 3)
+
+    POWERLINE_NODE_ENV_COLOR=( ${POWERLINE_NODE_ENV_COLOR[@]+"${POWERLINE_NODE_ENV_COLOR[@]}"} )
+    [[ ${#POWERLINE_NODE_ENV_COLOR[@]} == 0 ]] && POWERLINE_NODE_ENV_COLOR=("${POWERLINE_PYTHON_ENV_COLOR[@]}")
 
     POWERLINE_PROXY_COLOR=( ${POWERLINE_PROXY_COLOR[@]+"${POWERLINE_PROXY_COLOR[@]}"} )
     [[ ${#POWERLINE_PROXY_COLOR[@]} == 0 ]] && POWERLINE_PROXY_COLOR=(21 219 1 0 4 7)
@@ -278,6 +282,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_python_env
     if _lp_python_env; then
         __powerline_section "${POWERLINE_PYTHON_ENV_MARKER}${lp_python_env}" "${POWERLINE_PYTHON_ENV_COLOR[@]}"
+    fi
+
+    local lp_node_env
+    if _lp_node_env; then
+        __powerline_section "${POWERLINE_NODE_ENV_MARKER}${lp_node_env}" "${POWERLINE_NODE_ENV_COLOR[@]}"
     fi
 
     local lp_ruby_env

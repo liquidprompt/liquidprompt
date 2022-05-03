@@ -492,6 +492,18 @@ Features
    See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
    :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.
 
+.. attribute:: LP_ENABLE_NODE_VENV
+   :type: bool
+   :value: 1
+
+   Display the currently activated nodeenv_ virtual environment.
+
+   See also: :attr:`LP_COLOR_NODE_VENV`.
+
+   .. _nodeenv: https://ekalinin.github.io/nodeenv/
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_PERM
    :type: bool
    :value: 1
@@ -1272,6 +1284,16 @@ Valid preset color variables are:
    :attr:`LP_COLOR_MARK`.
 
    See also: :attr:`LP_ENABLE_SUDO`.
+
+.. attribute:: LP_COLOR_NODE_VENV
+   :type: string
+   :value: $LP_COLOR_VIRTUALENV
+
+   Color used for displaying a Node.js virtual env.
+
+   See also: :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_NOWRITE
    :type: string

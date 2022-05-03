@@ -198,6 +198,12 @@ default order if the user does not configure a different template.
    The current Python (or Conda) virtual environment. See
    :attr:`LP_ENABLE_VIRTUALENV`.
 
+.. attribute:: LP_NODE_VENV
+
+   The current Node.js virtual environment. See :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_RUBY_VENV
 
    The current Ruby virtual environment. See

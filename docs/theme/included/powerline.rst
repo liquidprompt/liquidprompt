@@ -375,6 +375,15 @@ _______
    The marker string used to indicate the following string is the name of a
    kubectl context.
 
+.. attribute:: POWERLINE_NODE_ENV_MARKER
+   :type: string
+   :value: "node: "
+
+   The marker string used to indicate the following string is a Node.js
+   environment.
+
+   .. versionadded:: 2.1
+
 .. attribute:: POWERLINE_PROXY_MARKER
    :type: string
    :value: "proxy: "
@@ -457,6 +466,14 @@ ______
 
    Color for all neutral sections, :attr:`LP_PS1_PREFIX` and
    :attr:`LP_PS1_POSTFIX`.
+
+.. attribute:: POWERLINE_NODE_ENV_COLOR
+   :type: array<int>
+   :value: $POWERLINE_PYTHON_ENV_COLOR
+
+   Color for the Node.js environment section.
+
+   .. versionadded:: 2.1
 
 .. attribute:: POWERLINE_PROXY_COLOR
    :type: array<int>

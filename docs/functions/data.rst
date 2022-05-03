@@ -67,6 +67,15 @@ Development Environment
 
    .. versionadded:: 2.1
 
+.. function:: _lp_node_env() -> var:lp_node_env
+
+   Returns ``true`` if a Node.js environment is detected. Returns the virtual
+   environment name.
+
+   Can be disabled by :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_python_env() -> var:lp_python_env
 
    Returns ``true`` if a Python or Conda environment is detected. Returns the

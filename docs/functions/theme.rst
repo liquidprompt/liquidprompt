@@ -190,6 +190,12 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_node_env_color() -> var:lp_node_env_color
+
+   Returns :func:`_lp_node_env` with color from :attr:`LP_COLOR_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
 .. function:: _lp_python_env_color() -> var:lp_python_env_color
 
    Returns :func:`_lp_python_env` with color from :attr:`LP_COLOR_VIRTUALENV`.

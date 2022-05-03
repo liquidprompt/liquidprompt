@@ -580,6 +580,8 @@ Features
 
    See also: :attr:`LP_MARK_SHLVL` and :attr:`LP_COLOR_SHLVL`.
 
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_SHORTEN_PATH
    :type: bool
    :value: 1
@@ -739,6 +741,8 @@ Features
      Defaults to **full** if one does not exist.
 
    See also: :attr:`LP_HOSTNAME_ALWAYS`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_PERCENTS_ALWAYS
    :type: bool
@@ -1009,6 +1013,8 @@ Marks
    Mark used to indicate the shell is inside another shell.
 
    See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_MARK_SHORTEN_PATH
    :type: string
@@ -1391,6 +1397,8 @@ Valid preset color variables are:
    Color used for displaying the nested shell level.
 
    See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_MARK_SHLVL`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_SSH
    :type: string

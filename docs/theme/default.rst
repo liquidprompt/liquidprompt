@@ -175,6 +175,8 @@ default order if the user does not configure a different template.
    The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored
    with :attr:`LP_COLOR_SHLVL`. Can be disabled by attr:`LP_ENABLE_SHLVL`.
 
+   .. versionadded:: 2.1
+
 .. attribute:: LP_SCLS
 
    The current Red Hat Software Collections environment. See

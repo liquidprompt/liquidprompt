@@ -353,6 +353,10 @@ OS
 
    .. versionadded:: 2.0
 
+   .. versionchanged:: 2.1
+      If the user has NOPASSWD powers, that is cached on startup to prevent
+      multiple ``sudo`` calls.
+
 .. function:: _lp_user()
 
    Returns a return code depending on the logged in user:

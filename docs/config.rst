@@ -613,8 +613,8 @@ Features
 
    .. warning::
       Each evocation of ``sudo`` by default writes to the syslog, and this will
-      run ``sudo`` once each prompt. This is likely to make your sysadmin hate
-      you.
+      run ``sudo`` once each prompt, unless you have NOPASSWD powers. This is
+      likely to make your sysadmin hate you.
 
    See also: :attr:`LP_COLOR_MARK_SUDO`.
 

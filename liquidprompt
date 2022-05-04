@@ -3361,7 +3361,7 @@ prompt_on() {
         fi
 
         _LP_OLD_SETOPT=(${_LP_OLD_SETOPT[@]+"${_LP_OLD_SETOPT[@]}"})
-        if (( ! ${#_LP_OLD_SETOPT} )); then
+        if (( ! ${#_LP_OLD_SETOPT[@]} )); then
             # Dump option names: echo ${(ko)options}
             for o in promptpercent
             do

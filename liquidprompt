@@ -936,7 +936,7 @@ _lp_path_format() {
 
     local -i path_length="${#display_path}"
 
-    local lp_vcs_root lp_vcs_type
+    local lp_vcs_root lp_vcs_dir lp_vcs_type lp_vcs_subtype
     local vcs_root_directory=
     if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
         __lp_pwd_tilde "$lp_vcs_root"
@@ -1601,49 +1601,75 @@ _lp_are_vcs_enabled() {
 _lp_find_vcs() {
     if ! _lp_are_vcs_enabled; then
         lp_vcs_type="disabled"
-        lp_vcs_root=
+        lp_vcs_root=""
         return 2
     fi
 
-    local vcs
+    lp_vcs_type=""
 
-    lp_vcs_root="$PWD"
-    while [[ -n "$lp_vcs_root" ]]; do
-        for vcs in ${_LP_ENABLED_VCSS[@]+"${_LP_ENABLED_VCSS[@]}"}; do
-            if [[ -d "$lp_vcs_root/.$vcs" ]]; then
-                lp_vcs_type="$vcs"
+    # Based on the Git behavior here:
+    # https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables
+    if [[ -d "${GIT_DIR-}" ]]; then
+        lp_vcs_type="git"
+        lp_vcs_dir="$GIT_DIR"
+        lp_vcs_root="${GIT_WORK_TREE:-"$(\git rev-parse --show-toplevel 2>/dev/null)"}"
+    fi
+
+    if [[ -z $lp_vcs_type ]]; then
+        local vcs
+        lp_vcs_root="$PWD"
+        while [[ -n "$lp_vcs_root" ]]; do
+            for vcs in ${_LP_ENABLED_VCSS[@]+"${_LP_ENABLED_VCSS[@]}"}; do
+                lp_vcs_dir="$lp_vcs_root/.$vcs"
+                if [[ -d "$lp_vcs_dir" ]]; then
+                    lp_vcs_type="$vcs"
+                    break 2
+                fi
+            done
+            unset lp_vcs_dir
+
+            if (( LP_ENABLE_GIT )) && [[ -f "$lp_vcs_root/.git" ]]; then
+                lp_vcs_type="git"
+                lp_vcs_dir="$(\git rev-parse --git-dir 2>/dev/null)"
+                break
+            fi
+
+            if (( LP_ENABLE_FOSSIL )) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
+                lp_vcs_type="fossil"
                 return 0
             fi
+
+            lp_vcs_root="${lp_vcs_root%/*}"
         done
+    fi
 
-        if (( LP_ENABLE_GIT )) && [[ -f "$lp_vcs_root/.git" ]]; then
-            lp_vcs_type="git"
-            return 0
+    if [[ $lp_vcs_type == git ]]; then
+        if [[ -n "${VCSH_DIRECTORY-}" ]]; then
+            lp_vcs_subtype="vcsh"
+        elif [[ -d "${lp_vcs_dir}/svn" ]]; then
+            lp_vcs_subtype="svn"
+        else
+            lp_vcs_subtype=""
         fi
+    fi
 
-        if (( LP_ENABLE_FOSSIL)) && [[ -f "$lp_vcs_root/_FOSSIL_" || -f "$lp_vcs_root/.fslckout" ]]; then
-            lp_vcs_type="fossil"
-            return 0
-        fi
-
-        lp_vcs_root="${lp_vcs_root%/*}"
-    done
-
-    lp_vcs_type=
-    lp_vcs_root=
-    return 1
+    if [[ -z $lp_vcs_type ]]; then
+        lp_vcs_root=""
+        return 1
+    fi
 }
 
 # Set the prompt mark depending on the current VCS.
 _lp_smart_mark() {
+    local subtype="${2:-"${lp_vcs_subtype-}"}"
     case "${1:-$lp_vcs_type}" in
     git)
-        lp_smart_mark="$LP_MARK_GIT"
-
-        if [[ -n "${VCSH_DIRECTORY-}" ]]; then
+        if [[ $subtype == vcsh ]]; then
             lp_smart_mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH"
-        elif [[ -d "${lp_vcs_root}/.git/svn" ]]; then
+        elif [[ $subtype == svn ]]; then
             lp_smart_mark="$LP_MARK_GIT$LP_MARK_SVN"
+        else
+            lp_smart_mark="$LP_MARK_GIT"
         fi
         ;;
     hg)       lp_smart_mark="$LP_MARK_HG"              ;;
@@ -1853,33 +1879,33 @@ _lp_git_commit_id() {
 
 # Get additional information if HEAD is in merging, rebasing or cherry-picking state.
 _lp_git_head_status() {
-    local gitdir="${lp_vcs_root}/.git" IFS= step total
+    local IFS="" step total
 
-    if [[ -f "${gitdir}/MERGE_HEAD" ]]; then
+    if [[ -f "${lp_vcs_dir}/MERGE_HEAD" ]]; then
         lp_vcs_head_status="MERGING"
-    elif [[ -d "${gitdir}/rebase-merge" ]]; then
-        read step <"${gitdir}/rebase-merge/msgnum"
-        read total <"${gitdir}/rebase-merge/end"
-        if [ -f "${gitdir}/rebase-merge/interactive" ]; then
+    elif [[ -d "${lp_vcs_dir}/rebase-merge" ]]; then
+        read -r step <"${lp_vcs_dir}/rebase-merge/msgnum"
+        read -r total <"${lp_vcs_dir}/rebase-merge/end"
+        if [[ -f "${lp_vcs_dir}/rebase-merge/interactive" ]]; then
             lp_vcs_head_status="REBASE-i"
         else
             lp_vcs_head_status="REBASE-m"
         fi
-    elif [[ -d "${gitdir}/rebase-apply" ]]; then
-        read step <"${gitdir}/rebase-apply/next"
-        read total <"${gitdir}/rebase-apply/last"
-        if [ -f "${gitdir}/rebase-apply/rebasing" ]; then
+    elif [[ -d "${lp_vcs_dir}/rebase-apply" ]]; then
+        read -r step <"${lp_vcs_dir}/rebase-apply/next"
+        read -r total <"${lp_vcs_dir}/rebase-apply/last"
+        if [[ -f "${lp_vcs_dir}/rebase-apply/rebasing" ]]; then
             lp_vcs_head_status="REBASE"
-        elif [ -f "${gitdir}/rebase-apply/applying" ]; then
+        elif [[ -f "${lp_vcs_dir}/rebase-apply/applying" ]]; then
             lp_vcs_head_status="AM"
         else
             lp_vcs_head_status="AM/REBASE"
         fi
-    elif [[ -f "${gitdir}/CHERRY_PICK_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_dir}/CHERRY_PICK_HEAD" ]]; then
         lp_vcs_head_status="CHERRY-PICKING"
-    elif [[ -f "${gitdir}/REVERT_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_dir}/REVERT_HEAD" ]]; then
         lp_vcs_head_status="REVERTING"
-    elif [[ -f "${gitdir}/BISECT_START" ]]; then
+    elif [[ -f "${lp_vcs_dir}/BISECT_START" ]]; then
         lp_vcs_head_status="BISECTING"
     else
         return 1
@@ -1888,7 +1914,7 @@ _lp_git_head_status() {
     if [[ -n "$step" && -n "$total" ]]; then
         lp_vcs_head_details="${step}/${total}"
     else
-        lp_vcs_head_details=
+        lp_vcs_head_details=""
     fi
 }
 
@@ -2083,18 +2109,17 @@ _lp_hg_commit_id() {
 
 # Get additional information if the repo is in any unfinished state.
 _lp_hg_head_status() {
-    local hgdir="${lp_vcs_root}/.hg"
-    if [[ -d "${hgdir}/merge" ]]; then
+    if [[ -d "${lp_vcs_dir}/merge" ]]; then
         lp_vcs_head_status="MERGING"
-    elif [[ -f "${hgdir}/rebasestate" ]]; then
+    elif [[ -f "${lp_vcs_dir}/rebasestate" ]]; then
         lp_vcs_head_status="REBASING"
-    elif [[ -f "${hgdir}/updatestate" ]]; then
+    elif [[ -f "${lp_vcs_dir}/updatestate" ]]; then
         lp_vcs_head_status="UPDATING"
-    elif [[ -f "${hgdir}/bisect.state" ]]; then
+    elif [[ -f "${lp_vcs_dir}/bisect.state" ]]; then
         lp_vcs_head_status="BISECTING"
-    elif [[ -f "${hgdir}/shelvedstate" ]]; then
+    elif [[ -f "${lp_vcs_dir}/shelvedstate" ]]; then
         lp_vcs_head_status="SHELVING"
-    elif [[ -f "${hgdir}/graftstate" ]]; then
+    elif [[ -f "${lp_vcs_dir}/graftstate" ]]; then
         lp_vcs_head_status="GRAFTING"
     else
         return 1

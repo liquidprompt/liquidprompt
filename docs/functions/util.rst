@@ -50,13 +50,17 @@ These functions are designed to be used by themes.
    If *string* is set and not empty, returns *string* padded with an extra space
    on the right.
 
-.. function:: _lp_smart_mark([vcs_type]) -> var:lp_smart_mark
+.. function:: _lp_smart_mark([vcs_type], [vcs_subtype]) -> var:lp_smart_mark
 
    Returns a string set to the configured mark matching *vcs_type*. If
    *vcs_type* is not set, uses the value of ``lp_vcs_type`` instead.
 
-   If the type is "git", extra checks are done to see if the repository is of
-   type VCSH or git-svn instead, and return their marks if so.
+   If the type is "git", matches *vcs_subtype* to see if the repository is of
+   type VCSH or git-svn instead, and return their marks if so. If *vcs_subtype*
+   is not set, uses the value of ``lp_vcs_subtype`` instead.
+
+   .. versionchanged:: 2.1
+      Added *vcs_subtype* argument.
 
 .. function:: _lp_title(title) -> stdout
 

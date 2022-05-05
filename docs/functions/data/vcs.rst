@@ -15,11 +15,12 @@ a theme can provide a common look for all VCS types.
 See the default theme function :func:`_lp_vcs_details_color` for an example of
 this.
 
-.. function:: _lp_find_vcs() -> var:lp_vcs_type, var:lp_vcs_root
+.. function:: _lp_find_vcs() -> var:lp_vcs_type, var:lp_vcs_root, \
+   var:lp_vcs_dir, var:lp_vcs_subtype
 
    Returns ``true`` if the current directory is part of a version control
-   repository. If not, returns ``1``. Returns the VCS type ID and the repository
-   root directory.
+   repository. If not, returns ``1``. Returns the VCS type ID, subtype if one
+   exists, the VCS data directory, and the repository root directory.
 
    If the current directory is disabled for version control using
    :attr:`LP_DISABLED_VCS_PATHS` (checked using :func:`_lp_are_vcs_enabled`),
@@ -34,7 +35,21 @@ this.
    if the database is valid or healthy. Use :func:`_lp_vcs_active` to test for
    that.
 
+   .. note::
+
+      *lp_vcs_dir* will not be set for Fossil repositories. Protect it with
+      ``"${lp_vcs_dir-}"``.
+
+   .. note::
+
+      *lp_vcs_subtype* will not be set usually. The only currently supported
+      subtypes are "vcsh" and "svn", which are subtypes of "git".
+
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.1
+      Added the *lp_vcs_dir* and *lp_vcs_subtype* return values.
+      Added support for checking the :envvar:`GIT_DIR` environment variable.
 
 .. function:: _lp_are_vcs_enabled()
 
@@ -90,8 +105,7 @@ this.
 
    .. versionadded:: 2.0
 
-.. function:: _lp_vcs_commits_off_remote() -> var:lp_vcs_commit_ahead, \
-                                              var:lp_vcs_commit_behind
+.. function:: _lp_vcs_commits_off_remote() -> var:lp_vcs_commit_ahead, var:lp_vcs_commit_behind
 
    Returns ``true`` if there are commits on the current branch that are not on
    the remote tracking branch, or commits on the remote tracking branch that are
@@ -105,8 +119,7 @@ this.
 
    .. versionadded:: 2.0
 
-.. function:: _lp_vcs_head_status() -> var:lp_vcs_head_status, \
-                                       var:lp_vcs_head_details
+.. function:: _lp_vcs_head_status() -> var:lp_vcs_head_status, var:lp_vcs_head_details
 
    Return ``true`` if the repo is in a special or unusual state. Return the
    special status, and any extra details (like progress in a rebase) if
@@ -431,8 +444,7 @@ Git
 
    .. versionadded:: 2.0
 
-.. function:: _lp_git_commits_off_remote() -> var:lp_vcs_commit_ahead, \
-                                              var:lp_vcs_commit_behind
+.. function:: _lp_git_commits_off_remote() -> var:lp_vcs_commit_ahead, var:lp_vcs_commit_behind
 
    Returns ``true`` if there are commits on the current branch that are not on
    the remote tracking branch, or commits on the remote tracking branch that are
@@ -443,8 +455,7 @@ Git
 
    .. versionadded:: 2.0
 
-.. function:: _lp_git_head_status() -> var:lp_vcs_head_status, \
-                                       var:lp_vcs_head_details
+.. function:: _lp_git_head_status() -> var:lp_vcs_head_status, var:lp_vcs_head_details
 
    Return ``true`` if the repository is in a special or unusual state. Return
    the special status, and any extra details (like progress in a rebase) if

@@ -496,11 +496,12 @@ Features
    :type: bool
    :value: 1
 
-   Display the currently activated nodeenv_ virtual environment.
+   Display the currently activated nodeenv_ or NVM_ virtual environment.
 
    See also: :attr:`LP_COLOR_NODE_VENV`.
 
    .. _nodeenv: https://ekalinin.github.io/nodeenv/
+   .. _NVM: https://github.com/nvm-sh/nvm
 
    .. versionadded:: 2.1
 

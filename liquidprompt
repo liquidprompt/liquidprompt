@@ -1196,9 +1196,14 @@ _lp_node_env() {
 
     local ret
 
-    # Truncate to the last '/' section, which is the directory name.
     if [[ -n "${NODE_VIRTUAL_ENV-}" ]]; then
+        # Truncate to the last '/' section, which is the directory name.
         __lp_escape "${NODE_VIRTUAL_ENV##*/}"
+        lp_node_env=$ret
+    elif [[ -n "${NVM_BIN-}" ]]; then
+        # Get the version string from the path.
+        ret="${NVM_BIN##*/node/}"
+        __lp_escape "${ret%/bin}"
         lp_node_env=$ret
     else
         return 1

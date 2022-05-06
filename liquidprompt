@@ -1665,7 +1665,7 @@ _lp_smart_mark() {
     case "${1:-$lp_vcs_type}" in
     git)
         if [[ $subtype == vcsh ]]; then
-            lp_smart_mark="$LP_MARK_VCSH$LP_MARK_GIT$LP_MARK_VCSH"
+            lp_smart_mark="$LP_MARK_VCSH${VCSH_DIRECTORY-}$LP_MARK_GIT$LP_MARK_VCSH"
         elif [[ $subtype == svn ]]; then
             lp_smart_mark="$LP_MARK_GIT$LP_MARK_SVN"
         else

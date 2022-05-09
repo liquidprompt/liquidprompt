@@ -27,11 +27,11 @@ uname -a
 printf -- '---lpb_release:\n'
 lsb_release -a 2>/dev/null || printf '<none>\n'
 printf -- '---/etc/*release:\n'
-cat /etc/*release 2>/dev/null || printf '<none>\n'
+cat /etc/*release 2>/dev/null </dev/null || printf '<none>\n'
 printf -- '---/etc/issue*:\n'
-cat /etc/issue* 2>/dev/null || printf '<none>\n'
+cat /etc/issue* 2>/dev/null </dev/null || printf '<none>\n'
 printf -- '---/proc/version:\n'
-cat /proc/version 2>/dev/null || printf '<none>\n'
+cat /proc/version 2>/dev/null </dev/null || printf '<none>\n'
 
 # Sanity check to verify special characters have not been lost on upload
 printf '\nSpecial character check: \a\b\t\001\r\n'

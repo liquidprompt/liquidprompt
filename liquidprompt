@@ -3391,8 +3391,8 @@ prompt_on() {
             fi
             if (( LP_ENABLE_TITLE_COMMAND )); then
                 # It's less bad to have this be duped than __lp_set_prompt, but let's be sure
-                if ! ( __lp_array_contains __lp_title_command ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
-                    preexec_functions+=(__lp_title_command)
+                if ! ( __lp_array_contains __lp_print_title_command ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
+                    preexec_functions+=(__lp_print_title_command)
                 fi
             fi
         fi
@@ -3449,7 +3449,7 @@ __lp_disable_hooks() {
             local -a new_preexec_functions=()
             for value in ${preexec_functions[@]+"${preexec_functions[@]}"}; do
                 [[ "$value" != "__lp_runtime_before" ]] &&
-                [[ "$value" != "__lp_title_command" ]] && new_preexec_functions+=("$value")
+                [[ "$value" != "__lp_print_title_command" ]] && new_preexec_functions+=("$value")
             done
             preexec_functions=(${new_preexec_functions[@]+"${new_preexec_functions[@]}"})
         else

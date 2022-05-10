@@ -70,6 +70,8 @@ General
    directory name when shortening the path. See :attr:`LP_PATH_METHOD` for
    details of the specific methods.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_PATH_DEFAULT
    :type: string
 
@@ -151,6 +153,8 @@ General
 
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_PATH_VCS_ROOT
    :type: bool
    :value: 1
@@ -159,6 +163,8 @@ General
    formatting, set by :attr:`LP_COLOR_PATH_VCS_ROOT`. If
    :attr:`LP_ENABLE_SHORTEN_PATH` is enabled, also prevent the path shortening
    from shortening or hiding the VCS root directory.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_PS1_POSTFIX
    :type: string
@@ -280,6 +286,8 @@ Features
       LP_DISABLED_VCS_PATHS=("/a/svn/repo" "/home/me/my/large/repo")
 
    See also: :attr:`LP_MARK_DISABLED`.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_ENABLE_AWS_PROFILE
    :type: bool
@@ -641,6 +649,18 @@ Features
    See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`, and
    :attr:`LP_COLORMAP`.
 
+.. attribute:: LP_ENABLE_TERRAFORM
+   :type: bool
+   :value: 0
+
+   Display the currently activated `Terraform`_ workspace.
+
+   See also: :attr:`LP_COLOR_TERRAFORM`.
+
+   .. _Terraform: https://www.terraform.io/docs/language/index.html
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_TIME
    :type: bool
    :value: 0
@@ -690,18 +710,6 @@ Features
 
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
-
-.. attribute:: LP_ENABLE_TERRAFORM
-   :type: bool
-   :value: 0
-
-   Display the currently activated `Terraform`_ workspace.
-
-   See also: :attr:`LP_COLOR_TERRAFORM`.
-
-   .. _Terraform: https://www.terraform.io/docs/language/index.html
-
-   .. versionadded:: 2.1
 
 .. attribute:: LP_HG_COMMAND
    :type: string
@@ -1357,6 +1365,8 @@ Valid preset color variables are:
    Color used for the last path segment, which corresponds to the current
    directory basename.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_COLOR_PATH_ROOT
    :type: string
    :value: $BOLD_YELLOW
@@ -1386,6 +1396,8 @@ Valid preset color variables are:
    root directory.
 
    :attr:`LP_PATH_VCS_ROOT` must be enabled to have any effect.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_COLOR_PROXY
    :type: string

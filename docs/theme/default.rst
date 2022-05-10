@@ -162,6 +162,8 @@ default order if the user does not configure a different template.
    colored with :attr:`LP_COLOR_DIRSTACK`. Can be enabled by
    :attr:`LP_ENABLE_DIRSTACK`.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_BRACKET_CLOSE
 
    A closing bracket, designed to go around the core of the prompt (generally

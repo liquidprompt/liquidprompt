@@ -118,6 +118,13 @@ default order if the user does not configure a different template.
    The highest temperature of the available system sensors, displayed with an
    intensity color map as temperature increases. See :attr:`LP_ENABLE_TEMP`.
 
+.. attribute:: LP_WIFI
+
+   The lowest wireless signal strength, displayed with an intensity color map as
+   strength decreases. See :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_JOBS
 
    The number of detached sessions. See :attr:`LP_ENABLE_DETACHED_SESSIONS`.

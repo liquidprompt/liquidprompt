@@ -288,3 +288,10 @@ specific text and formatting may change.
    The return code is undefined; a string should always be returned.
 
    .. versionadded:: 2.0
+
+.. function:: _lp_wifi_signal_strength_color() -> var:lp_wifi_signal_strength_color
+
+   Returns :func:`_lp_wifi_signal_strength` with color from :attr:`LP_COLORMAP`
+   and mark from :attr:`LP_MARK_WIFI`.
+
+   .. versionadded:: 2.1

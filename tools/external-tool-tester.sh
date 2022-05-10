@@ -82,6 +82,8 @@ test_tool pmset -g batt
 test_tool nproc
 # Not actually a command used, we read directly from the file
 test_tool cat /proc/loadavg
+test_tool cat /proc/net/wireless
+test_tool /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport --getinfo
 test_tool sysctl -n hw.ncpu
 test_tool sysctl -n vm.loadavg
 test_tool kstat -m cpu_info

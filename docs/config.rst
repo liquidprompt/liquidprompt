@@ -711,6 +711,20 @@ Features
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
+.. attribute:: LP_ENABLE_WIFI_STRENGTH
+   :type: bool
+   :value: 0
+
+   Display an indicator if any wireless signal strength is below
+   :attr:`LP_WIFI_STRENGTH_THRESHOLD`. Also show the strength in DB if
+   :attr:`LP_PERCENTS_ALWAYS` is enabled.
+
+   Both Linux and MacOS are supported.
+
+   See also: :attr:`LP_MARK_WIFI` and :attr:`LP_COLORMAP`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_HG_COMMAND
    :type: string
    :value: "hg"
@@ -757,8 +771,11 @@ Features
    :type: bool
    :value: 1
 
-   Display the actual values of load and batteries along with their
-   corresponding marks. Disable to only print the colored marks.
+   Display the actual values of load, batteries, and wifi signal strength along
+   with their corresponding marks. Disable to only print the colored marks.
+
+   See also: :attr:`LP_ENABLE_LOAD`, :attr:`LP_ENABLE_BATT`,
+   :attr:`LP_ENABLE_WIFI_STRENGTH`.
 
 .. attribute:: LP_RUBY_RVM_PROMPT_OPTIONS
    :type: array<string>
@@ -869,6 +886,17 @@ Thresholds
    threshold (in degrees Celsius).
 
    :attr:`LP_ENABLE_TEMP` must be enabled to have any effect.
+
+.. attribute:: LP_WIFI_STRENGTH_THRESHOLD
+   :type: int
+   :value: -75
+
+   Display the lowest wireless signal strength when the strength is below this
+   threshold (in DB). 0 DB is the highest value possible.
+
+   :attr:`LP_ENABLE_WIFI_STRENGTH` must be enabled to have any effect.
+
+   .. versionadded:: 2.1
 
 Marks
 -----
@@ -1098,6 +1126,16 @@ Marks
    Since VCSH repositories are Git repositories under the hood,
    :attr:`LP_MARK_GIT` is surrounded in this mark.
 
+.. attribute:: LP_MARK_WIFI
+   :type: string
+   :value: "📶"
+
+   Mark used before displaying wireless signal strength.
+
+   See also: :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded:: 2.1
+
 Colors
 ------
 
@@ -1131,9 +1169,10 @@ Valid preset color variables are:
 .. attribute:: LP_COLORMAP
    :type: array<string>
 
-   An array of colors that is used by the battery, load, and temperature
-   features to indicate the severity level of their status. A normal or low
-   status will use the first index, while the last index is the most severe.
+   An array of colors that is used by the battery, load, temperature, and
+   wireless signal strength features to indicate the severity level of their
+   status. A normal or low status will use the first index, while the last index
+   is the most severe.
 
    The default array is::
 
@@ -1150,8 +1189,8 @@ Valid preset color variables are:
           $DANGER_RED
       )
 
-   See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`, and
-   :attr:`LP_ENABLE_TEMP`.
+   See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`,
+   :attr:`LP_ENABLE_TEMP`, and :attr:`LP_ENABLE_WIFI_STRENGTH`.
 
 .. attribute:: LP_COLOR_AWS_PROFILE
    :type: string

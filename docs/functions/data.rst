@@ -491,3 +491,23 @@ Time
    ``0``.
 
    .. versionadded:: 2.0
+
+Wireless
+--------
+
+.. function:: _lp_wifi_signal_strength() -> var:lp_wifi_signal_strength
+
+   Returns ``true`` if the lowest wireless signal strength is lower than the
+   threshold. Returns the lowest strength in DB.
+
+   If the threshold is not surpassed, the lowest signal strength is still
+   returned.
+
+   If no wireless signal data is found, returns ``false`` and
+   *lp_wifi_signal_strength* will not be set.
+
+   The threshold is configured with :attr:`LP_WIFI_STRENGTH_THRESHOLD`.
+
+   Can be disabled by :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded:: 2.1

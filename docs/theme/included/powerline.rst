@@ -544,3 +544,11 @@ ______
    :value: (33, 17, 0, 0, 5, 4)
 
    Color for the current time section.
+
+.. attribute:: POWERLINE_WIFI_STRENGTH_COLOR
+   :type: array<int>
+   :value: (-1, 148, 0, 0, -1, 3)
+
+   Color for the wireless signal strength section.
+
+   .. versionadded:: 2.1

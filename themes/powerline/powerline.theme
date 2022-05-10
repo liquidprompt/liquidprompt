@@ -204,6 +204,9 @@ _lp_powerline_full_theme_activate() {
 
     POWERLINE_TIME_COLOR=( ${POWERLINE_TIME_COLOR[@]+"${POWERLINE_TIME_COLOR[@]}"} )
     [[ ${#POWERLINE_TIME_COLOR[@]} == 0 ]] && POWERLINE_TIME_COLOR=(33 17 0 0 5 4)
+
+    POWERLINE_WIFI_STRENGTH_COLOR=( ${POWERLINE_WIFI_STRENGTH_COLOR[@]+"${POWERLINE_WIFI_STRENGTH_COLOR[@]}"} )
+    [[ ${#POWERLINE_WIFI_STRENGTH_COLOR[@]} == 0 ]] && POWERLINE_WIFI_STRENGTH_COLOR=(-1 148 0 0 -1 3)
 }
 
 _lp_powerline_full_theme_directory() {
@@ -232,6 +235,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_temperature_color
     if _lp_temperature_color; then
         __powerline_formatted_section "$lp_temperature_color" "${POWERLINE_TEMPERATURE_COLOR[@]}"
+    fi
+
+    local lp_wifi_signal_strength_color
+    if _lp_wifi_signal_strength_color; then
+        __powerline_formatted_section "$lp_wifi_signal_strength_color" "${POWERLINE_WIFI_STRENGTH_COLOR[@]}"
     fi
 
     local lp_detached_sessions lp_running_jobs lp_stopped_jobs jobs_string=

@@ -43,7 +43,7 @@ battery_out_statuses+=(4)
 battery_values+=("")
 battery_scopes+=("")
 
-# Wrong type of battery battery (Wireless mouse, some other)
+# Wrong type of battery (Wireless mouse, some other)
 battery_types+=("Battery")
 battery_presents+=("1")
 battery_statuses+=("")
@@ -54,25 +54,26 @@ battery_scopes+=("Device")
 
 
 test_sysfs_battery() {
-  _LP_LINUX_POWERSUPPLY_PATH=$(mktemp -d)
+  _LP_LINUX_POWERSUPPLY_PATH="$SHUNIT_TMPDIR"
+
   for (( index=0; index < ${#battery_values[@]}; index++ )); do
-    _LP_LINUX_POWERSUPPLY_PATH_DEVICE="${_LP_LINUX_POWERSUPPLY_PATH}/${index}"
-    mkdir "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}"
+    local power_supply="${_LP_LINUX_POWERSUPPLY_PATH}/${index}"
+    mkdir "$power_supply"
 
     if [[ -n ${battery_types[index]-} ]]; then
-      printf '%s' "${battery_types[index]}" > "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}/type"
+      printf '%s' "${battery_types[index]}" > "${power_supply}/type"
     fi
     if [[ -n ${battery_presents[index]-} ]]; then
-      printf '%s' "${battery_presents[index]}" > "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}/present"
+      printf '%s' "${battery_presents[index]}" > "${power_supply}/present"
     fi
     if [[ -n ${battery_statuses[index]-} ]]; then
-      printf '%s' "${battery_statuses[index]}" > "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}/status"
+      printf '%s' "${battery_statuses[index]}" > "${power_supply}/status"
     fi
     if [[ -n ${battery_capacities[index]-} ]]; then
-      printf '%s' "${battery_capacities[index]}" > "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}/capacity"
+      printf '%s' "${battery_capacities[index]}" > "${power_supply}/capacity"
     fi
     if [[ -n ${battery_scopes[index]} ]]; then
-      printf '%s' "${battery_scopes[index]}" > "${_LP_LINUX_POWERSUPPLY_PATH_DEVICE}/scope"
+      printf '%s' "${battery_scopes[index]}" > "${power_supply}/scope"
     fi
 
     LP_BATTERY_THRESHOLD=100
@@ -88,9 +89,9 @@ test_sysfs_battery() {
     assertEquals "sysfs battery above returns at index ${index}" "$_status" "$?"
     assertEquals "sysfs battery value at index ${index}" "${battery_values[$index]}" "${lp_battery-}"
 
-    rm -r "$_LP_LINUX_POWERSUPPLY_PATH_DEVICE"
+    # Must delete the "device", or liquidpropmt will find the first one again.
+    rm -r "$power_supply"
   done
-  rm -r "$_LP_LINUX_POWERSUPPLY_PATH"
 }
 
 if [ -n "${ZSH_VERSION-}" ]; then

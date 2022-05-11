@@ -3322,7 +3322,9 @@ __lp_set_prompt() {
     fi
 
     # bash: execute the old prompt hook
-    eval "$LP_OLD_PROMPT_COMMAND"
+    if [[ -n ${LP_OLD_PROMPT_COMMAND-} ]]; then
+        eval "$LP_OLD_PROMPT_COMMAND"
+    fi
 
     if (( LP_ENABLE_RUNTIME_BELL && ${_LP_RUNTIME_SECONDS-0} >= LP_RUNTIME_BELL_THRESHOLD )); then
         printf '%s' "$_LP_TI_BELL"
@@ -3398,10 +3400,6 @@ prompt_on() {
     fi
 
     if (( _LP_SHELL_bash )); then
-        if [[ -z ${LP_OLD_PROMPT_COMMAND+x} ]]; then
-            LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
-        fi
-
         # Prevent some cases where the user shoots in his own foot.
         # PROMPT_COMMAND is not exported by default, but some users
         # incorrectly export it from their profile/bashrc (GitHub #450),
@@ -3413,10 +3411,23 @@ prompt_on() {
         fi
 
         if ! __lp_use_bash_preexec; then
-            PROMPT_COMMAND=__lp_set_prompt
-
+            local set_prompt_command
             if (( LP_DEBUG_TIME )); then
-                PROMPT_COMMAND="time $PROMPT_COMMAND"
+                set_prompt_command="time __lp_set_prompt"
+            else
+                set_prompt_command=__lp_set_prompt
+            fi
+
+            if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+                # PROMPT_COMMAND is an array since bash 5.1
+                PROMPT_COMMAND+=( "$set_prompt_command" )
+
+            else
+                if [[ -z ${LP_OLD_PROMPT_COMMAND+x} ]]; then
+                    LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
+                fi
+
+                PROMPT_COMMAND="$set_prompt_command"
             fi
 
             if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
@@ -3461,8 +3472,6 @@ prompt_on() {
             fi
         fi
     else # zsh
-        LP_OLD_PROMPT_COMMAND=""
-
         if [[ -n "${prompt_theme-}" && "$prompt_theme" != off ]]; then
             _LP_ZSH_PROMPT_THEME="$prompt_theme"
             # Disable the prompt to disable its precmd hook
@@ -3500,25 +3509,33 @@ prompt_on() {
 __lp_disable_hooks() {
     if (( _LP_SHELL_bash )); then
         if __lp_use_bash_preexec; then
-            # Disable previous hooks as options that set them
-            # may have changed
-            # (This is "remove the specified value(s) from the array", which bash does not make easy.)
-            local -a new_precmd_functions=()
-            for value in ${precmd_functions[@]+"${precmd_functions[@]}"}; do
-                [[ "$value" != "__lp_set_prompt" ]] && new_precmd_functions+=("$value")
+            # Disable previous hooks as options that set them may have changed.
+            for i in ${precmd_functions[@]+"${!precmd_functions[@]}"}; do
+                local value="${precmd_functions[i]}"
+                if [[ $value == "__lp_set_prompt" || $value == "__lp_debug_timed_lp_set_prompt" ]]; then
+                    unset 'precmd_functions[i]'
+                fi
             done
-            precmd_functions=(${new_precmd_functions[@]+"${new_precmd_functions[@]}"})
 
-            # Now repeat for preexec (not precmd) functions
-            local -a new_preexec_functions=()
-            for value in ${preexec_functions[@]+"${preexec_functions[@]}"}; do
-                [[ "$value" != "__lp_runtime_before" ]] &&
-                [[ "$value" != "__lp_print_title_command" ]] && new_preexec_functions+=("$value")
+            for i in ${preexec_functions[@]+"${!preexec_functions[@]}"}; do
+                local value="${preexec_functions[i]}"
+                if [[ $value == "__lp_runtime_before" || $value == "__lp_print_title_command" ]]; then
+                    unset 'preexec_functions[i]'
+                fi
             done
-            preexec_functions=(${new_preexec_functions[@]+"${new_preexec_functions[@]}"})
         else
-            PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
-            unset LP_OLD_PROMPT_COMMAND
+            if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+                # PROMPT_COMMAND is an array since bash 5.1
+                for i in ${PROMPT_COMMAND[@]+"${!PROMPT_COMMAND[@]}"}; do
+                    local value="${PROMPT_COMMAND[i]}"
+                    if [[ $value == "__lp_set_prompt" || $value == "time __lp_set_prompt" ]]; then
+                        unset 'PROMPT_COMMAND[i]'
+                    fi
+                done
+            else
+                PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
+                unset LP_OLD_PROMPT_COMMAND
+            fi
 
             # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
             if (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )); then

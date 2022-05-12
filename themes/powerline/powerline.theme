@@ -92,7 +92,7 @@ _lp_powerline_theme_directory() {
 }
 
 _lp_powerline_theme_prompt() {
-    local powerline_sections first_section sub_section_arrow _lp_last_af_color _lp_last_ab_color
+    local powerline_sections first_section sub_section_format _lp_last_af_color _lp_last_ab_color
 
     __powerline_section "${_POWERLINE_HOST_ICON}${_POWERLINE_HOSTNAME}" "${POWERLINE_HOST_COLOR[@]}"
 

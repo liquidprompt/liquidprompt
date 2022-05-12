@@ -11,7 +11,7 @@ unset -f uname
 LP_ENABLE_BATT=1
 _LP_BATTERY_FUNCTION=__lp_battery_acpi
 
-typeset -a battery_outputs battery_statuses battery_values temp_outputs temp_values battery_ids
+typeset -a battery_outputs battery_statuses battery_values temp_outputs temp_values
 
 # Add test cases to these arrays like below
 

@@ -96,4 +96,5 @@ test_tool date '+%I %M'
 test_tool tty
 test_tool basename -- /dev/pts/0
 
+# shellcheck disable=SC2016
 printf 'Tests complete.\nMake sure to upload the file directly, do not `cat` and copy paste!\n' >&2

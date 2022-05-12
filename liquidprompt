@@ -22,6 +22,7 @@
 
 # Issue #161: do not load if not an interactive shell
 # Do not exit if '--no-activate' flag was passed, as it overrides this check
+# shellcheck disable=SC2268
 [ "x${-##*i}" = "x$-" ] || [ -z "${TERM-}" ] || [ "x${TERM-}" = xdumb ] && [ "x${TERM-}" = xunknown ] && [ "x${1-}" != "x--no-activate" ] && return
 
 if test -n "${BASH_VERSION-}"; then
@@ -132,9 +133,10 @@ _LP_SED_EXTENDED=r
 #################
 
 # Load the user configuration and setup defaults.
+# shellcheck disable=SC2034
 __lp_source_config() {
 
-    local lp_terminal_format af_color= ab_color=
+    local lp_terminal_format af_color='' ab_color=''
 
     # Colors: variables are local so they will have a value only
     # during config loading and will not conflict with other values
@@ -381,6 +383,7 @@ __lp_source_config() {
 
     for configfile in "${configfiles[@]}"; do
         if [[ -f "$configfile" ]]; then
+            # shellcheck source=liquidpromptrc-dist
             source "$configfile"
             break
         fi
@@ -451,6 +454,7 @@ __lp_source_config() {
 }
 
 # Initialize features based on the user config.
+# shellcheck disable=SC2120
 lp_activate() {
     if (( _LP_SHELL_bash )); then
         complete -F __lp_theme_bash_complete lp_theme
@@ -516,7 +520,9 @@ lp_activate() {
     # Disable feature if the tool is not installed
     _lp_require_tool()
     {
-        (( LP_ENABLE_$1 )) && { command -v "$2" >/dev/null || eval LP_ENABLE_$1=0 ; }
+        # zsh does not allow quoting here.
+        # shellcheck disable=SC1105,SC2086
+        (( LP_ENABLE_$1 )) && { command -v "$2" >/dev/null || eval "LP_ENABLE_$1=0" ; }
     }
 
     _lp_require_tool GIT git
@@ -704,7 +710,7 @@ _lp_color_map() {
     local -i scale value
     scale=${2:-100}
     if (( $1 >= scale )); then
-      value=scale-1
+      (( value = scale - 1 ))
     elif (( $1 < 0 )); then
       value=0
     else
@@ -793,13 +799,13 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
 
     lp_terminal_format=${_LP_OPEN_ESC}${_LP_TI_RESET}
 
-    if (( $fg >= _LP_TI_COLORS )) && [[ -n ${5-} ]]; then
+    if (( fg >= _LP_TI_COLORS )) && [[ -n ${5-} ]]; then
         _lp_last_af_color=$5
-    elif (( $fg == -2 )); then
+    elif (( fg == -2 )); then
         :  # do nothing, _lp_last_af_color already correct
-    elif (( $fg == -3 )); then
+    elif (( fg == -3 )); then
         _lp_last_af_color=$_lp_last_ab_color
-    elif (( $fg >= 0 )); then
+    elif (( fg >= 0 )); then
         _lp_last_af_color=$fg
     else  # -1
         _lp_last_af_color=-1
@@ -809,13 +815,13 @@ lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
         __lp_foreground_color "$_lp_last_af_color" && lp_terminal_format+=$af_color
     fi
 
-    if (( $bg >= _LP_TI_COLORS )) && [[ -n ${6-} ]]; then
+    if (( bg >= _LP_TI_COLORS )) && [[ -n ${6-} ]]; then
         _lp_last_ab_color=$6
-    elif (( $bg == -2 )); then
+    elif (( bg == -2 )); then
         :  # do nothing, _lp_last_ab_color already correct
-    elif (( $bg == -3 )); then
+    elif (( bg == -3 )); then
         _lp_last_ab_color=$previous_af_color
-    elif (( $bg >= 0 )); then
+    elif (( bg >= 0 )); then
         _lp_last_ab_color=$bg
     else  # -1
         _lp_last_ab_color=-1
@@ -847,9 +853,11 @@ __lp_theme_list() {
 
     local -a _functions
     if (( _LP_SHELL_zsh )); then
+        # shellcheck disable=SC2296
         _functions=( "${(ko)functions[@]}" )
     else
         local IFS=$'\n'
+        # shellcheck disable=SC2207
         _functions=( $(declare -F) )
     fi
 
@@ -951,8 +959,8 @@ _lp_path_format() {
         vcs_root_directory=$lp_pwd_tilde
     fi
 
-    if [[ $path_length == 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
-        if [[ $path_length > 1 ]]; then
+    if [[ $path_length -eq 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
+        if [[ $path_length -gt 1 ]]; then
             lp_path=${display_path##*/}
         else
             # only root or home to show
@@ -961,7 +969,7 @@ _lp_path_format() {
 
         __lp_escape "$lp_path"
 
-        if [[ $display_path == $vcs_root_directory ]]; then
+        if [[ $display_path == "$vcs_root_directory" ]]; then
             lp_path_format="${vcs_root_format}${ret}"
         else
             lp_path_format="${last_directory_format}${ret}"
@@ -973,7 +981,7 @@ _lp_path_format() {
             # Add one to account for the first / needing to be both replaced and shown
             path_length+=1
         fi
-        if [[ ${#separator} > 1 ]]; then
+        if [[ ${#separator} -gt 1 ]]; then
             # Add length to account for multichar separators
             local slash_count="${display_path//[!\/]}"
             path_length+=$(( ${#slash_count} * ( ${#separator} - 1 ) ))
@@ -1002,7 +1010,7 @@ _lp_path_format() {
         current_path+=${current_directory}
         path_to_proccess=${path_to_proccess#*/}
 
-        if [[ $current_path == $vcs_root_directory ]]; then
+        if [[ $current_path == "$vcs_root_directory" ]]; then
             __lp_end_path_left_shortening
             # No shortening
             lp_path+=$current_directory
@@ -1147,6 +1155,7 @@ _lp_error_color() {
     lp_error_color="${LP_COLOR_ERR}${lp_error}${NO_COL}"
 }
 
+# shellcheck disable=SC2034
 _lp_multiplexer() {
     if [[ -n ${TMUX-} ]]; then
         lp_mulitplexer=tmux
@@ -1164,6 +1173,7 @@ _lp_http_proxy() {
     if [[ -n "${http_proxy-}${HTTP_PROXY-}${https_proxy-}${HTTPS_PROXY-}${all_proxy-}${ALL_PROXY-}" ]]; then
         local ret
         __lp_escape "${http_proxy:-${HTTP_PROXY:-${https_proxy:-${HTTPS_PROXY:-${all_proxy:-$ALL_PROXY}}}}}"
+        # shellcheck disable=SC2034
         lp_http_proxy=$ret
     else
         return 1
@@ -1308,10 +1318,12 @@ _lp_kubernetes_context() {
     fi
 
     if [[ -n "$LP_DELIMITER_KUBECONTEXT_PREFIX" ]]; then
+        # shellcheck disable=SC2295
         kubernetes_context="${kubernetes_context##*${LP_DELIMITER_KUBECONTEXT_PREFIX}}"
     fi
 
     if [[ -n "$LP_DELIMITER_KUBECONTEXT_SUFFIX" ]]; then
+        # shellcheck disable=SC2295
         kubernetes_context="${kubernetes_context%%${LP_DELIMITER_KUBECONTEXT_SUFFIX}*}"
     fi
 
@@ -1544,8 +1556,8 @@ _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
     local -i count=0
-    (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | \grep -c '[Dd]etach[^)]*)$')
-    (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | \grep -cv 'attached')
+    (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
+    (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))
@@ -1673,6 +1685,7 @@ _lp_find_vcs() {
 }
 
 # Set the prompt mark depending on the current VCS.
+# shellcheck disable=SC2120
 _lp_smart_mark() {
     local subtype="${2:-"${lp_vcs_subtype-}"}"
     case "${1:-$lp_vcs_type}" in
@@ -1943,13 +1956,13 @@ _lp_git_commits_off_remote() {
     local counts
     # The "@{upstream}" notation was added in Git 1.7.0, so this should work for everyone
     counts="$(\git rev-list --count --left-right '@{upstream}...HEAD' 2>/dev/null)" || return 2
-    IFS=$' \t' read lp_vcs_commit_behind lp_vcs_commit_ahead <<<"$counts"
+    IFS=$' \t' read -r lp_vcs_commit_behind lp_vcs_commit_ahead <<<"$counts"
     (( lp_vcs_commit_behind || lp_vcs_commit_ahead ))
 }
 
 # Get the number of untracked files in the repo.
 _lp_git_untracked_files() {
-    lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | \grep -c '^??')"
+    lp_vcs_untracked_files="$(LC_ALL=C \git status --porcelain 2>/dev/null | GREP_OPTIONS='' \grep -c '^??')"
     (( lp_vcs_untracked_files ))
 }
 
@@ -2027,6 +2040,7 @@ _lp_git_unstaged_files() {
     local lp_git_diff_shortstat_files
     __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_unstaged" || return "$?"
 
+    # shellcheck disable=SC2034
     lp_vcs_unstaged_files=$lp_git_diff_shortstat_files
 }
 
@@ -2054,10 +2068,12 @@ _lp_git_staged_files() {
     local lp_git_diff_shortstat_files
     __lp_git_diff_shortstat_files "$_lp_git_diff_shortstat_staged" || return "$?"
 
+    # shellcheck disable=SC2034
     lp_vcs_staged_files=$lp_git_diff_shortstat_files
 }
 
 # Get the number of changed lines in staging compared to HEAD.
+# shellcheck disable=SC2034
 _lp_git_staged_lines() {
     __lp_git_diff_shortstat_staged
 
@@ -2151,7 +2167,7 @@ _lp_hg_stash_count() {
 # https://github.com/nojhan/liquidprompt/issues/217
 # return: always false (2: disabled).
 _lp_hg_commits_off_remote() {
-    #commits=$("$LP_HG_COMMAND" outgoing --no-merges 2>/dev/null | \grep -c '\(^changeset\:\)')
+    #commits=$("$LP_HG_COMMAND" outgoing --no-merges 2>/dev/null | GREP_OPTIONS='' \grep -c '\(^changeset\:\)')
     return 2
 }
 
@@ -2173,7 +2189,7 @@ _lp_hg_uncommitted_files() {
 
 # Get the number of changed lines compared to the base revision.
 _lp_hg_uncommitted_lines() {
-    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+    IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$("$LP_HG_COMMAND" diff --stat 2>/dev/null | sed -n '$ s/^.*, \([0-9]*\) .*, \([0-9]*\).*$/\1 \2/p')"
 
     (( lp_vcs_uncommitted_i_lines || lp_vcs_uncommitted_d_lines ))
@@ -2243,7 +2259,7 @@ _lp_svn_commits_off_remote() { return 2 ; }
 
 # Get the number of untracked files in the Subversion repo.
 _lp_svn_untracked_files() {
-    lp_vcs_untracked_files="$(LC_ALL=C \svn status 2>/dev/null | \grep -c '^?')"
+    lp_vcs_untracked_files="$(LC_ALL=C \svn status 2>/dev/null | GREP_OPTIONS='' \grep -c '^?')"
     (( lp_vcs_untracked_files ))
 }
 
@@ -2260,7 +2276,7 @@ _lp_svn_uncommitted_files() {
 
 # Get the number of changed lines compared to the base revision.
 _lp_svn_uncommitted_lines() {
-    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+    IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\svn diff --internal-diff 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
         /^(\+[^+])|(\+$)/ { plus+=1 }
@@ -2373,7 +2389,7 @@ _lp_fossil_uncommitted_files() {
 
 # Get the number of changed lines compared to the checked-out version.
 _lp_fossil_uncommitted_lines() {
-    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+    IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\fossil diff --internal --verbose 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
         /^(\+[^+])|(\+$)/ { plus+=1 }
@@ -2418,8 +2434,8 @@ _lp_bzr_bookmark() { return 2 ; }
 
 # Get the most recent tag that refers to the current revision.
 _lp_bzr_tag() {
-    local tag ret eol
-    IFS=$' \t' read tag eol <<<"$(LC_ALL=C \bzr tags --revision=last:1 2>/dev/null)"
+    local tag ret _
+    IFS=$' \t' read -r tag _ <<<"$(LC_ALL=C \bzr tags --revision=last:1 2>/dev/null)"
     if [[ -n "$tag" ]]; then
         __lp_escape "$tag"
         lp_vcs_tag="$ret"
@@ -2450,7 +2466,7 @@ _lp_bzr_stash_count() {
         # Return of 1 means there are shelves.
         # The usual "printf x" trick can't be used, as it squashes the error code.
         __lp_line_count "$shelves"
-        lp_vcs_stash_count=$(( $count + 1 ))
+        lp_vcs_stash_count=$(( count + 1 ))
     else
         return 1
     fi
@@ -2464,21 +2480,21 @@ _lp_bzr_commits_off_remote() { return 2 ; }
 
 # Get the number of unknown files in the repo.
 _lp_bzr_untracked_files() {
-    lp_vcs_untracked_files="$(LC_ALL=C \bzr status --short 2>/dev/null | \grep -c '^?')"
+    lp_vcs_untracked_files="$(LC_ALL=C \bzr status --short 2>/dev/null | GREP_OPTIONS='' \grep -c '^?')"
 
     (( lp_vcs_untracked_files ))
 }
 
 # Get the number of changed files compared to the checked-out version.
 _lp_bzr_uncommitted_files() {
-    lp_vcs_uncommitted_files="$(LC_ALL=C \bzr status --short 2>/dev/null | \grep -vc '^?')"
+    lp_vcs_uncommitted_files="$(LC_ALL=C \bzr status --short 2>/dev/null | GREP_OPTIONS='' \grep -vc '^?')"
 
     (( lp_vcs_uncommitted_files ))
 }
 
 # Get the number of changed lines compared to the checked-out version.
 _lp_bzr_uncommitted_lines() {
-    IFS=' ' read lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
+    IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\bzr diff 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
         /^(\+[^+])|(\+$)/ { plus+=1 }
@@ -2509,8 +2525,8 @@ case "$LP_OS" in
 
         unset lp_wifi_signal_strength
 
-        local first second third strength eol
-        while IFS=$' \t' read -r first second third strength eol; do
+        local strength _
+        while IFS=$' \t' read -r _ _ _ strength _; do
             strength="${strength%%[![:digit:]-]*}"
 
             if [[ -n $strength ]] && ( [[ -z ${lp_wifi_signal_strength-} ]] \
@@ -2657,7 +2673,7 @@ case "$LP_OS" in
     Darwin)
     _lp_battery() {
         (( LP_ENABLE_BATT )) || return 5
-        local percent batt_status
+        local batt_status
         IFS=';' read -r lp_battery batt_status <<<"$(pmset -g batt | sed -n 's/^ -InternalBattery.*[[:space:]]\([0-9]*[0-9]\)%; \([^;]*\).*$/\1;\2/p')"
         case "$batt_status" in
             charged | "")
@@ -2786,11 +2802,11 @@ _lp_runtime_color() {
 case "$LP_OS" in
     Linux)
         __lp_cpu_count() {
-            _lp_CPUNUM=$( nproc 2>/dev/null || \grep -c '^[Pp]rocessor' /proc/cpuinfo )
+            _lp_CPUNUM=$( nproc 2>/dev/null || GREP_OPTIONS='' \grep -c '^[Pp]rocessor' /proc/cpuinfo )
         }
         _lp_cpu_load () {
-            local eol IFS=$' \t'
-            read lp_cpu_load eol < /proc/loadavg
+            local _ IFS=$' \t'
+            read -r lp_cpu_load _ < /proc/loadavg
         }
         ;;
     FreeBSD|Darwin|OpenBSD)
@@ -2798,16 +2814,16 @@ case "$LP_OS" in
             _lp_CPUNUM=$( sysctl -n hw.ncpu )
         }
         _lp_cpu_load () {
-            local bol eol IFS=$' \t'
+            local _ IFS=$' \t'
             # If you have problems with syntax coloring due to the following
             # line, do this: ln -s liquidprompt liquidprompt.bash
             # and edit liquidprompt.bash
-            read bol lp_cpu_load eol <<<"$( LC_ALL=C sysctl -n vm.loadavg )"
+            read -r _ lp_cpu_load _ <<<"$( LC_ALL=C sysctl -n vm.loadavg )"
         }
         ;;
     SunOS)
         __lp_cpu_count() {
-            _lp_CPUNUM=$( kstat -m cpu_info | \grep -c "module: cpu_info" )
+            _lp_CPUNUM=$( kstat -m cpu_info | GREP_OPTIONS='' \grep -c "module: cpu_info" )
         }
         _lp_cpu_load () {
             lp_cpu_load="$( LC_ALL=C uptime | sed 's/.*load average: *\([0-9.]*\).*/\1/' )"
@@ -2859,7 +2875,7 @@ __lp_temp_sensors() {
     local IFS=$' \t\n'
     for i in $(LC_ALL=C \sensors -u 2>/dev/null |
             sed -n 's/^  temp[0-9][0-9]*_input: \([0-9]*\)\..*$/\1/p'); do
-        if [[ -z ${lp_temperature-} ]] || (( $i > ${lp_temperature:-0} )); then
+        if [[ -z ${lp_temperature-} ]] || (( i > ${lp_temperature:-0} )); then
             lp_temperature=$i
         fi
     done
@@ -2872,7 +2888,7 @@ __lp_temp_acpi() {
     # Only the integer part is retained
     for i in $(LC_ALL=C \acpi -t |
             sed -n 's/.* \(-\{0,1\}[0-9]*\)\.[0-9]* degrees C$/\1/p'); do
-        if [[ -z ${lp_temperature-} ]] || (( $i > ${lp_temperature:-0} )); then
+        if [[ -z ${lp_temperature-} ]] || (( i > ${lp_temperature:-0} )); then
             lp_temperature=$i
         fi
     done
@@ -2958,11 +2974,12 @@ lp_title() {
 
 if (( _LP_SHELL_zsh )); then
     __lp_get_last_command_line() {
-        command=$history[$HISTCMD]
+        # shellcheck disable=SC2154
+        command=${history[$HISTCMD]}
     }
 else
     __lp_get_last_command_line() {
-        command=$(HISTTIMEFORMAT= builtin history 1 2>/dev/null)
+        command=$(HISTTIMEFORMAT='' builtin history 1 2>/dev/null)
         command=${command#*[[:digit:]][* ] }
 
         # Fallback measure if something goes wrong.
@@ -2997,7 +3014,7 @@ _lp_analog_time() {
     # %I: "00".."12"  %M: "00".."59"
     # hh:  1..12  mm: 0..59
     local hh mm
-    IFS=' ' read hh mm <<<"$(date '+%I %M')"
+    IFS=' ' read -r hh mm <<<"$(date '+%I %M')"
 
     # Bash interprets a '0' prefix as octal
     # so we have to clean that
@@ -3115,6 +3132,7 @@ _lp_default_theme_activate() {
     fi
 
     _lp_terminal_device
+    # shellcheck disable=SC2034
     LP_TTYN=$lp_terminal_device
 }
 
@@ -3268,6 +3286,7 @@ _lp_default_theme_prompt_data() {
 
 _lp_default_theme_prompt_template() {
     if [[ -f "${LP_PS1_FILE-}" ]]; then
+        # shellcheck source=liquid.ps1
         source "$LP_PS1_FILE"
     fi
 
@@ -3313,9 +3332,6 @@ __lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
     local -i lp_error="$?"
-
-    #TODO: unused?
-    local GREP_OPTIONS=
 
     if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
         __lp_runtime_after
@@ -3427,6 +3443,7 @@ prompt_on() {
                     LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"
                 fi
 
+                # shellcheck disable=SC2178
                 PROMPT_COMMAND="$set_prompt_command"
             fi
 
@@ -3478,17 +3495,14 @@ prompt_on() {
             prompt off
         fi
 
-        _LP_OLD_SETOPT=(${_LP_OLD_SETOPT[@]+"${_LP_OLD_SETOPT[@]}"})
-        if (( ! ${#_LP_OLD_SETOPT[@]} )); then
+        if [[ -z ${_LP_OLD_SETOPT-} ]]; then
             # Dump option names: echo ${(ko)options}
-            for o in promptpercent
-            do
-                if [[ "${options[$o]}" = on ]]; then
-                    _LP_OLD_SETOPT+=("$o")
-                else
-                    _LP_OLD_SETOPT+=("no$o")
-                fi
-            done
+            # shellcheck disable=SC2154
+            if [[ "${options[promptpercent]}" == on ]]; then
+                _LP_OLD_SETOPT="promptpercent"
+            else
+                _LP_OLD_SETOPT="nopromptpercent"
+            fi
         fi
 
         # Set options that affect PS1 evaluation; enable percent expansion
@@ -3533,6 +3547,7 @@ __lp_disable_hooks() {
                     fi
                 done
             else
+                # shellcheck disable=SC2178
                 PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
                 unset LP_OLD_PROMPT_COMMAND
             fi
@@ -3560,7 +3575,7 @@ prompt_off() {
     PS1=$LP_OLD_PS1
 
     if (( _LP_SHELL_zsh )); then
-        setopt "${_LP_OLD_SETOPT[@]}"
+        setopt "${_LP_OLD_SETOPT}"
 
         if [[ -n ${_LP_ZSH_PROMPT_THEME-} ]]; then
             prompt "$_LP_ZSH_PROMPT_THEME"

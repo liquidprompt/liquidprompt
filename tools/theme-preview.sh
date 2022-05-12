@@ -20,6 +20,7 @@ else
   shift
 
   for file in "$@"; do
+    # shellcheck disable=SC1090
     . "$file"
   done
 fi
@@ -151,7 +152,7 @@ printf 'Medium prompt:\n\n  %s  \n\n' "$PS1"
 
 # Configure options
 
-_config() {
+_long_config() {
   LP_ENABLE_SHORTEN_PATH=1
   LP_PATH_LENGTH=29
   COLUMNS=100
@@ -170,7 +171,7 @@ _config() {
   LP_ENABLE_DIRSTACK=1
   LP_PERCENTS_ALWAYS=1
 }
-_config
+_long_config
 
 # Stub data functions
 
@@ -235,7 +236,7 @@ PWD="${HOME}/code/liquidprompt/docs/theme"
 # Activate and generate
 
 lp_activate --no-config
-_config
+_long_config
 __lp_set_prompt
 
 printf 'Long prompt:\n\n  %s  \n\n' "$PS1"

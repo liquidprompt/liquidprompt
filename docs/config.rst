@@ -700,8 +700,8 @@ Features
    :type: bool
    :value: 0
 
-   Display an indicator if any wireless signal strength is below
-   :attr:`LP_WIFI_STRENGTH_THRESHOLD`. Also show the strength in DB if
+   Display an indicator if any wireless signal strength percentage is below
+   :attr:`LP_WIFI_STRENGTH_THRESHOLD`. Also show the strength percentage if
    :attr:`LP_PERCENTS_ALWAYS` is enabled.
 
    Both Linux and MacOS are supported.
@@ -874,10 +874,10 @@ Thresholds
 
 .. attribute:: LP_WIFI_STRENGTH_THRESHOLD
    :type: int
-   :value: -75
+   :value: 40
 
-   Display the lowest wireless signal strength when the strength is below this
-   threshold (in DB). 0 DB is the highest value possible.
+   Display the lowest wireless signal strength when the strength percentage is
+   below this threshold.
 
    :attr:`LP_ENABLE_WIFI_STRENGTH` must be enabled to have any effect.
 

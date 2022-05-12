@@ -498,7 +498,7 @@ Wireless
 .. function:: _lp_wifi_signal_strength() -> var:lp_wifi_signal_strength
 
    Returns ``true`` if the lowest wireless signal strength is lower than the
-   threshold. Returns the lowest strength in DB.
+   threshold. Returns the lowest strength percentage.
 
    If the threshold is not surpassed, the lowest signal strength is still
    returned.

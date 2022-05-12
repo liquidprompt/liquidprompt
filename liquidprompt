@@ -203,7 +203,7 @@ __lp_source_config() {
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
     LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
-    LP_WIFI_STRENGTH_THRESHOLD=${LP_WIFI_STRENGTH_THRESHOLD:-"-75"}
+    LP_WIFI_STRENGTH_THRESHOLD=${LP_WIFI_STRENGTH_THRESHOLD:-40}
     LP_RUNTIME_THRESHOLD=${LP_RUNTIME_THRESHOLD:-2}
     LP_RUNTIME_BELL_THRESHOLD=${LP_RUNTIME_BELL_THRESHOLD:-10}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
@@ -2516,11 +2516,29 @@ _lp_fossil_staged_lines() { return 2 ; }
 # Wifi link status #
 ####################
 
+_lp_wifi_signal_strength() {
+    (( LP_ENABLE_WIFI_STRENGTH )) || return 2
+
+    local level
+
+    __lp_wifi_signal_strength_raw || return "$?"
+
+    if (( level > 110 && level < 256 )); then
+        # assume old-style WEXT 8-bit unsigned signal level.
+        (( level -= 256 ))  # subtract 256 to convert to dBm.
+    fi
+
+    # normalize to 0.
+    (( level > -40 )) && (( level = -40 ))
+    (( level < -100 )) && (( level = -100 ))
+    (( lp_wifi_signal_strength = 100 - (100 * ((level + 40) * -1 ) / 60 ) ))
+
+    (( lp_wifi_signal_strength < LP_WIFI_STRENGTH_THRESHOLD ))
+}
+
 case "$LP_OS" in
     Linux)
-    _lp_wifi_signal_strength() {
-        (( LP_ENABLE_WIFI_STRENGTH )) || return 2
-
+    __lp_wifi_signal_strength_raw() {
         [[ -r "$_LP_LINUX_WIRELESS_FILE" ]] || return 2
 
         unset lp_wifi_signal_strength
@@ -2530,29 +2548,22 @@ case "$LP_OS" in
             strength="${strength%%[![:digit:]-]*}"
 
             if [[ -n $strength ]] && ( [[ -z ${lp_wifi_signal_strength-} ]] \
-                || (( strength < lp_wifi_signal_strength )) ); then
-                lp_wifi_signal_strength="$strength"
+                || (( strength < level )) ); then
+                level="$strength"
             fi
         done <"$_LP_LINUX_WIRELESS_FILE"
 
-        [[ -z ${lp_wifi_signal_strength-} ]] && return 2
-
-        (( lp_wifi_signal_strength < LP_WIFI_STRENGTH_THRESHOLD ))
+        [[ -n ${level-} ]] || return 2
     }
     ;;
     Darwin)
-    _lp_wifi_signal_strength() {
-        (( LP_ENABLE_WIFI_STRENGTH )) || return 2
+    __lp_wifi_signal_strength_raw() {
+        level="$("$_LP_AIRPORT_BIN" --getinfo 2>/dev/null)" || return 2
 
-        local strength
-        strength="$("$_LP_AIRPORT_BIN" --getinfo 2>/dev/null)" || return 2
+        level="${level#*"agrCtlRSSI: "}"
+        level="${level%%[![:digit:]-]*}"
 
-        strength="${strength#*"agrCtlRSSI: "}"
-        lp_wifi_signal_strength="${strength%%[![:digit:]-]*}"
-
-        [[ -z $lp_wifi_signal_strength ]] && return 2
-
-        (( lp_wifi_signal_strength < LP_WIFI_STRENGTH_THRESHOLD ))
+        [[ -n $level ]] || return 2
     }
     ;;
     *)
@@ -2566,7 +2577,7 @@ _lp_wifi_signal_strength_color() {
     _lp_wifi_signal_strength || return "$?"
 
     local ret
-    _lp_color_map "$(( lp_wifi_signal_strength * -1 ))"
+    _lp_color_map "$(( 100 - lp_wifi_signal_strength ))"
     lp_wifi_signal_strength_color="${ret}${LP_MARK_WIFI}"
 
     if (( LP_PERCENTS_ALWAYS )); then

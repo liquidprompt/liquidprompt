@@ -32,7 +32,7 @@ lastAssocStatus: 0
             NSS: 2
         channel: 36,1"
 )
-values+=("-55")
+values+=("75")
 
 # https://support.moonpoint.com/os/os-x/wireless/wifi-signal-strength
 outputs+=(
@@ -52,7 +52,7 @@ lastAssocStatus: 0
             MCS: 0
         channel: 11"
 )
-values+=("-67")
+values+=("55")
 
 
 function test_airport {
@@ -65,7 +65,7 @@ function test_airport {
   for (( index=0; index < ${#values[@]}; index++ )); do
     __output=${outputs[$index]}
 
-    LP_WIFI_STRENGTH_THRESHOLD="-100"
+    LP_WIFI_STRENGTH_THRESHOLD="0"
     _lp_wifi_signal_strength
     assertEquals "airport wireless above returns at index ${index}" "1" "$?"
     assertEquals "airport wireless value at index ${index}" "${values[$index]}" "$lp_wifi_signal_strength"
@@ -73,7 +73,7 @@ function test_airport {
     # This is to test that _lp_wifi_signal_strength() ignores previous low values.
     lp_wifi_signal_strength=-10000
 
-    LP_WIFI_STRENGTH_THRESHOLD="0"
+    LP_WIFI_STRENGTH_THRESHOLD="100"
     _lp_wifi_signal_strength
     assertEquals "airport wireless below returns at index ${index}" "0" "$?"
     assertEquals "airport wireless value at index ${index}" "${values[$index]}" "$lp_wifi_signal_strength"

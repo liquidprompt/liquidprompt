@@ -18,7 +18,7 @@ outputs+=(
  face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | 22
   wlo1: 0000   69.  -41.  -256        0      0      0      0     33        0"
 )
-values+=("-41")
+values+=("99")
 
 # Fake two interfaces
 outputs+=(
@@ -27,7 +27,7 @@ outputs+=(
   wlo1: 0000   69.  -41.  -256        0      0      0      0     33        0
   wlo2: 0000   61.  -58.  -256        0      0      0      0     37        0"
 )
-values+=("-58")
+values+=("70")
 
 
 function test_net_wifi {
@@ -36,7 +36,7 @@ function test_net_wifi {
   for (( index=0; index < ${#values[@]}; index++ )); do
     printf '%s\n' "${outputs[$index]}" >"$_LP_LINUX_WIRELESS_FILE"
 
-    LP_WIFI_STRENGTH_THRESHOLD="-100"
+    LP_WIFI_STRENGTH_THRESHOLD="0"
     _lp_wifi_signal_strength
     assertEquals "Linux wireless above returns at index ${index}" "1" "$?"
     assertEquals "Linux wireless value at index ${index}" "${values[$index]}" "$lp_wifi_signal_strength"
@@ -44,7 +44,7 @@ function test_net_wifi {
     # This is to test that _lp_wifi_signal_strength() ignores previous low values.
     lp_wifi_signal_strength=-10000
 
-    LP_WIFI_STRENGTH_THRESHOLD="0"
+    LP_WIFI_STRENGTH_THRESHOLD="100"
     _lp_wifi_signal_strength
     assertEquals "Linux wireless below returns at index ${index}" "0" "$?"
     assertEquals "Linux wireless value at index ${index}" "${values[$index]}" "$lp_wifi_signal_strength"

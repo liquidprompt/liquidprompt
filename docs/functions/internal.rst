@@ -320,3 +320,15 @@ Utility
    replacement for ``wc -l``.
 
    .. versionadded:: 2.0
+
+Wireless
+--------
+.. function:: __lp_wifi_signal_strength_raw() -> var:level
+
+   Returns the lowest raw wireless signal strength in dBm. Return ``2`` if no
+   data is found.
+
+   Implementation depends on operating system. This function does not exist on
+   all operating systems.
+
+   .. versionadded:: 2.1

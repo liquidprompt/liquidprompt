@@ -167,20 +167,22 @@ Environment
 .. function:: _lp_container() -> var:lp_container
 
    Returns ``true`` if the shell is running in a container.  In that case,
-   the return variable is set to a string matching the container type. Valid
-   values:
+   the return variable is set to a string matching the container type. Possible
+   values include (but are not limited to):
 
    * ``Singlrty`` - running in a `Singularity`_ container
    * ``Toolbox`` - running in a `Toolbox`_ container
    * ``Podman`` - running in a `Podman`_ container
    * ``Docker`` - running in a `Docker`_ container
    * ``LXC`` - running in an `LXC`_ container
+   * ``nspawn`` - running in a `systemd-nspawn`_ container
 
    .. _Singularity: https://sylabs.io/guides/latest/user-guide/
    .. _Toolbox: https://containertoolbx.org/
    .. _Podman: https://podman.io/
    .. _Docker: https://www.docker.com/
    .. _LXC: https://linuxcontainers.org/lxc/
+   .. _systemd-nspawn: https://www.freedesktop.org/software/systemd/man/systemd-nspawn.html
 
    It is not possible to detect more than one containerization type to be
    returned.  The containers are checked in the order listed above, and the

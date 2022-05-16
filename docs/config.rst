@@ -336,7 +336,7 @@ Features
    :value: 0
 
    Indicate if the shell is running in a container environment (e.g. Docker,
-   Podman, LXC, Singularity).
+   Podman, LXC, Singularity, systemd-nspawn).
 
    .. note::
       Containers may inherit some or even no variables from their parent shell,

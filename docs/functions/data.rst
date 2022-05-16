@@ -88,6 +88,10 @@ Development Environment
 
    .. versionadded:: 2.0
 
+   .. versionchanged:: 2.1
+      Displays the "prompt string" first (the ``--prompt`` argument when setting
+      up the virtualenv).
+
 .. function:: _lp_ruby_env() -> var:lp_ruby_env
 
    Returns ``true`` if a RVM or RBENV ruby environment is detected. Returns the

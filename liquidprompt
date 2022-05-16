@@ -1193,7 +1193,23 @@ _lp_python_env() {
 
     # Truncate to the last '/' section, which is the directory name.
     if [[ -n "${VIRTUAL_ENV-}" ]]; then
-        __lp_escape "${VIRTUAL_ENV##*/}"
+        virtualenv_config="${VIRTUAL_ENV}/pyvenv.cfg"
+        if [[ -r "$virtualenv_config" ]]; then
+            local line
+            while IFS='' read -r line ; do
+                if [[ $line == "prompt = "* ]]; then
+                    line="${line#"prompt = '"}"
+                    line="${line%"'"}"
+                    __lp_escape "$line"
+                    break
+                fi
+            done <"$virtualenv_config"
+        fi
+
+        if [[ -z "${ret-}" ]]; then
+            __lp_escape "${VIRTUAL_ENV##*/}"
+        fi
+
         lp_python_env=$ret
     elif [[ -n "${CONDA_DEFAULT_ENV-}" ]]; then
         __lp_escape "${CONDA_DEFAULT_ENV##*/}"

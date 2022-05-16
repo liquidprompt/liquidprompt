@@ -118,6 +118,10 @@ Thanks again to everyone for all of the help and support!
 * Simon Chopin (@schopin-pro)
 * @Mice7R
 * Alan Hoyle (@alanhoyle)
+* David Caro (@Terseus)
+* Mark Korondi (@kmARC)
+* Thomas Guimbretiere (@ProfMobius)
+* Marco d'Itri (@rfc1036)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -254,3 +258,4 @@ Thanks again to everyone for all of the help and support!
 * Janne Himanka (@jhimanka)
 * Peter van Dijk (@Habbie)
 * Martin Blanchard (@t-chaik)
+* François GUÉRIN (@frague59)

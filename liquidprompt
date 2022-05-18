@@ -42,10 +42,6 @@ if test -n "${BASH_VERSION-}"; then
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
 
-    # Sed expression using extended regexp to match terminal
-    # escape sequences with their wrappers
-    _LP_CLEAN_ESC='\\\[([^\]+|\\[^]])*\\\]'
-
     # Escape the given strings
     # Must be used for all strings injected in PS1 that may comes from remote sources,
     # like $PWD, VCS branch names...
@@ -54,6 +50,25 @@ if test -n "${BASH_VERSION-}"; then
         if shopt -q promptvars ; then
             ret="${ret//\$/\\\$}"
             ret="${ret//\`/\\\`}"
+        fi
+    }
+
+    __lp_strip_escapes() {
+        if ! shopt -q extglob ; then
+            local _lp_no_extglob=true
+            shopt -s extglob
+        fi
+
+        ret="${1//"${_LP_OPEN_ESC}"!(*"${_LP_CLOSE_ESC}"*)"${_LP_CLOSE_ESC}"}"
+
+        if [[ -n ${_lp_no_extglob-} ]]; then
+            shopt -u extglob
+        fi
+
+        ret="${ret//\\\\/\\}"
+        if shopt -q promptvars ; then
+            ret="${ret//\\\$/\$}"
+            ret="${ret//\\\`/\`}"
         fi
     }
 elif test -n "${ZSH_VERSION-}" ; then
@@ -73,8 +88,6 @@ elif test -n "${ZSH_VERSION-}" ; then
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
 
-    _LP_CLEAN_ESC='%\{([^%]+|%[^}])*%\}'
-
     __lp_escape() {
         ret="${1//\\/\\\\}"
         ret="${ret//\%/%%}"
@@ -84,6 +97,20 @@ elif test -n "${ZSH_VERSION-}" ; then
         if [[ -o promptsubst ]]; then
             ret="${ret//\$/\\\$}"
             ret="${ret//\`/\\\`}"
+        fi
+    }
+
+    __lp_strip_escapes() {
+        # shellcheck disable=SC2296
+        ret="${(S)1//"${_LP_OPEN_ESC}"*"${_LP_CLOSE_ESC}"}"
+        ret="${ret//\\\\/\\}"
+        ret="${ret//\%\%/%}"
+        if [[ -o promptbang ]]; then
+            ret="${ret//!!/!}"
+        fi
+        if [[ -o promptsubst ]]; then
+            ret="${ret//\\\$/\$}"
+            ret="${ret//\\\`/\`}"
         fi
     }
 else
@@ -122,11 +149,6 @@ case "$(uname)" in
     SunOS)     LP_OS=SunOS   ;;
     *)         LP_OS=Linux   ;;
 esac
-
-# Extended regexp patterns for sed
-# GNU/BSD sed
-_LP_SED_EXTENDED=r
-[[ "$LP_OS" = Darwin ]] && _LP_SED_EXTENDED=E
 
 #################
 # CONFIGURATION #
@@ -686,10 +708,13 @@ lp_activate() {
 #####################
 
 # Remove all colors and escape characters of the given string and return a pure text
+# Deprecated since v2.1.
 _lp_as_text() {
     # Remove all terminal sequences that we wrapped with $_LP_OPEN_ESC and
     # $_LP_CLOSE_ESC.
-    printf '%s' "$1" | sed "-$_LP_SED_EXTENDED" "s,$_LP_CLEAN_ESC,,g"
+    local ret
+    __lp_strip_escapes "$1"
+    printf '%s' "$ret"
 }
 
 # Store $2 (or $?) as a true/false value in variable named $1
@@ -1386,14 +1411,14 @@ _lp_username() {
         # No username ever
         return 2
     elif (( LP_USER_ALWAYS )) || ! _lp_user; then
-        lp_username_raw=${USER:-${USERNAME:-${LOGNAME-}}}
+        lp_username=${USER:-${USERNAME:-${LOGNAME-}}}
 
-        if [[ -z $lp_username_raw ]]; then
-            lp_username_raw=$(id -nu 2>/dev/null)
+        if [[ -z $lp_username ]]; then
+            lp_username=$(id -nu 2>/dev/null)
         fi
 
         local ret
-        __lp_escape "$lp_username_raw"
+        __lp_escape "$lp_username"
         lp_username=$ret
 
         return 0
@@ -1439,26 +1464,26 @@ _lp_hostname() {
         fi
 
         if [[ $LP_HOSTNAME_METHOD == fqdn ]]; then
-            lp_hostname_raw=$(hostname -f 2>/dev/null)
+            lp_hostname=$(hostname -f 2>/dev/null)
         elif [[ $LP_HOSTNAME_METHOD == pretty ]]; then
             if [[ $LP_OS == Darwin ]]; then
-                lp_hostname_raw=$(scutil --get ComputerName 2>/dev/null)
+                lp_hostname=$(scutil --get ComputerName 2>/dev/null)
             else
-                lp_hostname_raw=$(hostnamectl --pretty 2>/dev/null)
+                lp_hostname=$(hostnamectl --pretty 2>/dev/null)
             fi
         fi
 
-        if [[ -z ${lp_hostname_raw-} ]]; then
-            lp_hostname_raw=${HOSTNAME:-${HOST-}}
+        if [[ -z ${lp_hostname-} ]]; then
+            lp_hostname=${HOSTNAME:-${HOST-}}
         fi
 
         # Truncate to the first subdomain
         if [[ $LP_HOSTNAME_METHOD == short ]]; then
-            lp_hostname_raw=${lp_hostname_raw%%.*}
+            lp_hostname=${lp_hostname%%.*}
         fi
 
         local ret
-        __lp_escape "$lp_hostname_raw"
+        __lp_escape "$lp_hostname"
         lp_hostname=$ret
     else
         return 2
@@ -2971,16 +2996,18 @@ _lp_title() {
     (( LP_ENABLE_TITLE )) || return
 
     # Get the input as pure text
-    printf '%s' "${_LP_OPEN_ESC}${LP_TITLE_OPEN}"
-    _lp_as_text "${1-}"
-    printf '%s' "${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
+    local ret
+    __lp_strip_escapes "${1-}"
+    printf '%s' "${_LP_OPEN_ESC}${LP_TITLE_OPEN}${ret}${LP_TITLE_CLOSE}${_LP_CLOSE_ESC}"
 }
 
 _lp_formatted_title() {
     (( LP_ENABLE_TITLE )) || return 2
 
     # Get the input as pure text
-    _lp_generated_title=$(_lp_as_text "${1-}")
+    local ret
+    __lp_strip_escapes "${1-}"
+    _lp_generated_title="$ret"
 }
 
 _lp_raw_title() {
@@ -3340,12 +3367,7 @@ _lp_default_theme_prompt_template() {
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # Get the core sections without prompt escapes and make them into a title.
-        _lp_formatted_title "${LP_PS1_PREFIX}${LP_MARK_BRACKET_OPEN}${lp_username_raw-}${lp_hostname_raw+@}${lp_hostname_raw-}${LP_MARK_PERM}${lp_path-}${LP_MARK_BRACKET_CLOSE}${LP_MARK_PREFIX}${lp_smart_mark} ${LP_PS1_POSTFIX}"
-
-        # Glue the bash prompt always go to the first column.
-        # Avoid glitches after interrupting a command with Ctrl-C
-        # Does not seem to be necessary anymore?
-        #PS1="\[\033[G\]${PS1}${NO_COL}"
+        _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
     else
         PS1=$LP_PS1
     fi

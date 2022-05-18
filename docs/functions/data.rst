@@ -329,15 +329,12 @@ OS
 
    .. versionadded:: 2.0
 
-.. function:: _lp_hostname() -> var:lp_hostname, var:lp_hostname_raw
+.. function:: _lp_hostname() -> var:lp_hostname
 
    Returns ``true`` if a hostname should be displayed. Returns ``1`` if the
    connection type is local and :attr:`LP_HOSTNAME_ALWAYS` is not ``1``.
 
    Returns the hostname string in *lp_hostname*.
-
-   Returns the hostname string not passed through :func:`__lp_escape` in
-   *lp_hostname_raw*.
 
    Can be disabled by :attr:`LP_HOSTNAME_ALWAYS` set to ``-1``.
 
@@ -345,7 +342,6 @@ OS
 
    .. versionchanged:: 2.1
       Returns the actual hostname instead of a shell prompt escape code.
-      Added *lp_hostname_raw* return value.
       No longer sets :attr:`LP_HOST_SYMBOL` to the same return string.
       Added :attr:`LP_HOSTNAME_METHOD` to configure display method.
 
@@ -373,15 +369,12 @@ OS
 
    .. versionadded:: 2.0
 
-.. function:: _lp_username() -> var:lp_username, var:lp_username_raw
+.. function:: _lp_username() -> var:lp_username
 
    Returns ``true`` if a username should be displayed. Returns ``1`` if the
    user is the login user and :attr:`LP_USER_ALWAYS` is not ``1``.
 
    Returns the current user ID in *lp_username*.
-
-   Returns the current user ID not passed through :func:`__lp_escape` in
-   *lp_username_raw*.
 
    Can be disabled by :attr:`LP_USER_ALWAYS` set to ``-1``.
 
@@ -389,7 +382,6 @@ OS
 
    .. versionchanged:: 2.1
       Returns the actual username instead of a shell prompt escape code.
-      Added *lp_username_raw* return value.
 
 Path
 ----

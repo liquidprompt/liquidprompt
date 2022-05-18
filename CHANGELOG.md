@@ -16,8 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **battery**: Linux sysfs backend ([#689])
 - **battery**: ACPI backend option to choose battery ([#687])
 - **container**: Container status data source ([#569], [#612], [#709])
-- **env**: Return unescaped hostname in `_lp_hostname()` ([#665], [a23af79])
-- **env**: Return unescaped username in `_lp_username()` ([#665], [a23af79])
 - **env**: `LP_HOSTNAME_METHOD=fqdn` displays true FQDN ([#472])
 - **env**: `LP_HOSTNAME_METHOD=pretty` shows display name ([#596])
 - **env**: Nested shell level data source ([#606])
@@ -50,7 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **general**: Directly generate prompt mark instead of escape code ([#665], [1a22e1e])
-- **general**: Remove backslash escaping from Zsh `__lp_escape()` ([658ce84])
 - **general**: Refactor internal shell hooking implementation ([0ce7646])
 - **bash**: Avoid setting any shell options ([#663], [a1d0a54])
 - **env**: Lookup hostname instead of escape code ([#665], [0368523])
@@ -828,7 +825,6 @@ for help.
 [62f0270]: https://github.com/nojhan/liquidprompt/commit/62f0270888ec668ec50df2af826727ca8ba9d6c6
 [63b9f73]: https://github.com/nojhan/liquidprompt/commit/63b9f73d72218d4e72c0d43bc6a60a82ea0e15e8
 [64029ad]: https://github.com/nojhan/liquidprompt/commit/64029ad75d108a0619958c337fd64fe18560988e
-[658ce84]: https://github.com/nojhan/liquidprompt/commit/658ce84cc81c283b840355b4f1afdac035abd3b7
 [66d1d2b]: https://github.com/nojhan/liquidprompt/commit/66d1d2ba3baade138d7470317aca527c138732fe
 [67dc0a9]: https://github.com/nojhan/liquidprompt/commit/67dc0a9ae9eebf0c2b85b4ee6fc2d6b5562b6412
 [695d629]: https://github.com/nojhan/liquidprompt/commit/695d629dd5cf7109e8892075d4cf7fadd8c17d94

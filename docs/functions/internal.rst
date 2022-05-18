@@ -321,6 +321,13 @@ Utility
 
    .. versionadded:: 2.0
 
+.. function:: __lp_strip_escapes(string) -> var:ret
+
+   Remove shell escape characters so *string* prints correctly in a terminal
+   title, or can be measured for printing character length.
+
+   .. versionadded:: 2.1
+
 Wireless
 --------
 .. function:: __lp_wifi_signal_strength_raw() -> var:level

@@ -265,6 +265,9 @@ Temperature
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_detect``.
 
+   .. versionchanged:: 2.1
+      No longer takes arguments of what backends to try.
+
 .. function:: __lp_temp_acpi() -> var:lp_temperature
 
    A temperature backend using ``acpi``.
@@ -280,6 +283,12 @@ Temperature
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_sensors``.
       Return variable changed from ``temperature``.
+
+.. function:: __lp_temp_sysfs() -> var:lp_temperature
+
+   A temperature backend reading directly from the Linux sysfs filesystem.
+
+   .. versionadded:: 2.1
 
 Utility
 ---------

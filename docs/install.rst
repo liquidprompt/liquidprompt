@@ -63,8 +63,6 @@ corresponding feature will not be available, but no error will be displayed. See
 the :doc:`config` for more information about available features and what tools
 they require.
 
-   * Battery status requires ``acpi`` on GNU/Linux.
-   * Temperature status requires ``acpi`` or ``sensors`` on GNU/Linux.
    * Terminal formatting requires ``tput``.
    * Detached session status looks for ``screen`` and/or ``tmux``.
    * VCS support features require ``git``, ``hg``, ``svn``, ``bzr`` or

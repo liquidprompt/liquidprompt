@@ -382,6 +382,18 @@ __lp_source_config() {
     _LP_LINUX_WIRELESS_FILE="/proc/net/wireless"
     _LP_AIRPORT_BIN="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
 
+    if (( _LP_SHELL_zsh )); then
+        setopt local_options nullglob
+    fi
+    _LP_LINUX_TEMPERATURE_FILES=(
+        /sys/class/hwmon/hwmon*/temp*_input
+        # CentOS has an intermediate /device directory:
+        /sys/class/hwmon/hwmon*/device/temp*_input
+        /sys/devices/platform/coretemp.*/hwmon/hwmon*/temp*_input
+        # Older, fallback option
+        /sys/class/thermal/thermal_zone*/temp
+    )
+
     # Debugging flags
     LP_DEBUG_TIME=${LP_DEBUG_TIME:-0}
 
@@ -672,7 +684,7 @@ lp_activate() {
     if (( LP_ENABLE_TEMP )); then
         # Try each _lp_temp method
         # If no function worked, disable the feature
-        __lp_temp_detect acpi sensors || LP_ENABLE_TEMP=0
+        __lp_temp_detect || LP_ENABLE_TEMP=0
     fi
 
     if (( LP_ENABLE_LOAD )); then
@@ -2918,6 +2930,25 @@ _lp_load_color() {
 ######################
 
 # Backends for TEMP. Each backend must return the result in $lp_temperature.
+# Return the hottest system temperature we get.
+
+__lp_temp_sysfs() {
+    local -i temperature
+
+    for temp_file in "${_LP_LINUX_TEMPERATURE_FILES[@]}"; do
+        if [[ ! -r $temp_file ]]; then
+            continue
+        fi
+
+        IFS='' read -r temperature <"$temp_file"
+        # Input is in millidegrees Celsius.
+        (( temperature = temperature / 1000 ))
+
+        if [[ -z ${lp_temperature-} ]] || (( temperature > ${lp_temperature:-0} )); then
+            lp_temperature=$temperature
+        fi
+    done
+}
 
 # Implementation using lm-sensors
 __lp_temp_sensors() {
@@ -2950,20 +2981,24 @@ __lp_temp_acpi() {
 __lp_temp_detect() {
     local lp_temperature cmd
 
-    # Global variable
-    unset _LP_TEMP_FUNCTION
-
-    for cmd
-    do
-        command -v "$cmd" >/dev/null || continue
-
-        _LP_TEMP_FUNCTION=__lp_temp_$cmd
+    if [[ $LP_OS == 'Linux' ]]; then
+        _LP_TEMP_FUNCTION="__lp_temp_sysfs"
         # Check that we can retrieve temperature at least once
         "$_LP_TEMP_FUNCTION" 2>/dev/null
         # If $lp_temperature is set, success!
         [[ -n "${lp_temperature-}" ]] && return 0
-        unset _LP_TEMP_FUNCTION
+    fi
+
+    for cmd in acpi sensors ; do
+        command -v "$cmd" >/dev/null || continue
+
+        _LP_TEMP_FUNCTION="__lp_temp_$cmd"
+        "$_LP_TEMP_FUNCTION" 2>/dev/null
+
+        [[ -n "${lp_temperature-}" ]] && return 0
     done
+
+    unset _LP_TEMP_FUNCTION
     return 1
 }
 

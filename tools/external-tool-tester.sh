@@ -91,6 +91,17 @@ test_tool uptime
 
 test_tool sensors -u
 test_tool acpi -t
+_LP_LINUX_TEMPERATURE_FILES=(
+  /sys/class/hwmon/hwmon*/temp*_input
+  # CentOS has an intermediate /device directory:
+  /sys/class/hwmon/hwmon*/device/temp*_input
+  /sys/devices/platform/coretemp.*/hwmon/hwmon*/temp*_input
+  # Older, fallback option
+  /sys/class/thermal/thermal_zone*/temp
+)
+for interface in "${_LP_LINUX_TEMPERATURE_FILES[@]}"; do
+  test_tool cat "$interface"
+done
 
 test_tool date '+%I %M'
 test_tool tty

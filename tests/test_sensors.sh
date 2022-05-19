@@ -244,11 +244,14 @@ values+=(48)
 function test_sensors {
 
   LP_ENABLE_TEMP=1
+  _LP_LINUX_TEMPERATURE_FILES=("")
   LP_TEMP_THRESHOLD=-1000000
 
   sensors() {
     printf '%s\n' "$__output"
   }
+  # Stub needed to test sensors with no output.
+  acpi() { :; }
 
   for (( index=0; index < ${#values[@]}; index++ )); do
     __output=${outputs[$index]}
@@ -262,7 +265,7 @@ function test_sensors {
       valid=1
     fi
 
-    __lp_temp_detect sensors
+    __lp_temp_detect
     assertEquals "Sensors temperature detect at index ${index}" "$valid" "$?"
 
     # Set the temp function in case the above detect said it was invalid.

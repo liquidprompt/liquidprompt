@@ -83,11 +83,14 @@ function test_acpi_battery {
 function test_acpi_temperature {
 
   LP_ENABLE_TEMP=1
+  _LP_LINUX_TEMPERATURE_FILES=("")
   LP_TEMP_THRESHOLD=-1000000
 
   acpi() {
     printf '%s\n' "$__temp_output"
   }
+  # Stub needed to test acpi with no output.
+  sensors() { :; }
 
   local valid
 
@@ -103,7 +106,7 @@ function test_acpi_temperature {
       valid=1
     fi
 
-    __lp_temp_detect acpi
+    __lp_temp_detect
     assertEquals "ACPI temperature detect at index ${index}" "$valid" "$?"
 
     # Set the temp function in case the above detect said it was invalid.

@@ -10,6 +10,9 @@ unset -f uname
 LP_ENABLE_BATT=1
 _LP_BATTERY_FUNCTION=__lp_battery_sysfs
 
+LP_ENABLE_TEMP=1
+_LP_TEMP_FUNCTION=__lp_temp_sysfs
+
 typeset -a battery_types battery_presents battery_status battery_capacities battery_out_statuses battery_values
 
 # Add test cases to these arrays like below
@@ -92,6 +95,31 @@ test_sysfs_battery() {
     # Must delete the "device", or liquidpropmt will find the first one again.
     rm -r "$power_supply"
   done
+}
+
+test_sysfs_temperature() {
+  _LP_LINUX_TEMPERATURE_FILES=(
+    "${SHUNIT_TMPDIR}/hwmon0_temp1_input"
+    "${SHUNIT_TMPDIR}/hwmon1_temp1_input"
+    "${SHUNIT_TMPDIR}/hwmon2_temp1_input"
+    "${SHUNIT_TMPDIR}/thermal_zone0_temp"
+  )
+  local -i i=0
+  printf '%s\n' 27000 > "${_LP_LINUX_TEMPERATURE_FILES[i++]}"
+  printf '%s\n' 12000 > "${_LP_LINUX_TEMPERATURE_FILES[i++]}"
+  printf '%s\n' 17000 > "${_LP_LINUX_TEMPERATURE_FILES[i++]}"
+  printf '%s\n' 27000 > "${_LP_LINUX_TEMPERATURE_FILES[i++]}"
+
+  LP_TEMP_THRESHOLD=100
+  _lp_temperature
+  assertEquals "sysfs temperature below returns" 1 "$?"
+  assertEquals "sysfs temperature value" 27 "${lp_temperature-}"
+
+
+  LP_TEMP_THRESHOLD=0
+  _lp_temperature
+  assertEquals "sysfs temperature above returns at index" 0 "$?"
+  assertEquals "sysfs temperature value" 27 "${lp_temperature-}"
 }
 
 if [ -n "${ZSH_VERSION-}" ]; then

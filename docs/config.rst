@@ -299,8 +299,8 @@ Features
    Add battery percentage colored with :attr:`LP_COLORMAP` if
    :attr:`LP_PERCENTS_ALWAYS` is enabled.
 
-   Will be disabled if ``acpi`` is not found on Linux, or ``pmset`` is not
-   found on MacOS.
+   Will be disabled if ``acpi`` is not found on Linux, fails to read the Linux
+   sysfs system, or ``pmset`` is not found on MacOS.
 
    See also: :attr:`LP_BATTERY_THRESHOLD`, :attr:`LP_MARK_BATTERY`,
    :attr:`LP_MARK_ADAPTER`, :attr:`LP_COLOR_CHARGING_ABOVE`,
@@ -629,7 +629,8 @@ Features
 
    Display the highest system temperature if above the threshold.
 
-   Will be disabled if neither ``sensors`` nor ``acpi`` are found.
+   Will be disabled if neither ``sensors`` nor ``acpi`` are found, or fails to
+   read from the Linux sysfs system.
 
    See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`, and
    :attr:`LP_COLORMAP`.

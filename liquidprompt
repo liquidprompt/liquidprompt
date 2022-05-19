@@ -559,6 +559,8 @@ lp_activate() {
         (( LP_ENABLE_$1 )) && { command -v "$2" >/dev/null || eval "LP_ENABLE_$1=0" ; }
     }
 
+    _lp_require_tool TIME date
+
     _lp_require_tool GIT git
     _lp_require_tool SVN svn
     _lp_require_tool FOSSIL fossil

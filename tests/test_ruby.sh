@@ -28,7 +28,7 @@ function test_rbenv {
     printf '%s\n' "$__rbenv_output"
   }
 
-  lp_activate
+  _LP_RUBY_VENV_PROGRAM=rbenv
 
   for (( index=0; index < ${#rbenv_outputs[@]}; index++ )); do
     __rbenv_output=${rbenv_outputs[$index]}

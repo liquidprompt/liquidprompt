@@ -11,3 +11,4 @@ document describing what changes a user needs to make will be linked below.
    :reversed:
 
    upgrading/v2.0
+   upgrading/v2.1

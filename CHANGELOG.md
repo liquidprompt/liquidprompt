@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **aws**: AWS profile display ([#496], [#679], [4c8ac92])
 - **bash**: Compatibility with bash-preexec ([#672])
 - **battery**: Linux sysfs backend ([#689])
-- **battery**: ACPI backend option to choose battery ([#687])
 - **container**: Container status data source ([#569], [#612], [#709])
 - **env**: `LP_HOSTNAME_METHOD=fqdn` displays true FQDN ([#472])
 - **env**: `LP_HOSTNAME_METHOD=pretty` shows display name ([#596])
@@ -737,7 +736,6 @@ for help.
 [#681]: https://github.com/nojhan/liquidprompt/pull/681
 [#684]: https://github.com/nojhan/liquidprompt/issues/684
 [#686]: https://github.com/nojhan/liquidprompt/issues/686
-[#687]: https://github.com/nojhan/liquidprompt/pull/687
 [#688]: https://github.com/nojhan/liquidprompt/pull/688
 [#689]: https://github.com/nojhan/liquidprompt/pull/689
 [#690]: https://github.com/nojhan/liquidprompt/issues/690

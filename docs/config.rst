@@ -348,7 +348,7 @@ Features
 
    See also: :attr:`LP_COLOR_CONTAINER`.
 
-   .. versionadded: 2.1
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_DETACHED_SESSIONS
    :type: bool

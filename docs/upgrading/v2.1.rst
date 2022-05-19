@@ -1,0 +1,46 @@
+Version 2.1 Upgrade Notes
+*************************
+
+Upgrading to version 2.1 is almost completely painless, as there is only one
+deprecation.
+
+.. contents::
+   :local:
+
+Deprecations
+++++++++++++
+
+Public Deprecations
+===================
+
+$LP_ENABLE_FQDN
+---------------
+
+Replaced by :attr:`LP_HOSTNAME_METHOD`.
+
+Replace a set statement like::
+
+   LP_ENABLE_FQDN=1
+
+with::
+
+   LP_HOSTNAME_METHOD=full
+
+Private Deprecations
+====================
+
+_lp_as_text()
+-------------
+
+Replaced by :func:`__lp_strip_escapes`.
+
+Replace a statement like::
+
+   text="$(_lp_as_text "$string")"
+
+with::
+
+   local ret
+   __lp_strip_escapes "$string"
+   text="$ret"
+

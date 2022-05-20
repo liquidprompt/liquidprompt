@@ -23,7 +23,7 @@
 # Issue #161: do not load if not an interactive shell
 # Do not exit if '--no-activate' flag was passed, as it overrides this check
 # shellcheck disable=SC2268
-[ "x${-##*i}" = "x$-" ] || [ -z "${TERM-}" ] || [ "x${TERM-}" = xdumb ] && [ "x${TERM-}" = xunknown ] && [ "x${1-}" != "x--no-activate" ] && return
+[ "x${-##*i}" = "x$-" ] || [ -z "${TERM-}" ] || [ "x${TERM-}" = xdumb ] || [ "x${TERM-}" = xunknown ] && [ "x${1-}" != "x--no-activate" ] && return
 
 if test -n "${BASH_VERSION-}"; then
     # Check for recent enough version of bash.

@@ -99,7 +99,7 @@ _LP_LINUX_TEMPERATURE_FILES=(
   # Older, fallback option
   /sys/class/thermal/thermal_zone*/temp
 )
-for interface in "${_LP_LINUX_TEMPERATURE_FILES[@]}"; do
+for interface in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
   test_tool cat "$interface"
 done
 

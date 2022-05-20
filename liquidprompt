@@ -2937,7 +2937,7 @@ _lp_load_color() {
 __lp_temp_sysfs() {
     local -i temperature
 
-    for temp_file in "${_LP_LINUX_TEMPERATURE_FILES[@]}"; do
+    for temp_file in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
         if [[ ! -r $temp_file ]]; then
             continue
         fi

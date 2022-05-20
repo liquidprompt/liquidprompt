@@ -487,7 +487,7 @@ Features
 
 .. attribute:: LP_ENABLE_NODE_VENV
    :type: bool
-   :value: 1
+   :value: 0
 
    Display the currently activated nodeenv_ or NVM_ virtual environment.
 

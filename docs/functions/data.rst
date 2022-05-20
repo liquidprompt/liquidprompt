@@ -72,7 +72,7 @@ Development Environment
    Returns ``true`` if a Node.js environment is detected. Returns the virtual
    environment name.
 
-   Can be disabled by :attr:`LP_ENABLE_NODE_VENV`.
+   Can be enabled by :attr:`LP_ENABLE_NODE_VENV`.
 
    .. versionadded:: 2.1
 

@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.1.0-beta.1] - 2022-05-16
+## [2.1.0-rc.1] - 2022-05-23
 ### Deprecated
 - **env**: `LP_ENABLE_FQDN` replaced with `LP_HOSTNAME_METHOD=full` ([#472])
+- **utils**: `_lp_as_text()` replaced with `__lp_strip_escapes()` ([6085cd2])
 
 ### Added
 - **aws**: AWS profile display ([#496], [#679], [4c8ac92])
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **node**: Node.js environment display ([#298])
 - **path**: Return unescaped path in *lp_path* in `_lp_path_format()` ([a23af79])
 - **ruby**: Ruby environment display ([#628], [239a574], [#676], [59078f0])
+- **temp**: Linux sysfs backend ([#623])
 - **terraform**: Terraform workspace support ([#669])
 - **title**: Title command feature ([#609], [#665], [0c23a33], [a23af79])
 - **vcsh**: Print the VCSH directory name in the custom prompt mark ([#363])
@@ -553,8 +555,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.0-beta.1...master
-[2.1.0-beta.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0-beta.1
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.0-rc.1...master
+[2.1.0-rc.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0-rc.1
 [2.0.5]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.5
 [2.0.4]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.4
 [2.0.3]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.3
@@ -708,6 +710,7 @@ for help.
 [#613]: https://github.com/nojhan/liquidprompt/issues/613
 [#614]: https://github.com/nojhan/liquidprompt/issues/614
 [#615]: https://github.com/nojhan/liquidprompt/issues/615
+[#623]: https://github.com/nojhan/liquidprompt/pull/623
 [#625]: https://github.com/nojhan/liquidprompt/pull/625
 [#626]: https://github.com/nojhan/liquidprompt/issues/626
 [#628]: https://github.com/nojhan/liquidprompt/pull/628
@@ -819,6 +822,7 @@ for help.
 [5ef795d]: https://github.com/nojhan/liquidprompt/commit/5ef795d262839e99183db00a3dc7572e06f9b610
 [5f8fcc4]: https://github.com/nojhan/liquidprompt/commit/5f8fcc46eade20015291833118055b7cd76a5c0a
 [5fa9054]: https://github.com/nojhan/liquidprompt/commit/5fa905481c9c7c4579cadc0065648b6617b9c775
+[6085cd2]: https://github.com/nojhan/liquidprompt/commit/6085cd21b958c16853c3bb5ea7bfdb7daf11e2cf
 [61df03a]: https://github.com/nojhan/liquidprompt/commit/61df03a02367e29f80d470196b4cc193729ef37a
 [62f0270]: https://github.com/nojhan/liquidprompt/commit/62f0270888ec668ec50df2af826727ca8ba9d6c6
 [63b9f73]: https://github.com/nojhan/liquidprompt/commit/63b9f73d72218d4e72c0d43bc6a60a82ea0e15e8

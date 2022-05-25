@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.1.0-rc.1] - 2022-05-23
+## [2.1.0] - 2022-05-25
 ### Deprecated
 - **env**: `LP_ENABLE_FQDN` replaced with `LP_HOSTNAME_METHOD=full` ([#472])
 - **utils**: `_lp_as_text()` replaced with `__lp_strip_escapes()` ([6085cd2])
@@ -555,8 +555,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.0-rc.1...master
-[2.1.0-rc.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0-rc.1
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.0...master
+[2.1.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0
 [2.0.5]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.5
 [2.0.4]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.4
 [2.0.3]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.3

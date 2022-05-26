@@ -2661,21 +2661,21 @@ case "$LP_OS" in
             fi
 
             local power_supply_type power_supply_present power_supply_scope
-            IFS= read -r power_supply_type <"${power_supply}/type"
+            IFS= read -r power_supply_type <"${power_supply}/type" 2>/dev/null || continue
             [[ $power_supply_type == 'Battery' ]] || continue
-            IFS= read -r power_supply_present <"${power_supply}/present"
+            IFS= read -r power_supply_present <"${power_supply}/present" 2>/dev/null || continue
             [[ $power_supply_present == '1' ]] || continue
 
             # Scope is a property of a power supply
             # Scope = System or missing - power supply powers the system
             # Scope = Device - power supply powers a device
             if [[ -r "${power_supply}/scope" ]]; then
-                IFS= read -r power_supply_scope <"${power_supply}/scope"
+                IFS= read -r power_supply_scope <"${power_supply}/scope" 2>/dev/null || continue
                 [[ $power_supply_scope == 'System' ]] || continue
             fi
 
-            IFS= read -r lp_battery_status <"${power_supply}/status"
-            IFS= read -r lp_battery <"${power_supply}/capacity"
+            IFS= read -r lp_battery_status <"${power_supply}/status" 2>/dev/null || continue
+            IFS= read -r lp_battery <"${power_supply}/capacity" 2>/dev/null || continue
             return 0
         done
         return 1
@@ -2942,7 +2942,7 @@ __lp_temp_sysfs() {
             continue
         fi
 
-        IFS='' read -r temperature <"$temp_file"
+        IFS='' read -r temperature <"$temp_file" 2>/dev/null || continue
         # Input is in millidegrees Celsius.
         (( temperature = temperature / 1000 ))
 

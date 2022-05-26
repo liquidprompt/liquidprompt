@@ -64,19 +64,19 @@ test_sysfs_battery() {
     mkdir "$power_supply"
 
     if [[ -n ${battery_types[index]-} ]]; then
-      printf '%s' "${battery_types[index]}" > "${power_supply}/type"
+      printf '%s\n' "${battery_types[index]}" > "${power_supply}/type"
     fi
     if [[ -n ${battery_presents[index]-} ]]; then
-      printf '%s' "${battery_presents[index]}" > "${power_supply}/present"
+      printf '%s\n' "${battery_presents[index]}" > "${power_supply}/present"
     fi
     if [[ -n ${battery_statuses[index]-} ]]; then
-      printf '%s' "${battery_statuses[index]}" > "${power_supply}/status"
+      printf '%s\n' "${battery_statuses[index]}" > "${power_supply}/status"
     fi
     if [[ -n ${battery_capacities[index]-} ]]; then
-      printf '%s' "${battery_capacities[index]}" > "${power_supply}/capacity"
+      printf '%s\n' "${battery_capacities[index]}" > "${power_supply}/capacity"
     fi
     if [[ -n ${battery_scopes[index]} ]]; then
-      printf '%s' "${battery_scopes[index]}" > "${power_supply}/scope"
+      printf '%s\n' "${battery_scopes[index]}" > "${power_supply}/scope"
     fi
 
     LP_BATTERY_THRESHOLD=100

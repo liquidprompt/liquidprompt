@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2022-05-26
+### Fixed
+- **battery**: Error messages printed with buggy driver with sysfs backend ([#713])
+- **temp**: Error messages printed with buggy driver with sysfs backend ([#713])
+
 ## [2.1.0] - 2022-05-25
 ### Deprecated
 - **env**: `LP_ENABLE_FQDN` replaced with `LP_HOSTNAME_METHOD=full` ([#472])
@@ -555,7 +560,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.0...master
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.1...master
+[2.1.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.1
 [2.1.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0
 [2.0.5]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.5
 [2.0.4]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.4

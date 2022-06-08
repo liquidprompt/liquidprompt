@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2022-06-08
+### Fixed
+- **bash**: `PROMPT_COMMAND` not saved and respected on first load ([#715])
+
 ## [2.1.1] - 2022-05-26
 ### Fixed
 - **battery**: Error messages printed with buggy driver with sysfs backend ([#713])
@@ -560,7 +564,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.1...master
+[Unreleased]: https://github.com/nojhan/liquidprompt/compare/v2.1.2...master
+[2.1.2]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.2
 [2.1.1]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.1
 [2.1.0]: https://github.com/nojhan/liquidprompt/releases/tag/v2.1.0
 [2.0.5]: https://github.com/nojhan/liquidprompt/releases/tag/v2.0.5
@@ -754,6 +759,8 @@ for help.
 [#702]: https://github.com/nojhan/liquidprompt/pull/702
 [#708]: https://github.com/nojhan/liquidprompt/issues/708
 [#709]: https://github.com/nojhan/liquidprompt/issues/709
+[#713]: https://github.com/nojhan/liquidprompt/issues/713
+[#715]: https://github.com/nojhan/liquidprompt/issues/715
 
 [0200b99]: https://github.com/nojhan/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/nojhan/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

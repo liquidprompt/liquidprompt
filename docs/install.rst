@@ -44,6 +44,14 @@ add the following lines in your ``.zshrc`` after activating Zinit::
     zinit ice ver"stable" lucid nocd
     zinit light nojhan/liquidprompt
 
+Installation via Fig
+----------------------
+
+Install `liquidprompt` with `Fig <https://fig.io/>`_ in just one click.
+
+.. image:: https://fig.io/badges/install-with-fig.svg
+   :target: https://fig.io/plugins/other/liquidprompt
+
 Dependencies
 ============
 

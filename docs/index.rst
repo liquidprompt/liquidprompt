@@ -13,11 +13,10 @@ powerful theming engine and a large array of data sources.
 To get started, view the :doc:`install` documentation, which includes
 instructions for trying Liquidprompt temporarily.
 
-.. image:: demo.png
-
 On top of the classical information of a classical prompt,
 Liquid Prompt displays the state of many of the tools that you like to operate
 from the command line, for example:
+
 * numerous information from various version control systems (Git, Mercurial, Fossil, etc.), when you are in a code repository;
 * whether you're remotely connected by SSH, in a terminal multiplexer (screen or tmux), with graphical support;
 * permissions on the current directory, whether you have sudo rights or not;
@@ -33,10 +32,7 @@ important alerts right away.
 Moreover, Liquid Prompt is highly configurable: you can disable useless features
 and change any alert thresholds to suit your needs.
 On top of this, it comes with several themes, from the discrete default to the
-most colorful and fancy one, àla powerline.
-
-.. image:: demo_dotmatrix.png
-
+most colorful and fancy one.
 
 .. toctree::
    :maxdepth: 2
@@ -54,3 +50,21 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
+
+
+Screenshots
+===========
+
+:doc:`theme/default` (classical design):
+
+.. image:: demo.png
+
+
+:doc:`theme/included/powerline` (fancy colors):
+
+.. image:: demo_powerline.png
+
+
+:doc:`theme/included/dotmatrix` (polished UX):
+
+.. image:: demo_dotmatrix.png

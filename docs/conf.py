@@ -30,7 +30,6 @@ author = 'Mark Vander Stel'
 # ones.
 extensions = [
     'sphinx_rtd_theme',
-    'sphinx.ext.autodoc'
 ]
 
 # This value determines how to group the document tree into manual pages

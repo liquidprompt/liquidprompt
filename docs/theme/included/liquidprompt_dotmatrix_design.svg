@@ -1,0 +1,3028 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="794.02185"
+   height="681.99835"
+   viewBox="0 0 794.02185 681.99838"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1945">Liquid Prompt DotMatrix Design</title>
+  <defs
+     id="defs6">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath18">
+      <path
+         d="M 0,0.028 H 595.275 V 841.889 H 0 Z"
+         clip-rule="evenodd"
+         id="path16" />
+    </clipPath>
+  </defs>
+  <g
+     id="g10"
+     transform="matrix(1.3333333,0,0,-1.3333333,0.28854166,1122.5853)">
+    <g
+       id="g12">
+      <g
+         id="g14"
+         clip-path="url(#clipPath18)">
+        <path
+           d="M -0.05,841.939 H 595.3 V 330.44021 H -0.05 Z"
+           style="fill:#191919;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999998"
+           id="path20" />
+        <g
+           id="g22">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.596,823.989)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text26"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998"
+               y="0"
+               id="tspan24">localhost</tspan></text>
+        </g>
+        <g
+           id="g28">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,813.889)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text32"><tspan
+               x="0 4.8000002 9.6000004 14.496 19.296 24.096001 28.896 33.792 38.591999 43.391998 48.192001 52.992001"
+               y="0"
+               id="tspan30">logged│ home</tspan></text>
+        </g>
+        <g
+           id="g34">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.596,803.789)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text38"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998"
+               y="0"
+               id="tspan36">┌┴┐┌┴┐┌┴┐</tspan></text>
+        </g>
+        <path
+           d="M 0,781.339 H 4.75 V 791.389 H 0 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path40" />
+        <g
+           id="g42">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,783.589)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text46"><tspan
+               x="0"
+               y="0"
+               id="tspan44">X</tspan></text>
+        </g>
+        <g
+           id="g48">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,783.589)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text52"><tspan
+               x="0"
+               y="0"
+               id="tspan50">█</tspan></text>
+        </g>
+        <path
+           d="M 9.6,781.339 H 14.35 V 791.389 H 9.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path54" />
+        <g
+           id="g56">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.7,783.589)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text60"><tspan
+               x="0"
+               y="0"
+               id="tspan58"></tspan></text>
+        </g>
+        <path
+           d="M 14.4,781.339 H 19.15 V 791.389 H 14.4 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path62" />
+        <g
+           id="g64">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.5,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text68"><tspan
+               x="0"
+               y="0"
+               id="tspan66">█</tspan></text>
+        </g>
+        <path
+           d="M 19.2,781.339 H 23.95 V 791.389 H 19.2 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path70" />
+        <g
+           id="g72">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,19.3,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text76"><tspan
+               x="0"
+               y="0"
+               id="tspan74"></tspan></text>
+        </g>
+        <path
+           d="M 24,781.339 H 28.75 V 791.389 H 24 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path78" />
+        <g
+           id="g80" />
+        <path
+           d="M 28.8,781.339 H 33.55 V 791.389 H 28.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path82" />
+        <g
+           id="g84">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,28.9,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text88"><tspan
+               x="0"
+               y="0"
+               id="tspan86"></tspan></text>
+        </g>
+        <path
+           d="M 33.6,781.339 H 38.35 V 791.389 H 33.6 Z"
+           style="fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path90" />
+        <g
+           id="g92">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,33.7,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text96"><tspan
+               x="0"
+               y="0"
+               id="tspan94">█</tspan></text>
+        </g>
+        <path
+           d="M 38.4,781.339 H 48.05 V 791.389 H 38.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path98" />
+        <g
+           id="g100">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,38.5,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text104"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan102">⌂ </tspan></text>
+        </g>
+        <path
+           d="M 48.1,781.339 H 52.85 V 791.389 H 48.1 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path106" />
+        <g
+           id="g108">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,48.2,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text112"><tspan
+               x="0"
+               y="0"
+               id="tspan110"></tspan></text>
+        </g>
+        <path
+           d="M 52.9,781.339 H 57.65 V 791.389 H 52.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path114" />
+        <g
+           id="g116" />
+        <path
+           d="M 57.7,781.339 H 62.45 V 791.389 H 57.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path118" />
+        <g
+           id="g120">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,57.8,783.589)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text124"><tspan
+               x="0"
+               y="0"
+               id="tspan122">~</tspan></text>
+        </g>
+        <path
+           d="M 62.5,781.339 H 67.25 V 791.389 H 62.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path126" />
+        <g
+           id="g128" />
+        <g
+           id="g130">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,67.4,783.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text134"><tspan
+               x="0 4.8000002 9.6000004 515.328 520.12799"
+               y="0"
+               id="tspan132"> </tspan></text>
+        </g>
+        <g
+           id="g136">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,773.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text140"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.391998 72.192001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.56799 250.464 255.26401 260.064 264.86401 269.664 274.46399 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 313.056 317.85599 322.65601 327.45599 332.25601 337.15201 341.952 346.75201 351.552 356.35199 361.15201 366.048 370.84799 375.64801 380.448 385.24799 390.048 394.944 399.74399 404.54401 409.34399 414.14401 418.944 423.84 428.64001 433.44 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.73599 481.63199 486.43201 491.23199 496.03201 500.832 505.63199 510.52802 515.328 520.12799 524.92798 529.72803 534.52802 539.42401 544.224 549.02399 553.82397 558.62402 563.42401 568.32001 573.12 577.91998 582.71997 587.52002"
+               y="0"
+               id="tspan138">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <path
+           d="M 0,761.139 H 4.75 V 771.189 H 0 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path142" />
+        <g
+           id="g144">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,763.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text148"><tspan
+               x="0"
+               y="0"
+               id="tspan146">△</tspan></text>
+        </g>
+        <g
+           id="g150">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,763.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text154"><tspan
+               x="0"
+               y="0"
+               id="tspan152"></tspan></text>
+        </g>
+        <g
+           id="g156">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.5,763.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text160"><tspan
+               x="0"
+               y="0"
+               id="tspan158"></tspan></text>
+        </g>
+        <g
+           id="g162" />
+        <g
+           id="g164">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,743.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text168"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan166">├┘</tspan></text>
+        </g>
+        <g
+           id="g170">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,733.089)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text174"><tspan
+               x="0 4.8000002 9.6000004 14.496 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001"
+               y="0"
+               id="tspan172">no-internet</tspan></text>
+        </g>
+        <g
+           id="g176">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,24.196,712.889)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text180"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24.096001 43.391998 48.192001 52.992001 57.792 62.591999 67.391998 72.288002 288.95999 293.76001 298.56 303.35999 308.16 313.056 317.85599 322.65601 327.45599 462.336 467.13599 471.936 476.73599 481.53601 486.43201 491.23199 496.03201 500.832 505.728 510.52802 515.328 520.12799 524.92798 529.72803 534.52802 539.328 544.224"
+               y="0"
+               id="tspan178">admin remote dirstack detached suspended</tspan></text>
+        </g>
+        <g
+           id="g182">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,702.789)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text186"><tspan
+               x="0 4.8000002 14.496 19.296 24.096001 33.695999 38.591999 48.192001 52.992001 57.792 62.591999 67.487999 77.087997 81.888 96.384003 101.184 105.984 173.37601 178.17599 182.976 187.87199 192.672 197.472 202.272 207.07201 211.968 288.95999 293.76001 298.56 303.45599 332.35199 337.15201 433.44 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.832 481.63199 486.43201 491.23199 496.03201 500.92801 510.52802 515.328 524.92798 529.72803 534.62402 539.42401 544.224 568.32001 573.12 577.91998 582.71997"
+               y="0"
+               id="tspan184">X su │ tmux │ RO VCS root cwd │ batt load temp │ bg │ time</tspan></text>
+        </g>
+        <g
+           id="g188">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,692.689)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text192"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.391998 72.192001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 158.976 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 274.56 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 313.056 317.85599 322.65601 327.552 332.35199 337.15201 341.952 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.73599 481.63199 486.43201 491.23199 496.03201 500.92801 505.728 510.52802 515.328 520.12799 524.92798 529.72803 534.52802 539.42401 544.224 549.02399 553.82397 558.62402 563.42401 568.32001 573.12 577.91998 582.71997 587.52002"
+               y="0"
+               id="tspan190">├┐┌┴┐┌─┴─┐┌┴┐┌──┴──┐┌┴┐ ┌─────┴─────┐ ┌───┴────┐ ┌┴┐ ┌┴─┐┌─┴─┐┌─┴┐ ┌┴┐┌┴┐┌┴┐┌───┴───┐</tspan></text>
+        </g>
+        <g
+           id="g194" />
+        <path
+           d="M 0,670.239 H 4.75 V 680.289 H 0 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path196" />
+        <g
+           id="g198">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text202"><tspan
+               x="0"
+               y="0"
+               id="tspan200">X</tspan></text>
+        </g>
+        <g
+           id="g204">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text208"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan206">█</tspan></text>
+        </g>
+        <g
+           id="g210">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.6,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text214"><tspan
+               x="0"
+               y="0"
+               id="tspan212"></tspan></text>
+        </g>
+        <path
+           d="M 19.3,670.239 H 24.05 V 680.289 H 19.3 Z"
+           style="fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path216" />
+        <g
+           id="g218">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,19.4,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text222"><tspan
+               x="0"
+               y="0"
+               id="tspan220">█</tspan></text>
+        </g>
+        <path
+           d="M 24.1,670.239 H 43.25 V 680.289 H 24.1 Z"
+           style="fill:#ffd800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path224" />
+        <g
+           id="g226">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,24.2,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text230"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan228">root</tspan></text>
+        </g>
+        <path
+           d="M 43.3,670.239 H 48.05 V 680.289 H 43.3 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path232" />
+        <g
+           id="g234">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,43.4,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text238"><tspan
+               x="0"
+               y="0"
+               id="tspan236">█</tspan></text>
+        </g>
+        <g
+           id="g240">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,48.2,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text244"><tspan
+               x="0"
+               y="0"
+               id="tspan242"></tspan></text>
+        </g>
+        <g
+           id="g246">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,53,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text250"><tspan
+               x="0"
+               y="0"
+               id="tspan248"></tspan></text>
+        </g>
+        <path
+           d="M 57.7,670.239 H 62.45 V 680.289 H 57.7 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path252" />
+        <g
+           id="g254">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,57.8,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text258"><tspan
+               x="0"
+               y="0"
+               id="tspan256">█</tspan></text>
+        </g>
+        <path
+           d="M 62.5,670.239 H 91.35 V 680.289 H 62.5 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path260" />
+        <g
+           id="g262">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,62.6,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text266"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001"
+               y="0"
+               id="tspan264">server</tspan></text>
+        </g>
+        <path
+           d="M 91.4,670.239 H 96.15 V 680.289 H 91.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path268" />
+        <g
+           id="g270">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,91.5,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text274"><tspan
+               x="0"
+               y="0"
+               id="tspan272">█</tspan></text>
+        </g>
+        <g
+           id="g276">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,96.3,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text280"><tspan
+               x="0"
+               y="0"
+               id="tspan278"></tspan></text>
+        </g>
+        <g
+           id="g282">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,101.1,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text286"><tspan
+               x="0"
+               y="0"
+               id="tspan284"></tspan></text>
+        </g>
+        <path
+           d="M 105.8,670.239 H 110.55 V 680.289 H 105.8 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path288" />
+        <g
+           id="g290" />
+        <path
+           d="M 110.6,670.239 H 120.25 V 680.289 H 110.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path292" />
+        <g
+           id="g294">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,110.7,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text298"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan296">~ </tspan></text>
+        </g>
+        <path
+           d="M 120.3,670.239 H 129.85 V 680.289 H 120.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path300" />
+        <g
+           id="g302">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,120.4,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text306"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan304">╱ </tspan></text>
+        </g>
+        <path
+           d="M 129.9,670.239 H 153.95 V 680.289 H 129.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path308" />
+        <g
+           id="g310">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,130,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text314"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296"
+               y="0"
+               id="tspan312">code </tspan></text>
+        </g>
+        <path
+           d="M 154,670.239 H 163.65 V 680.289 H 154 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path316" />
+        <g
+           id="g318">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,154.1,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text322"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan320">╱ </tspan></text>
+        </g>
+        <path
+           d="M 163.7,670.239 H 226.25 V 680.289 H 163.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path324" />
+        <g
+           id="g326">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,163.8,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text330"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998 43.296001 48.096001 52.896 57.792"
+               y="0"
+               id="tspan328">liquidprompt </tspan></text>
+        </g>
+        <g
+           id="g332"
+           transform="translate(163.8,672.489)">
+          <path
+             d="M 0,-0.9 H 62.6"
+             style="fill:none;stroke:#bababa;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+             id="path334" />
+        </g>
+        <path
+           d="M 226.3,670.239 H 235.85 V 680.289 H 226.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path336" />
+        <g
+           id="g338">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,226.4,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text342"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan340">╱ </tspan></text>
+        </g>
+        <path
+           d="M 235.9,670.239 H 264.75 V 680.289 H 235.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path344" />
+        <g
+           id="g346">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,236,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text350"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001"
+               y="0"
+               id="tspan348">theme </tspan></text>
+        </g>
+        <path
+           d="M 264.8,670.239 H 274.45 V 680.289 H 264.8 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path352" />
+        <g
+           id="g354">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,264.9,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text358"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan356">╱ </tspan></text>
+        </g>
+        <path
+           d="M 274.5,670.239 H 322.55 V 680.289 H 274.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path360" />
+        <g
+           id="g362">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,274.6,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text366"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998 43.296001"
+               y="0"
+               id="tspan364">dotmatrix </tspan></text>
+        </g>
+        <path
+           d="M 322.6,670.239 H 327.35 V 680.289 H 322.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path368" />
+        <g
+           id="g370">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,322.7,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text374"><tspan
+               x="0"
+               y="0"
+               id="tspan372"></tspan></text>
+        </g>
+        <path
+           d="M 327.4,670.239 H 332.15 V 680.289 H 327.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path376" />
+        <g
+           id="g378">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,327.5,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text382"><tspan
+               x="0"
+               y="0"
+               id="tspan380">█</tspan></text>
+        </g>
+        <path
+           d="M 332.2,670.239 H 336.95 V 680.289 H 332.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path384" />
+        <g
+           id="g386">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,332.3,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#333;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text390"><tspan
+               x="0"
+               y="0"
+               id="tspan388">⚂</tspan></text>
+        </g>
+        <g
+           id="g392">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,337.1,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text396"><tspan
+               x="0"
+               y="0"
+               id="tspan394"></tspan></text>
+        </g>
+        <g
+           id="g398">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,341.9,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text402"><tspan
+               x="0 4.8000002 86.688004 91.487999"
+               y="0"
+               id="tspan400"> </tspan></text>
+        </g>
+        <path
+           d="M 438.2,670.239 H 452.55 V 680.289 H 438.2 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path404" />
+        <g
+           id="g406">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,438.3,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text410"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan408">24%</tspan></text>
+        </g>
+        <path
+           d="M 452.6,670.239 H 457.35 V 680.289 H 452.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path412" />
+        <g
+           id="g414">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,452.7,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text418"><tspan
+               x="0"
+               y="0"
+               id="tspan416">╱</tspan></text>
+        </g>
+        <path
+           d="M 457.4,670.239 H 476.65 V 680.289 H 457.4 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path420" />
+        <g
+           id="g422">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,457.5,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text426"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan424">1.68</tspan></text>
+        </g>
+        <path
+           d="M 476.7,670.239 H 481.45 V 680.289 H 476.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path428" />
+        <g
+           id="g430">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,476.8,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text434"><tspan
+               x="0"
+               y="0"
+               id="tspan432">╱</tspan></text>
+        </g>
+        <path
+           d="M 481.5,670.239 H 495.85 V 680.289 H 481.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path436" />
+        <g
+           id="g438">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,481.6,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text442"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan440">90°</tspan></text>
+        </g>
+        <path
+           d="M 495.9,670.239 H 515.15 V 680.289 H 495.9 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path444" />
+        <g
+           id="g446">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,496,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text450"><tspan
+               x="0 4.8000002 9.6960001 14.496"
+               y="0"
+               id="tspan448"> 3d</tspan></text>
+        </g>
+        <path
+           d="M 515.2,670.239 H 519.95 V 680.289 H 515.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path452" />
+        <g
+           id="g454">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,515.3,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text458"><tspan
+               x="0"
+               y="0"
+               id="tspan456">╱</tspan></text>
+        </g>
+        <path
+           d="M 520,670.239 H 529.55 V 680.289 H 520 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path460" />
+        <g
+           id="g462">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,520.1,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text466"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan464">2&amp;</tspan></text>
+        </g>
+        <path
+           d="M 529.6,670.239 H 534.35 V 680.289 H 529.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path468" />
+        <g
+           id="g470">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,529.7,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text474"><tspan
+               x="0"
+               y="0"
+               id="tspan472">╱</tspan></text>
+        </g>
+        <path
+           d="M 534.4,670.239 H 544.05 V 680.289 H 534.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path476" />
+        <g
+           id="g478">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,534.5,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text482"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan480">1z</tspan></text>
+        </g>
+        <path
+           d="M 544.1,670.239 H 553.65 V 680.289 H 544.1 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path484" />
+        <g
+           id="g486">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,544.2,672.489)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text490"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan488"> </tspan></text>
+        </g>
+        <path
+           d="M 553.7,670.239 H 592.25 V 680.289 H 553.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path492" />
+        <g
+           id="g494">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,553.8,672.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text498"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999"
+               y="0"
+               id="tspan496">15:20:34</tspan></text>
+        </g>
+        <g
+           id="g500">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,662.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text504"><tspan
+               x="0 4.8000002 9.6960001 14.496 19.296 24.096001 28.896 33.695999 38.591999 43.391998 48.192001 52.992001 57.792"
+               y="0"
+               id="tspan502">━ scl ━ venv </tspan></text>
+        </g>
+        <g
+           id="g506">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,62.7,662.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text510"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.391998 72.192001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.56799 250.464 255.26401 260.064 264.86401 269.664 274.46399 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 313.056 317.85599 322.65601 327.45599 332.25601 337.15201 341.952 346.75201 351.552 356.35199 361.15201 366.048 370.84799 375.64801 380.448 385.24799 390.048 394.944 399.74399 404.54401 409.34399 414.14401 418.944 423.84 428.64001 433.44 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.73599 481.63199 486.43201 491.23199 496.03201 500.832 505.63199 510.52802 515.328 520.12799 524.92798"
+               y="0"
+               id="tspan508">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <path
+           d="M 0,650.039 H 7.95 V 660.089 H 0 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path512" />
+        <g
+           id="g514">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:Symbola;-inkscape-font-specification:Symbola;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text518"><tspan
+               x="0"
+               y="0"
+               id="tspan516"></tspan></text>
+        </g>
+        <path
+           d="M 8,650.039 H 12.75 V 660.089 H 8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path520" />
+        <g
+           id="g522">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,8.1,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text526"><tspan
+               x="0"
+               y="0"
+               id="tspan524"></tspan></text>
+        </g>
+        <path
+           d="M 12.8,650.039 H 17.55 V 660.089 H 12.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path528" />
+        <g
+           id="g530">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,12.9,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text534"><tspan
+               x="0"
+               y="0"
+               id="tspan532">±</tspan></text>
+        </g>
+        <g
+           id="g536">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,17.7,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text540"><tspan
+               x="0"
+               y="0"
+               id="tspan538"></tspan></text>
+        </g>
+        <g
+           id="g542">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,22.5,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text546"><tspan
+               x="0"
+               y="0"
+               id="tspan544"></tspan></text>
+        </g>
+        <path
+           d="M 27.2,650.039 H 31.95 V 660.089 H 27.2 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path548" />
+        <g
+           id="g550" />
+        <path
+           d="M 32,650.039 H 36.75 V 660.089 H 32 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path552" />
+        <g
+           id="g554">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,32.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text558"><tspan
+               x="0"
+               y="0"
+               id="tspan556">+</tspan></text>
+        </g>
+        <path
+           d="M 36.8,650.039 H 44.75 V 660.089 H 36.8 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path560" />
+        <g
+           id="g562">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,36.9,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'VL Gothic';-inkscape-font-specification:VL-Gothic-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text566"><tspan
+               x="0"
+               y="0"
+               id="tspan564">➒</tspan></text>
+        </g>
+        <path
+           d="M 44.8,650.039 H 49.55 V 660.089 H 44.8 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path568" />
+        <g
+           id="g570">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,44.9,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text574"><tspan
+               x="0"
+               y="0"
+               id="tspan572">╱</tspan></text>
+        </g>
+        <path
+           d="M 49.6,650.039 H 54.35 V 660.089 H 49.6 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path576" />
+        <g
+           id="g578">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,49.7,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text582"><tspan
+               x="0"
+               y="0"
+               id="tspan580">-</tspan></text>
+        </g>
+        <path
+           d="M 54.4,650.039 H 62.35 V 660.089 H 54.4 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path584" />
+        <g
+           id="g586">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,54.5,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'VL Gothic';-inkscape-font-specification:VL-Gothic-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text590"><tspan
+               x="0"
+               y="0"
+               id="tspan588">➎</tspan></text>
+        </g>
+        <path
+           d="M 62.4,650.039 H 67.15 V 660.089 H 62.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path592" />
+        <g
+           id="g594">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,62.5,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text598"><tspan
+               x="0"
+               y="0"
+               id="tspan596"></tspan></text>
+        </g>
+        <path
+           d="M 67.2,650.039 H 71.95 V 660.089 H 67.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path600" />
+        <g
+           id="g602" />
+        <path
+           d="M 72,650.039 H 91.25 V 660.089 H 72 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path604" />
+        <g
+           id="g606">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,72.1,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text610"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan608">main</tspan></text>
+        </g>
+        <path
+           d="M 91.3,650.039 H 96.05 V 660.089 H 91.3 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path612" />
+        <g
+           id="g614">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,91.4,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text618"><tspan
+               x="0"
+               y="0"
+               id="tspan616">:</tspan></text>
+        </g>
+        <path
+           d="M 96.1,650.039 H 115.25 V 660.089 H 96.1 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path620" />
+        <g
+           id="g622">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,96.2,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text626"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan624">feat</tspan></text>
+        </g>
+        <path
+           d="M 115.3,650.039 H 120.05 V 660.089 H 115.3 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path628" />
+        <g
+           id="g630">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,115.4,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text634"><tspan
+               x="0"
+               y="0"
+               id="tspan632">╱</tspan></text>
+        </g>
+        <path
+           d="M 120.1,650.039 H 139.35 V 660.089 H 120.1 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path636" />
+        <g
+           id="g638">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,120.2,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text642"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan640">v0.1</tspan></text>
+        </g>
+        <path
+           d="M 139.4,650.039 H 144.15 V 660.089 H 139.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path644" />
+        <g
+           id="g646" />
+        <g
+           id="g648">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,144.3,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text652"><tspan
+               x="0"
+               y="0"
+               id="tspan650"></tspan></text>
+        </g>
+        <g
+           id="g654">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,149.1,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text658"><tspan
+               x="0"
+               y="0"
+               id="tspan656"></tspan></text>
+        </g>
+        <path
+           d="M 153.8,650.039 H 158.55 V 660.089 H 153.8 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path660" />
+        <g
+           id="g662" />
+        <path
+           d="M 158.6,650.039 H 163.35 V 660.089 H 158.6 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path664" />
+        <g
+           id="g666">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,158.7,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text670"><tspan
+               x="0"
+               y="0"
+               id="tspan668">+</tspan></text>
+        </g>
+        <path
+           d="M 163.4,650.039 H 171.35 V 660.089 H 163.4 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path672" />
+        <g
+           id="g674">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,163.5,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'VL Gothic';-inkscape-font-specification:VL-Gothic-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text678"><tspan
+               x="0"
+               y="0"
+               id="tspan676">➁</tspan></text>
+        </g>
+        <path
+           d="M 171.4,650.039 H 176.15 V 660.089 H 171.4 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path680" />
+        <g
+           id="g682">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,171.5,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text686"><tspan
+               x="0"
+               y="0"
+               id="tspan684">╱</tspan></text>
+        </g>
+        <path
+           d="M 176.2,650.039 H 180.95 V 660.089 H 176.2 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path688" />
+        <g
+           id="g690">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,176.3,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text694"><tspan
+               x="0"
+               y="0"
+               id="tspan692">-</tspan></text>
+        </g>
+        <path
+           d="M 181,650.039 H 193.75 V 660.089 H 181 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path696" />
+        <g
+           id="g698">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,189.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text702"><tspan
+               x="0"
+               y="0"
+               id="tspan700">⁺</tspan></text>
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,181.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'VL Gothic';-inkscape-font-specification:VL-Gothic-Regular;writing-mode:lr-tb;fill:#e8e8e8;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text706"><tspan
+               x="0"
+               y="0"
+               id="tspan704">⑳</tspan></text>
+        </g>
+        <path
+           d="M 193.8,650.039 H 198.55 V 660.089 H 193.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path708" />
+        <g
+           id="g710">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,193.9,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text714"><tspan
+               x="0"
+               y="0"
+               id="tspan712"></tspan></text>
+        </g>
+        <path
+           d="M 198.6,650.039 H 203.35 V 660.089 H 198.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path716" />
+        <g
+           id="g718" />
+        <path
+           d="M 203.4,650.039 H 208.15 V 660.089 H 203.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path720" />
+        <g
+           id="g722">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,203.5,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text726"><tspan
+               x="0"
+               y="0"
+               id="tspan724">✞</tspan></text>
+        </g>
+        <path
+           d="M 208.2,650.039 H 212.95 V 660.089 H 208.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path728" />
+        <g
+           id="g730">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,208.3,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text734"><tspan
+               x="0"
+               y="0"
+               id="tspan732">╱</tspan></text>
+        </g>
+        <path
+           d="M 213,650.039 H 220.95 V 660.089 H 213 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path736" />
+        <g
+           id="g738">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,213.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:Symbola;-inkscape-font-specification:Symbola;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text742"><tspan
+               x="0"
+               y="0"
+               id="tspan740">⛶</tspan></text>
+        </g>
+        <path
+           d="M 221,650.039 H 225.75 V 660.089 H 221 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path744" />
+        <g
+           id="g746">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,221.1,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text750"><tspan
+               x="0"
+               y="0"
+               id="tspan748">╱</tspan></text>
+        </g>
+        <path
+           d="M 225.8,650.039 H 264.25 V 660.089 H 225.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path752" />
+        <g
+           id="g754">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,225.9,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text758"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999"
+               y="0"
+               id="tspan756">detached</tspan></text>
+        </g>
+        <path
+           d="M 264.3,650.039 H 269.05 V 660.089 H 264.3 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path760" />
+        <g
+           id="g762">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,264.4,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text766"><tspan
+               x="0"
+               y="0"
+               id="tspan764"></tspan></text>
+        </g>
+        <path
+           d="M 269.1,650.039 H 273.85 V 660.089 H 269.1 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path768" />
+        <g
+           id="g770" />
+        <path
+           d="M 273.9,650.039 H 288.35 V 660.089 H 273.9 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path772" />
+        <g
+           id="g774">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,274,652.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text778"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan776">20s</tspan></text>
+        </g>
+        <path
+           d="M 288.4,650.039 H 293.15 V 660.089 H 288.4 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path780" />
+        <g
+           id="g782" />
+        <path
+           d="M 293.2,650.039 H 297.95 V 660.089 H 293.2 Z"
+           style="fill:#ffd800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path784" />
+        <g
+           id="g786">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,293.3,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text790"><tspan
+               x="0"
+               y="0"
+               id="tspan788"></tspan></text>
+        </g>
+        <path
+           d="M 298,650.039 H 302.75 V 660.089 H 298 Z"
+           style="fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path792" />
+        <g
+           id="g794">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,298.1,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text798"><tspan
+               x="0"
+               y="0"
+               id="tspan796">█</tspan></text>
+        </g>
+        <path
+           d="M 302.8,650.039 H 317.15 V 660.089 H 302.8 Z"
+           style="fill:#ffd800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path800" />
+        <g
+           id="g802">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,302.9,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#fe007f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text806"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan804">125</tspan></text>
+        </g>
+        <g
+           id="g808">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,317.3,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text812"><tspan
+               x="0"
+               y="0"
+               id="tspan810"></tspan></text>
+        </g>
+        <g
+           id="g814" />
+        <g
+           id="g816">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,326.9,652.289)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text820"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan818"> </tspan></text>
+        </g>
+        <g
+           id="g822">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,632.089)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text826"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.391998 72.192001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.56799 250.464 255.26401 260.064 264.86401 269.664 274.46399 279.35999 284.16 288.95999 298.65601 303.45599 308.25601 313.056 317.85599 322.65601 327.45599"
+               y="0"
+               id="tspan824">├┘└┬┘├┘└──┬──┘└─┬──┘└─┬┘└─┬─┘ ├┘└───┬───┘└┬┘└┬┘└───┬───┘└┬─┘ └┬─┘ ├┘</tspan></text>
+        </g>
+        <g
+           id="g828">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,621.989)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text832"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.28 130.08 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 187.87199 192.672 197.472 202.272 207.07201 211.968 216.76801 221.56799 226.368 231.168 235.968 240.76801 245.664 250.464 255.26401 260.064 264.86401 269.76001 274.56 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 317.85599 322.65601 327.45599 332.25601"
+               y="0"
+               id="tspan830">│VCS push!│ │bookmark │ commit! │ stash │ head st. Runtime│ sudo</tspan></text>
+        </g>
+        <g
+           id="g834">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,611.889)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text838"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.487999 72.288002 77.087997 81.888 86.688004 91.487999 96.288002 101.184 125.28 130.08 134.88 139.67999 173.37601 178.17599 182.976 187.776 192.672 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.664 293.76001 298.56 303.35999 308.25601 313.056"
+               y="0"
+               id="tspan836">itnet upstream branch tag diff untracked error</tspan></text>
+        </g>
+        <g
+           id="g840">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.796,581.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text844"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan842">ssh</tspan></text>
+        </g>
+        <g
+           id="g846">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,571.489)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text850"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 86.688004 91.487999 96.288002 101.088 105.984 125.28 130.08 134.88 139.67999 144.48 149.28 154.17599 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799"
+               y="0"
+               id="tspan848">txt│ guest FQDN chroot shorten</tspan></text>
+        </g>
+        <g
+           id="g852">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,561.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text856"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.487999 72.288002 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 197.472 202.272 207.07201"
+               y="0"
+               id="tspan854">├┐┌┴┐┌──┴───┐ ┌────┴─────┐┌┴┐ ┌┴┐</tspan></text>
+        </g>
+        <g
+           id="g858" />
+        <path
+           d="M 0,538.939 H 9.65 V 548.989 H 0 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path860" />
+        <g
+           id="g862">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text866"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan864">T </tspan></text>
+        </g>
+        <g
+           id="g868">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.8,541.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text872"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan870"></tspan></text>
+        </g>
+        <g
+           id="g874">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,19.4,541.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text878"><tspan
+               x="0"
+               y="0"
+               id="tspan876"></tspan></text>
+        </g>
+        <path
+           d="M 24.1,538.939 H 28.85 V 548.989 H 24.1 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path880" />
+        <g
+           id="g882">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,24.2,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text886"><tspan
+               x="0"
+               y="0"
+               id="tspan884">█</tspan></text>
+        </g>
+        <path
+           d="M 28.9,538.939 H 62.55 V 548.989 H 28.9 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path888" />
+        <g
+           id="g890">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,29,541.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text894"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896"
+               y="0"
+               id="tspan892">rycieos</tspan></text>
+        </g>
+        <path
+           d="M 62.6,538.939 H 67.35 V 548.989 H 62.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path896" />
+        <g
+           id="g898">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,62.7,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text902"><tspan
+               x="0"
+               y="0"
+               id="tspan900"></tspan></text>
+        </g>
+        <path
+           d="M 67.4,538.939 H 72.15 V 548.989 H 67.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path904" />
+        <g
+           id="g906" />
+        <path
+           d="M 72.2,538.939 H 125.15 V 548.989 H 72.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path908" />
+        <g
+           id="g910">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,72.3,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text914"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001"
+               y="0"
+               id="tspan912">host.fq.dn </tspan></text>
+        </g>
+        <g
+           id="g916">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,125.3,541.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text920"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan918"></tspan></text>
+        </g>
+        <g
+           id="g922">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,135,541.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text926"><tspan
+               x="0"
+               y="0"
+               id="tspan924"></tspan></text>
+        </g>
+        <path
+           d="M 139.7,538.939 H 144.45 V 548.989 H 139.7 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path928" />
+        <g
+           id="g930">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,139.8,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text934"><tspan
+               x="0"
+               y="0"
+               id="tspan932">█</tspan></text>
+        </g>
+        <path
+           d="M 144.5,538.939 H 149.25 V 548.989 H 144.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path936" />
+        <g
+           id="g938" />
+        <path
+           d="M 149.3,538.939 H 158.85 V 548.989 H 149.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path940" />
+        <g
+           id="g942">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,149.4,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text946"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan944">~ </tspan></text>
+        </g>
+        <path
+           d="M 158.9,538.939 H 168.55 V 548.989 H 158.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path948" />
+        <g
+           id="g950">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,159,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text954"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan952">╱ </tspan></text>
+        </g>
+        <path
+           d="M 168.6,538.939 H 192.65 V 548.989 H 168.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path956" />
+        <g
+           id="g958">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,168.7,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text962"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001"
+               y="0"
+               id="tspan960">code </tspan></text>
+        </g>
+        <path
+           d="M 192.7,538.939 H 202.25 V 548.989 H 192.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path964" />
+        <g
+           id="g966">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,192.8,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text970"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan968">╱ </tspan></text>
+        </g>
+        <path
+           d="M 202.3,538.939 H 211.95 V 548.989 H 202.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path972" />
+        <g
+           id="g974">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,202.4,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text978"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan976">… </tspan></text>
+        </g>
+        <path
+           d="M 212,538.939 H 221.55 V 548.989 H 212 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path980" />
+        <g
+           id="g982">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,212.1,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text986"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan984">╱ </tspan></text>
+        </g>
+        <path
+           d="M 221.6,538.939 H 255.25 V 548.989 H 221.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path988" />
+        <g
+           id="g990">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,221.7,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text994"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001"
+               y="0"
+               id="tspan992">files </tspan></text>
+        </g>
+        <g
+           id="g996">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,255.4,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1000"><tspan
+               x="0 4.8000002 9.6960001 313.056 317.85599"
+               y="0"
+               id="tspan998"> </tspan></text>
+        </g>
+        <path
+           d="M 578,538.939 H 592.75 V 548.989 H 578 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1002" />
+        <g
+           id="g1004">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,582.9,541.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'Noto Color Emoji';-inkscape-font-specification:NotoColorEmoji;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1008"><tspan
+               x="0"
+               y="0"
+               id="tspan1006"></tspan></text>
+        </g>
+        <g
+           id="g1010">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,531.089)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1014"><tspan
+               x="0 4.8000002 9.6960001 14.496 19.296 24.096001 28.896 33.695999 38.591999 43.391998 48.192001 52.992001 57.792 62.591999 67.391998 72.192001 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.56799 250.464 255.26401 260.064 264.86401 269.664 274.46399 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 313.056 317.85599 322.65601 327.45599 332.25601 337.15201 341.952 346.75201 351.552 356.35199 361.15201 366.048 370.84799 375.64801 380.448 385.24799 390.048 394.944 399.74399 404.54401 409.34399 414.14401 418.944 423.84 428.64001 433.44 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.73599 481.63199 486.43201 491.23199 496.03201 500.832 505.63199 510.52802 515.328 520.12799 524.92798 529.72803 534.52802 539.42401 544.224 549.02399 553.82397 558.62402 563.42401 568.32001 573.12 577.91998 582.71997 587.52002"
+               y="0"
+               id="tspan1012">━ pyenv ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <path
+           d="M 0,518.739 H 4.75 V 528.789 H 0 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1016" />
+        <g
+           id="g1018">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1022"><tspan
+               x="0"
+               y="0"
+               id="tspan1020">△</tspan></text>
+        </g>
+        <path
+           d="M 4.8,518.739 H 9.55 V 528.789 H 4.8 Z"
+           style="fill:#ffd800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1024" />
+        <g
+           id="g1026">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1030"><tspan
+               x="0"
+               y="0"
+               id="tspan1028"></tspan></text>
+        </g>
+        <path
+           d="M 9.6,518.739 H 14.35 V 528.789 H 9.6 Z"
+           style="fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1032" />
+        <g
+           id="g1034">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.7,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1038"><tspan
+               x="0"
+               y="0"
+               id="tspan1036">█</tspan></text>
+        </g>
+        <path
+           d="M 14.4,518.739 H 19.15 V 528.789 H 14.4 Z"
+           style="fill:#ffd800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1040" />
+        <g
+           id="g1042">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.5,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#fe007f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1046"><tspan
+               x="0"
+               y="0"
+               id="tspan1044">1</tspan></text>
+        </g>
+        <g
+           id="g1048">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,19.3,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1052"><tspan
+               x="0"
+               y="0"
+               id="tspan1050"></tspan></text>
+        </g>
+        <g
+           id="g1054">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,28.9,520.989)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1058"><tspan
+               x="0 4.8959999"
+               y="0"
+               id="tspan1056"> </tspan></text>
+        </g>
+        <g
+           id="g1060">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.796,490.689)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1064"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.896 76.991997 81.792 86.592003 91.391998 96.288002 101.088 105.888 110.688 115.584 120.384 125.184"
+               y="0"
+               id="tspan1062">telnet chroot + RO</tspan></text>
+        </g>
+        <g
+           id="g1066">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.796,480.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1070"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 81.792 86.592003 91.391998 96.288002 101.088 105.888"
+               y="0"
+               id="tspan1068">┌─┴─┐ ┌─┴──┐</tspan></text>
+        </g>
+        <g
+           id="g1072" />
+        <path
+           d="M 0,458.139 H 9.65 V 468.189 H 0 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1074" />
+        <g
+           id="g1076">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1080"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1078">T </tspan></text>
+        </g>
+        <g
+           id="g1082">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.8,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1086"><tspan
+               x="0"
+               y="0"
+               id="tspan1084"></tspan></text>
+        </g>
+        <g
+           id="g1088">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.6,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1092"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1090"></tspan></text>
+        </g>
+        <g
+           id="g1094">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,24.2,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1098"><tspan
+               x="0"
+               y="0"
+               id="tspan1096"></tspan></text>
+        </g>
+        <path
+           d="M 28.9,458.139 H 33.65 V 468.189 H 28.9 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1100" />
+        <g
+           id="g1102">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,29,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1106"><tspan
+               x="0"
+               y="0"
+               id="tspan1104">█</tspan></text>
+        </g>
+        <path
+           d="M 33.7,458.139 H 62.55 V 468.189 H 33.7 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1108" />
+        <g
+           id="g1110">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,33.8,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1114"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001"
+               y="0"
+               id="tspan1112">nojhan</tspan></text>
+        </g>
+        <path
+           d="M 62.6,458.139 H 67.35 V 468.189 H 62.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1116" />
+        <g
+           id="g1118">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,62.7,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1122"><tspan
+               x="0"
+               y="0"
+               id="tspan1120"></tspan></text>
+        </g>
+        <path
+           d="M 67.4,458.139 H 72.15 V 468.189 H 67.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1124" />
+        <g
+           id="g1126" />
+        <path
+           d="M 72.2,458.139 H 96.25 V 468.189 H 72.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1128" />
+        <g
+           id="g1130">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,72.3,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1134"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296"
+               y="0"
+               id="tspan1132">host </tspan></text>
+        </g>
+        <g
+           id="g1136">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,96.4,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1140"><tspan
+               x="0"
+               y="0"
+               id="tspan1138"></tspan></text>
+        </g>
+        <g
+           id="g1142">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,101.2,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#ffd800;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1146"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1144"></tspan></text>
+        </g>
+        <g
+           id="g1148">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,110.9,460.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1152"><tspan
+               x="0"
+               y="0"
+               id="tspan1150"></tspan></text>
+        </g>
+        <path
+           d="M 115.6,458.139 H 120.35 V 468.189 H 115.6 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1154" />
+        <g
+           id="g1156">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,115.7,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1160"><tspan
+               x="0"
+               y="0"
+               id="tspan1158">█</tspan></text>
+        </g>
+        <path
+           d="M 120.4,458.139 H 125.15 V 468.189 H 120.4 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1162" />
+        <g
+           id="g1164" />
+        <path
+           d="M 125.2,458.139 H 134.75 V 468.189 H 125.2 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1166" />
+        <g
+           id="g1168">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,125.3,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1172"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1170">~ </tspan></text>
+        </g>
+        <path
+           d="M 134.8,458.139 H 144.45 V 468.189 H 134.8 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1174" />
+        <g
+           id="g1176">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,134.9,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1180"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1178">╱ </tspan></text>
+        </g>
+        <path
+           d="M 144.5,458.139 H 168.55 V 468.189 H 144.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1182" />
+        <g
+           id="g1184">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,144.6,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1188"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001"
+               y="0"
+               id="tspan1186">code </tspan></text>
+        </g>
+        <path
+           d="M 168.6,458.139 H 178.15 V 468.189 H 168.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1190" />
+        <g
+           id="g1192">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,168.7,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1196"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1194">╱ </tspan></text>
+        </g>
+        <path
+           d="M 178.2,458.139 H 187.85 V 468.189 H 178.2 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1198" />
+        <g
+           id="g1200">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,178.3,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1204"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1202">… </tspan></text>
+        </g>
+        <path
+           d="M 187.9,458.139 H 197.45 V 468.189 H 187.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1206" />
+        <g
+           id="g1208">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,188,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1212"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1210">╱ </tspan></text>
+        </g>
+        <path
+           d="M 197.5,458.139 H 226.35 V 468.189 H 197.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1214" />
+        <g
+           id="g1216">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,197.6,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1220"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296"
+               y="0"
+               id="tspan1218">here </tspan></text>
+        </g>
+        <g
+           id="g1222">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,226.5,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1226"><tspan
+               x="0 4.8000002 9.6960001 308.25601 313.056"
+               y="0"
+               id="tspan1224"> </tspan></text>
+        </g>
+        <path
+           d="M 544.3,458.139 H 549.05 V 468.189 H 544.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1228" />
+        <g
+           id="g1230" />
+        <path
+           d="M 549.1,458.139 H 592.45 V 468.189 H 549.1 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1232" />
+        <g
+           id="g1234">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,549.2,460.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1238"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.591999"
+               y="0"
+               id="tspan1236">15:20:34 </tspan></text>
+        </g>
+        <g
+           id="g1240">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,450.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1244"><tspan
+               x="0 4.8000002 9.6960001 14.496 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999 67.487999 72.288002 77.087997 81.888 86.688004 91.487999 96.288002 101.088 105.984 110.784 115.584 120.384 125.184 129.98399 134.88 139.67999 144.48 149.28 154.08 158.88 163.776 168.576 173.37601 178.17599 182.976 187.776 192.672 197.472 202.272 207.07201 211.87199 216.672 221.56799 226.368 231.168 235.968 240.76801 245.56799 250.464 255.26401 260.064 264.86401 269.664 274.46399 279.35999 284.16 288.95999 293.76001 298.56 303.35999 308.25601 313.056 317.85599 322.65601 327.45599 332.25601 337.15201 341.952 346.75201 351.552 356.35199 361.15201 366.048 370.84799 375.64801 380.448 385.24799 390.048 394.944 399.74399 404.54401 409.34399 414.14401 418.944 423.84 428.64001 433.44 438.23999 443.04001 447.84 452.73599 457.53601 462.336 467.13599 471.936 476.73599 481.63199 486.43201 491.23199 496.03201 500.832 505.63199 510.52802 515.328 520.12799 524.92798 529.72803 534.52802 539.42401 544.224 549.02399 553.82397 558.62402 563.42401 568.32001 573.12 577.91998 582.71997 587.52002"
+               y="0"
+               id="tspan1242">━ devtoolset-8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <path
+           d="M 0,437.939 H 7.95 V 447.989 H 0 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1246" />
+        <g
+           id="g1248">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,440.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:Symbola;-inkscape-font-specification:Symbola;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1252"><tspan
+               x="0"
+               y="0"
+               id="tspan1250"></tspan></text>
+        </g>
+        <g
+           id="g1254">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,8.1,440.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1258"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1256"></tspan></text>
+        </g>
+        <path
+           d="M 17.7,437.939 H 22.45 V 447.989 H 17.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1260" />
+        <g
+           id="g1262">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,17.8,440.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1266"><tspan
+               x="0"
+               y="0"
+               id="tspan1264">±</tspan></text>
+        </g>
+        <path
+           d="M 22.5,437.939 H 27.25 V 447.989 H 22.5 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1268" />
+        <g
+           id="g1270">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,22.6,440.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1274"><tspan
+               x="0"
+               y="0"
+               id="tspan1272"></tspan></text>
+        </g>
+        <path
+           d="M 27.3,437.939 H 32.05 V 447.989 H 27.3 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1276" />
+        <g
+           id="g1278" />
+        <path
+           d="M 32.1,437.939 H 51.25 V 447.989 H 32.1 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1280" />
+        <g
+           id="g1282">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,32.2,440.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1286"><tspan
+               x="0 4.8000002 9.6000004 14.4"
+               y="0"
+               id="tspan1284">main</tspan></text>
+        </g>
+        <path
+           d="M 51.3,437.939 H 56.05 V 447.989 H 51.3 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1288" />
+        <g
+           id="g1290" />
+        <g
+           id="g1292">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,56.2,440.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1296"><tspan
+               x="0 4.8000002 9.6960001 14.496"
+               y="0"
+               id="tspan1294">  </tspan></text>
+        </g>
+        <g
+           id="g1298">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,419.989)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1302"><tspan
+               x="0 4.8000002 9.6000004"
+               y="0"
+               id="tspan1300">└┬┘</tspan></text>
+        </g>
+        <g
+           id="g1304">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,409.889)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#008400;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1308"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296"
+               y="0"
+               id="tspan1306">proxy</tspan></text>
+        </g>
+        <g
+           id="g1310">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,379.589)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1314"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.591999 43.391998 48.192001 52.992001 57.792 62.591999 67.391998 72.192001"
+               y="0"
+               id="tspan1312">Generic example:</tspan></text>
+        </g>
+        <path
+           d="M 0,357.139 H 4.75 V 367.189 H 0 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1316" />
+        <g
+           id="g1318">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,359.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1322"><tspan
+               x="0"
+               y="0"
+               id="tspan1320">X</tspan></text>
+        </g>
+        <g
+           id="g1324">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,4.9,359.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1328"><tspan
+               x="0"
+               y="0"
+               id="tspan1326">█</tspan></text>
+        </g>
+        <path
+           d="M 9.6,357.139 H 14.35 V 367.189 H 9.6 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1330" />
+        <g
+           id="g1332">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,9.7,359.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1336"><tspan
+               x="0"
+               y="0"
+               id="tspan1334"></tspan></text>
+        </g>
+        <path
+           d="M 14.4,357.139 H 19.15 V 367.189 H 14.4 Z"
+           style="fill:#333;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1338" />
+        <g
+           id="g1340">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,14.5,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1344"><tspan
+               x="0"
+               y="0"
+               id="tspan1342">█</tspan></text>
+        </g>
+        <path
+           d="M 19.2,357.139 H 23.95 V 367.189 H 19.2 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1346" />
+        <g
+           id="g1348">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,19.3,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1352"><tspan
+               x="0"
+               y="0"
+               id="tspan1350"></tspan></text>
+        </g>
+        <path
+           d="M 24,357.139 H 28.75 V 367.189 H 24 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1354" />
+        <g
+           id="g1356" />
+        <path
+           d="M 28.8,357.139 H 33.55 V 367.189 H 28.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1358" />
+        <g
+           id="g1360">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,28.9,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1364"><tspan
+               x="0"
+               y="0"
+               id="tspan1362"></tspan></text>
+        </g>
+        <path
+           d="M 33.6,357.139 H 38.35 V 367.189 H 33.6 Z"
+           style="fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1366" />
+        <g
+           id="g1368">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,33.7,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1372"><tspan
+               x="0"
+               y="0"
+               id="tspan1370">█</tspan></text>
+        </g>
+        <path
+           d="M 38.4,357.139 H 48.05 V 367.189 H 38.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1374" />
+        <g
+           id="g1376">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,38.5,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1380"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1378">⌂ </tspan></text>
+        </g>
+        <path
+           d="M 48.1,357.139 H 52.85 V 367.189 H 48.1 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1382" />
+        <g
+           id="g1384">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,48.2,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1388"><tspan
+               x="0"
+               y="0"
+               id="tspan1386"></tspan></text>
+        </g>
+        <path
+           d="M 52.9,357.139 H 57.65 V 367.189 H 52.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1390" />
+        <g
+           id="g1392" />
+        <path
+           d="M 57.7,357.139 H 62.45 V 367.189 H 57.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1394" />
+        <g
+           id="g1396">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,57.8,359.389)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1400"><tspan
+               x="0"
+               y="0"
+               id="tspan1398">~</tspan></text>
+        </g>
+        <path
+           d="M 62.5,357.139 H 67.25 V 367.189 H 62.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1402" />
+        <g
+           id="g1404" />
+        <path
+           d="M 67.3,357.139 H 76.85 V 367.189 H 67.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1406" />
+        <g
+           id="g1408">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,67.4,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1412"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1410">╱ </tspan></text>
+        </g>
+        <path
+           d="M 76.9,357.139 H 100.95 V 367.189 H 76.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1414" />
+        <g
+           id="g1416">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,77,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1420"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296"
+               y="0"
+               id="tspan1418">code </tspan></text>
+        </g>
+        <path
+           d="M 101,357.139 H 110.65 V 367.189 H 101 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1422" />
+        <g
+           id="g1424">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,101.1,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1428"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1426">╱ </tspan></text>
+        </g>
+        <path
+           d="M 110.7,357.139 H 173.25 V 367.189 H 110.7 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1430" />
+        <g
+           id="g1432">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,110.8,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1436"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998 43.296001 48.096001 52.896 57.792"
+               y="0"
+               id="tspan1434">liquidprompt </tspan></text>
+        </g>
+        <g
+           id="g1438"
+           transform="translate(110.8,359.389)">
+          <path
+             d="M 0,-0.9 H 62.6"
+             style="fill:none;stroke:#bababa;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+             id="path1440" />
+        </g>
+        <path
+           d="M 173.3,357.139 H 182.85 V 367.189 H 173.3 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1442" />
+        <g
+           id="g1444">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,173.4,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1448"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1446">╱ </tspan></text>
+        </g>
+        <path
+           d="M 182.9,357.139 H 211.75 V 367.189 H 182.9 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1450" />
+        <g
+           id="g1452">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,183,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#bababa;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1456"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001"
+               y="0"
+               id="tspan1454">theme </tspan></text>
+        </g>
+        <path
+           d="M 211.8,357.139 H 221.45 V 367.189 H 211.8 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1458" />
+        <g
+           id="g1460">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,211.9,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1464"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1462">╱ </tspan></text>
+        </g>
+        <path
+           d="M 221.5,357.139 H 269.55 V 367.189 H 221.5 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1466" />
+        <g
+           id="g1468">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,221.6,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1472"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998 43.296001"
+               y="0"
+               id="tspan1470">dotmatrix </tspan></text>
+        </g>
+        <g
+           id="g1474">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,269.7,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1478"><tspan
+               x="0 4.8000002 9.6960001 269.76001 274.56"
+               y="0"
+               id="tspan1476"> </tspan></text>
+        </g>
+        <path
+           d="M 549,357.139 H 553.75 V 367.189 H 549 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1480" />
+        <g
+           id="g1482" />
+        <path
+           d="M 553.8,357.139 H 592.25 V 367.189 H 553.8 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1484" />
+        <g
+           id="g1486">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,553.9,359.389)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1490"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999"
+               y="0"
+               id="tspan1488">15:20:34</tspan></text>
+        </g>
+        <g
+           id="g1492">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,349.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1496"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998 43.296001 48.192001 52.992001 57.792 62.591999"
+               y="0"
+               id="tspan1494">━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <g
+           id="g1498">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,67.6,349.289)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1502"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.200001 24 28.799999 33.695999 38.495998 43.296001 48.096001 52.896 57.695999 62.591999 67.391998 72.192001 76.991997 81.792 86.592003 91.487999 96.288002 101.088 105.888 110.688 115.488 120.384 125.184 129.98399 134.784 139.584 144.384 149.28 154.08 158.88 163.67999 168.48 173.28 178.17599 182.976 187.776 192.576 197.37601 202.17599 207.07201 211.87199 216.672 221.472 226.272 231.07201 235.968 240.76801 245.56799 250.368 255.168 259.96799 264.86401 269.664 274.46399 279.26401 284.064 288.86401 293.76001 298.56 303.35999 308.16 312.95999 317.76001 322.65601 327.45599 332.25601 337.056 341.85599 346.65601 351.552 356.35199 361.15201 365.952 370.75201 375.552 380.448 385.24799 390.048 394.84799 399.64801 404.448 409.34399 414.14401 418.944 423.74399 428.54401 433.34399 438.23999 443.04001 447.84 452.64001 457.44 462.23999 467.13599 471.936 476.73599 481.53601 486.336 491.13599 496.03201 500.832 505.63199 510.43201 515.23199 520.03198"
+               y="0"
+               id="tspan1500">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</tspan></text>
+        </g>
+        <path
+           d="M 0,336.939 H 7.95 V 346.989 H 0 Z"
+           style="fill:#4c4c4c;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1504" />
+        <g
+           id="g1506">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,0.1,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:Symbola;-inkscape-font-specification:Symbola;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1510"><tspan
+               x="0"
+               y="0"
+               id="tspan1508"></tspan></text>
+        </g>
+        <path
+           d="M 8,336.939 H 12.75 V 346.989 H 8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1512" />
+        <g
+           id="g1514">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,8.1,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1518"><tspan
+               x="0"
+               y="0"
+               id="tspan1516"></tspan></text>
+        </g>
+        <path
+           d="M 12.8,336.939 H 17.55 V 346.989 H 12.8 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1520" />
+        <g
+           id="g1522">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,12.9,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1526"><tspan
+               x="0"
+               y="0"
+               id="tspan1524">±</tspan></text>
+        </g>
+        <g
+           id="g1528">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,17.7,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1532"><tspan
+               x="0"
+               y="0"
+               id="tspan1530"></tspan></text>
+        </g>
+        <g
+           id="g1534">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,22.5,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1538"><tspan
+               x="0"
+               y="0"
+               id="tspan1536"></tspan></text>
+        </g>
+        <path
+           d="M 27.2,336.939 H 31.95 V 346.989 H 27.2 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1540" />
+        <g
+           id="g1542" />
+        <path
+           d="M 32,336.939 H 36.75 V 346.989 H 32 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1544" />
+        <g
+           id="g1546">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,32.1,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1550"><tspan
+               x="0"
+               y="0"
+               id="tspan1548">≠</tspan></text>
+        </g>
+        <path
+           d="M 36.8,336.939 H 41.55 V 346.989 H 36.8 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1552" />
+        <g
+           id="g1554" />
+        <path
+           d="M 41.6,336.939 H 46.35 V 346.989 H 41.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1556" />
+        <g
+           id="g1558">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,41.7,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1562"><tspan
+               x="0"
+               y="0"
+               id="tspan1560"></tspan></text>
+        </g>
+        <path
+           d="M 46.4,336.939 H 51.15 V 346.989 H 46.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1564" />
+        <g
+           id="g1566" />
+        <path
+           d="M 51.2,336.939 H 94.55 V 346.989 H 51.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1568" />
+        <g
+           id="g1570">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,51.3,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1574"><tspan
+               x="0 4.8000002 9.6000004 14.4 19.296 24.096001 28.896 33.695999 38.495998"
+               y="0"
+               id="tspan1572">dotmatrix</tspan></text>
+        </g>
+        <path
+           d="M 94.6,336.939 H 99.35 V 346.989 H 94.6 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1576" />
+        <g
+           id="g1578" />
+        <g
+           id="g1580">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,99.5,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1584"><tspan
+               x="0"
+               y="0"
+               id="tspan1582"></tspan></text>
+        </g>
+        <g
+           id="g1586">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,104.3,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1590"><tspan
+               x="0"
+               y="0"
+               id="tspan1588"></tspan></text>
+        </g>
+        <path
+           d="M 109,336.939 H 113.75 V 346.989 H 109 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1592" />
+        <g
+           id="g1594" />
+        <path
+           d="M 113.8,336.939 H 118.55 V 346.989 H 113.8 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1596" />
+        <g
+           id="g1598">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,113.9,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1602"><tspan
+               x="0"
+               y="0"
+               id="tspan1600">≠</tspan></text>
+        </g>
+        <path
+           d="M 118.6,336.939 H 123.35 V 346.989 H 118.6 Z"
+           style="fill:#007ffe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1604" />
+        <g
+           id="g1606" />
+        <path
+           d="M 123.4,336.939 H 128.15 V 346.989 H 123.4 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1608" />
+        <g
+           id="g1610">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,123.5,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#007ffe;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1614"><tspan
+               x="0"
+               y="0"
+               id="tspan1612"></tspan></text>
+        </g>
+        <path
+           d="M 128.2,336.939 H 132.95 V 346.989 H 128.2 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1616" />
+        <g
+           id="g1618" />
+        <path
+           d="M 133,336.939 H 142.55 V 346.989 H 133 Z"
+           style="fill:#d0d0d0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="path1620" />
+        <g
+           id="g1622">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,133.1,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#4c4c4c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1626"><tspan
+               x="0 4.8000002"
+               y="0"
+               id="tspan1624">✞ </tspan></text>
+        </g>
+        <g
+           id="g1628">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,142.7,339.189)"
+             style="font-variant:normal;font-weight:normal;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Regular;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1632"><tspan
+               x="0"
+               y="0"
+               id="tspan1630"></tspan></text>
+        </g>
+        <g
+           id="g1634" />
+        <g
+           id="g1636">
+          <text
+             xml:space="preserve"
+             transform="matrix(1,0,0,-1,152.3,339.189)"
+             style="font-variant:normal;font-weight:bold;font-size:8px;font-family:'MesloLGS NF';-inkscape-font-specification:MesloLGS-NF-Bold;writing-mode:lr-tb;fill:#d0d0d0;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1640"><tspan
+               x="0"
+               y="0"
+               id="tspan1638"></tspan></text>
+        </g>
+        <g
+           id="g1642" />
+      </g>
+    </g>
+  </g>
+  <metadata
+     id="metadata1943">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Liquid Prompt DotMatrix Design</dc:title>
+        <dc:date>2021-02-07</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>nojhan</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -9,4 +9,5 @@ them as they are added to Liquidprompt.
 
    included/alternate_vcs
    included/powerline
+   included/dotmatrix
 

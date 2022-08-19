@@ -367,7 +367,11 @@ _lp_dotmatrix_theme_prompt() {
         head_width=0
     fi
 
-    local spaced_side+=$(printf "%.0s " $(seq ${head_width}))
+    local spaced_side=""
+    local i
+    for ((i=0; i < head_width; i++)); do
+        spaced_side+=" "
+    done
 
     header+="${spaced_side}${side}"
 

@@ -600,7 +600,9 @@ lp_activate() {
     fi
 
     if (( LP_ENABLE_DETACHED_SESSIONS )); then
+        # shellcheck disable=SC2181
         command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
+        # shellcheck disable=SC2181
         command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
     fi
 
@@ -840,7 +842,7 @@ _lp_fill() {
     local side_as_text="$ret"
     __lp_strip_escapes "$right"
     local head_as_text="$ret"
-    local head_width=$((${COLUMNS}-${#side_as_text}-${#head_as_text}))
+    local head_width=$((COLUMNS-${#side_as_text}-${#head_as_text}))
     if [[ $head_width -lt 0 ]] ; then
         head_width=0
     fi
@@ -851,7 +853,8 @@ _lp_fill() {
         spaces+="$space"
     done
 
-    lp_fill="${left}${spaces}${side}"
+    # shellcheck disable=SC2034
+    lp_fill="${left}${spaces}${right}"
 }
 
 

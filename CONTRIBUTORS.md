@@ -114,6 +114,14 @@ Thanks again to everyone for all of the help and support!
 * Ian Smith (@ismith)
 * Emil Lerch (@elerch)
 * Michael Livshin (@cmm)
+* Slobodan Todorov (@todorowww)
+* Simon Chopin (@schopin-pro)
+* @Mice7R
+* Alan Hoyle (@alanhoyle)
+* David Caro (@Terseus)
+* Mark Korondi (@kmARC)
+* Thomas Guimbretiere (@ProfMobius)
+* Marco d'Itri (@rfc1036)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -242,3 +250,14 @@ Thanks again to everyone for all of the help and support!
 * Tiziano Santoro (@tiziano88)
 * Michael Louis Thaler (@mithaler)
 * Michael Große (@micgro42)
+* Niko Storni (@nikooo777)
+* Chris Weyl (@rsrchboy)
+* Federico Stra (@FedericoStra)
+* Roman (@hatifnatt)
+* Alan Hoyle (@alanhoyle)
+* Janne Himanka (@jhimanka)
+* Peter van Dijk (@Habbie)
+* Martin Blanchard (@t-chaik)
+* François GUÉRIN (@frague59)
+* Florian "KopfKrieg" (@KopfKrieg)
+* @tsangal

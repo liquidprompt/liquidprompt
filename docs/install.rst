@@ -56,16 +56,14 @@ systems:
    * ``ps``
    * ``sed``
    * ``uname``
-   * ``who``
 
 Some features depend on specific commands. If you do not install them, the
 corresponding feature will not be available, but no error will be displayed. See
 the :doc:`config` for more information about available features and what tools
 they require.
 
-   * Battery status requires ``acpi`` on GNU/Linux.
-   * Temperature status requires ``acpi`` or ``sensors`` on GNU/Linux.
    * Terminal formatting requires ``tput``.
+   * Time display requires ``date``.
    * Detached session status looks for ``screen`` and/or ``tmux``.
    * VCS support features require ``git``, ``hg``, ``svn``, ``bzr`` or
      ``fossil`` for their respective repositories.

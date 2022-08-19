@@ -118,6 +118,13 @@ default order if the user does not configure a different template.
    The highest temperature of the available system sensors, displayed with an
    intensity color map as temperature increases. See :attr:`LP_ENABLE_TEMP`.
 
+.. attribute:: LP_WIFI
+
+   The lowest wireless signal strength, displayed with an intensity color map as
+   strength decreases. See :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_JOBS
 
    The number of detached sessions. See :attr:`LP_ENABLE_DETACHED_SESSIONS`.
@@ -162,6 +169,8 @@ default order if the user does not configure a different template.
    colored with :attr:`LP_COLOR_DIRSTACK`. Can be enabled by
    :attr:`LP_ENABLE_DIRSTACK`.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_BRACKET_CLOSE
 
    A closing bracket, designed to go around the core of the prompt (generally
@@ -169,6 +178,13 @@ default order if the user does not configure a different template.
 
    If running in a terminal multiplexer, will be colored. See
    :attr:`LP_COLOR_IN_MULTIPLEXER`.
+
+.. attribute:: LP_SHLVL
+
+   The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored
+   with :attr:`LP_COLOR_SHLVL`. Can be disabled by attr:`LP_ENABLE_SHLVL`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_SCLS
 
@@ -182,15 +198,26 @@ default order if the user does not configure a different template.
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_CONTAINER
+
+   The container status for the current shell. See :attr:`LP_ENABLE_CONTAINER`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_VENV
 
    The current Python (or Conda) virtual environment. See
    :attr:`LP_ENABLE_VIRTUALENV`.
 
+.. attribute:: LP_NODE_VENV
+
+   The current Node.js virtual environment. See :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_RUBY_VENV
 
-   The current Ruby virtual environment. See
-   :attr:`LP_ENABLE_RUBY_VENV`.
+   The current Ruby virtual environment. See :attr:`LP_ENABLE_RUBY_VENV`.
 
    .. versionadded:: 2.1
 
@@ -266,4 +293,3 @@ default order if the user does not configure a different template.
 
    Not actually a part of the default theme, it is used in the default template
    as the final section. See :attr:`LP_PS1_POSTFIX` for details.
-

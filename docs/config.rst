@@ -70,6 +70,8 @@ General
    directory name when shortening the path. See :attr:`LP_PATH_METHOD` for
    details of the specific methods.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_PATH_DEFAULT
    :type: string
 
@@ -151,6 +153,8 @@ General
 
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_PATH_VCS_ROOT
    :type: bool
    :value: 1
@@ -159,6 +163,8 @@ General
    formatting, set by :attr:`LP_COLOR_PATH_VCS_ROOT`. If
    :attr:`LP_ENABLE_SHORTEN_PATH` is enabled, also prevent the path shortening
    from shortening or hiding the VCS root directory.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_PS1_POSTFIX
    :type: string
@@ -187,21 +193,6 @@ General
 
 Features
 --------
-.. attribute:: LP_BATTERY_ID
-   :type: int
-   :value: 0
-
-   Select which battery to use when monitoring level and charging status.
-   Works only with ACPI method of obtaining battery information.
-   Usage example:
-   
-   * Default value for this option is ``0``, meaning default battery will
-     be used when monitoring battery level and charging status.
-   * Any other value must be a valid battery ID. Can be obtained by running
-     ``acpi --battery`` and getting the appropriate ID from the printout.
-
-   .. versionadded:: 2.1
-
 .. attribute:: LP_DELIMITER_KUBECONTEXT_PREFIX
    :type: string
    :value: ""
@@ -281,6 +272,8 @@ Features
 
    See also: :attr:`LP_MARK_DISABLED`.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_ENABLE_AWS_PROFILE
    :type: bool
    :value: 1
@@ -306,8 +299,8 @@ Features
    Add battery percentage colored with :attr:`LP_COLORMAP` if
    :attr:`LP_PERCENTS_ALWAYS` is enabled.
 
-   Will be disabled if ``acpi`` is not found on Linux, or ``pmset`` is not
-   found on MacOS.
+   Will be disabled if ``acpi`` is not found on Linux, fails to read the Linux
+   sysfs system, or ``pmset`` is not found on MacOS.
 
    See also: :attr:`LP_BATTERY_THRESHOLD`, :attr:`LP_MARK_BATTERY`,
    :attr:`LP_MARK_ADAPTER`, :attr:`LP_COLOR_CHARGING_ABOVE`,
@@ -337,6 +330,25 @@ Features
    Will be disabled if ``tput`` is not found.
 
    .. versionadded:: 2.0
+
+.. attribute:: LP_ENABLE_CONTAINER
+   :type: bool
+   :value: 0
+
+   Indicate if the shell is running in a container environment (e.g. Docker,
+   Podman, LXC, Singularity, systemd-nspawn).
+
+   .. note::
+      Containers may inherit some or even no variables from their parent shell,
+      so this may behave inconsisently with different container software.  For
+      example, Docker doesn't inherit anything unless explicitly told to.
+      Singularity in many configurations inherits most variables but shell
+      functions and zsh hooks might not make it in.  For full functionality,
+      liquidprompt may need to be sourced inside the child container.
+
+   See also: :attr:`LP_COLOR_CONTAINER`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_DETACHED_SESSIONS
    :type: bool
@@ -389,8 +401,16 @@ Features
    :type: bool
    :value: 0
 
+   .. deprecated:: 2.1
+      Use :attr:`LP_HOSTNAME_METHOD` set to "full" instead.
+
    Use the fully qualified domain name (FQDN) instead of the short hostname when
    the hostname is displayed.
+
+   .. note::
+      This never functioned as intended, and would only show the FQDN if
+      ``/etc/hostname`` contained the full domain name. For a more portable and
+      reliable version, set :attr:`LP_HOSTNAME_METHOD` to "fqdn".
 
    See also: :attr:`LP_HOSTNAME_ALWAYS`.
 
@@ -413,7 +433,7 @@ Features
 
    Will be disabled if ``hg`` is not found.
 
-   See also: :attr:`LP_MARK_HG`.
+   See also: :attr:`LP_MARK_HG` and :attr:`LP_HG_COMMAND`.
 
 .. attribute:: LP_ENABLE_JOBS
    :type: bool
@@ -465,6 +485,19 @@ Features
    See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
    :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.
 
+.. attribute:: LP_ENABLE_NODE_VENV
+   :type: bool
+   :value: 0
+
+   Display the currently activated nodeenv_ or NVM_ virtual environment.
+
+   See also: :attr:`LP_COLOR_NODE_VENV`.
+
+   .. _nodeenv: https://ekalinin.github.io/nodeenv/
+   .. _NVM: https://github.com/nvm-sh/nvm
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_PERM
    :type: bool
    :value: 1
@@ -481,6 +514,20 @@ Features
    Display a :attr:`LP_MARK_PROXY` mark when an HTTP proxy is detected.
 
    See also: :attr:`LP_COLOR_PROXY`.
+
+.. attribute:: LP_ENABLE_RUBY_VENV
+   :type: bool
+   :value: 1
+
+   Display the currently activated RVM_ or RBENV_ virtual environment.
+
+   See also: :attr:`LP_RUBY_RVM_PROMPT_OPTIONS` and
+   :attr:`LP_COLOR_RUBY_VENV`.
+
+   .. _RVM: https://rvm.io/
+   .. _RBENV: https://github.com/rbenv/rbenv
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_RUNTIME
    :type: bool
@@ -517,6 +564,18 @@ Features
 
    :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
 
+.. attribute:: LP_ENABLE_SHLVL
+   :type: bool
+   :value: 1
+
+   Show the value of ``$SHLVL``, which is the number of nested shells. For
+   example, if one runs ``bash`` inside their shell, it will open a new shell
+   inside their current shell, and this will display "2".
+
+   See also: :attr:`LP_MARK_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_ENABLE_SHORTEN_PATH
    :type: bool
    :value: 1
@@ -548,8 +607,8 @@ Features
 
    .. warning::
       Each evocation of ``sudo`` by default writes to the syslog, and this will
-      run ``sudo`` once each prompt. This is likely to make your sysadmin hate
-      you.
+      run ``sudo`` once each prompt, unless you have NOPASSWD powers. This is
+      likely to make your sysadmin hate you.
 
    See also: :attr:`LP_COLOR_MARK_SUDO`.
 
@@ -570,10 +629,23 @@ Features
 
    Display the highest system temperature if above the threshold.
 
-   Will be disabled if neither ``sensors`` nor ``acpi`` are found.
+   Will be disabled if neither ``sensors`` nor ``acpi`` are found, or fails to
+   read from the Linux sysfs system.
 
    See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`, and
    :attr:`LP_COLORMAP`.
+
+.. attribute:: LP_ENABLE_TERRAFORM
+   :type: bool
+   :value: 0
+
+   Display the currently activated `Terraform`_ workspace.
+
+   See also: :attr:`LP_COLOR_TERRAFORM`.
+
+   .. _Terraform: https://www.terraform.io/docs/language/index.html
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_ENABLE_TIME
    :type: bool
@@ -625,27 +697,28 @@ Features
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
-.. attribute:: LP_ENABLE_RUBY_VENV
-   :type: bool
-   :value: 1
-
-   Display the currently activated RVM_ or RBENV_ virtual environment.
-
-   See also: :attr:`LP_RUBY_RVM_PROMPT_OPTIONS` and
-   :attr:`LP_COLOR_VIRTUALENV`.
-
-   .. _RVM: https://rvm.io/
-   .. _RBENV: https://github.com/rbenv/rbenv
-
-.. attribute:: LP_ENABLE_TERRAFORM
+.. attribute:: LP_ENABLE_WIFI_STRENGTH
    :type: bool
    :value: 0
 
-   Display the currently activated `Terraform`_ workspace.
+   Display an indicator if any wireless signal strength percentage is below
+   :attr:`LP_WIFI_STRENGTH_THRESHOLD`. Also show the strength percentage if
+   :attr:`LP_PERCENTS_ALWAYS` is enabled.
 
-   See also: :attr:`LP_COLOR_TERRAFORM`.
+   Both Linux and MacOS are supported.
 
-   .. _Terraform: https://www.terraform.io/docs/language/index.html
+   See also: :attr:`LP_MARK_WIFI` and :attr:`LP_COLORMAP`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_HG_COMMAND
+   :type: string
+   :value: "hg"
+
+   The command to use for Mercurial commands. Can be used to replace ``hg``
+   with ``rhg`` or ``chg``.
+
+   See also: :attr:`LP_ENABLE_HG` and :attr:`LP_MARK_HG`.
 
    .. versionadded:: 2.1
 
@@ -661,12 +734,34 @@ Features
 
    See also: :attr:`LP_COLOR_HOST` and :attr:`LP_ENABLE_SSH_COLORS`.
 
+.. attribute:: LP_HOSTNAME_METHOD
+   :type: string
+   :value: "short"
+
+   Determine the method for displaying the hostname.
+
+   * **short**: show the first section of the hostname, what is before the first
+     dot. Equal to ``\h`` in Bash or ``%m`` in Zsh.
+   * **full**: show the full hostname, without any domain name. Equal to ``\H``
+     in Bash or ``%M`` in Zsh.
+   * **fqdn**: show the fully qualified domain name, if it exists. Defaults to
+     **full** if not.
+   * **pretty**: show the pretty hostname, also called "machine display name".
+     Defaults to **full** if one does not exist.
+
+   See also: :attr:`LP_HOSTNAME_ALWAYS`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_PERCENTS_ALWAYS
    :type: bool
    :value: 1
 
-   Display the actual values of load and batteries along with their
-   corresponding marks. Disable to only print the colored marks.
+   Display the actual values of load, batteries, and wifi signal strength along
+   with their corresponding marks. Disable to only print the colored marks.
+
+   See also: :attr:`LP_ENABLE_LOAD`, :attr:`LP_ENABLE_BATT`,
+   :attr:`LP_ENABLE_WIFI_STRENGTH`.
 
 .. attribute:: LP_RUBY_RVM_PROMPT_OPTIONS
    :type: array<string>
@@ -678,6 +773,8 @@ Features
    are using RVM (i.e. no effect with RBENV).
 
    .. _`RVM prompt`: https://rvm.io/workflow/prompt
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_TIME_ANALOG
    :type: bool
@@ -776,6 +873,17 @@ Thresholds
 
    :attr:`LP_ENABLE_TEMP` must be enabled to have any effect.
 
+.. attribute:: LP_WIFI_STRENGTH_THRESHOLD
+   :type: int
+   :value: 40
+
+   Display the lowest wireless signal strength when the strength percentage is
+   below this threshold.
+
+   :attr:`LP_ENABLE_WIFI_STRENGTH` must be enabled to have any effect.
+
+   .. versionadded:: 2.1
+
 Marks
 -----
 
@@ -802,7 +910,7 @@ Marks
    Mark used for closing core prompt brackets. Used by the default theme for
    enclosing user, host, and current working directory sections.
 
-   See also: :attr:`LP_MARK_BRACKET_OPEN`.
+   See also: :attr:`LP_MARK_BRACKET_OPEN`, :attr:`LP_MARK_MULTIPLEXER_CLOSE`.
 
 .. attribute:: LP_MARK_BRACKET_OPEN
    :type: string
@@ -811,7 +919,7 @@ Marks
    Mark used for opening core prompt brackets. Used by the default theme for
    enclosing user, host, and current working directory sections.
 
-   See also: :attr:`LP_MARK_BRACKET_CLOSE`.
+   See also: :attr:`LP_MARK_BRACKET_CLOSE`, :attr:`LP_MARK_MULTIPLEXER_OPEN`.
 
 .. attribute:: LP_MARK_BZR
    :type: string
@@ -872,7 +980,7 @@ Marks
    Mark used instead of :attr:`LP_MARK_DEFAULT` to indicate that the current
    directory is inside of a Mercurial repository.
 
-   See also: :attr:`LP_ENABLE_HG`.
+   See also: :attr:`LP_ENABLE_HG` and :attr:`LP_HG_COMMAND`.
 
 .. attribute:: LP_MARK_KUBECONTEXT
    :type: string
@@ -902,6 +1010,28 @@ Marks
 
    See also: :attr:`LP_ENABLE_LOAD`.
 
+.. attribute:: LP_MARK_MULTIPLEXER_CLOSE
+   :type: string
+   :value: $LP_MARK_BRACKET_CLOSE
+
+   Mark used for closing core prompt brackets. Used by the default theme when
+   inside of a multiplexer.
+
+   See also: :attr:`LP_MARK_MULTIPLEXER_OPEN`, :attr:`LP_MARK_BRACKET_CLOSE`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_MARK_MULTIPLEXER_OPEN
+   :type: string
+   :value: $LP_MARK_BRACKET_OPEN
+
+   Mark used for opening core prompt brackets. Used by the default theme when
+   inside of a multiplexer.
+
+   See also: :attr:`LP_MARK_MULTIPLEXER_CLOSE`, :attr:`LP_MARK_BRACKET_OPEN`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_MARK_PERM
    :type: string
    :value: ":"
@@ -920,6 +1050,16 @@ Marks
    Mark used to indicate a proxy is active.
 
    See also: :attr:`LP_ENABLE_PROXY`.
+
+.. attribute:: LP_MARK_SHLVL
+   :type: string
+   :value: "└"
+
+   Mark used to indicate the shell is inside another shell.
+
+   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_MARK_SHORTEN_PATH
    :type: string
@@ -972,6 +1112,16 @@ Marks
    Since VCSH repositories are Git repositories under the hood,
    :attr:`LP_MARK_GIT` is surrounded in this mark.
 
+.. attribute:: LP_MARK_WIFI
+   :type: string
+   :value: "📶"
+
+   Mark used before displaying wireless signal strength.
+
+   See also: :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded:: 2.1
+
 Colors
 ------
 
@@ -1005,9 +1155,10 @@ Valid preset color variables are:
 .. attribute:: LP_COLORMAP
    :type: array<string>
 
-   An array of colors that is used by the battery, load, and temperature
-   features to indicate the severity level of their status. A normal or low
-   status will use the first index, while the last index is the most severe.
+   An array of colors that is used by the battery, load, temperature, and
+   wireless signal strength features to indicate the severity level of their
+   status. A normal or low status will use the first index, while the last index
+   is the most severe.
 
    The default array is::
 
@@ -1024,8 +1175,8 @@ Valid preset color variables are:
           $DANGER_RED
       )
 
-   See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`, and
-   :attr:`LP_ENABLE_TEMP`.
+   See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`,
+   :attr:`LP_ENABLE_TEMP`, and :attr:`LP_ENABLE_WIFI_STRENGTH`.
 
 .. attribute:: LP_COLOR_AWS_PROFILE
    :type: string
@@ -1077,6 +1228,14 @@ Valid preset color variables are:
    branch that the remote tracking branch does not.
 
    Also used to color :attr:`LP_MARK_STASH`.
+
+.. attribute:: LP_COLOR_CONTAINER
+   :type: string
+   :value: $BOLD_BLUE
+
+   Color used to indicate that the current shell is running in a container
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_DIFF
    :type: string
@@ -1133,8 +1292,8 @@ Valid preset color variables are:
    :type: string
    :value: $BOLD_BLUE
 
-   Color used for :attr:`LP_MARK_BRACKET_OPEN` and :attr:`LP_MARK_BRACKET_CLOSE`
-   if the terminal is in a multiplexer.
+   Color used for :attr:`LP_MARK_MULTIPLEXER_OPEN` and
+   :attr:`LP_MARK_MULTIPLEXER_CLOSE` if the terminal is in a multiplexer.
 
 .. attribute:: LP_COLOR_JOB_D
    :type: string
@@ -1192,6 +1351,16 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_SUDO`.
 
+.. attribute:: LP_COLOR_NODE_VENV
+   :type: string
+   :value: $LP_COLOR_VIRTUALENV
+
+   Color used for displaying a Node.js virtual env.
+
+   See also: :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_COLOR_NOWRITE
    :type: string
    :value: $RED
@@ -1220,6 +1389,8 @@ Valid preset color variables are:
 
    Color used for the last path segment, which corresponds to the current
    directory basename.
+
+   .. versionadded:: 2.0
 
 .. attribute:: LP_COLOR_PATH_ROOT
    :type: string
@@ -1251,6 +1422,8 @@ Valid preset color variables are:
 
    :attr:`LP_PATH_VCS_ROOT` must be enabled to have any effect.
 
+   .. versionadded:: 2.0
+
 .. attribute:: LP_COLOR_PROXY
    :type: string
    :value: $BOLD_BLUE
@@ -1259,6 +1432,16 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_PROXY`.
 
+.. attribute:: LP_COLOR_RUBY_VENV
+   :type: string
+   :value: $LP_COLOR_VIRTUALENV
+
+   Color used for displaying a Ruby virtual env.
+
+   See also: :attr:`LP_ENABLE_RUBY_VENV`.
+
+   .. versionadded:: 2.1
+
 .. attribute:: LP_COLOR_RUNTIME
    :type: string
    :value: $YELLOW
@@ -1266,6 +1449,16 @@ Valid preset color variables are:
    Color used for displaying the last command runtime.
 
    See also: :attr:`LP_ENABLE_RUNTIME`.
+
+.. attribute:: LP_COLOR_SHLVL
+   :type: string
+   :value: $BOLD_GREEN
+
+   Color used for displaying the nested shell level.
+
+   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_MARK_SHLVL`.
+
+   .. versionadded:: 2.1
 
 .. attribute:: LP_COLOR_SSH
    :type: string

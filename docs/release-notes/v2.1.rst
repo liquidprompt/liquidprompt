@@ -1,0 +1,67 @@
+Version 2.1 Release Notes
+*************************
+
+Version 2.1 has a whole host of new data sources, features, and compatibility
+fixes.
+
+.. contents::
+   :local:
+
+Title Command
+=============
+
+Liquidprompt can now display the currently running command as part of the
+terminal title. See :attr:`LP_ENABLE_TITLE_COMMAND` for more information.
+
+Development Environments
+========================
+
+Multiple new development environments are now detected and displayed, including
+AWS profiles, container environment, kubectl context, Node.js, Ruby, and
+Terraform workspace.
+
+Some of these sections are disabled by default, so see their respective config
+options for more details and how to enable them:
+
+- :attr:`LP_ENABLE_AWS_PROFILE`
+- :attr:`LP_ENABLE_CONTAINER`
+- :attr:`LP_ENABLE_KUBECONTEXT`
+- :attr:`LP_ENABLE_NODE_VENV`
+- :attr:`LP_ENABLE_RUBY_VENV`
+- :attr:`LP_ENABLE_TERRAFORM`
+
+Linux sysfs interface
+=====================
+
+Both battery and temperature information now support reading from the sysfs
+inteface on Linux. This means ``sensors`` and ``acpi`` are no longer required
+to get battery and temperature information, and the data source is much faster.
+
+Wireless Signal Strength
+========================
+
+A new feature exists to track wireless signal strength, and display the value if
+it falls below a threshold, similar to the battery feature. See
+:attr:`LP_ENABLE_WIFI_STRENGTH` for more information.
+
+Shell Nesting Level
+===================
+
+A new feature to display the number of nested shells. See
+:attr:`LP_ENABLE_SHLVL` for more information.
+
+ShellCheck
+==========
+
+The whole project is now checked with `ShellCheck`_, which has already caught a
+few issues, and will help prevent regressions.
+
+.. _ShellCheck: https://www.shellcheck.net/
+
+Bash-preexec Compatibility
+==========================
+
+Liquidprompt now supports running along side `bash-preexec`_. Simply load
+Liquidprompt `after` bash-preexec.
+
+.. _bash-preexec: https://github.com/rcaloras/bash-preexec

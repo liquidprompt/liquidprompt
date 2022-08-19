@@ -265,6 +265,9 @@ Temperature
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_detect``.
 
+   .. versionchanged:: 2.1
+      No longer takes arguments of what backends to try.
+
 .. function:: __lp_temp_acpi() -> var:lp_temperature
 
    A temperature backend using ``acpi``.
@@ -280,6 +283,12 @@ Temperature
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_sensors``.
       Return variable changed from ``temperature``.
+
+.. function:: __lp_temp_sysfs() -> var:lp_temperature
+
+   A temperature backend reading directly from the Linux sysfs filesystem.
+
+   .. versionadded:: 2.1
 
 Utility
 ---------
@@ -320,3 +329,22 @@ Utility
    replacement for ``wc -l``.
 
    .. versionadded:: 2.0
+
+.. function:: __lp_strip_escapes(string) -> var:ret
+
+   Remove shell escape characters so *string* prints correctly in a terminal
+   title, or can be measured for printing character length.
+
+   .. versionadded:: 2.1
+
+Wireless
+--------
+.. function:: __lp_wifi_signal_strength_raw() -> var:level
+
+   Returns the lowest raw wireless signal strength in dBm. Return ``2`` if no
+   data is found.
+
+   Implementation depends on operating system. This function does not exist on
+   all operating systems.
+
+   .. versionadded:: 2.1

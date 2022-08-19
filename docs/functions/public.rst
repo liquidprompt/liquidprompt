@@ -20,6 +20,8 @@ their config.
 
 .. function:: lp_title([title_string])
 
+   Not to be confused with :func:`_lp_title`.
+
    Set *title_string* as the terminal title. This overrides any title set by the
    current theme.
 

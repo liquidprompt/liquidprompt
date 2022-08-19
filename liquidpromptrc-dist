@@ -20,13 +20,6 @@
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 
-# Use particular battery ID when multiple batteries are reported by ACPI
-# and the default one is wrong.
-# Example of such behaviour is when using Logitech Unified Receiver
-# and ACPI reports keyboard and mouse batteries first, and laptop battery last
-# Run acpi --battery and use Battery # for this value.
-LP_BATTERY_ID=0
-
 # Display the load average over the past minute when above this threshold.
 # This value is scaled per CPU, so on a quad-core machine, the load average
 # would need to be 2.40 or greater to be displayed.
@@ -59,10 +52,6 @@ LP_PATH_KEEP=2
 # set to 1 if you want to always see the hostname
 # set to -1 if you want to never see the hostname
 LP_HOSTNAME_ALWAYS=0
-
-# Use the fully qualified domain name (FQDN) instead of the short hostname when
-# the hostname is displayed
-LP_ENABLE_FQDN=0
 
 # When to display the user name:
 # 1: always display the user name

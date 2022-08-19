@@ -20,6 +20,7 @@ else
   shift
 
   for file in "$@"; do
+    # shellcheck disable=SC1090
     . "$file"
   done
 fi
@@ -53,6 +54,8 @@ LP_ENABLE_TIME=0
 LP_ENABLE_RUNTIME=0
 LP_ENABLE_RUNTIME_BELL=0
 LP_ENABLE_VIRTUALENV=0
+LP_ENABLE_NODE_VENV=0
+LP_ENABLE_RUBY_VENV=0
 LP_ENABLE_TERRAFORM=0
 LP_ENABLE_SCLS=0
 LP_ENABLE_VCS_ROOT=1
@@ -61,6 +64,8 @@ LP_ENABLE_TITLE=0
 LP_ENABLE_SUDO=0
 LP_ENABLE_COLOR=1
 LP_ENABLE_ERROR=0
+LP_ENABLE_SHLVL=0
+LP_ENABLE_AWS_PROFILE=0
 LP_USER_ALWAYS=1
 LP_HOSTNAME_ALWAYS=-1
 
@@ -151,7 +156,7 @@ printf 'Medium prompt:\n\n  %s  \n\n' "$PS1"
 
 # Configure options
 
-_config() {
+_long_config() {
   LP_ENABLE_SHORTEN_PATH=1
   LP_PATH_LENGTH=29
   COLUMNS=100
@@ -168,9 +173,10 @@ _config() {
   LP_ENABLE_RUNTIME=1
   LP_ENABLE_ERROR=1
   LP_ENABLE_DIRSTACK=1
+  LP_ENABLE_SHLVL=1
   LP_PERCENTS_ALWAYS=1
 }
-_config
+_long_config
 
 # Stub data functions
 
@@ -227,6 +233,9 @@ _lp_error() {
 _lp_dirstack() {
   lp_dirstack=3
 }
+_lp_shell_level() {
+  lp_shell_level=2
+}
 
 # Setup Env
 
@@ -235,7 +244,7 @@ PWD="${HOME}/code/liquidprompt/docs/theme"
 # Activate and generate
 
 lp_activate --no-config
-_config
+_long_config
 __lp_set_prompt
 
 printf 'Long prompt:\n\n  %s  \n\n' "$PS1"

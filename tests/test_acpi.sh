@@ -11,7 +11,7 @@ unset -f uname
 LP_ENABLE_BATT=1
 _LP_BATTERY_FUNCTION=__lp_battery_acpi
 
-typeset -a battery_outputs battery_statuses battery_values temp_outputs temp_values battery_ids
+typeset -a battery_outputs battery_statuses battery_values temp_outputs temp_values
 
 # Add test cases to these arrays like below
 
@@ -83,11 +83,14 @@ function test_acpi_battery {
 function test_acpi_temperature {
 
   LP_ENABLE_TEMP=1
+  _LP_LINUX_TEMPERATURE_FILES=("")
   LP_TEMP_THRESHOLD=-1000000
 
   acpi() {
     printf '%s\n' "$__temp_output"
   }
+  # Stub needed to test acpi with no output.
+  sensors() { :; }
 
   local valid
 
@@ -103,7 +106,7 @@ function test_acpi_temperature {
       valid=1
     fi
 
-    __lp_temp_detect acpi
+    __lp_temp_detect
     assertEquals "ACPI temperature detect at index ${index}" "$valid" "$?"
 
     # Set the temp function in case the above detect said it was invalid.

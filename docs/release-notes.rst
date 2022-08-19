@@ -15,3 +15,4 @@ For a full description of what a user needs to do to upgrade, see
 
    release-notes/v1.12
    release-notes/v2.0
+   release-notes/v2.1

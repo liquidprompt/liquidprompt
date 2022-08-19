@@ -4,13 +4,21 @@ set -u
 
 . ../liquidprompt --no-activate
 
-function test_as_text {
-  # The escape sequences are different on Bash and Zsh
-  assertEquals "basic text removal" "a normal string without colors" \
-    "$(_lp_as_text "${_LP_OPEN_ESC}bad text${_LP_CLOSE_ESC}a normal string without ${_LP_OPEN_ESC}color${_LP_CLOSE_ESC}colors")"
+function test_strip_escape {
+  local ret
 
-  assertEquals "control character removal" "string" \
-    "$(_lp_as_text "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}str${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing")"
+  # The escape sequences are different on Bash and Zsh
+  __lp_strip_escapes "${_LP_OPEN_ESC}bad text${_LP_CLOSE_ESC}a normal string without ${_LP_OPEN_ESC}color${_LP_CLOSE_ESC}colors"
+  assertEquals "basic text removal" "a normal string without colors" "$ret"
+
+  __lp_strip_escapes "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}str${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing"
+  assertEquals "control character internal removal" "string" "$ret"
+
+  __lp_strip_escapes "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}st"$'\t'"r${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing"
+  assertEquals "control character external removal" $'st\tring' "$ret"
+
+  __lp_strip_escapes "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}st\\\\r${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing"
+  assertEquals "control character escaped removal" $'st\\ring' "$ret"
 }
 
 function test_line_count {

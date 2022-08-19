@@ -27,11 +27,11 @@ uname -a
 printf -- '---lpb_release:\n'
 lsb_release -a 2>/dev/null || printf '<none>\n'
 printf -- '---/etc/*release:\n'
-cat /etc/*release 2>/dev/null || printf '<none>\n'
+cat /etc/*release 2>/dev/null </dev/null || printf '<none>\n'
 printf -- '---/etc/issue*:\n'
-cat /etc/issue* 2>/dev/null || printf '<none>\n'
+cat /etc/issue* 2>/dev/null </dev/null || printf '<none>\n'
 printf -- '---/proc/version:\n'
-cat /proc/version 2>/dev/null || printf '<none>\n'
+cat /proc/version 2>/dev/null </dev/null || printf '<none>\n'
 
 # Sanity check to verify special characters have not been lost on upload
 printf '\nSpecial character check: \a\b\t\001\r\n'
@@ -82,6 +82,8 @@ test_tool pmset -g batt
 test_tool nproc
 # Not actually a command used, we read directly from the file
 test_tool cat /proc/loadavg
+test_tool cat /proc/net/wireless
+test_tool /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport --getinfo
 test_tool sysctl -n hw.ncpu
 test_tool sysctl -n vm.loadavg
 test_tool kstat -m cpu_info
@@ -89,9 +91,21 @@ test_tool uptime
 
 test_tool sensors -u
 test_tool acpi -t
+_LP_LINUX_TEMPERATURE_FILES=(
+  /sys/class/hwmon/hwmon*/temp*_input
+  # CentOS has an intermediate /device directory:
+  /sys/class/hwmon/hwmon*/device/temp*_input
+  /sys/devices/platform/coretemp.*/hwmon/hwmon*/temp*_input
+  # Older, fallback option
+  /sys/class/thermal/thermal_zone*/temp
+)
+for interface in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
+  test_tool cat "$interface"
+done
 
 test_tool date '+%I %M'
 test_tool tty
 test_tool basename -- /dev/pts/0
 
+# shellcheck disable=SC2016
 printf 'Tests complete.\nMake sure to upload the file directly, do not `cat` and copy paste!\n' >&2

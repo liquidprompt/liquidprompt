@@ -355,8 +355,11 @@ _lp_dotmatrix_theme_prompt() {
     fi
 
     # Merge side in header
-    local side_as_text="$(_lp_as_text "${side}")"
-    local head_as_text="$(_lp_as_text "${header}")"
+    local ret
+    __lp_strip_escapes "$side"
+    local side_as_text="$ret"
+    __lp_strip_escapes "$header"
+    local head_as_text="$ret"
     # FIXME within SSH, COLUMNS seems to be broken
     local head_width=$((${COLUMNS}-${#side_as_text}-${#head_as_text}))
     #-6)) # Why -6? I have no idea.
@@ -384,7 +387,9 @@ _lp_dotmatrix_theme_prompt() {
     if _lp_python_env ; then
         inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
-    local as_text="$(_lp_as_text "${inline}")"
+    local ret
+    __lp_strip_escapes "$inline"
+    local as_text="$ret"
     inline_width=$((${COLUMNS}-${#as_text}))
 
     # Fill up the remaining space.

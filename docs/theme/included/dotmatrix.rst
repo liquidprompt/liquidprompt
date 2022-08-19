@@ -28,7 +28,6 @@ DotMatrix might be as simple as this:
 A typical display of a slightly complex session would look like this:
 
 .. image:: dotmatrix-med-chevron.png
-   :alt: 
 
 The DotMatrix theme also comes as several variants, changing the shape of the segments separators,
 like the (default) "dotmatrix" pixels:
@@ -150,41 +149,21 @@ Liquid Prompt Configuration
 The DotMatrix theme honors the Liquid Prompt configuration options,
 except for the ones defining colors, specific marks and disabling some features.
 
-Hence, the following options are **not honored**:
+The following options are honored:
 
-* :attr:`LP_COLOR_DIRSTACK`
-* :attr:`LP_COLOR_ERR`
-* :attr:`LP_COLOR_HOST`
-* :attr:`LP_COLOR_IN_MULTIPLEXER`
-* :attr:`LP_COLOR_JOB_D`
-* :attr:`LP_COLOR_JOB_R`
-* :attr:`LP_COLOR_JOB_Z`
-* :attr:`LP_COLOR_MARK`
-* :attr:`LP_COLOR_MARK_ROOT`
-* :attr:`LP_COLOR_MARK_SUDO`
-* :attr:`LP_COLOR_NOWRITE`
-* :attr:`LP_COLOR_PATH`
-* :attr:`LP_COLOR_PATH_ROOT`
-* :attr:`LP_COLOR_PROXY`
-* :attr:`LP_COLOR_RUNTIME`
-* :attr:`LP_COLOR_SSH`
-* :attr:`LP_COLOR_SU`
-* :attr:`LP_COLOR_TELNET`
-* :attr:`LP_COLOR_TERRAFORM`
-* :attr:`LP_COLOR_TIME`
-* :attr:`LP_COLOR_USER_ALT`
-* :attr:`LP_COLOR_USER_LOGGED`
-* :attr:`LP_COLOR_USER_ROOT`
-* :attr:`LP_COLOR_VIRTUALENV`
-* :attr:`LP_COLOR_WRITE`
-* :attr:`LP_COLOR_X11_OFF`
-* :attr:`LP_COLOR_X11_ON`
-* :attr:`LP_ENABLE_PERM`
-* :attr:`LP_ENABLE_SSH_COLORS`
-* :attr:`LP_MARK_BRACKET_OPEN`
-* :attr:`LP_MARK_BRACKET_CLOSE`
-* :attr:`LP_MARK_PERM`
-* :attr:`LP_MARK_PREFIX`
+- :attr:`LP_ENABLE_PERM`,
+- :attr:`LP_ENABLE_VCS_DIFFSTATS`,
+- :attr:`LP_ENABLE_UNCOMMITED`,
+- :attr:`LP_MARK_BATTERY`,
+- :attr:`LP_MARK_LOAD`,
+- :attr:`LP_MARK_TEMP`,
+- :attr:`LP_PS1_PREFIX`.
+
+The following options are **not honored**:
+
+- every `LP_COLOR_\*` options.
+- all the others `LP_MARK_\*` options not listed in the above section.
+- :attr:`LP_USER_ALWAYS` (at least a user icon is always displayed).
 
 
 Theme Configuration
@@ -408,4 +387,106 @@ You may overcome the spacing details with these options.
 
    Spacing character for filled sections.
    You probably don't want to touch this.
+
+
+Colors
+______
+
+
+.. attribute:: DOTMATRIX_COLOR_DARK
+   :type: array<int>
+   :value: (252 239 0 0  15   0)
+
+   The color of dark segments.
+
+
+.. attribute:: DOTMATRIX_COLOR_LITE
+   :type: array<int>
+   :value: (239 252 0 0   0  15)
+
+   The color of light segments.
+
+
+.. attribute:: DOTMATRIX_COLOR_GLOW
+   :type: array<int>
+   :value: (  0 252 1 0   0  15)
+
+   The color for bright elements.
+
+
+.. attribute:: DOTMATRIX_COLOR_NOTE
+   :type: array<int>
+   :value: ( 15  33 0 0  15  12)
+
+   The color for notable elements.
+
+
+.. attribute:: DOTMATRIX_COLOR_WARN
+   :type: array<int>
+   :value: (196 220 1 0   0  11)
+
+   The color for elements related to a warning.
+
+
+.. attribute:: DOTMATRIX_COLOR_FAIR
+   :type: array<int>
+   :value: (  0 244 0 0   0   8)
+
+   The color for elements that are not very important.
+
+
+.. attribute:: DOTMATRIX_COLOR_PATH_SHORT
+   :type: array<int>
+   :value: (252 239 0 0   0  15)
+
+   The color of the shorten path marker.
+
+
+.. attribute:: DOTMATRIX_COLOR_PATH_VCS
+   :type: array<int>
+   :value: (252 239 0 1   0  15)
+
+   The color of the VCS repository in the path.
+
+
+.. attribute:: DOTMATRIX_COLOR_PATH_LAST
+   :type: array<int>
+   :value: (15 239 1 0   0  15)
+
+   The color of the current directory.
+
+
+.. attribute:: DOTMATRIX_COLOR_LINE
+   :type: array<int>
+   :value: (244 -1 0 0 15 -1)
+
+   The color of the middle line.
+
+
+.. attribute:: DOTMATRIX_COLOR_MARK
+   :type: array<int>
+   :value: (15 -1 0 0 15 -1)
+
+   The color of the actual prompt mark.
+
+
+.. attribute:: DOTMATRIX_COLOR_SEP_DARK
+   :type: array<int>
+   :value: (  0 -2 0 0  0 -2)
+
+   The color for dark separators.
+
+
+.. attribute:: DOTMATRIX_COLOR_SEP_FAIR
+   :type: array<int>
+   :value: (244 -2 0 0  0 -2)
+
+   The color for fair separators.
+
+
+.. attribute:: DOTMATRIX_COLOR_SEP_LITE
+   :type: array<int>
+   :value: ( 15 -2 0 0 15 -2)
+
+   The color for light separators.
 

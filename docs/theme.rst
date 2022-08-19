@@ -45,6 +45,7 @@ loaded and available, run :func:`lp_theme`::
    default
    powerline_full
    powerline
+   dotmatrix
 
 To switch to a different theme, call :func:`lp_theme` with the name of the theme
 as the argument::

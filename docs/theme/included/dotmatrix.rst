@@ -112,18 +112,19 @@ For example:
    source ~/code/liquidprompt/themes/dotmatrix/dotmatrix.theme && lp_theme dotmatrix
 
 .. note:: The recommended segment markers (the "chevron" variant) uses characters in the private section of unicode
-          that are defined by the "Powerline" project.
+          that are defined by the "Nerd-fonts" project.
           You will either need a compatible font, or use a variant that does not need them, like "text" and "dotmatrix".
 
-          See the `Powerline Fonts installation docs`_ for help on installing this kind of fonts.
+          See the `Nerd-fonts Fonts installation docs`_ for help on installing this kind of fonts.
 
-.. _`Powerline fonts installation docs`: https://powerline.readthedocs.io/en/latest/installation.html#fonts-installation
+.. _`Nerd-fonts fonts installation docs`: https://www.nerdfonts.com/
+
 
 
 Variants
 --------
 
-Variants needing a Powerline font:
+Variants needing a Nerd-fonts font:
 
 - "chevron" (the recommended one),
     .. image:: dotmatrix-short-chevron.png
@@ -183,9 +184,9 @@ __________
    Allowed values:
 
    - "dotmatrix" (the *default*),
-   - "chevron" (the *recommended*, need a Powerline font),
-   - "slant" (need a Powerline font),
-   - "round" (need a Powerline font),
+   - "chevron" (the *recommended*, need a Nerd-fonts font),
+   - "slant" (need a Nerd-fonts font),
+   - "round" (need a Nerd-fonts font),
    - "text" (the one that works anywhere).
 
 

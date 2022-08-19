@@ -151,6 +151,7 @@ _lp_dotmatrix_theme_activate() {
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
         DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-" "}
     else
+        # FIXME avoid subshells
         DOTMATRIX_SPACE_VOID=$(printf '%0.s ' $(seq 1 ${DOTMATRIX_SPACED})) # Regular space
         DOTMATRIX_SPACE_FILL=$(printf '%0.s█' $(seq 1 ${DOTMATRIX_SPACED})) # Inverted space
         DOTMATRIX_SPACE_PATH=${DOTMATRIX_SPACE_PATH:-"${DOTMATRIX_SPACE_VOID}"}
@@ -354,26 +355,9 @@ _lp_dotmatrix_theme_prompt() {
         fi
     fi
 
-    # Merge side in header
-    local ret
-    __lp_strip_escapes "$side"
-    local side_as_text="$ret"
-    __lp_strip_escapes "$header"
-    local head_as_text="$ret"
-    # FIXME within SSH, COLUMNS seems to be broken
-    local head_width=$((${COLUMNS}-${#side_as_text}-${#head_as_text}))
-    #-6)) # Why -6? I have no idea.
-    if [[ $head_width -lt 0 ]] ; then
-        head_width=0
-    fi
-
-    local spaced_side=""
-    local i
-    for ((i=0; i < head_width; i++)); do
-        spaced_side+=" "
-    done
-
-    header+="${spaced_side}${side}"
+    # Right-align the $side with spaces.
+    _lp_fill "$header" "$side" " "
+    header="$lp_fill"
 
     ####################################################################
     # IN LINE
@@ -400,6 +384,7 @@ _lp_dotmatrix_theme_prompt() {
     inline+="${lp_terminal_format}$(printf "%.0s${DOTMATRIX_LINE}" $(seq ${inline_width}))"
     inline+="${NO_COL}"
 
+    # FIXME retry this with avoiding subshells.
     # Gradient line: too slow (or not enough optimized? check COLUMNS change before recompute?)
     # for i in $(seq ${inline_width}) ; do
     #     local dash_color=()

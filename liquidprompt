@@ -826,6 +826,35 @@ _lp_sb() {
     [[ -n "$1" ]] && echo -nE " $1 "
 }
 
+
+# Adds as much $3 character (e.g. spaces) between $1 and $2,
+# so as to make the resulting string the same width than the current terminal.
+_lp_fill() {
+
+    local left="$1" right="$2" space="$3"
+    [[ -z $3 ]] && space=" "
+
+    # Merge side in header
+    local ret
+    __lp_strip_escapes "$left"
+    local side_as_text="$ret"
+    __lp_strip_escapes "$right"
+    local head_as_text="$ret"
+    local head_width=$((${COLUMNS}-${#side_as_text}-${#head_as_text}))
+    if [[ $head_width -lt 0 ]] ; then
+        head_width=0
+    fi
+
+    local spaces=""
+    local i
+    for ((i=0; i < head_width; i++)); do
+        spaces+="$space"
+    done
+
+    lp_fill="${left}${spaces}${side}"
+}
+
+
 # Generates a terminal escape sequence to format the terminal.
 lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
     lp_terminal_format=

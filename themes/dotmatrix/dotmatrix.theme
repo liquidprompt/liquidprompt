@@ -375,6 +375,27 @@ _lp_dotmatrix_theme_prompt() {
     if _lp_python_env ; then
         inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
+    if _lp_node_env ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    if _lp_ruby_env ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    if _lp_container ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    if _lp_kubernetes_context ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    if _lp_terraform_env ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    if _lp_aws_profile ; then
+        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    fi
+    # if _lp_XXX ; then
+    #     inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_XXX}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+    # fi
     local ret
     __lp_strip_escapes "$inline"
     local as_text="$ret"
@@ -406,7 +427,17 @@ _lp_dotmatrix_theme_prompt() {
 
     prompt=""
     lp_terminal_format ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-    prompt+="${lp_terminal_format}·" # Put internet here when (if) it's done.
+
+    if (( LP_ENABLE_WIFI_STRENGTH )) ; then
+        if _lp_wifi_signal_strength ; then
+            lp_terminal_format ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
+            prompt+="${lp_terminal_format}${LP_MARK_WIFI}"
+        else
+            prompt+="${lp_terminal_format}${LP_MARK_WIFI}"
+        fi
+    else
+        prompt+="${lp_terminal_format}·"
+    fi
 
     local net_sep_color=${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
     if _lp_find_vcs && _lp_vcs_commits_off_remote ; then
@@ -447,7 +478,29 @@ _lp_dotmatrix_theme_prompt() {
     __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_MARK[@]+"${DOTMATRIX_COLOR_MARK[@]}"}
     prompt+="${dotmatrix_sep}"
     lp_terminal_format ${DOTMATRIX_COLOR_MARK[@]+"${DOTMATRIX_COLOR_MARK[@]}"}
-    prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+
+    if (( LP_ENABLE_SHLVL )) ; then
+        if _lp_shell_level ; then
+            local i
+            for ((i=0; i < lp_shell_level-1; i++)); do
+                prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+            done
+        fi
+    fi
+
+    if (( LP_ENABLE_SUDO )) ; then
+        if _lp_sudo_active ; then
+            local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
+            [[ -z $dcwfg ]] && dcwfg=-1
+            lp_terminal_format ${dcwfg}
+            prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+        else
+            prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+        fi
+    else
+        prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+    fi
+
     prompt+="${NO_COL}"
 
     # Assemble and setup
@@ -495,7 +548,7 @@ __dotmatrix_activate_connection() {
             connection="${dotmatrix_sep}"
             ;;
         su)
-            _dotmatrix_make_sep_link ${user_color[@]}
+            __dotmatrix_make_sep_link ${user_color[@]}
             connection="${dotmatrix_sep}"
             ;;
         ssh)
@@ -503,7 +556,7 @@ __dotmatrix_activate_connection() {
             connection="${dotmatrix_sep}"
             ;;
         tel)
-            _dotmatrix_make_sep_dang ${user_color[@]}
+            __dotmatrix_make_sep_dang ${user_color[@]}
             connection="${dotmatrix_sep}"
             ;;
         *)
@@ -605,7 +658,7 @@ __dotmatrix_directory_FS() {
                 __dotmatrix_make_sep_open ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
                 fs="${dotmatrix_sep}"
             else
-                _dotmatrix_make_sep_dang ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
+                __dotmatrix_make_sep_dang ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
                 fs="${dotmatrix_sep}"
             fi
         else

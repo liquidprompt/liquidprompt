@@ -393,17 +393,10 @@ _lp_dotmatrix_theme_prompt() {
     if _lp_aws_profile ; then
         inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
-    # if _lp_XXX ; then
-    #     inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_XXX}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
-    # fi
-    local ret
-    __lp_strip_escapes "$inline"
-    local as_text="$ret"
-    inline_width=$((${COLUMNS}-${#as_text}))
 
-    # Fill up the remaining space.
-    inline+="${lp_terminal_format}$(printf "%.0s${DOTMATRIX_LINE}" $(seq ${inline_width}))"
-    inline+="${NO_COL}"
+    # Fill up the remaining space with a line.
+    _lp_fill "$inline" "" "$DOTMATRIX_LINE"
+    inline="${lp_terminal_format}${lp_fill}${NO_COL}"
 
     # FIXME retry this with avoiding subshells.
     # Gradient line: too slow (or not enough optimized? check COLUMNS change before recompute?)

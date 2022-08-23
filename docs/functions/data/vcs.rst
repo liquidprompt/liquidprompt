@@ -63,7 +63,7 @@ this.
 
 .. function:: _lp_vcs_active()
 
-   Returns ``true`` if the detected VCS is enabled in Liquidprompt and the
+   Returns ``true`` if the detected VCS is enabled in Liquid Prompt and the
    current directory is a valid repository of that type. This check should be
    done before running any other ``_lp_vcs_*`` data functions, but can be
    omitted for speed reasons if the checks done by :func:`_lp_find_vcs` are good
@@ -262,7 +262,7 @@ Bazaar
 
 .. function:: _lp_bzr_active()
 
-   Returns ``true`` if Bazaar is enabled in Liquidprompt and the current
+   Returns ``true`` if Bazaar is enabled in Liquid Prompt and the current
    directory is a valid Bazaar repository. This check should be done before
    running any other ``_lp_bzr_*`` data functions if accessing the Bazaar
    data functions directly instead of through the generic interface.
@@ -347,7 +347,7 @@ Fossil
 
 .. function:: _lp_fossil_active()
 
-   Returns ``true`` if Fossil is enabled in Liquidprompt and the current
+   Returns ``true`` if Fossil is enabled in Liquid Prompt and the current
    directory is a valid Fossil repository. This check should be done before
    running any other ``_lp_fossil_*`` data functions if accessing the Fossil
    data functions directly instead of through the generic interface.
@@ -419,7 +419,7 @@ Git
 
 .. function:: _lp_git_active()
 
-   Returns ``true`` if Git is enabled in Liquidprompt and the current directory
+   Returns ``true`` if Git is enabled in Liquid Prompt and the current directory
    is a valid Git repository. This check should be done before running any other
    ``_lp_git_*`` data functions if accessing the Git data functions directly
    instead of through the generic interface.
@@ -547,7 +547,7 @@ Mercurial
 
 .. function:: _lp_hg_active()
 
-   Returns ``true`` if Mercurial is enabled in Liquidprompt and the current
+   Returns ``true`` if Mercurial is enabled in Liquid Prompt and the current
    directory is a valid Mercurial repository. This check should be done before
    running any other ``_lp_hg_*`` data functions if accessing the Mercurial data
    functions directly instead of through the generic interface.
@@ -677,7 +677,7 @@ Subversion
 
 .. function:: _lp_svn_active()
 
-   Returns ``true`` if Subversion is enabled in Liquidprompt and the current
+   Returns ``true`` if Subversion is enabled in Liquid Prompt and the current
    directory is a valid Subversion repository. This check should be done before
    running any other ``_lp_svn_*`` data functions if accessing the Subversion
    data functions directly instead of through the generic interface.

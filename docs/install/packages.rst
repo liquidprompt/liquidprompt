@@ -4,14 +4,14 @@ Packages
 .. contents::
    :local:
 
-Liquidprompt is packaged for many operating systems, though the latest version
+Liquid Prompt is packaged for many operating systems, though the latest version
 in those repositories is not always up to date.
 
 Latest Versions
 ===============
 
 .. image:: https://repology.org/badge/vertical-allrepos/liquidprompt.svg
-   :alt: Liquidprompt packaging status
+   :alt: Liquid Prompt packaging status
 
 Source: `repology.org <https://repology.org/project/liquidprompt/versions>`_.
 
@@ -56,11 +56,11 @@ used instead of the :ref:`shell-installation` instructions.
 
 This will set the required environment:
 
-* The files ``~/.bashrc`` and/or ``~/.zshrc`` are modified to load Liquidprompt
+* The files ``~/.bashrc`` and/or ``~/.zshrc`` are modified to load Liquid Prompt
   at startup.
 * If no previous ``~/.config/liquidpromptrc`` file exists, it will be created.
 
-So, to get Liquidprompt working simply run:
+So, to get Liquid Prompt working simply run:
 
 .. code-block::
 

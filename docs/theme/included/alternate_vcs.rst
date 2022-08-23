@@ -36,7 +36,7 @@ Git repository on a server:
 .. image:: alternate_vcs-med.png
    :alt: 1& [user@server:~/liquidprompt] main ±
 
-When Liquidprompt is displaying nearly everything, it may look like this:
+When Liquid Prompt is displaying nearly everything, it may look like this:
 
 .. image:: alternate_vcs-long.png
    :alt: 🕤 ⌁24% ⌂1.68 θ90° 3d/2&/1z [user@server:~/ … /liquidprompt/docs/theme ⚞3] [pyenv] main(U2 ?1 +10/-5,+3/-1)+ 20s 125 ±
@@ -49,9 +49,9 @@ A demo of what disabling the configuration options might look like:
 Configuration
 =============
 
-Liquidprompt Configuration
---------------------------
-All Liquidprompt config options are respected, **except for**:
+Liquid Prompt Configuration
+---------------------------
+All Liquid Prompt config options are respected, **except for**:
 
 * :attr:`LP_MARK_UNTRACKED` when :attr:`LP_ENABLE_ALT_VCS_STATUS` is enabled.
 
@@ -102,4 +102,3 @@ _______
    :value: "🔖"
 
    The marker string used to indicate the following string is a VCS tag.
-

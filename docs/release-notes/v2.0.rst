@@ -24,7 +24,7 @@ See :doc:`../theme`.
 Example Themes
 ==============
 
-Liquidprompt now ships with some example themes showcasing how the new theme
+Liquid Prompt now ships with some example themes showcasing how the new theme
 engine works. They are also fulling working themes that you can use as your
 daily drivers.
 See :doc:`../theme/included`.
@@ -32,7 +32,7 @@ See :doc:`../theme/included`.
 Data Sources
 ============
 
-To power the themes, all of the data sources in Liquidprompt have been broken
+To power the themes, all of the data sources in Liquid Prompt have been broken
 out into individual data functions that can be called by themes. They are also
 documented in detail in :doc:`../functions/data`.
 
@@ -61,9 +61,9 @@ See :doc:`../functions/theme`.
 Version Control Tracking updates without directory change
 =========================================================
 
-Before, if ``git init`` or similar was run in a directory, Liquidprompt would
+Before, if ``git init`` or similar was run in a directory, Liquid Prompt would
 not display any repository information until the current directory was changed.
-Thanks to the speed improvements, Liquidprompt now checks for a repository at
+Thanks to the speed improvements, Liquid Prompt now checks for a repository at
 each prompt, while still being faster than version 1.12.
 
 Activate Function

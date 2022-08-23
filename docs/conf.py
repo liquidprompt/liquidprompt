@@ -18,8 +18,8 @@ import time
 
 # -- Project information -----------------------------------------------------
 
-project = 'Liquidprompt'
-copyright = '2011-%s, Liquidprompt team' % time.strftime('%Y')
+project = 'Liquid Prompt'
+copyright = '2011-%s, Liquid Prompt team' % time.strftime('%Y')
 author = 'Mark Vander Stel'
 
 
@@ -34,9 +34,9 @@ extensions = [
 
 # This value determines how to group the document tree into manual pages
 man_pages = [
-    ('functions', 'liquidprompt', 'Liquidprompt functions', [], 3),
-    ('config', 'liquidprompt', 'Liquidprompt configuration', [], 5),
-    ('theme', 'liquidprompt', 'Liquidprompt theming', [], 7),
+    ('functions', 'liquidprompt', 'Liquid Prompt functions', [], 3),
+    ('config', 'liquidprompt', 'Liquid Prompt configuration', [], 5),
+    ('theme', 'liquidprompt', 'Liquid Prompt theming', [], 7),
 ]
 
 # A URL to cross-reference manpage directives

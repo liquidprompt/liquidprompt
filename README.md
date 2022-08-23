@@ -14,8 +14,8 @@ You can even use it with your favorite shell – Bash or zsh.
 
 ## Documentation
 
-See the [Liquidprompt documentation](https://liquidprompt.readthedocs.io/) for
-details on installing and configuring Liquidprompt.
+See the [Liquid Prompt documentation](https://liquidprompt.readthedocs.io/) for
+details on installing and configuring Liquid Prompt.
 
 
 ## License

@@ -9,7 +9,7 @@ Preview
 =======
 
 If there is nothing special about the current context, the appearance of
-Liquidprompt is similar to that of a default prompt:
+Liquid Prompt is similar to that of a default prompt:
 
 .. image:: default-short.png
    :alt: [user:~] $
@@ -20,7 +20,7 @@ Git repository on a server:
 .. image:: default-med.png
    :alt: 1& [user@server:~/liquidprompt] main ±
 
-When Liquidprompt is displaying nearly everything (a rare event!), it may look
+When Liquid Prompt is displaying nearly everything (a rare event!), it may look
 like this:
 
 .. image:: default-long.png
@@ -57,7 +57,7 @@ to a variable, and can be arranged in any order in a template. If you want to
 change the theme enough to move things around, but not enough to make your own
 theme, templates will let you change the order of the default theme's pieces.
 
-As the default theme of Liquidprompt was the only theme until version 2.0,
+As the default theme of Liquid Prompt was the only theme until version 2.0,
 templates were sometimes referred to as "themes" in version 1.X.
 
 For a template file to be loaded, its filepath must be set in
@@ -78,7 +78,7 @@ default order if the user does not configure a different template.
 
 .. note::
    Omitting a template section from your template will **not** disable that
-   feature. While it will not be displayed in the prompt, Liquidprompt does not
+   feature. While it will not be displayed in the prompt, Liquid Prompt does not
    know that, and will still generate that template section. If you want to
    speed up your prompt by disabling a section, you must disable it with its
    respective ``LP_ENABLE_*`` option.

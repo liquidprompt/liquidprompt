@@ -4,7 +4,7 @@ set -u
 
 . ../liquidprompt --no-activate
 
-# Liquidprompt depends on PS1 being set to detect if it has installed itself.
+# Liquid Prompt depends on PS1 being set to detect if it has installed itself.
 PS1="$ "
 
 LP_ENABLE_RUBY_VENV=1

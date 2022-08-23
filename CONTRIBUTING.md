@@ -68,7 +68,7 @@ for our standards on shell language.
     $ git clone -o upstream git://github.com/nojhan/liquidprompt.git
     $ cd liquidprompt
 
-    # Run liquidprompt and check that your issue is still on that branch
+    # Run Liquid Prompt and check that your issue is still on that branch
     $ source liquidprompt
 
     # Prepare a fix (include the issue number in the branch name if an issue

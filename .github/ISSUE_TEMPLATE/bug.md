@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve Liquidprompt
+about: Create a report to help us improve Liquid Prompt
 title: ''
 labels: 'bug'
 assignees: ''
@@ -27,13 +27,13 @@ Shell:
 -->
 Operating system:
 <!---
-  Liquidprompt version, tag, or commit.
+  Liquid Prompt version, tag, or commit.
   Find with `git describe --tags --exact-match`
   or `git rev-parse HEAD` in the liquidprompt repo.
   Please only report bugs that you have tested against the master branch
   Example: "v1.12"
 -->
-Liquidprompt version: 
+Liquid Prompt version:
 
 ### Steps to Reproduce
 <!--- Provide an unambiguous set of steps to reproduce this bug.
@@ -50,4 +50,3 @@ Liquidprompt version:
 
 ### Possible Solution
 <!--- Optional, suggest an idea for fixing the bug -->
-

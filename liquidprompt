@@ -842,7 +842,7 @@ _lp_fill() {
     local side_as_text="$ret"
     __lp_strip_escapes "$right"
     local head_as_text="$ret"
-    local head_width=$((COLUMNS-${#side_as_text}-${#head_as_text}))
+    local head_width=$((${COLUMNS:-80}-${#side_as_text}-${#head_as_text}))
     if [[ $head_width -lt 0 ]] ; then
         head_width=0
     fi

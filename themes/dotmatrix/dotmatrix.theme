@@ -151,9 +151,16 @@ _lp_dotmatrix_theme_activate() {
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
         DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-" "}
     else
-        # FIXME avoid subshells
-        DOTMATRIX_SPACE_VOID=$(printf '%0.s ' $(seq 1 ${DOTMATRIX_SPACED})) # Regular space
-        DOTMATRIX_SPACE_FILL=$(printf '%0.s█' $(seq 1 ${DOTMATRIX_SPACED})) # Inverted space
+        local n="${DOTMATRIX_SPACED:-1}"
+        [[ $n -lt 0 ]] && n=1
+        local i
+        DOTMATRIX_SPACE_VOID=""
+        DOTMATRIX_SPACE_FILL=""
+        for ((i=0; i < n; i++)); do
+            DOTMATRIX_SPACE_VOID+=" " # Regular space
+            DOTMATRIX_SPACE_FILL+="█" # Inverted space
+        done
+
         DOTMATRIX_SPACE_PATH=${DOTMATRIX_SPACE_PATH:-"${DOTMATRIX_SPACE_VOID}"}
         DOTMATRIX_SPACE_FIELD=${DOTMATRIX_SPACE_FIELD:-""}
         DOTMATRIX_SPACE_LINE=${DOTMATRIX_SPACE_LINE:-""}

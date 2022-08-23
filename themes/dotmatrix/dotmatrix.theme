@@ -320,7 +320,7 @@ _lp_dotmatrix_theme_prompt() {
 
     local detached_sessions=""
     if _lp_detached_sessions ; then
-        if [[ -n "${lp_detached_sessions}" && "${lp_detached_sessions}" > 0 ]] ; then
+        if [[ -n "${lp_detached_sessions}" && "${lp_detached_sessions}" -gt 0 ]] ; then
             __dotmatrix_make_field "${lp_detached_sessions}d" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
             detached_sessions="${dotmatrix_field}"
         fi
@@ -329,12 +329,12 @@ _lp_dotmatrix_theme_prompt() {
     local running_jobs=""
     local stopped_jobs=""
     if _lp_jobcount ; then
-        if [[ -n "${lp_running_jobs}" && "${lp_running_jobs}" > 0  ]] ; then
+        if [[ -n "${lp_running_jobs}" && "${lp_running_jobs}" -gt 0  ]] ; then
             __dotmatrix_make_field "${lp_running_jobs}&" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
             running_jobs="${dotmatrix_field}"
         fi
 
-        if [[ -n "${lp_stopped_jobs}" && "${lp_stopped_jobs}" > 0  ]] ; then
+        if [[ -n "${lp_stopped_jobs}" && "${lp_stopped_jobs}" -gt 0  ]] ; then
             __dotmatrix_make_field "${lp_stopped_jobs}z" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
             stopped_jobs="${dotmatrix_field}"
         fi
@@ -375,7 +375,6 @@ _lp_dotmatrix_theme_prompt() {
     local lp_terminal_format
     lp_terminal_format ${DOTMATRIX_COLOR_LINE[@]+"${DOTMATRIX_COLOR_LINE[@]}"}
 
-    local inline_width
     if _lp_software_collections ; then
         inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
@@ -406,6 +405,7 @@ _lp_dotmatrix_theme_prompt() {
     inline="${lp_terminal_format}${lp_fill}${NO_COL}"
 
     # FIXME retry this with avoiding subshells.
+    # local inline_width
     # Gradient line: too slow (or not enough optimized? check COLUMNS change before recompute?)
     # for i in $(seq ${inline_width}) ; do
     #     local dash_color=()
@@ -439,7 +439,7 @@ _lp_dotmatrix_theme_prompt() {
         prompt+="${lp_terminal_format}·"
     fi
 
-    local net_sep_color=${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+    # local net_sep_color=${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
     if _lp_find_vcs && _lp_vcs_commits_off_remote ; then
 
         if _lp_http_proxy ; then
@@ -529,13 +529,13 @@ __dotmatrix_activate_connection() {
     local user_color
     case "$user_type" in
         0) # logged-in user
-            user_color=${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
+            user_color=(${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"})
             ;;
         1) # other user
-            user_color=${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+            user_color=(${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"})
             ;;
         2) # root
-            user_color=${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
+            user_color=(${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"})
             ;;
     esac
 
@@ -544,23 +544,23 @@ __dotmatrix_activate_connection() {
     _lp_connection
         case "$lp_connection" in
         lcl)
-            __dotmatrix_make_sep_plug ${user_color[@]}
+            __dotmatrix_make_sep_plug "${user_color[@]}"
             connection="${dotmatrix_sep}"
             ;;
         su)
-            __dotmatrix_make_sep_link ${user_color[@]}
+            __dotmatrix_make_sep_link "${user_color[@]}"
             connection="${dotmatrix_sep}"
             ;;
         ssh)
-            __dotmatrix_make_sep_open ${user_color[@]}
+            __dotmatrix_make_sep_open "${user_color[@]}"
             connection="${dotmatrix_sep}"
             ;;
         tel)
-            __dotmatrix_make_sep_dang ${user_color[@]}
+            __dotmatrix_make_sep_dang "${user_color[@]}"
             connection="${dotmatrix_sep}"
             ;;
         *)
-            __dotmatrix_make_sep_plug ${user_color[@]}
+            __dotmatrix_make_sep_plug "${user_color[@]}"
             connection="${dotmatrix_sep}"
             ;;
         esac
@@ -575,7 +575,7 @@ __dotmatrix_activate_user() {
     case "$user_type" in
         0) # logged-in user
             if [[ -z $lp_username ]] ; then # Honors LP_USER_ALWAYS
-                __dotmatrix_make_field $DOTMATRIX_USER_LOCAL ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
+                __dotmatrix_make_field "$DOTMATRIX_USER_LOCAL" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
                 _DOTMATRIX_USER="$dotmatrix_field"
             else
                 __dotmatrix_make_field "$lp_username" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
@@ -584,7 +584,7 @@ __dotmatrix_activate_user() {
             ;;
         1) # other user
             _lp_username_color
-            __dotmatrix_make_field $lp_username_color ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+            __dotmatrix_make_field "$lp_username_color" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             _DOTMATRIX_USER="$dotmatrix_field"
             ;;
         2) # root
@@ -621,7 +621,7 @@ __dotmatrix_activate_hostname() {
 
 
 __dotmatrix_activate_multiplexer() {
-    local multiplexer
+    local lp_multiplexer multiplexer
     if _lp_multiplexer ; then
         case "$lp_multiplexer" in
             tmux)
@@ -806,7 +806,7 @@ __dotmatrix_prompt_vcs() {
                 else
                     __dotmatrix_make_field "+$lp_vcs_unstaged_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
                     has_lines="$dotmatrix_field"
-                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_NOTE[@]+"${DOTMATRIX_COLOR_SEP_NOTE[@]}"}
+                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_LITE[@]+"${DOTMATRIX_COLOR_SEP_LITE[@]}"}
                     has_lines+="$dotmatrix_sep"
                     __dotmatrix_make_field "-$lp_vcs_unstaged_d_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
                     has_lines+="$dotmatrix_field"
@@ -823,7 +823,7 @@ __dotmatrix_prompt_vcs() {
                 else
                     __dotmatrix_make_field "+$lp_vcs_uncommitted_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
                     has_lines="$dotmatrix_field"
-                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_NOTE[@]+"${DOTMATRIX_COLOR_SEP_NOTE[@]}"}
+                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_LITE[@]+"${DOTMATRIX_COLOR_SEP_LITE[@]}"}
                     has_lines+="$dotmatrix_sep"
                     __dotmatrix_make_field "-$lp_vcs_uncommitted_d_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
                     has_lines+="$dotmatrix_field"
@@ -838,7 +838,7 @@ __dotmatrix_prompt_vcs() {
         fi # uncommitted files
 
         # Stash / untracked / head
-        local stash= untracked= head=
+        local stash="" untracked="" head=""
         if _lp_vcs_stash_count; then
             stash="$DOTMATRIX_MARK_STASH"
         fi
@@ -905,7 +905,7 @@ __dotmatrix_join_fields() {
     dotmatrix_join_fields=""
     local sep="${1-}"
     shift
-    if [[ -n "$@" ]] ; then
+    if [[ -n "$*" ]] ; then
         local first_field="${1-}"
         shift
         dotmatrix_join_fields="${first_field}"
@@ -1041,9 +1041,9 @@ __dotmatrix_make_sep_last() { # no arg
 
 __dotmatrix_make_sep_side() { # no arg
     local lp_terminal_format
-    local dsf=${DOTMATRIX_COLOR_SEP_FAIR[@]+"${DOTMATRIX_COLOR_SEP_FAIR[@]}"}
-    [[ -z $dsf ]] && dsf=-1
-    lp_terminal_format $dsf
+    local dsf=(${DOTMATRIX_COLOR_SEP_FAIR[@]+"${DOTMATRIX_COLOR_SEP_FAIR[@]}"})
+    [[ -z "${dsf[*]}" ]] && dsf=(-1)
+    lp_terminal_format "${dsf[@]}"
     dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[1]}"
 }
 

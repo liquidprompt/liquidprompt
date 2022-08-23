@@ -256,7 +256,7 @@ _lp_dotmatrix_theme_prompt() {
     if _lp_dirstack; then
         __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
         header+="${dotmatrix_sep}"
-        __dotmatrix_make_field $lp_dirstack ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+        __dotmatrix_make_field "$lp_dirstack" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
         header+="${dotmatrix_field}"
     else
         # Recall a dark format to correctly reset sections history
@@ -299,7 +299,7 @@ _lp_dotmatrix_theme_prompt() {
     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_DARK[@]+"${DOTMATRIX_COLOR_SEP_DARK[@]}"}
     # Non-bracketed variables are intentionals,
     # so that if the variable is null, it does not count in the arguments array.
-    __dotmatrix_join_fields "$dotmatrix_sep" $battery $load $temperature
+    __dotmatrix_join_fields "$dotmatrix_sep" "$battery" "$load" "$temperature"
     if [[ -n "$dotmatrix_join_fields" ]] ; then
         side+="${blt_plug}${dotmatrix_join_fields}"
     else
@@ -334,7 +334,7 @@ _lp_dotmatrix_theme_prompt() {
     fi
 
     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_LITE[@]+"${DOTMATRIX_COLOR_SEP_LITE[@]}"}
-    __dotmatrix_join_fields "$dotmatrix_sep" ${detached_sessions} ${running_jobs} ${stopped_jobs}
+    __dotmatrix_join_fields "$dotmatrix_sep" "$detached_sessions" "$running_jobs" "$stopped_jobs"
     if [[ -n "$dotmatrix_join_fields" ]] ; then
         side+="${djc_plug}${dotmatrix_join_fields}"
     else
@@ -485,7 +485,7 @@ _lp_dotmatrix_theme_prompt() {
         if _lp_sudo_active ; then
             local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
             [[ -z $dcwfg ]] && dcwfg=-1
-            lp_terminal_format ${dcwfg}
+            lp_terminal_format $dcwfg
             prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
         else
             prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
@@ -507,20 +507,20 @@ _lp_dotmatrix_theme_prompt() {
 
 __dotmatrix_activate_display() {
     if _lp_connected_display ; then
-        __dotmatrix_make_field $DOTMATRIX_DISPLAY_X11 ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-        _DOTMATRIX_DISPLAY=$dotmatrix_field
+        __dotmatrix_make_field "$DOTMATRIX_DISPLAY_X11" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+        _DOTMATRIX_DISPLAY="$dotmatrix_field"
     else
-        __dotmatrix_make_field $DOTMATRIX_DISPLAY_TEXT ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-        _DOTMATRIX_DISPLAY=$dotmatrix_field
+        __dotmatrix_make_field "$DOTMATRIX_DISPLAY_TEXT" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
+        _DOTMATRIX_DISPLAY="$dotmatrix_field"
     fi
 }
 
 
 __dotmatrix_activate_connection() {
     _lp_user
-    user_type=$?
+    user_type="$?"
     local user_color
-    case $user_type in
+    case "$user_type" in
         0) # logged-in user
             user_color=${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
             ;;
@@ -564,26 +564,26 @@ __dotmatrix_activate_connection() {
 
 __dotmatrix_activate_user() {
     _lp_user
-    user_type=$?
-    case $user_type in
+    user_type="$?"
+    case "$user_type" in
         0) # logged-in user
-            if [[ -z ${lp_username} ]] ; then # Honors LP_USER_ALWAYS
+            if [[ -z $lp_username ]] ; then # Honors LP_USER_ALWAYS
                 __dotmatrix_make_field $DOTMATRIX_USER_LOCAL ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                _DOTMATRIX_USER="${dotmatrix_field}"
+                _DOTMATRIX_USER="$dotmatrix_field"
             else
-                __dotmatrix_make_field $lp_username ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                _DOTMATRIX_USER="${dotmatrix_field}"
+                __dotmatrix_make_field "$lp_username" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
+                _DOTMATRIX_USER="$dotmatrix_field"
             fi
             ;;
         1) # other user
             _lp_username_color
             __dotmatrix_make_field $lp_username_color ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-            _DOTMATRIX_USER="${dotmatrix_field}"
+            _DOTMATRIX_USER="$dotmatrix_field"
             ;;
         2) # root
             _lp_username
-            __dotmatrix_make_field $lp_username ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
-            _DOTMATRIX_USER="${dotmatrix_field}"
+            __dotmatrix_make_field "$lp_username" ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
+            _DOTMATRIX_USER="$dotmatrix_field"
             ;;
     esac
     return $user_type
@@ -608,7 +608,7 @@ __dotmatrix_activate_hostname() {
         hostname="${DOTMATRIX_HOST_LOCAL}"
     fi
 
-    __dotmatrix_make_field $hostname ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+    __dotmatrix_make_field "$hostname" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
     _DOTMATRIX_HOSTNAME="${dotmatrix_field}"
 }
 
@@ -647,24 +647,24 @@ __dotmatrix_directory_FS() {
     local fs
     if (( LP_ENABLE_PERM )); then
         if _lp_chroot ; then
-            if [[ -w "${PWD}" ]]; then
+            if [[ -w "$PWD" ]]; then
                 __dotmatrix_make_sep_open ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                fs="${dotmatrix_sep}"
+                fs="$dotmatrix_sep"
             else
                 __dotmatrix_make_sep_dang ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                fs="${dotmatrix_sep}"
+                fs="$dotmatrix_sep"
             fi
         else
-            if [[ -w "${PWD}" ]]; then
+            if [[ -w "$PWD" ]]; then
                 __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                fs="${dotmatrix_sep}"
+                fs="$dotmatrix_sep"
             else
                 __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-                fs="${dotmatrix_sep}"
+                fs="$dotmatrix_sep"
             fi
         fi
     fi
-    _DOTMATRIX_FS="${fs}"
+    _DOTMATRIX_FS="$fs"
 }
 
 
@@ -708,85 +708,85 @@ __dotmatrix_prompt_vcs() {
         if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
             if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
                 __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="${dotmatrix_field}"
+                has_commit+="$dotmatrix_field"
                 __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="${dotmatrix_sep}"
+                has_commit+="$dotmatrix_sep"
                 __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="${dotmatrix_field}"
+                has_commit+="$dotmatrix_field"
 
             elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
                 __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="${dotmatrix_field}"
+                has_commit+="$dotmatrix_field"
 
             elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
                 __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="${dotmatrix_field}"
+                has_commit+="$dotmatrix_field"
             fi
-            diffs+="${has_commit}"
+            diffs+="$has_commit"
         else
-            __dotmatrix_make_field "${DOTMATRIX_DIFF}" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-            diffs+="${dotmatrix_field}"
+            __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+            diffs+="$dotmatrix_field"
         fi # LP_ENABLE_VCS_DIFFSTATS
 
         # Mark & commits off remote
         local has_commit=
         if _lp_vcs_commits_off_remote; then
             __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-            _DOTMATRIX_VCS="${dotmatrix_field}"
+            _DOTMATRIX_VCS="$dotmatrix_field"
 
             __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_sep}"
+            _DOTMATRIX_VCS+="$dotmatrix_sep"
 
-            _DOTMATRIX_VCS+="${diffs}"
+            _DOTMATRIX_VCS+="$diffs"
 
             if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
                 __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                _DOTMATRIX_VCS+="${dotmatrix_sep}"
+                _DOTMATRIX_VCS+="$dotmatrix_sep"
             else
                 __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-                _DOTMATRIX_VCS+="${dotmatrix_sep}"
+                _DOTMATRIX_VCS+="$dotmatrix_sep"
             fi
 
         else # No commit off remote
             __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-            _DOTMATRIX_VCS="${dotmatrix_field}"
+            _DOTMATRIX_VCS="$dotmatrix_field"
             __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_sep}"
+            _DOTMATRIX_VCS+="$dotmatrix_sep"
         fi # commits off remote
 
         # Branch:bookmark/tag
         if _lp_vcs_branch; then
-            __dotmatrix_make_field "${lp_vcs_branch}" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_field}"
+            __dotmatrix_make_field "$lp_vcs_branch" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
+            _DOTMATRIX_VCS+="$dotmatrix_field"
 
             if _lp_vcs_bookmark; then
                 __dotmatrix_make_field ":${lp_vcs_bookmark}" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-                _DOTMATRIX_VCS+="${dotmatrix_field}"
+                _DOTMATRIX_VCS+="$dotmatrix_field"
             fi
             if _lp_vcs_tag; then
                 __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_LITE[@]+"${DOTMATRIX_COLOR_SEP_LITE[@]}"}
-                __dotmatrix_make_field "${lp_vcs_tag}" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+                __dotmatrix_make_field "$lp_vcs_tag" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
                 _DOTMATRIX_VCS+="${dotmatrix_sep}${dotmatrix_field}"
             fi
 
         elif _lp_vcs_bookmark; then
-            __dotmatrix_make_field "${lp_vcs_bookmark}" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_field}"
+            __dotmatrix_make_field "$lp_vcs_bookmark" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
+            _DOTMATRIX_VCS+="$dotmatrix_field"
         elif _lp_vcs_tag; then
-            __dotmatrix_make_field "${lp_vcs_tag}" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_field}"
+            __dotmatrix_make_field "$lp_vcs_tag" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
+            _DOTMATRIX_VCS+="$dotmatrix_field"
         else
             _lp_vcs_commit_id
             branch="${lp_vcs_commit_id:0:7}"
             __dotmatrix_make_field "${lp_vcs_commit_id:0:7}" ${DOTMATRIX_COLOR_GLOW[@]+"${DOTMATRIX_COLOR_GLOW[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_field}"
+            _DOTMATRIX_VCS+="$dotmatrix_field"
         fi # vcs branch
 
         # Diff stats
         local ret has_lines=
         if _lp_vcs_uncommitted_files; then
             __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-            _DOTMATRIX_VCS+="${dotmatrix_sep}"
+            _DOTMATRIX_VCS+="$dotmatrix_sep"
 
             _lp_vcs_unstaged_lines; ret=$?
             # Only show unstaged changes if the VCS supports staging, otherwise
@@ -795,14 +795,14 @@ __dotmatrix_prompt_vcs() {
                 if [[ "$lp_vcs_unstaged_i_lines" == "$lp_vcs_unstaged_d_lines" ]] ; then
                     # If same number of lines inserted and deleted: display a single number.
                     __dotmatrix_make_field "±$lp_vcs_unstaged_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines="${dotmatrix_field}"
+                    has_lines="$dotmatrix_field"
                 else
                     __dotmatrix_make_field "+$lp_vcs_unstaged_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines="${dotmatrix_field}"
+                    has_lines="$dotmatrix_field"
                     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_NOTE[@]+"${DOTMATRIX_COLOR_SEP_NOTE[@]}"}
                     has_lines+="$dotmatrix_sep"
                     __dotmatrix_make_field "-$lp_vcs_unstaged_d_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines+="${dotmatrix_field}"
+                    has_lines+="$dotmatrix_field"
                 fi
 
             elif (( ret == 1 )); then
@@ -812,21 +812,21 @@ __dotmatrix_prompt_vcs() {
                 _lp_vcs_uncommitted_lines
                 if [[ "$lp_vcs_uncommitted_i_lines" == "$lp_vcs_uncommitted_d_lines" ]] ; then
                     __dotmatrix_make_field "±$lp_vcs_uncommitted_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines="${dotmatrix_field}"
+                    has_lines="$dotmatrix_field"
                 else
                     __dotmatrix_make_field "+$lp_vcs_uncommitted_i_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines="${dotmatrix_field}"
+                    has_lines="$dotmatrix_field"
                     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_NOTE[@]+"${DOTMATRIX_COLOR_SEP_NOTE[@]}"}
                     has_lines+="$dotmatrix_sep"
                     __dotmatrix_make_field "-$lp_vcs_uncommitted_d_lines" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_lines+="${dotmatrix_field}"
+                    has_lines+="$dotmatrix_field"
                 fi
             fi
             if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
-                _DOTMATRIX_VCS+="${has_lines}"
+                _DOTMATRIX_VCS+="$has_lines"
             else
-                __dotmatrix_make_field "${DOTMATRIX_DIFF}" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                _DOTMATRIX_VCS+="${dotmatrix_field}"
+                __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                _DOTMATRIX_VCS+="$dotmatrix_field"
             fi # LP_ENABLE_VCS_DIFFSTATS
         fi # uncommitted files
 
@@ -847,7 +847,7 @@ __dotmatrix_prompt_vcs() {
         if [[ -n "$stash" || -n "$untracked" || -n "$head" ]] ; then
             if [[ -z $has_lines ]] ; then
                 __dotmatrix_make_sep_mid ${DOTMATRIX_COLOR_SEP_FAIR[@]+"${DOTMATRIX_COLOR_SEP_FAIR[@]}"}
-                _DOTMATRIX_VCS+=" $dotmatrix_sep "
+                _DOTMATRIX_VCS+=" ${dotmatrix_sep} "
             else
                 __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
                 _DOTMATRIX_VCS+="$dotmatrix_sep"
@@ -870,7 +870,7 @@ __dotmatrix_prompt_vcs() {
         else # no stash
             if [[ -n "$untracked" ]] ; then
                 __dotmatrix_make_field "$untracked" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-                _DOTMATRIX_VCS+="${dotmatrix_field}"
+                _DOTMATRIX_VCS+="$dotmatrix_field"
                 if [[ -n "$head" ]] ; then
                     __dotmatrix_make_field "$head" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
                     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_LITE[@]+"${DOTMATRIX_COLOR_SEP_LITE[@]}"}
@@ -879,7 +879,7 @@ __dotmatrix_prompt_vcs() {
             else # no untracked
                 if [[ -n "$head" ]] ; then
                     __dotmatrix_make_field "$head" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-                    _DOTMATRIX_VCS+="${dotmatrix_field}"
+                    _DOTMATRIX_VCS+="$dotmatrix_field"
                 fi
             fi
         fi # stash
@@ -903,6 +903,7 @@ __dotmatrix_join_fields() {
         shift
         dotmatrix_join_fields="${first_field}"
         for f in "$@"; do
+            [[ -z $f ]] && continue
             dotmatrix_join_fields+="${sep}${f}"
         done
     fi
@@ -941,7 +942,7 @@ __dotmatrix_make_sep_plug() { # color
         sep="${DOTMATRIX_MEAN}"
     fi
 
-    lp_terminal_format -3 $bg 0 0 -1 $fbg
+    lp_terminal_format -3 "$bg" 0 0 -1 "$fbg"
     dotmatrix_sep="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${sep}${DOTMATRIX_SPACE_VOID}"
 }
 
@@ -954,15 +955,15 @@ __dotmatrix_make_sep_link() { # color
     local fbg="${6-}"
     [[ -z $fbg ]] && fbg=-1
 
-    lp_terminal_format -3 -1 0 0 -1 $fbg
+    lp_terminal_format -3 -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_LINK[0]}"
 
     local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[0]}"
     [[ -z $dsfg ]] && dsfg=-1
-    lp_terminal_format ${dsf} -1 0 0 -1 $fbg
+    lp_terminal_format "$dsf" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[1]}"
 
-    lp_terminal_format $fg -1 0 0 -1 $fbg
+    lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[2]}${DOTMATRIX_SPACE_FILL}"
 }
 
@@ -974,15 +975,15 @@ __dotmatrix_make_sep_open() { # color
     local fbg="${6-}"
     [[ -z $fbg ]] && fbg=-1
 
-    lp_terminal_format -3 -1 0 0 -1 $fbg
+    lp_terminal_format -3 -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_OPEN[0]}"
 
     local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[0]}"
     [[ -z $dsfg ]] && dsfg=-1
-    lp_terminal_format ${dsfg} -1 0 0 -1 $fbg
+    lp_terminal_format "$dsfg" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[1]}"
 
-    lp_terminal_format $fg -1 0 0 -1 $fbg
+    lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[2]}${DOTMATRIX_SPACE_FILL}"
 }
 
@@ -994,15 +995,15 @@ __dotmatrix_make_sep_dang() { # color
     local fbg="${6-}"
     [[ -z $fbg ]] && fbg=-1
 
-    lp_terminal_format -3 -1 0 0 -1 $fbg
+    lp_terminal_format -3 -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_DANG[0]}"
 
     local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
     [[ -z $dcwfg ]] && dcwfg=-1
-    lp_terminal_format ${dcwfg} -1 0 0 -1 $fbg
+    lp_terminal_format "$dcwfg" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[1]}"
 
-    lp_terminal_format $fg -1 0 0 -1 $fbg
+    lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
     dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[2]}${DOTMATRIX_SPACE_FILL}"
 }
 
@@ -1014,7 +1015,7 @@ __dotmatrix_make_sep_soft() { # color
     local fbg="${5-}"
     [[ -z $fbg ]] && fbg=-1
 
-    lp_terminal_format $fg -2 0 0 $fbg
+    lp_terminal_format "$fg" -2 0 0 "$fbg"
     dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_SOFT}"
 }
 
@@ -1026,7 +1027,7 @@ __dotmatrix_make_sep_mid() { # color
     local fbg="${5-}"
     [[ -z $fbg ]] && fbg=-1
 
-    lp_terminal_format $fg -2 0 0 $fbg
+    lp_terminal_format "$fg" -2 0 0 "$fbg"
     dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_MEAN}"
 }
 
@@ -1040,7 +1041,7 @@ __dotmatrix_make_sep_side() { # no arg
     local lp_terminal_format
     local dsf=${DOTMATRIX_COLOR_SEP_FAIR[@]+"${DOTMATRIX_COLOR_SEP_FAIR[@]}"}
     [[ -z $dsf ]] && dsf=-1
-    lp_terminal_format ${dsf}
+    lp_terminal_format $dsf
     dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[1]}"
 }
 

@@ -839,17 +839,20 @@ _lp_fill() {
     # Merge side in header
     local ret
     __lp_strip_escapes "$left"
-    local side_as_text="$ret"
+    local left_as_text="$ret"
     __lp_strip_escapes "$right"
-    local head_as_text="$ret"
-    local head_width=$((${COLUMNS:-80}-${#side_as_text}-${#head_as_text}))
-    if [[ $head_width -lt 0 ]] ; then
-        head_width=0
+    local right_as_text="$ret"
+    local space_width=$((${COLUMNS:-80}-${#left_as_text}-${#right_as_text}))
+    if [[ $space_width -lt 0 ]] ; then
+        # FIXME this would be larger than the actual width.
+        # Maybe think of an option to reduce either the right or left side?
+        lp_fill="${left}${right}"
+        return
     fi
 
     local spaces=""
     local i
-    for ((i=0; i < head_width; i++)); do
+    for ((i=0; i < space_width; i++)); do
         spaces+="$space"
     done
 

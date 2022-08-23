@@ -97,7 +97,7 @@ The following diagram shows almost all the possible states of a DotMatrix Liquid
 Setup
 =====
 
-.. versionadded:: 2.1.3
+.. versionadded:: 2.2
 
 To actually use the DotMatrix theme, you need to add a few configuration commands to the script that loads the Liquid Prompt.
 For example:
@@ -276,6 +276,19 @@ The following options configure some marks that will be used across all variants
    :value: "■"
 
    The actual prompt marker, right where the user type text.
+
+
+.. attribute:: DOTMATRIX_ENABLE_GRADIENT_LINE
+    :type: boolean
+    :value: 0
+
+    If set to 0 (the default),  will draw the line of the middle section
+    as a sequence of :attr:`DOTMATRIX_LINE` characters,
+    using the :attr:`DOTMATRIX_COLOR_LINE` color.
+
+    If set to 1, will draw the same line with a gradient of color
+    interpolated from :attr:`DOTMATRIX_COLOR_LINE_START`
+    to :attr:`DOTMATRIX_COLOR_LINE_END`.
 
 
 Variant Markers
@@ -490,4 +503,26 @@ ______
    :value: ( 15 -2 0 0 15 -2)
 
    The color for light separators.
+
+
+.. attribute:: DOTMATRIX_COLOR_LINE_START
+    :type: array<int>
+    :value: (255 -1 1 0 15 -1)
+
+    The color starting the gradient of the line of the middle section.
+    Default is white.
+
+    Valus being linearly interpolated up to :attr:`DOTMATRIX_COLOR_LINE_END`,
+    it is recommended to stick to aligned ANSI values (i.e. greys)
+
+
+.. attribute:: DOTMATRIX_COLOR_LINE_END
+    :type: array<int>
+    :value: (232 -1 1 0 15 -1)
+
+    The color ending the gradient of the line of the middle section.
+    Default is black.
+
+    Valus being linearly interpolated from :attr:`DOTMATRIX_COLOR_LINE_START`,
+    it is recommended to stick to aligned ANSI values (i.e. greys).
 

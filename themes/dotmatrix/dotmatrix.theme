@@ -14,6 +14,8 @@ _lp_dotmatrix_theme_activate() {
     DOTMATRIX_MARK_UNTRACKED=${DOTMATRIX_MARK_UNTRACKED:-"?"} # ⛶
     DOTMATRIX_DIFF=${DOTMATRIX_DIFF:-"≠"}
 
+    DOTMATRIX_ENABLE_GRADIENT_LINE=${DOTMATRIX_ENABLE_GRADIENT_LINE:-0}
+
     # Sets of characters
     DOTMATRIX_VARIANT=${DOTMATRIX_VARIANT:-"dotmatrix"}
     if [[ "${DOTMATRIX_VARIANT}" == "dotmatrix" ]] ; then
@@ -200,8 +202,8 @@ _lp_dotmatrix_theme_activate() {
     DOTMATRIX_COLOR_LINE=( ${DOTMATRIX_COLOR_LINE[@]+"${DOTMATRIX_COLOR_LINE[@]}"} )
     [[ ${#DOTMATRIX_COLOR_LINE[@]} == 0 ]] && DOTMATRIX_COLOR_LINE=(244 -1 0 0 15 -1)
 
-    # DOTMATRIX_COLOR_LINE_START=( ${DOTMATRIX_COLOR_LINE_START[@]+"${DOTMATRIX_COLOR_LINE_START[@]}"} )
-    # [[ ${#DOTMATRIX_COLOR_LINE_START[@]} == 0 ]] && DOTMATRIX_COLOR_LINE_START=(255 -1 1 0 15 -1)
+    DOTMATRIX_COLOR_LINE_START=( ${DOTMATRIX_COLOR_LINE_START[@]+"${DOTMATRIX_COLOR_LINE_START[@]}"} )
+    [[ ${#DOTMATRIX_COLOR_LINE_START[@]} == 0 ]] && DOTMATRIX_COLOR_LINE_START=(255 -1 1 0 15 -1)
 
     DOTMATRIX_COLOR_LINE_END=( ${DOTMATRIX_COLOR_LINE_END[@]+"${DOTMATRIX_COLOR_LINE_END[@]}"} )
     [[ ${#DOTMATRIX_COLOR_LINE_END[@]} == 0 ]] && DOTMATRIX_COLOR_LINE_END=(232 -1 1 0 15 -1)
@@ -370,56 +372,68 @@ _lp_dotmatrix_theme_prompt() {
     # IN LINE
     ####################################################################
 
-    inline="$LP_PS1_PREFIX${NO_COL}"
-
     local lp_terminal_format
     lp_terminal_format ${DOTMATRIX_COLOR_LINE[@]+"${DOTMATRIX_COLOR_LINE[@]}"}
 
+    inline="${NO_COL}$LP_PS1_PREFIX${lp_terminal_format}"
+
     if _lp_software_collections ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_python_env ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_node_env ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_ruby_env ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_container ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_kubernetes_context ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_terraform_env ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
     if _lp_aws_profile ; then
-        inline+="${inline}${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
     fi
 
-    # Fill up the remaining space with a line.
-    _lp_fill "$inline" "" "$DOTMATRIX_LINE"
-    inline="${lp_terminal_format}${lp_fill}${NO_COL}"
+    if ((DOTMATRIX_ENABLE_GRADIENT_LINE)); then
+        # Fill up the center section with a line colored as a gradient.
+        local ret
+        __lp_strip_escapes "$inline"
+        local left_as_text="$ret"
+        local line_width=$((${COLUMNS:-80}-${#left_as_text}))
 
-    # FIXME retry this with avoiding subshells.
-    # local inline_width
-    # Gradient line: too slow (or not enough optimized? check COLUMNS change before recompute?)
-    # for i in $(seq ${inline_width}) ; do
-    #     local dash_color=()
-    #     for c in $(seq 0 $(${#DOTMATRIX_COLOR_LINE_START[@]+"${DOTMATRIX_COLOR_LINE_START[@]}-}1)) ); do
-    #         f=$(bc -l <<< "$i / ${inline_width}")
-    #         a=${DOTMATRIX_COLOR_LINE_START[c]}
-    #         b=${DOTMATRIX_COLOR_LINE_END[c]}
-    #         j=$(LC_ALL=C;printf "%.*f" 0 "$(bc -l <<< "($a)+(($b)-($a))*($f)")")
-    #         dash_color+=($j)
-    #     done
-    #
-    #     lp_terminal_format ${dash_color[@]+"${dash_color[@]}"}
-    #     inline+="${lp_terminal_format}${inline}"
-    # done
+        local line="$inline"
+        local i c f a b j
+        for ((i=0; i < line_width; i++)); do # For each character in the line.
+            local dash_colors=()
+            # for ((c=0; c < colors_nb-1; c++)); do # For each color parameter.
+            for ((c=0; c < 6; c++)); do # For each color parameter.
+                a="${DOTMATRIX_COLOR_LINE_START[c]}"
+                b="${DOTMATRIX_COLOR_LINE_END[c]}"
+                j=$((a+(b-a)*i/line_width))
+                dash_colors+=("$j")
+            done
+            lp_terminal_format "${dash_colors[@]}"
+            line+="${lp_terminal_format}${DOTMATRIX_LINE}"
+            # line+="${lp_terminal_format}${i}(${dash_colors[@]}) "
+        done
+
+        inline="${line}${NO_COL}"
+
+    else
+        # Fill up the remaining space with a fixed-color line.
+        _lp_fill "$inline" "" "$DOTMATRIX_LINE"
+        # Format here is DOTMATRIX_COLOR_LINE.
+        inline="${lp_terminal_format}${lp_fill}${NO_COL}"
+    fi
+
 
     ####################################################################
     # PROMPT LINE

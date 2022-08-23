@@ -833,8 +833,7 @@ _lp_sb() {
 # so as to make the resulting string the same width than the current terminal.
 _lp_fill() {
 
-    local left="$1" right="$2" space="$3"
-    [[ -z $3 ]] && space=" "
+    local left="$1" right="$2" space="${3:-" "}"
 
     # Merge side in header
     local ret

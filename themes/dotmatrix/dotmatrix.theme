@@ -914,12 +914,7 @@ __dotmatrix_make_field() { # string, (color array)
     [[ -z $string ]] && return 1
 
     shift
-    local format="$@"
-    if [[ -z $format ]] ; then
-        lp_terminal_format -1
-    else
-        lp_terminal_format $format
-    fi
+    lp_terminal_format "$@"
 
     dotmatrix_field="${lp_terminal_format}${DOTMATRIX_SPACE_FIELD}${string}${DOTMATRIX_SPACE_FIELD}"
 }

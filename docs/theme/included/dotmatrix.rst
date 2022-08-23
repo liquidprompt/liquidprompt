@@ -83,7 +83,7 @@ For instance, in the following prompt, you can see that the user is in a Git rep
 The screenshot also shows that the last command ended in an error, hence the red-over-yellow error code.
 
 The upper section shows a classical state of the prompt: a shell within a graphical server ("X"),
-for the default login user (""), on localhost (""), in the liquidprompt directory, which is underlined because it is also a VCS repository.
+for the default login user ("", a figure), on localhost ("", an island), in the liquidprompt directory, which is underlined because it is also a VCS repository.
 
 
 Full description

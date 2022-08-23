@@ -99,12 +99,12 @@ Setup
 
 .. versionadded:: 2.2
 
-To actually use the DotMatrix theme, you need to add a few configuration commands to the script that loads the Liquid Prompt.
+To actually use the DotMatrix theme, you need to add a few configuration commands to the script that loads Liquid Prompt.
 For example:
 
 .. code-block:: bash
 
-   # Load the Liquid Prompt.
+   # Load Liquid Prompt.
    source ~/.liquidprompt
    # Configure the desired variant.
    DOTMATRIX_VARIANT="chevron"
@@ -147,7 +147,7 @@ Configuration
 Liquid Prompt Configuration
 ---------------------------
 
-The DotMatrix theme honors the Liquid Prompt configuration options,
+The DotMatrix theme honors Liquid Prompt configuration options,
 except for the ones defining colors, specific marks and disabling some features.
 
 The following options are honored:
@@ -162,8 +162,8 @@ The following options are honored:
 
 The following options are **not honored**:
 
-- every `LP_COLOR_\*` options.
-- all the others `LP_MARK_\*` options not listed in the above section.
+- every ``LP_COLOR_\*`` options.
+- all the others ``LP_MARK_\*`` options not listed in the above section.
 - :attr:`LP_USER_ALWAYS` (at least a user icon is always displayed).
 
 
@@ -217,7 +217,7 @@ The following options configure some marks that will be used across all variants
 
    The marker used to indicates that the shell is in text mode,
    i.e. that does not have a graphical display
-   (more rigorously: there is no X11 `DISPLAY` environment variable).
+   (more rigorously: there is no X11 :envvar:`DISPLAY` environment variable).
 
 
 .. attribute:: DOTMATRIX_DISPLAY_X11
@@ -225,7 +225,7 @@ The following options configure some marks that will be used across all variants
    :value: "X"
 
    The marker used to indicates that the shell does have access to a graphical server
-   (more rigorously: there is a X11 `DISPLAY` environment variable).
+   (more rigorously: there is a X11 :envvar:`DISPLAY` environment variable).
 
 
 .. attribute:: DOTMATRIX_HOST_LOCAL

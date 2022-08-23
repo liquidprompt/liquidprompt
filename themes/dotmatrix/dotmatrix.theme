@@ -306,8 +306,6 @@ _lp_dotmatrix_theme_prompt() {
     fi
 
     __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_SEP_DARK[@]+"${DOTMATRIX_COLOR_SEP_DARK[@]}"}
-    # Non-bracketed variables are intentionals,
-    # so that if the variable is null, it does not count in the arguments array.
     __dotmatrix_join_fields "$dotmatrix_sep" "$battery" "$load" "$temperature"
     if [[ -n "$dotmatrix_join_fields" ]] ; then
         side+="${blt_plug}${dotmatrix_join_fields}"
@@ -493,24 +491,20 @@ _lp_dotmatrix_theme_prompt() {
     prompt+="${dotmatrix_sep}"
     lp_terminal_format ${DOTMATRIX_COLOR_MARK[@]+"${DOTMATRIX_COLOR_MARK[@]}"}
 
-    if (( LP_ENABLE_SHLVL )) ; then
-        if _lp_shell_level ; then
-            local i
-            for ((i=0; i < lp_shell_level-1; i++)); do
-                prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
-            done
-        fi
+    # No need to check LP_ENABLE_SHLVL, _lp_shell_level does it.
+    if _lp_shell_level ; then
+        local i
+        for ((i=0; i < lp_shell_level-1; i++)); do
+            prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
+        done
     fi
 
-    if (( LP_ENABLE_SUDO )) ; then
-        if _lp_sudo_active ; then
-            local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
-            [[ -z $dcwfg ]] && dcwfg=-1
-            lp_terminal_format $dcwfg
-            prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
-        else
-            prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
-        fi
+    # No need to check LP_ENABLE_SUDO, _lp_sudo_active does it.
+    if _lp_sudo_active ; then
+        local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
+        [[ -z $dcwfg ]] && dcwfg=-1
+        lp_terminal_format $dcwfg
+        prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
     else
         prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
     fi
@@ -930,7 +924,7 @@ __dotmatrix_join_fields() {
     fi
 }
 
-__dotmatrix_make_field() { # string, (color array)
+__dotmatrix_make_field() { # string, color_array
     local lp_terminal_format string="${1-}"
     [[ -z $string ]] && return 1
 

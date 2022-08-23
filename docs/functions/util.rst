@@ -104,7 +104,7 @@ These functions are designed to be used by themes.
 .. function:: _lp_fill(left, right, [character])
 
    Adds as much *character* (e.g. spaces) between *left* and *right*,
-   so as to make the resulting string the same width than the current terminal.
+   so as to make the resulting string the same width as the current terminal.
 
    .. versionadded:: 2.2
 

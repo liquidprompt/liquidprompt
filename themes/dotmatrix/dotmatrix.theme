@@ -375,29 +375,31 @@ _lp_dotmatrix_theme_prompt() {
 
     inline="${NO_COL}$LP_PS1_PREFIX${lp_terminal_format}"
 
+    local open_idx="$_LP_FIRST_INDEX"
+    local close_idx=$((_LP_FIRST_INDEX+2))
     if _lp_software_collections ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_python_env ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_node_env ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_ruby_env ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_container ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_kubernetes_context ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_terraform_env ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
     if _lp_aws_profile ; then
-        inline+="${DOTMATRIX_ITEMS[0]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[2]}"
+        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
 
     if ((DOTMATRIX_ENABLE_GRADIENT_LINE)); then
@@ -411,8 +413,7 @@ _lp_dotmatrix_theme_prompt() {
         local i c f a b j
         for ((i=0; i < line_width; i++)); do # For each character in the line.
             local dash_colors=()
-            # for ((c=0; c < colors_nb-1; c++)); do # For each color parameter.
-            for ((c=0; c < 6; c++)); do # For each color parameter.
+            for ((c=_LP_FIRST_INDEX; c < 6+_LP_FIRST_INDEX; c++)); do # For each color parameter.
                 a="${DOTMATRIX_COLOR_LINE_START[c]}"
                 b="${DOTMATRIX_COLOR_LINE_END[c]}"
                 j=$((a+(b-a)*i/line_width))
@@ -501,7 +502,7 @@ _lp_dotmatrix_theme_prompt() {
 
     # No need to check LP_ENABLE_SUDO, _lp_sudo_active does it.
     if _lp_sudo_active ; then
-        local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
+        local dcwfg="${DOTMATRIX_COLOR_WARN[_LP_FIRST_INDEX+1]}"
         [[ -z $dcwfg ]] && dcwfg=-1
         lp_terminal_format $dcwfg
         prompt+="${lp_terminal_format}${DOTMATRIX_MARK}"
@@ -966,15 +967,15 @@ __dotmatrix_make_sep_link() { # color
     [[ -z $fbg ]] && fbg=-1
 
     lp_terminal_format -3 -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_LINK[0]}"
+    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_LINK[_LP_FIRST_INDEX]}"
 
-    local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[0]}"
+    local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[_LP_FIRST_INDEX]}"
     [[ -z $dsfg ]] && dsfg=-1
     lp_terminal_format "$dsf" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[1]}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[_LP_FIRST_INDEX+1]}"
 
     lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[2]}${DOTMATRIX_SPACE_FILL}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_LINK[_LP_FIRST_INDEX+2]}${DOTMATRIX_SPACE_FILL}"
 }
 
 __dotmatrix_make_sep_open() { # color
@@ -986,15 +987,15 @@ __dotmatrix_make_sep_open() { # color
     [[ -z $fbg ]] && fbg=-1
 
     lp_terminal_format -3 -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_OPEN[0]}"
+    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_OPEN[_LP_FIRST_INDEX]}"
 
-    local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[0]}"
+    local dsfg="${DOTMATRIX_COLOR_SEP_FAIR[_LP_FIRST_INDEX]}"
     [[ -z $dsfg ]] && dsfg=-1
     lp_terminal_format "$dsfg" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[1]}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[_LP_FIRST_INDEX+1]}"
 
     lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[2]}${DOTMATRIX_SPACE_FILL}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_OPEN[_LP_FIRST_INDEX+2]}${DOTMATRIX_SPACE_FILL}"
 }
 
 __dotmatrix_make_sep_dang() { # color
@@ -1006,15 +1007,15 @@ __dotmatrix_make_sep_dang() { # color
     [[ -z $fbg ]] && fbg=-1
 
     lp_terminal_format -3 -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_DANG[0]}"
+    dotmatrix_sep+="${DOTMATRIX_SPACE_VOID}${lp_terminal_format}${DOTMATRIX_DANG[_LP_FIRST_INDEX]}"
 
-    local dcwfg="${DOTMATRIX_COLOR_WARN[1]}"
+    local dcwfg="${DOTMATRIX_COLOR_WARN[_LP_FIRST_INDEX+1]}"
     [[ -z $dcwfg ]] && dcwfg=-1
     lp_terminal_format "$dcwfg" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[1]}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[_LP_FIRST_INDEX+1]}"
 
     lp_terminal_format "$fg" -1 0 0 -1 "$fbg"
-    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[2]}${DOTMATRIX_SPACE_FILL}"
+    dotmatrix_sep+="${lp_terminal_format}${DOTMATRIX_DANG[_LP_FIRST_INDEX+2]}${DOTMATRIX_SPACE_FILL}"
 }
 
 __dotmatrix_make_sep_soft() { # color
@@ -1044,7 +1045,7 @@ __dotmatrix_make_sep_mid() { # color
 __dotmatrix_make_sep_last() { # no arg
     local lp_terminal_format
     lp_terminal_format -3 -1 0 0 -3 -1
-    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[0]}${NO_COL}"
+    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[_LP_FIRST_INDEX]}${NO_COL}"
 }
 
 __dotmatrix_make_sep_side() { # no arg
@@ -1052,6 +1053,6 @@ __dotmatrix_make_sep_side() { # no arg
     local dsf=(${DOTMATRIX_COLOR_SEP_FAIR[@]+"${DOTMATRIX_COLOR_SEP_FAIR[@]}"})
     [[ -z "${dsf[*]}" ]] && dsf=(-1)
     lp_terminal_format "${dsf[@]}"
-    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[1]}"
+    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_ENDS[_LP_FIRST_INDEX+1]}"
 }
 

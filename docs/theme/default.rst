@@ -76,6 +76,9 @@ Template Sections
 All of the available template sections are listed below. Their order is the
 default order if the user does not configure a different template.
 
+.. image:: template.svg
+   :alt: Sections of the prompt.
+
 .. note::
    Omitting a template section from your template will **not** disable that
    feature. While it will not be displayed in the prompt, Liquid Prompt does not

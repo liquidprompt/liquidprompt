@@ -1,6 +1,6 @@
 
-Build doc
-=========
+Build docs
+==========
 
 To build the documentation for checking your edits, try the HTML target: `make html` and open `_build/index.html`.
 

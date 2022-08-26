@@ -30,7 +30,7 @@ There are many prompts configurations out there, but here is what makes Liquid P
   It also provides pre-defined themes, enabled by a simple command in your shell configuration.
   Configuration is as simple as editing text files with key/value pairs. No complex format to learn.
 - **Shell features first**: Liquid Prompt helps you being aware of all the powerfull features a modern shell can provide.
-  While most of the other prompts focus on covering a lot of (boring) software version tags,
+  While most other prompts focus on covering a lot of (boring) software version tags,
   Liquid Prompt shows you the features that are actually useful while you actually use the shell.
 - **Configurability**: All aspects of Liquid Prompt are configurable, down to the core.
 
@@ -38,22 +38,22 @@ There are many prompts configurations out there, but here is what makes Liquid P
 Features overview
 =================
 
-Liquid Prompt have a good support of shell-related features,
+Liquid Prompt has good support of shell-related features,
 various version control systems, and several software configuration environments.
 
-To browse the complete list of capabilities, see the :doc:`config`.
+To browse the complete list of capabilities, see :doc:`config`.
 
 
 Shell Essentials
 ----------------
 
-Those are some of the most popular features:
+These are some of the most popular features:
 
 - **Current path**: displays where you are,
-  highlight the important parts (current directory, version control repository up),
+  highlighting the important parts (current directory, version control repository root),
   smart path shortening.
 - **Last command execution time**: if the last executed command took too long, display how much time it took.
-- **Battery level**: show what charge remains in the battery if it's close enough to be empty.
+- **Battery level**: show what charge remains in the battery if it's close enough to empty.
 - **Username**: display the user name if it's not the login one.
 - **Hostname**: indicate the hostname if over a remote connection, with host-specific color.
 - **Exit code**: display the last command's exit code if it was an error.
@@ -64,7 +64,7 @@ Those are some of the most popular features:
 - **Shell level**: displays the number of nested shells if it starts being too much.
 - **Proxy**: indicate whether a proxy is configured.
 - **Temperature**: warn if the temperature goes too high.
-- **Prompt switch**: command allowing you to rapidely go back to the default prompt, or the even most simple possible.
+- **Prompt switch**: command allowing you to rapidly go back to the default prompt, or the even most simple possible.
 - **Wifi**: shows the wireless network signal strength.
 - **Dir stack**: helps you follow the state of this overlooked, but neat, feature of modern shells.
 - **Title**: synchronize the prompt and the terminal's window title (or status bar).
@@ -132,9 +132,9 @@ All prompt systems tend to focus on some feature sets.
 If you don't like Liquid Prompt's design, you may be interested in one of those popular prompts:
 
 - `Starship <https://starship.rs/>`_: focused on showing development contexts. Probably the largest set of detected languages.
-- `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to Starship (with a little bit fewer features), but only for Zsh.
-- `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of everything, and thus does not really shine at something. Only for Zsh.
-- `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular on Github, focused on fancy theming, but to the expense of the UX.
+- `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to Starship (with a few fewer features), but only for Zsh.
+- `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of everything, and thus does not really shine at anything. Only for Zsh.
+- `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular on Github, focused on fancy theming, but to the expense of the UX. Only supports Zsh.
 - `Powerline <https://github.com/powerline/powerline>`_: primarily a daemon-based status line generator, hence with good support for latency-expensive features. Probably the largest feature set for various services status.
 - `Pure <https://github.com/sindresorhus/pure>`_: quite popular, despite focusing on being minimalist (only supports Zsh, Git, and a few shell features).
 
@@ -144,7 +144,7 @@ The following table compares those prompts systems in details.
           As such, they are highly subjective. Judgements made about the levels of support are
           extremely arbitrary. Take this with a grain of salt.
 
-In that table, the numbers in cells figure the level of quality of the feature.
+In this table, the numbers in cells figure the level of quality of the feature.
 *Popularity* is the sum of levels in the row.
 *Support* lines are the sum of levels in the column, for each *category* section.
 *Category* sections are sorted from top to bottom based on their average popularity.

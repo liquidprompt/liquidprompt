@@ -1,0 +1,30 @@
+
+.wy-side-nav-search {
+    background-color: #3771c8;
+}
+
+.wy-nav-side {
+    background-color: #1a1a1a;
+}
+
+a {
+    color: #3771c8;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.external:after {
+    content: " (↗)";
+}
+
+.wy-nav-side a {
+    color: #87aade;
+}
+
+.wy-side-nav-search a {
+    color: #e3e2db;
+    font-size: large;
+}
+

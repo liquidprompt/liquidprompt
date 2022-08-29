@@ -53,13 +53,21 @@ highlight_language = 'shell'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
 html_theme = 'sphinx_rtd_theme'
+
+# Adds a logo to the navbar.
+html_logo = 'liquidprompt_emblem.svg'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
+
+# These paths are either relative to html_static_path
+# # or fully qualified paths (eg. https://...)
+html_css_files = [
+     'liquid.css',
+]
 
 # linkchecker dislikes anchor tags in github links: https://github.com/sphinx-doc/sphinx/issues/9016
 # breezy-vcs.org has been having intermittent dns problems ("Temporary failure in name # resolution") for a while now

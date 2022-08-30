@@ -1,7 +1,7 @@
 <h1 align="center">
     <img
         width="500"
-        src="https://raw.githubusercontent.com/nojhan/liquidprompt/fix(doc)-marketing/docs/liquidprompt_emblem.svg"
+        src="https://raw.githubusercontent.com/nojhan/liquidprompt/master/docs/liquidprompt_emblem.svg"
         alt="Liquid Prompt"
     />
     <br/>

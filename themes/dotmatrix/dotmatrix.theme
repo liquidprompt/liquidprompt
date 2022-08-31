@@ -484,7 +484,7 @@ _lp_dotmatrix_theme_prompt() {
     fi
 
     if _lp_error ; then
-        __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
+        __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
         __dotmatrix_make_field "${lp_error}" ${DOTMATRIX_COLOR_WARN[@]+"${DOTMATRIX_COLOR_WARN[@]}"}
         prompt+="${dotmatrix_sep}${dotmatrix_field}"
     fi
@@ -722,30 +722,6 @@ __dotmatrix_prompt_vcs() {
 
         _lp_smart_mark
 
-        local diffs=
-        if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
-            if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
-                __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="$dotmatrix_field"
-                __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="$dotmatrix_sep"
-                __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="$dotmatrix_field"
-
-            elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
-                __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="$dotmatrix_field"
-
-            elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
-                __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                has_commit+="$dotmatrix_field"
-            fi
-            diffs+="$has_commit"
-        else
-            __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-            diffs+="$dotmatrix_field"
-        fi # LP_ENABLE_VCS_DIFFSTATS
-
         # Mark & commits off remote
         local has_commit=
         if _lp_vcs_commits_off_remote; then
@@ -754,6 +730,30 @@ __dotmatrix_prompt_vcs() {
 
             __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             _DOTMATRIX_VCS+="$dotmatrix_sep"
+
+            local diffs=
+            if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
+                if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
+                    __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    has_commit+="$dotmatrix_field"
+                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    has_commit+="$dotmatrix_sep"
+                    __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    has_commit+="$dotmatrix_field"
+
+                elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
+                    __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    has_commit+="$dotmatrix_field"
+
+                elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
+                    __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    has_commit+="$dotmatrix_field"
+                fi
+                diffs+="$has_commit"
+            else
+                __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                diffs+="$dotmatrix_field"
+            fi # LP_ENABLE_VCS_DIFFSTATS
 
             _DOTMATRIX_VCS+="$diffs"
 

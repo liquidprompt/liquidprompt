@@ -453,25 +453,12 @@ _lp_dotmatrix_theme_prompt() {
         prompt+="${lp_terminal_format}·"
     fi
 
-    # local net_sep_color=${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-    if _lp_find_vcs && _lp_vcs_commits_off_remote ; then
-
-        if _lp_http_proxy ; then
-            __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-            prompt+="${dotmatrix_sep}"
-        else
-            __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
-            prompt+="${dotmatrix_sep}"
-        fi
+    if _lp_http_proxy ; then
+        __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+        prompt+="${dotmatrix_sep}"
     else
-        if _lp_http_proxy ; then
-            __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-            prompt+="${dotmatrix_sep}"
-        else
-            __dotmatrix_make_sep_mid ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-            prompt+="${dotmatrix_sep}${DOTMATRIX_SPACE_VOID}"
-        fi
-
+        __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+        prompt+="${dotmatrix_sep}"
     fi
 
     __dotmatrix_prompt_vcs
@@ -722,55 +709,51 @@ __dotmatrix_prompt_vcs() {
 
         _lp_smart_mark
 
-        # Mark & commits off remote
-        local has_commit=
-        if _lp_vcs_commits_off_remote; then
-            __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-            _DOTMATRIX_VCS="$dotmatrix_field"
+        _DOTMATRIX_VCS=""
 
+        # Mark & commits off remote
+        if _lp_vcs_commits_off_remote; then # There is remote-space-[local].
+
+            # Remote segment.
+            if [[ "$lp_vcs_commit_behind" -ne "0" ]]; then # NOTE remote segment.
+                if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
+                    __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark} +${lp_vcs_commit_behind}" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    _DOTMATRIX_VCS+="$dotmatrix_field"
+                else
+                    __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark} ${DOTMATRIX_DIFF}" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    _DOTMATRIX_VCS+="$dotmatrix_field"
+                fi
+
+            else # LITE remote segment.
+                __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+                _DOTMATRIX_VCS+="$dotmatrix_field"
+            fi
             __dotmatrix_make_sep_link ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             _DOTMATRIX_VCS+="$dotmatrix_sep"
 
-            local diffs=
-            if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
-                if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
+            # Local segment.
+            if [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then # NOTE local segment.
+                if (( LP_ENABLE_VCS_DIFFSTATS )) ; then
                     __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_commit+="$dotmatrix_field"
-                    __dotmatrix_make_sep_soft ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_commit+="$dotmatrix_sep"
-                    __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_commit+="$dotmatrix_field"
-
-                elif [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
-                    __dotmatrix_make_field "+$lp_vcs_commit_ahead" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_commit+="$dotmatrix_field"
-
-                elif [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
-                    __dotmatrix_make_field "-$lp_vcs_commit_behind" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                    has_commit+="$dotmatrix_field"
+                    _DOTMATRIX_VCS+="$dotmatrix_field"
+                else
+                    __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                    _DOTMATRIX_VCS+="$dotmatrix_field"
                 fi
-                diffs+="$has_commit"
-            else
-                __dotmatrix_make_field "$DOTMATRIX_DIFF" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
-                diffs+="$dotmatrix_field"
-            fi # LP_ENABLE_VCS_DIFFSTATS
-
-            _DOTMATRIX_VCS+="$diffs"
-
-            if [[ "$lp_vcs_commit_ahead" -ne "0" && "$lp_vcs_commit_behind" -ne "0" ]]; then
-                __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
+                __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
                 _DOTMATRIX_VCS+="$dotmatrix_sep"
-            else
+            else # LITE local segment.
                 __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
                 _DOTMATRIX_VCS+="$dotmatrix_sep"
             fi
 
-        else # No commit off remote
-            __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_DARK[@]+"${DOTMATRIX_COLOR_DARK[@]}"}
-            _DOTMATRIX_VCS="$dotmatrix_field"
-            __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+        else # There is no space between remote and branch.
+            __dotmatrix_make_field "${DOTMATRIX_VCS}${lp_smart_mark}" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+            _DOTMATRIX_VCS+="$dotmatrix_field"
+            __dotmatrix_make_sep_mid ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
             _DOTMATRIX_VCS+="$dotmatrix_sep"
-        fi # commits off remote
+            # No local commit segment.
+        fi
 
         # Branch:bookmark/tag
         if _lp_vcs_branch; then
@@ -1041,7 +1024,7 @@ __dotmatrix_make_sep_mid() { # color
     [[ -z $fbg ]] && fbg=-1
 
     lp_terminal_format "$fg" -2 0 0 "$fbg"
-    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_MEAN}"
+    dotmatrix_sep="${lp_terminal_format}${DOTMATRIX_SPACE_VOID}${DOTMATRIX_MEAN}${DOTMATRIX_SPACE_VOID}"
 }
 
 __dotmatrix_make_sep_last() { # no arg

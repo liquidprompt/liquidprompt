@@ -402,6 +402,7 @@ _lp_dotmatrix_theme_prompt() {
         inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
     fi
 
+
     if ((DOTMATRIX_ENABLE_GRADIENT_LINE)); then
         # Fill up the center section with a line colored as a gradient.
         local ret
@@ -611,7 +612,8 @@ __dotmatrix_activate_hostname() {
     if _lp_hostname; then
         case "$lp_connection" in
         ssh)
-            hostname="${lp_hostname}"
+            (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
+            hostname="${LP_COLOR_SSH}${lp_hostname}"
             ;;
         tel)
             hostname="${lp_hostname}"

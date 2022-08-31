@@ -315,13 +315,13 @@ _lp_dotmatrix_theme_prompt() {
     fi
 
     # jobs: detached / running / stopped
-    __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+    __dotmatrix_make_sep_plug ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
     local djc_plug="${dotmatrix_sep}"
 
     local detached_sessions=""
     if _lp_detached_sessions ; then
         if [[ -n "${lp_detached_sessions}" && "${lp_detached_sessions}" -gt 0 ]] ; then
-            __dotmatrix_make_field "${lp_detached_sessions}d" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+            __dotmatrix_make_field "${lp_detached_sessions}d" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             detached_sessions="${dotmatrix_field}"
         fi
     fi
@@ -330,12 +330,12 @@ _lp_dotmatrix_theme_prompt() {
     local stopped_jobs=""
     if _lp_jobcount ; then
         if [[ -n "${lp_running_jobs}" && "${lp_running_jobs}" -gt 0  ]] ; then
-            __dotmatrix_make_field "${lp_running_jobs}&" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+            __dotmatrix_make_field "${lp_running_jobs}&" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             running_jobs="${dotmatrix_field}"
         fi
 
         if [[ -n "${lp_stopped_jobs}" && "${lp_stopped_jobs}" -gt 0  ]] ; then
-            __dotmatrix_make_field "${lp_stopped_jobs}z" ${DOTMATRIX_COLOR_LITE[@]+"${DOTMATRIX_COLOR_LITE[@]}"}
+            __dotmatrix_make_field "${lp_stopped_jobs}z" ${DOTMATRIX_COLOR_NOTE[@]+"${DOTMATRIX_COLOR_NOTE[@]}"}
             stopped_jobs="${dotmatrix_field}"
         fi
     fi

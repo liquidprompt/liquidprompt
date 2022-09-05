@@ -375,33 +375,39 @@ _lp_dotmatrix_theme_prompt() {
 
     inline="${NO_COL}$LP_PS1_PREFIX${lp_terminal_format}"
 
-    local open_idx="$_LP_FIRST_INDEX"
-    local close_idx=$((_LP_FIRST_INDEX+2))
+    local ista="$_LP_FIRST_INDEX"
+    local imid=$((_LP_FIRST_INDEX+1))
+    local iend=$((_LP_FIRST_INDEX+2))
+    local d="${DOTMATRIX_ITEMS[ista]}${DOTMATRIX_SPACE_LINE}"
+    local I="${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[imid]}${DOTMATRIX_SPACE_LINE}"
+    local b="${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[iend]}"
     if _lp_software_collections ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_software_collections}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_software_collections}$b"
     fi
     if _lp_python_env ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_python_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_python_env}$b"
     fi
     if _lp_node_env ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_node_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_node_env}$b"
     fi
     if _lp_ruby_env ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_ruby_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_ruby_env}$b"
     fi
     if _lp_container ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_container}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_container}$b"
     fi
     if _lp_kubernetes_context ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_kubernetes_context}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_kubernetes_context}$b"
     fi
     if _lp_terraform_env ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_terraform_env}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_terraform_env}$b"
     fi
     if _lp_aws_profile ; then
-        inline+="${DOTMATRIX_ITEMS[open_idx]}${DOTMATRIX_SPACE_LINE}${lp_aws_profile}${DOTMATRIX_SPACE_LINE}${DOTMATRIX_ITEMS[close_idx]}"
+        inline+="$d${lp_aws_profile}$b"
     fi
-
+    if _lp_cmake ; then
+        inline+="$d${lp_cmake_compiler}$I${lp_cmake_generator}$I${lp_cmake_buildtype}$b"
+    fi
 
     if ((DOTMATRIX_ENABLE_GRADIENT_LINE)); then
         # Fill up the center section with a line colored as a gradient.

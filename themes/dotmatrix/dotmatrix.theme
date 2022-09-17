@@ -494,8 +494,13 @@ _lp_dotmatrix_theme_prompt() {
         done
     fi
 
+    # Warning prompt mark if either root or sudo.
+    _lp_user
+    user="$?"
     # No need to check LP_ENABLE_SUDO, _lp_sudo_active does it.
-    if _lp_sudo_active ; then
+    _lp_sudo_active
+    sudo="$?"
+    if [[ "$sudo" != 0 || "$user" == 2 ]] ; then
         local dcwfg="${DOTMATRIX_COLOR_WARN[_LP_FIRST_INDEX+1]}"
         [[ -z $dcwfg ]] && dcwfg=-1
         lp_terminal_format $dcwfg

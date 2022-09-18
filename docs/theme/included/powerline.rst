@@ -1,11 +1,14 @@
-***************
-Powerline Theme
-***************
+****************
+Powerline Themes
+****************
 
-The included ``themes/powerline/powerline.theme`` file includes two themes:
+The included ``themes/powerline/powerline.theme`` file includes four themes:
 
 .. contents::
    :local:
+
+
+.. _powerline:
 
 Powerline
 *********
@@ -29,24 +32,24 @@ If there is nothing special about the current context, the appearance of
 Powerline might be as simple as this:
 
 .. image:: powerline-short.png
-   :alt:  user  ~  
+   :alt:  ~  
 
-If you are running a background command and are also in the "main" branch of a
+If you are running a background command and are also on a branch of a
 Git repository on a server:
 
 .. image:: powerline-med.png
-   :alt:   server  user  ~  liquidprompt  1   main  
+   :alt:   gaming  ~  code  liquidprompt  docs  1   theme+powerpuff  ST 7 
 
 When Liquid Prompt is displaying nearly everything, it may look like this:
 
 .. image:: powerline-long.png
-   :alt:   server  user  (e) pyenv  ~   …   liquidprompt   …   theme  3   main  ST 1  125  
+   :alt:   gaming  (e) neon  ~  code  liquidprompt  docs  theme   theme+powerpuff  ST 7  130 
 
 .. note::
    The above "everything" image looks like it is missing some parts because this
    theme does not implement all data sources of Liquid Prompt. This is by design
    to clone basic Powerline. For a Powerline theme that does show all data
-   sources, see :ref:`Powerline Full <powerline_full>` below.
+   sources, see :ref:`Powerline Plus <powerline_full>` below.
 
 Setup
 =====
@@ -253,10 +256,10 @@ These color config options take an array of integers, which are arguments to
 
 .. _powerline_full:
 
-Powerline Full
+Powerline Plus
 **************
 
-An extension of the ``powerline`` theme, ``powerline_full`` includes all data
+An extension of the ``powerline`` theme, ``powerline_plus`` includes all data
 sources that Liquid Prompt provides. The ordering is the same as the default
 theme.
 
@@ -348,7 +351,7 @@ All Liquid Prompt config options are respected, **except for**:
 Theme Configuration
 -------------------
 
-Powerline Full uses all the config options of the above Powerline theme,
+Powerline Plus uses all the config options of the above Powerline theme,
 **except for**:
 
 * :attr:`POWERLINE_STASH_MARKER`
@@ -356,7 +359,7 @@ Powerline Full uses all the config options of the above Powerline theme,
 * :attr:`POWERLINE_VCS_MARKER`
 * :attr:`POWERLINE_VCS_STASH_COLOR`
 
-Powerline Full adds these config options:
+Powerline Plus adds these config options:
 
 Markers
 _______
@@ -462,6 +465,12 @@ ______
 
    Color for the directory stack section.
 
+.. attribute:: POWERLINE_GAP_COLOR
+   :type: array<int>
+   :value: FIXME
+
+   Color of the gaps between meta-sections.
+
 .. attribute:: POWERLINE_KUBECONTEXT_COLOR
    :type: array<int>
    :value: (231, 74, 0, 0, 7, 4)
@@ -552,3 +561,94 @@ ______
    Color for the wireless signal strength section.
 
    .. versionadded:: 2.1
+
+
+.. _power2lines:
+
+Power2lines
+***********
+
+This ``power2line`` theme rearranges the sections of :ref:`Powerline Plus <powerline_full>`, but on two rows instead of one.
+That is, the data sections are displayed on a first row, and the interactive prompt forms a second row.
+This gives room for long command lines, and let the user find the prompt always at the same location.
+
+.. versionadded:: 2.2
+
+
+Preview
+=======
+
+If there is nothing special about the current context, the appearance of
+Powerline might be as simple as this:
+
+.. image:: power2lines-short.png
+
+A slightly longer prompt with more data:
+
+.. image:: power2lines-med.png
+
+When Liquid Prompt is displaying nearly everything, it may look like this:
+
+.. image:: power2lines-long.png
+
+
+Setup & Configuration
+=====================
+
+This theme as the same core configuration than the :ref:`Powerline Plus <powerline_full>` theme.
+
+Theme Configuration
+-------------------
+
+Colors
+______
+
+.. attribute:: POWERLINE_LINE_COLOR
+   :type: array<int>
+   :value: FIXME
+
+   Color of the decorative lines.
+
+
+.. _powerpuff:
+
+Powerpuff
+*********
+
+This ``powerpuff`` theme go even further in rearranging the sections of the :ref:`Powerline Plus <powerline_full>` theme:
+
+- Data sections are spraid on two rows,
+- each of which has a left-aligned and a right-aligned section.
+- A third row hosts the actual interactive prompt.
+- A horizontal line link the left and right sections of the first line.
+- A new line is drawn before the first row.
+
+The meta-sections are thus less prone to move around when more data is displayed,
+and the user will find it easier to spot new information.
+The horizontal line and the new line gap also helps in parsing screens with a lot of history.
+
+.. versionadded:: 2.2
+
+
+Preview
+=======
+
+If there is nothing special about the current context, the appearance of
+Powerline might be as simple as this:
+
+.. image:: powerpuff-short.png
+
+A slightly longer prompt with more data:
+
+.. image:: powerpuff-med.png
+
+When Liquid Prompt is displaying nearly everything, it may look like this:
+
+.. image:: powerpuff-long.png
+
+
+Setup & Configuration
+=====================
+
+This theme as the same core configuration than the :ref:`Power2lines <power2lines>` theme.
+

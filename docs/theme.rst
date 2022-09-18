@@ -27,6 +27,7 @@ If you want to create your own theme, see :doc:`theme/custom`.
 .. contents::
    :local:
 
+
 Switching Themes
 ----------------
 
@@ -58,3 +59,47 @@ To switch back to the default theme, call :func:`lp_theme` again with
 
 If you add the theme source commands to your shell startup file, you will have
 your favorite themes ready to be switched to at any time.
+
+
+Themes overview
+---------------
+
+Default
+_______
+
+Available via ``lp_theme default``:
+
+.. image:: theme/default-med.png
+
+
+Alternate VCS
+_____________
+
+Theme available after::
+
+   $ source themes/alternate_vcs/alternate_vcs.theme
+
+and ``lp_theme alternate_vcs``.
+
+.. image:: theme/included/alternate_vcs-long.png
+
+
+Powerline themes
+________________
+
+All themes available after::
+
+   $ source themes/powerline/powerline.theme
+
+
+- :ref:`Powerline <powerline>` (``lp_theme powerline``):
+
+  .. image:: theme/included/powerline-med.png
+
+- :ref:`Power2lines <power2lines>` (``lp_theme power2lines``):
+
+  .. image:: theme/included/power2lines-med.png
+
+- :ref:`Powerpuff <powerpuff>` (``lp_theme powerpuff``):
+
+  .. image:: theme/included/powerpuff-med.png

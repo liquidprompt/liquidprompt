@@ -286,6 +286,7 @@ __lp_source_config() {
     LP_ENABLE_SHLVL=${LP_ENABLE_SHLVL:-1}
     LP_ENABLE_WIFI_STRENGTH=${LP_ENABLE_WIFI_STRENGTH:-0}
 
+    LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-/}"
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
     LP_MARK_ADAPTER="${LP_MARK_ADAPTER:-"⏚"}"
@@ -1650,11 +1651,11 @@ _lp_jobcount_color() {
 
     if _lp_jobcount; then
         if (( lp_running_jobs > 0 )); then
-            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+="${LP_MARK_JOBS_SEPARATOR}"
             lp_jobcount_color+="${LP_COLOR_JOB_R}${lp_running_jobs}&${NO_COL}"
         fi
         if (( lp_stopped_jobs > 0 )); then
-            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+="${LP_MARK_JOBS_SEPARATOR}"
             lp_jobcount_color+="${LP_COLOR_JOB_Z}${lp_stopped_jobs}z${NO_COL}"
         fi
     fi

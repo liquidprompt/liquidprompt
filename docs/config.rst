@@ -982,6 +982,14 @@ Marks
 
    See also: :attr:`LP_ENABLE_HG` and :attr:`LP_HG_COMMAND`.
 
+.. attribute:: LP_MARK_JOBS_SEPARATOR
+   :type: string
+   :value: "/"
+
+   Mark used to join the fields of :attr:`LP_JOBS`.
+
+   See also :attr:`LP_ENABLE_JOBS`.
+
 .. attribute:: LP_MARK_KUBECONTEXT
    :type: string
    :value: "⎈"

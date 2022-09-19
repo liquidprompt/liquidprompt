@@ -1,5 +1,5 @@
 Upgrading Liquid Prompt
-**********************
+***********************
 
 We try our best to make new versions of Liquid Prompt backwards compatible with
 previous versions, but sometimes things need to change to make forward progress.

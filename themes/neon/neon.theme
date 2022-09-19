@@ -1,0 +1,294 @@
+
+_lp_neon_theme_activate() {
+    local lp_terminal_format
+
+    #
+    # User-configurable variables.
+    #
+
+    NEON_PRIMARY_COLOR=( ${NEON_PRIMARY_COLOR[@]+"${NEON_PRIMARY_COLOR[@]}"} )
+    [[ ${#NEON_PRIMARY_COLOR[@]} == 0 ]] && NEON_PRIMARY_COLOR=(2 -1 0 0 2 -1)
+    lp_terminal_format "${NEON_PRIMARY_COLOR[@]}"
+    local primary="$lp_terminal_format"
+
+    NEON_PRIMARYBOLD_COLOR=( ${NEON_PRIMARYBOLD_COLOR[@]+"${NEON_PRIMARYBOLD_COLOR[@]}"} )
+    [[ ${#NEON_PRIMARYBOLD_COLOR[@]} == 0 ]] && NEON_PRIMARYBOLD_COLOR=(2 -1 1 0 2 -1)
+    lp_terminal_format "${NEON_PRIMARYBOLD_COLOR[@]}"
+    local primarybold="$lp_terminal_format"
+
+    NEON_SECONDARY_COLOR=( ${NEON_SECONDARY_COLOR[@]+"${NEON_SECONDARY_COLOR[@]}"} )
+    [[ ${#NEON_SECONDARY_COLOR[@]} == 0 ]] && NEON_SECONDARY_COLOR=(4 -1 0 0 4 -1)
+    lp_terminal_format "${NEON_SECONDARY_COLOR[@]}"
+    local secondary="$lp_terminal_format"
+
+    NEON_SECONDARYBOLD_COLOR=( ${NEON_SECONDARYBOLD_COLOR[@]+"${NEON_SECONDARYBOLD_COLOR[@]}"} )
+    [[ ${#NEON_SECONDARYBOLD_COLOR[@]} == 0 ]] && NEON_SECONDARYBOLD_COLOR=(4 -1 1 0 4 -1)
+    lp_terminal_format "${NEON_SECONDARYBOLD_COLOR[@]}"
+    local secondarybold="$lp_terminal_format"
+
+    NEON_PROMPT_COLOR=( ${NEON_PROMPT_COLOR[@]+"${NEON_PROMPT_COLOR[@]}"} )
+    [[ ${#NEON_PROMPT_COLOR[@]} == 0 ]] && NEON_PROMPT_COLOR=(6 -1 0 0 6 -1)
+    lp_terminal_format "${NEON_PROMPT_COLOR[@]}"
+    local prompt="$lp_terminal_format"
+
+    NEON_WARN_COLOR=( ${NEON_WARN_COLOR[@]+"${NEON_WARN_COLOR[@]}"} )
+    [[ ${#NEON_WARN_COLOR[@]} == 0 ]] && NEON_WARN_COLOR=(1 -1 0 0 1 -1)
+    lp_terminal_format "${NEON_WARN_COLOR[@]}"
+    local warn="$lp_terminal_format"
+
+    local p="$primary"
+    local n="$NO_COL"
+
+    NEON_MARK_BRACKET_OPEN="${NEON_MARK_BRACKET_OPEN:-┥}"
+    LP_MARK_BRACKET_OPEN="$p${NEON_MARK_BRACKET_OPEN}$n"
+
+    NEON_MARK_BRACKET_CLOSE="${NEON_MARK_BRACKET_CLOSE:-┝}"
+    LP_MARK_BRACKET_CLOSE="$p${NEON_MARK_BRACKET_CLOSE}$n"
+
+    NEON_MARK_MULTIPLEXER_OPEN="${NEON_MARK_MULTIPLEXER_OPEN:-╣}"
+    NEON_MARK_MULTIPLEXER_CLOSE="${NEON_MARK_MULTIPLEXER_CLOSE:-╠}"
+    NEON_MARK_PERM="${NEON_MARK_PERM:-╏}"
+    NEON_MARK_SHORTEN_PATH="${NEON_MARK_SHORTEN_PATH:-┈}"
+    NEON_MARK_DIRSTACK="${NEON_MARK_DIRSTACK:-☰}"
+    NEON_MARK_SHLVL="${NEON_MARK_SHLVL:->}"
+    NEON_MARK_JOBS_SEPARATOR="${NEON_MARK_JOBS_SEPARATOR:-┄}"
+    NEON_MARK_WIFI="${NEON_MARK_WIFI:-╜}"
+
+    #
+    # Theme configuration.
+    #
+
+    LP_MARK_MULTIPLEXER_OPEN="${NEON_MARK_MULTIPLEXER_OPEN}"
+    LP_MARK_MULTIPLEXER_CLOSE="${NEON_MARK_MULTIPLEXER_CLOSE}"
+    LP_MARK_PERM="${NEON_MARK_PERM}"
+    LP_MARK_SHORTEN_PATH="${NEON_MARK_SHORTEN_PATH}"
+    LP_MARK_DIRSTACK="${NEON_MARK_DIRSTACK}"
+    LP_MARK_SHLVL="${NEON_MARK_SHLVL}"
+    LP_MARK_JOBS_SEPARATOR="${secondary}${NEON_MARK_JOBS_SEPARATOR}${n}"
+    LP_MARK_WIFI="${NEON_MARK_WIFI}"
+
+    LP_COLOR_PATH=$primary
+    LP_COLOR_PATH_SEPARATOR=$primary
+    LP_COLOR_PATH_SHORTENED=$primarybold
+    LP_COLOR_PATH_VCS_ROOT=$primarybold
+    LP_COLOR_PATH_LAST_DIR=$primarybold
+    LP_COLOR_PATH_ROOT=$primary
+    LP_COLOR_USER_LOGGED=$primary
+    LP_COLOR_USER_ALT=$primarybold
+    LP_COLOR_USER_ROOT=$warn
+    LP_COLOR_HOST=$primary
+    LP_COLOR_SSH=$primary
+    LP_COLOR_SU=$primarybold
+    LP_COLOR_TELNET=$warn
+    LP_COLOR_X11_ON=$primarybold
+    LP_COLOR_X11_OFF=$primary
+    LP_COLOR_WRITE=$primary
+    LP_COLOR_NOWRITE=$warn
+    LP_COLOR_IN_MULTIPLEXER=$primarybold
+    LP_COLOR_DIRSTACK=$primary
+
+    LP_COLOR_PROXY=$secondarybold
+
+    LP_COLOR_JOB_D=$secondary
+    LP_COLOR_JOB_R=$secondary
+    LP_COLOR_JOB_Z=$secondarybold
+    LP_COLOR_CHARGING_ABOVE=$secondary
+    LP_COLOR_CHARGING_UNDER=$secondarybold
+    LP_COLOR_DISCHARGING_ABOVE=$secondary
+    LP_COLOR_DISCHARGING_UNDER=$secondarybold
+    LP_COLOR_TIME=$secondary
+
+    LP_COLOR_VIRTUALENV=$secondary
+    LP_COLOR_NODE_VENV=$secondary
+    LP_COLOR_RUBY_VENV=$secondary
+    LP_COLOR_TERRAFORM=$secondary
+    LP_COLOR_CONTAINER=$secondary
+    LP_COLOR_KUBECONTEXT=$secondary
+    LP_COLOR_AWS_PROFILE=$secondary
+
+    LP_COLOR_SHLVL=$prompt
+    LP_COLOR_ERR=$warn
+    LP_COLOR_RUNTIME=$prompt
+    LP_COLOR_MARK=$prompt
+    LP_COLOR_MARK_ROOT=$warn
+    LP_COLOR_MARK_SUDO=$warn
+
+    _lp_default_theme_activate
+}
+
+_lp_neon_theme_directory() {
+    _lp_default_theme_directory
+    local lp_path_format
+    _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "" "$LP_COLOR_PATH_SEPARATOR"
+
+    LP_PWD="${lp_path_format}${NO_COL}"
+}
+
+_lp_neon_theme_prompt() {
+    if _lp_jobcount_color; then
+        LP_JOBS="$lp_jobcount_color"
+    else
+        LP_JOBS=
+    fi
+    if _lp_temperature_color; then
+        LP_TEMP="$lp_temperature_color"
+    else
+        LP_TEMP=
+    fi
+    if _lp_load_color; then
+        LP_LOAD="$lp_load_color"
+    else
+        LP_LOAD=
+    fi
+    if _lp_battery_color; then
+        LP_BATT="$lp_battery_color"
+    else
+        LP_BATT=
+    fi
+    if _lp_wifi_signal_strength_color; then
+        LP_WIFI="$lp_wifi_signal_strength_color"
+    else
+        LP_WIFI=
+    fi
+
+    if _lp_time_color; then
+        LP_TIME="$lp_time_color"
+    elif _lp_analog_time_color; then
+        LP_TIME="$lp_analog_time_color"
+    else
+        LP_TIME=
+    fi
+
+    if _lp_sudo_active_color; then
+        LP_COLOR_MARK="$lp_sudo_active_color"
+    fi
+
+    if _lp_dirstack; then
+        LP_DIRSTACK="${LP_COLOR_DIRSTACK}${lp_dirstack}${LP_MARK_DIRSTACK}${NO_COL}"
+    else
+        LP_DIRSTACK=
+    fi
+
+    if _lp_http_proxy_color; then
+        LP_PROXY="$lp_http_proxy_color"
+    else
+        LP_PROXY=
+    fi
+
+    if _lp_shell_level; then
+        LP_SHLVL="${LP_MARK_SHLVL}"
+        local i
+        for (( i=1; i < lp_shell_level; ++i )) ; do
+            LP_SHLVL+="${LP_MARK_SHLVL}"
+       done
+    else
+        LP_SHLVL="${LP_MARK_SHLVL}"
+    fi
+
+    if _lp_python_env_color; then
+        LP_VENV="$lp_python_env_color"
+    else
+        LP_VENV=
+    fi
+
+    if _lp_node_env_color; then
+        LP_NODE_VENV="$lp_node_env_color"
+    else
+        LP_NODE_VENV=
+    fi
+
+    if _lp_ruby_env_color; then
+        LP_RUBY_VENV="$lp_ruby_env_color"
+    else
+        LP_RUBY_VENV=
+    fi
+
+    if _lp_kubernetes_context_color; then
+        LP_KUBECONTEXT="$lp_kubernetes_context_color"
+    else
+        LP_KUBECONTEXT=
+    fi
+
+    if _lp_terraform_env_color; then
+        LP_TFSPACE="$lp_terraform_env_color"
+    else
+        LP_TFSPACE=
+    fi
+
+    if _lp_container_color; then
+        LP_CONTAINER="$lp_container_color"
+    else
+        LP_CONTAINER=
+    fi
+
+    if _lp_software_collections_color; then
+        LP_SCLS="$lp_software_collections_color"
+    else
+        LP_SCLS=
+    fi
+
+    if _lp_aws_profile_color; then
+        LP_AWS_PROFILE="$lp_aws_profile_color"
+    else
+        LP_AWS_PROFILE=
+    fi
+
+    if _lp_runtime_color; then
+        LP_RUNTIME="$lp_runtime_color"
+    else
+        LP_RUNTIME=
+    fi
+
+    if _lp_error_color; then
+        LP_ERR="$lp_error_color"
+    else
+        LP_ERR=
+    fi
+
+    if _lp_find_vcs && _lp_vcs_details_color; then
+        LP_VCS="$lp_vcs_details_color"
+    else
+        LP_VCS=
+    fi
+    _lp_smart_mark
+    LP_MARK="${lp_smart_mark}${NO_COL}"
+
+    _lp_neon_theme_prompt_template
+}
+
+
+_lp_neon_theme_prompt_template() {
+    if [[ -f "${LP_PS1_FILE-}" ]]; then
+        # shellcheck source=liquid.ps1
+        source "$LP_PS1_FILE"
+    fi
+
+    if [[ -z "${LP_PS1-}" ]]; then
+        local first_left first_right second_left second_right third
+        local lp_terminal_format
+        lp_terminal_format "${NEON_PRIMARY_COLOR[@]}"
+        local m="$lp_terminal_format"
+        lp_terminal_format "${NEON_SECONDARY_COLOR[@]}"
+        local s="$lp_terminal_format"
+        lp_terminal_format "${NEON_PROMPT_COLOR[@]}"
+        local p="$lp_terminal_format"
+        local n="$NO_COL"
+        # ━┝┌─└─⤙⤚⤛⤜
+        first_left="$s${LP_PS1_PREFIX}─$n${LP_JOBS}$s─$n${LP_BATT}$s─$n${LP_WIFI}$s─$n${LP_LOAD}$s─$n${LP_TEMP}$s─$n${LP_PROXY}"
+        first_right="$s┄｢$n${LP_SCLS}${LP_AWS_PROFILE}${LP_CONTAINER}${LP_VENV}${LP_NODE_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}$s｣┄─$n${LP_TIME}$s─⎸$n"
+        first="${first_left}$s─$n${first_right}"
+
+        second_left="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_BRACKET_CLOSE}$m═$n${LP_DIRSTACK}$m═╾$n"
+        second_right="${LP_VCS}"
+        second="${second_left}${second_right}"
+
+        third="${LP_RUNTIME}$p━$n${LP_ERR}$p━$n${LP_COLOR_MARK}${LP_MARK}$p${LP_SHLVL}$n "
+
+        PS1=" $s┌─$n${first}\n$m╔╧══$n${second}\n$p┗━$n${third}"
+
+        # Get the core sections without prompt escapes and make them into a title.
+        _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK}"
+    else
+        PS1=$LP_PS1
+    fi
+}

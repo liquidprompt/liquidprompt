@@ -154,12 +154,14 @@ code change:
 - tests and checks have been added, ran, and their warnings fixed:
     - [ ] unit tests have been updated (see `tests/test_*.sh` files)
     - [ ] ran `test.sh`
-    - [ ] ran `shellcheck.sh`
+    - [ ] ran `shellcheck.sh` (requires [shellcheck](https://github.com/koalaman/shellcheck#user-content-installing)).
 - documentation have been updated accordingly:
     - [ ] functions and attributes are documented in alphabetical order
     - [ ] tag `.. versionadded:: X.Y` or `.. versionchanged:: Y.Z`
     - [ ] functions signatures have arguments, returned code, and set value(s)
     - [ ] attributes have types and defaults
+    - [ ] ran `docs/docs-lint.sh` (requires Python 3 and `requirements.txt`
+          installed (`cd docs/; python3 -m venv venv; . venv/bin/activate; pip install -r requirements.txt`))
 
 
 ### Can I make a pull request without a separate issue for a bug/enhancement?

@@ -75,3 +75,11 @@ linkcheck_ignore = [
         r'^https://github.com/rcaloras/bash-preexec/blob/master/README.md#install$',
         r'^https://www.breezy-vcs.org/$'
 ]
+
+nitpick_ignore_regex = [
+    # Environment variables are defined by external programs, so we do not
+    # write documentation for them.
+    ('envvar', r'.*'),
+    # Our returned values are done in variables, not types.
+    ('py:class', r'.*'),
+]

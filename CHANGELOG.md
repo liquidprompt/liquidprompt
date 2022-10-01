@@ -138,7 +138,7 @@ for help.
 - **load**: `_lp_load_color()` return changed from stdout to `$lp_load_color` ([8a987f4])
 - **path**: `_lp_get_home_tilde_collapsed()` renamed to `__lp_pwd_tilde()` and return changed from
   stdout to `$lp_pwd_tilde` ([28c13f2])
-- **path**: `_lp_set_dirtrim()` renamed to `__lp_set_dirtrim()` ([decaece])
+- **path**: `_lp_set_dirtrim()` removed ([ae769dc])
 - **path**: `_lp_shorten_path()` replaced by `_lp_path_format()` ([decaece], [a35032f], [ae769dc])
 - **runtime**: `_lp_runtime()` renamed to `_lp_runtime_color()` and return changed from stdout to
   `$lp_runtime_color` ([0f0fd37])

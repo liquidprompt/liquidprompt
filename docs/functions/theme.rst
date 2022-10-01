@@ -182,7 +182,7 @@ specific text and formatting may change.
 
    Returns :func:`_lp_hostname`, with added data from :func:`_lp_chroot`.
    Color from :attr:`LP_COLOR_HOST`, :attr:`LP_COLOR_SSH`,
-   :attr:`LP_COLOR_HOST_HASH`, and :attr:`LP_COLOR_TELNET`, depending on the
+   ``LP_COLOR_HOST_HASH``, and :attr:`LP_COLOR_TELNET`, depending on the
    output of :func:`_lp_connection`.
 
    Added color from :func:`_lp_connected_display`: either
@@ -290,7 +290,7 @@ specific text and formatting may change.
 
    Returns :func:`_lp_sudo_active` with color and marks from
    :attr:`LP_COLOR_MARK_SUDO` if sudo is active, or
-   :attr:`LP_COLOR_MARK_NO_SUDO` if not.
+   ``LP_COLOR_MARK_NO_SUDO`` if not.
 
    Does not return ``1`` if sudo is not active, as the return string is still
    needed.

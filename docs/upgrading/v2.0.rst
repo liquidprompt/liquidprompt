@@ -225,7 +225,7 @@ Renamed to :func:`__lp_pwd_tilde`.
 
 Return changed from stdout to ``$lp_pwd_tilde``
 
-Recommended that :attr:`lp_path` is used instead.
+Recommended that :attr:`_lp_path_format` is used instead.
 
 Replace assignment statements like::
 
@@ -403,9 +403,8 @@ Recommended to not use this internal function.
 _lp_set_dirtrim()
 -----------------
 
-Renamed to :func:`__lp_set_dirtrim`.
-
-Recommended that :attr:`lp_path` is used instead.
+Removed and replaced by :attr:`_lp_path_format`.
+Support for ``\w`` in ``PS1`` has been dropped.
 
 _lp_set_prompt()
 ----------------

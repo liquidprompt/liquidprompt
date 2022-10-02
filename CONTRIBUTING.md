@@ -133,8 +133,34 @@ for our standards on shell language.
    it is also important enough to put in the commit message.
 
 If your branch ever ends up "out of sync" or "conflicts" with the `master`
-branch of the main repo, never, ever, merge the `master` branch into your own
-branch. Instead, always rebase your own work on top of the `master` branch.
+branch of the main repo, never, ever, *merge* the `master` branch into your own
+branch. Instead, always *rebase* your own work on top of the `master` branch.
+
+
+### Technical checklist for adding a new prompt section
+
+Here is a list of technical details that will be checked when making any
+code change:
+
+- code follows our [shell standards](https://github.com/nojhan/liquidprompt/wiki/Shell-standards):
+    - [ ] correct use of `IFS`
+    - [ ] careful quoting
+    - [ ] cautious array access
+    - [ ] portable array indexing with `_LP_FIRST_INDEX`
+    - [ ] functions/variable naming conventions
+    - [ ] functions have local variables
+    - [ ] data functions have optimization guards (early exits)
+    - [ ] subshells are avoided as much as possible
+- tests and checks have been added, ran, and their warnings fixed:
+    - [ ] unit tests have been updated (see `tests/test_*.sh` files)
+    - [ ] ran `test.sh`
+    - [ ] ran `shellcheck.sh`
+- documentation have been updated accordingly:
+    - [ ] functions and attributes are documented in alphabetical order
+    - [ ] tag `.. versionadded:: X.Y` or `.. versionchanged:: Y.Z`
+    - [ ] functions signatures have arguments, returned code, and set value(s)
+    - [ ] attributes have types and defaults
+
 
 ### Can I make a pull request without a separate issue for a bug/enhancement?
 Yes, **but**, in that case, the pull request **must have a full description of

@@ -321,3 +321,15 @@ theme template and use the following sections.
    :attr:`LP_ENABLE_KUBECONTEXT`.
 
    .. versionadded:: 2.1
+
+.. attribute:: LP_CMAKE
+
+   Variables from CMake cache configured in this directory:
+
+   - the base name of the compiler (without the path),
+   - the configured generator (without spaces, some of them shortened),
+   - the build type.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2

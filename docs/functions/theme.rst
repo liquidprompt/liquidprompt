@@ -120,6 +120,20 @@ specific text and formatting may change.
       Return code matches data function.
       Return method changed from stdout.
 
+.. function:: _lp_cmake_color() -> var:lp_cmake_color
+
+   Returns data from :func:`_lp_cmake`.
+   `lp_cmake_compiler` and `lp_cmake_generator` are colored according to their
+   hash (see :func:`_lp_hash_color`). `lp_cmake_buildtype` has as configurable
+   color, depending on its value:
+
+   - "Debug", colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
+   - "RelWithDebInfo", colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by default),
+   - "Release", colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
+   - any other value would be colored according to its hash.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_container_color() -> var:_lp_container_color
 
    Returns :func:`_lp_container`, surrounded by « and »

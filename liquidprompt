@@ -282,6 +282,7 @@ __lp_source_config() {
     LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
     LP_ENABLE_KUBECONTEXT=${LP_ENABLE_KUBECONTEXT:-0}
     LP_ENABLE_KUBE_NAMESPACE=${LP_ENABLE_KUBE_NAMESPACE:-0}
+    LP_ENABLE_CMAKE=${LP_ENABLE_CMAKE:-0}
     LP_ENABLE_SHLVL=${LP_ENABLE_SHLVL:-1}
     LP_ENABLE_WIFI_STRENGTH=${LP_ENABLE_WIFI_STRENGTH:-0}
 
@@ -313,8 +314,12 @@ __lp_source_config() {
     LP_MARK_DEV_OPEN="${LP_MARK_DEV_OPEN:-"<"}"
     LP_MARK_DEV_CLOSE="${LP_MARK_DEV_CLOSE:-">"}"
     LP_MARK_DEV_MID="${LP_MARK_DEV_MID:-"|"}"
+    LP_MARK_CMAKE="${LP_MARK_CMAKE:-":"}"
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
 
+    LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
+    LP_COLOR_CMAKE_RWDI=${LP_COLOR_CMAKE_RWDI:-$BLUE}
+    LP_COLOR_CMAKE_RELEASE=${LP_COLOR_CMAKE_RELEASE:-$CYAN}
     LP_COLOR_PATH=${LP_COLOR_PATH:-$NO_COL}
     lp_terminal_format 8 -1 0 0 -1
     LP_COLOR_PATH_SEPARATOR=${LP_COLOR_PATH_SEPARATOR:-$lp_terminal_format}
@@ -569,6 +574,7 @@ lp_activate() {
     _lp_require_tool FOSSIL fossil
     _lp_require_tool HG "$LP_HG_COMMAND"
     _lp_require_tool BZR bzr
+    _lp_require_tool CMAKE cmake
 
     _LP_ENABLED_VCSS=()
     (( LP_ENABLE_GIT )) && _LP_ENABLED_VCSS+=(git)
@@ -932,6 +938,19 @@ __lp_theme_zsh_complete() {
     _describe 'theme' lp_theme_list
 }
 
+_lp_hash_color() {
+    (( LP_ENABLE_COLOR )) || return 2
+    # compute the hash of the argument and color it with the corresponding color in:
+    # (green, yellow, blue, purple, cyan)
+    # Red (would be index 1) is not used here, as it should be reserved for alerts.
+    local str=${1-}
+    local cksum="$(printf '%s' "$str" | cksum)"
+    local hash="${cksum%%[$' \t']*}"
+    __lp_foreground_color "$(( 2 + hash % 5 ))"
+    local color="${_LP_OPEN_ESC}${af_color-}${_LP_CLOSE_ESC}"
+    lp_hash_color="${color}${str}${NO_COL}"
+}
+
 _lp_join() {
     # Join the $2... array with the $1 string.
     local delimiter=${1-}
@@ -946,6 +965,32 @@ _lp_join() {
         lp_join="${first}${*/#/$delimiter}"
     fi
 }
+
+_lp_grep_fields() {
+    # Open file $1 and parse it for key/value pairs having delimiter $2, for each key in $3...
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+
+    local delimiter="$2"
+    shift 2
+    local -a fields
+    fields=("$@")
+
+    lp_grep_fields=()
+    # We test for $line in the loop is here to ensure that we read the last line,
+    # even if the file does not ends with a \n.
+    # This bypass a known behavior of the C standard, not fixed in POSIX.
+    while IFS='' read -r line || [[ -n "$line" ]] ; do
+        for (( i=_LP_FIRST_INDEX; i < ${#fields[@]} + _LP_FIRST_INDEX; i++ )); do
+            key="${fields[i]}"
+            if [[ "$line" == "${key}${delimiter}"* ]] ; then
+                line="${line#*"${key}${delimiter}"}" # Remove first part until delimiter.
+                lp_grep_fields[i]="${line}"
+            fi
+        done
+    done <"$file"
+}
+
 
 ##########################
 # Working Directory Path #
@@ -1417,6 +1462,70 @@ _lp_kubernetes_context_color() {
 
     lp_kubernetes_context_color="${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}"
 }
+
+
+_lp_cmake() {
+    ((  LP_ENABLE_CMAKE  )) || return 2
+    [[ -f CMakeCache.txt ]] || return 1
+
+    _lp_grep_fields "CMakeCache.txt" "=" "CMAKE_C_COMPILER:FILEPATH"  "CMAKE_CXX_COMPILER:FILEPATH" "CMAKE_GENERATOR:INTERNAL" "CMAKE_BUILD_TYPE:STRING"
+
+    local cmake_c_compiler=${lp_grep_fields[_LP_FIRST_INDEX+0]-}
+    lp_cmake_c_compiler="${cmake_c_compiler##*/}" # Only the part after the last slash.
+
+    local cmake_cxx_compiler=${lp_grep_fields[_LP_FIRST_INDEX+1]-}
+    lp_cmake_cxx_compiler="${cmake_cxx_compiler##*/}" # Only the part after the last slash.
+
+    local cmake_generator=${lp_grep_fields[_LP_FIRST_INDEX+2]-}
+    # Shorten: Makefiles -> Make, and Visual Studio -> VS.
+    cmake_generator="${cmake_generator/%Makefiles/Make}"
+    cmake_generator="${cmake_generator/#Visual Studio/VS}"
+    # Remove all white spaces.
+    lp_cmake_generator="${cmake_generator// /}"
+
+    lp_cmake_buildtype=${lp_grep_fields[_LP_FIRST_INDEX+3]-}
+    [[ -n "${lp_cmake_c_compiler}${lp_cmake_cxx_compiler}${lp_cmake_generator}${lp_cmake_buildtype}" ]] || return 1
+}
+
+_lp_cmake_color() {
+    if _lp_cmake ; then
+        local lp_hash_color
+
+        lp_cmake_color=""
+
+        if [[ -n "$lp_cmake_c_compiler" ]] ; then
+            _lp_hash_color "$lp_cmake_c_compiler"
+            lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
+        fi
+
+        if [[ -n "$lp_cmake_cxx_compiler" ]] ; then
+            _lp_hash_color "$lp_cmake_cxx_compiler"
+            lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
+        fi
+
+        if [[ -n "$lp_cmake_generator" ]] ; then
+            _lp_hash_color "$lp_cmake_generator"
+            lp_cmake_color+="$lp_hash_color${LP_MARK_CMAKE}"
+        fi
+
+        if [[ -n "$lp_cmake_buildtype" ]] ; then
+            if [[ "$lp_cmake_buildtype" == "Release" ]] ; then
+                lp_cmake_color+="${LP_COLOR_CMAKE_RELEASE}${lp_cmake_buildtype}${NO_COL}"
+            elif [[ "$lp_cmake_buildtype" == "RelWithDebInfo" ]] ; then
+                lp_cmake_color+="${LP_COLOR_CMAKE_RWDI}${lp_cmake_buildtype}${NO_COL}"
+            elif [[ "$lp_cmake_buildtype" == "Debug" ]] ; then
+                lp_cmake_color+="${LP_COLOR_CMAKE_DEBUG}${lp_cmake_buildtype}${NO_COL}"
+            else
+                _lp_hash_color "$lp_cmake_buildtype"
+                lp_cmake_color+="$lp_hash_color"
+            fi
+        fi
+        return 0
+    else
+        return 1
+    fi
+}
+
 
 # Same as bash '\l', but can be inlined as a constant as the value will not
 # change during the shell's life.
@@ -3217,6 +3326,7 @@ _lp_dev_env_color() {
         "${lp_ruby_env_color-}"
         "${lp_terraform_env_color-}"
         "${lp_kubernetes_context_color-}"
+        "${lp_cmake_color-}"
     )
     local -a dev_active
     dev_active=()
@@ -3412,6 +3522,12 @@ _lp_default_theme_prompt_data() {
         LP_AWS_PROFILE=" $lp_aws_profile_color"
     else
         LP_AWS_PROFILE=
+    fi
+
+    if _lp_cmake_color; then
+        LP_CMAKE=" $lp_cmake_color"
+    else
+        LP_CMAKE=
     fi
 
     # End of the section for dev-related variables.

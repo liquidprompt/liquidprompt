@@ -47,8 +47,21 @@ Battery
    .. versionchanged:: 2.1
       Implemented `sysfs` method as the default way of getting battery status.
 
+
 Development Environment
 -----------------------
+
+.. function:: _lp_cmake() -> var:lp_cmake_compiler, var:lp_cmake_generator, var:lp_cmake_buildtype
+
+   Returns ``true`` if a CMake context is found.
+   Parse the data in `CMakeCache.txt` and returns the basename of the configured compiler,
+   generator (e.g. "Unix Makefiles"),
+   and build type ("Debug", "Release", etc.).
+   Some generator names are shorten: "Makefiles" becomes "Make" and "Visual Studio" becomes "VS".
+
+   Can be disabled by :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
 
 .. function:: _lp_kubernetes_context() -> var:lp_kubernetes_context, var:lp_kubernetes_namespace
 

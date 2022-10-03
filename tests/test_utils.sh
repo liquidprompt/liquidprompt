@@ -710,6 +710,14 @@ function test_is_function {
   unalias not_my_function
 }
 
+function test_hash_color {
+    PS1="$ "
+    lp_activate --no-config # For having _lp_foreground
+    _lp_hash_color "Debug"
+    assertContains "$lp_hash_color" "Debug"
+    # FIXME How to test color?
+}
+
 function test_join {
     _lp_join "_" "A" "B " " " " C" " D " "EE"
     assertEquals "A_B _ _ C_ D _EE" "$lp_join"
@@ -724,6 +732,55 @@ function test_join {
     arr=(1 2 3)
     _lp_join "/" "${arr[@]}"
     assertEquals "1/2/3" "$lp_join"
+}
+
+function test_grep_fields {
+    filename=$(mktemp)
+
+    printf 'key1:value1\nkey2:value2\n' > "$filename"
+    _lp_grep_fields "$filename" ":" "key1" "key2"
+    assertEquals 2 ${#lp_grep_fields[@]}
+    assertEquals "value1" ${lp_grep_fields[_LP_FIRST_INDEX+0]}
+    assertEquals "value2" ${lp_grep_fields[_LP_FIRST_INDEX+1]}
+
+    # Two-char delimiter, reverse orders of keys.
+    printf 'key1:=value1\nkey2:=value2\n' > "$filename"
+    _lp_grep_fields "$filename" ":=" "key2" "key1"
+    assertEquals 2 ${#lp_grep_fields[@]}
+    assertEquals "value2" ${lp_grep_fields[_LP_FIRST_INDEX+0]}
+    assertEquals "value1" ${lp_grep_fields[_LP_FIRST_INDEX+1]}
+
+    # No end of line.
+    printf '[section]\nkey1=value1' > "$filename"
+    _lp_grep_fields "$filename" "=" "key1"
+    assertEquals 1 ${#lp_grep_fields[@]}
+    assertEquals "value1" ${lp_grep_fields[_LP_FIRST_INDEX+0]}
+
+    # Bad keys with spaces.
+    printf ' key1 :NOPE\nkey1:value1\nNOPE:NOPE\n key1:NOPE\nkey1 :NOPE' > "$filename"
+    _lp_grep_fields "$filename" ":" "key1"
+    assertEquals 1 ${#lp_grep_fields[@]}
+    assertEquals "value1" ${lp_grep_fields[_LP_FIRST_INDEX+0]}
+
+    # Delimiter in key name/value.
+    printf 'key1=value1\nkey2=value=key2=?\nkey3==val\n' > "$filename"
+    _lp_grep_fields "$filename" "=" "key1" "key2" "key3"
+    assertEquals 3 ${#lp_grep_fields[@]}
+    assertEquals "value1" ${lp_grep_fields[_LP_FIRST_INDEX+0]}
+    assertEquals "value=key2=?" ${lp_grep_fields[_LP_FIRST_INDEX+1]}
+    assertEquals "=val" ${lp_grep_fields[_LP_FIRST_INDEX+2]}
+
+    # Empty file.
+    printf '\n' > "$filename"
+    _lp_grep_fields "$filename" ":=" "nokey"
+    assertTrue "found a non existing key" '[[ -z "${lp_grep_fields[_LP_FIRST_INDEX+0]+x}" ]]'
+
+    # Really empty file.
+    printf '' > "$filename"
+    _lp_grep_fields "$filename" ":=" "nokey"
+    assertTrue "found a non existing key" '[[ -z "${lp_grep_fields[_LP_FIRST_INDEX+0]+x}" ]]'
+
+    rm -f "$filename"
 }
 
 if [ -n "${ZSH_VERSION-}" ]; then

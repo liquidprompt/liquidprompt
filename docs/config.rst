@@ -319,6 +319,33 @@ Features
 
    See also: :attr:`LP_MARK_BZR`.
 
+.. attribute:: LP_ENABLE_CMAKE
+   :type: bool
+   :value: 0
+
+   Displays the current configuration of CMake,
+   if the directory contains a `CMakecache.txt`.
+   Displays the compiler, the generator and the build type,
+   separated by :attr:`LP_MARK_CMAKE`.
+
+   Wil be disabled if ``cmake`` is not found.
+
+   The compiler is displayed without its path.
+   The generator is displayed without space,
+   and some names are shortened ("Makefiles" as "Make"
+   and "Visual Studio" as "VS"), so that, for instance:
+   "Unix Makefiles" will be displayed as "UnixMake".
+   Both fields are randomly colored according to their hash.
+
+   The common build type colors can be configured:
+
+   - "Debug", colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
+   - "RelWithDebInfo", colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by default),
+   - "Release", colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
+   - any other value would be colored according to its hash.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_COLOR
    :type: bool
    :value: 1
@@ -932,6 +959,14 @@ Marks
 
    See also: :attr:`LP_ENABLE_BZR`.
 
+.. attribute:: LP_MARK_CMAKE
+   :type: string
+   :value: ":"
+
+   Separator used for fields of :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_MARK_DEFAULT
    :type: string
    :value: "$" (Bash) or "%" (Zsh)
@@ -1239,6 +1274,36 @@ Valid preset color variables are:
    :attr:`LP_BATTERY_THRESHOLD`.
 
    See also: :attr:`LP_ENABLE_BATT`.
+
+.. attribute:: LP_COLOR_CMAKE_DEBUG
+   :type: string
+   :value: $MAGENTA
+
+   Color for the "Debug" build type of the CMake section.
+
+   See also: :attr:`LP_COLOR_CMAKE_RWDI` and :attr:`LP_COLOR_CMAKE_RELEASE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_RWDI
+   :type: string
+   :value: $BLUE
+
+   Color for the "RelWithDebInfog" build type of the CMake section.
+
+   See also: :attr:`LP_COLOR_CMAKE_DEBUG` and :attr:`LP_COLOR_CMAKE_RELEASE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_RELEASE
+   :type: string
+   :value: $CYAN
+
+   Color for the "Release" build type of the CMake section.
+
+   See also: :attr:`LP_COLOR_CMAKE_DEBUG` and :attr:`LP_COLOR_CMAKE_RWDI`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_COMMITS_BEHIND
    :type: string

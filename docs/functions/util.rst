@@ -87,7 +87,7 @@ These functions are designed to be used by themes.
    *vcs_type* is not set, uses the value of ``lp_vcs_type`` instead.
 
    If the type is "git", matches *vcs_subtype* to see if the repository is of
-   type VCSH or git-svn instead, and return their marks if so. If *vcs_subtype*
+   type VCSH or ``git-svn`` instead, and return their marks if so. If *vcs_subtype*
    is not set, uses the value of ``lp_vcs_subtype`` instead.
 
    .. versionchanged:: 2.1
@@ -139,7 +139,7 @@ These functions are designed to be used by themes.
 
 .. function:: _lp_join(delimiter, items...) -> var:lp_join
 
-   Join all strings in items with the given deliminter.
+   Join all strings in items with the given delimiter.
    Example: ``_lp_join ", " "a" "b" "c"`` will render ``lp_join="a, b, c"``
 
    .. versionadded:: 2.2

@@ -9,6 +9,10 @@ Installation
 
    install/packages
 
+.. spelling:word-list::
+   gzip
+   Zinit
+
 Download
 ========
 
@@ -75,7 +79,7 @@ To test the prompt immediately after download, run::
 
    source ~/liquidprompt/liquidprompt
 
-Adjust the path if you installed to a different location that the suggested
+Adjust the path if you installed to a different location than the suggested
 ``~/liquidprompt``.
 
 .. _shell-installation:
@@ -89,7 +93,7 @@ your ``.bashrc`` (if you use Bash) or ``.zshrc`` (if you use zsh)::
    # Only load Liquid Prompt in interactive shells, not from a script or from scp
    [[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
 
-Adjust the path if you installed to a different location that the suggested
+Adjust the path if you installed to a different location than the suggested
 ``~/liquidprompt``.
 
 .. warning::

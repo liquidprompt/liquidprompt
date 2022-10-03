@@ -278,7 +278,7 @@ Temperature
 
 .. function:: __lp_temp_sensors() -> var:lp_temperature
 
-   A temperature backend using lm-sensors provided ``sensors``.
+   A temperature backend using `lm-sensors` provided ``sensors``.
 
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_sensors``.
@@ -286,7 +286,7 @@ Temperature
 
 .. function:: __lp_temp_sysfs() -> var:lp_temperature
 
-   A temperature backend reading directly from the Linux sysfs filesystem.
+   A temperature backend reading directly from the Linux sysfs file system.
 
    .. versionadded:: 2.1
 

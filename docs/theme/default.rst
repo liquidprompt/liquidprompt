@@ -190,7 +190,7 @@ default order if the user does not configure a different template.
 .. attribute:: LP_SHLVL
 
    The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored
-   with :attr:`LP_COLOR_SHLVL`. Can be disabled by attr:`LP_ENABLE_SHLVL`.
+   with :attr:`LP_COLOR_SHLVL`. Can be disabled by :attr:`LP_ENABLE_SHLVL`.
 
    .. versionadded:: 2.1
 
@@ -271,7 +271,7 @@ joined by :attr:`LP_MARK_DEV_MID` and surrounded by
 :attr:`LP_MARK_DEV_OPEN` and :attr:`LP_MARK_DEV_CLOSE`.
 
 If you want to change the ordering or have different marks
-for different items, you can derivate your own
+for different items, you can derive your own
 theme template and use the following sections.
 
 .. attribute:: LP_SCLS

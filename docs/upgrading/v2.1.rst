@@ -7,6 +7,9 @@ deprecation.
 .. contents::
    :local:
 
+.. spelling:word-list::
+   lp
+
 Deprecations
 ++++++++++++
 

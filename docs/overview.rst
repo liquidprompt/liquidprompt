@@ -29,7 +29,7 @@ There are many prompts configurations out there, but here is what makes Liquid P
 - **Ease of use**: Liquid Prompt is written in (*heavily optimized*) portable Shell, and its installation is as easy as copying files.
   It also provides pre-defined themes, enabled by a simple command in your shell configuration.
   Configuration is as simple as editing text files with key/value pairs. No complex format to learn.
-- **Shell features first**: Liquid Prompt helps you being aware of all the powerfull features a modern shell can provide.
+- **Shell features first**: Liquid Prompt helps you being aware of all the powerful features a modern shell can provide.
   While most other prompts focus on covering a lot of (boring) software version tags,
   Liquid Prompt shows you the features that are actually useful while you actually use the shell.
 - **Configurability**: All aspects of Liquid Prompt are configurable, down to the core.
@@ -60,7 +60,7 @@ These are some of the most popular features:
 - **Jobs**: show counters for background, sleeping, and detached jobs.
 - **Time**: display the current time, using clock icons if you want a compact view.
 - **Filesystem permission**: indicate if the current directory is writable or not.
-- **Remote shell**: discretly denote if you are connected through SSH, under Tmux and with XForwarding capability.
+- **Remote shell**: discreetly denote if you are connected through SSH, under Tmux and with X Forwarding capability.
 - **Shell level**: displays the number of nested shells if it starts being too much.
 - **Proxy**: indicate whether a proxy is configured.
 - **Temperature**: warn if the temperature goes too high.
@@ -117,11 +117,11 @@ Known Limitations and Bugs
   (like `xterm-256`).
 - The analog clock requires a Unicode-aware terminal and at least a
   sufficiently complete font on your system. The `Symbola <https://dn-works.com/ufas/>`_
-  font, designed by Georges Douros, is known to work well. On Debian or Ubuntu
-  install try the `fonts-symbola` or `ttf-ancient-fonts` package.
-  "Powerline" and "Nerd" fonts also have the approriate symbols.
-- The "sudo" feature is disabled by default as there is no way to detect
-  if the user has sudo rights without triggering a security alert
+  font, designed by Georges :spelling:word:`Douros`, is known to work well. On
+  Debian or Ubuntu install try the `fonts-symbola` or `ttf-ancient-fonts` package.
+  "Powerline" and "Nerd" fonts also have the appropriate symbols.
+- The ``sudo`` feature is disabled by default as there is no way to detect
+  if the user has ``sudo`` rights without triggering a security alert
   that will annoy the sysadmin.
 
 
@@ -132,7 +132,7 @@ All prompt systems tend to focus on some feature sets.
 If you don't like Liquid Prompt's design, you may be interested in one of those popular prompts:
 
 - `Starship <https://starship.rs/>`_: focused on showing development contexts. Probably the largest set of detected languages.
-- `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to Starship (with a few fewer features), but only for Zsh.
+- `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to :spelling:word:`Starship` (with a few fewer features), but only for Zsh.
 - `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of everything, and thus does not really shine at anything. Only for Zsh.
 - `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular on Github, focused on fancy theming, but to the expense of the UX. Only supports Zsh.
 - `Powerline <https://github.com/powerline/powerline>`_: primarily a daemon-based status line generator, hence with good support for latency-expensive features. Probably the largest feature set for various services status.
@@ -140,8 +140,8 @@ If you don't like Liquid Prompt's design, you may be interested in one of those 
 
 The following table compares those prompts systems in details.
 
-.. warning:: Those information have been gathered by *nojhan*, one of the author of Liquid Prompt.
-          As such, they are highly subjective. Judgements made about the levels of support are
+.. warning:: This information has been gathered by *nojhan*, one of the authors of Liquid Prompt.
+          As such, it is highly subjective. Judgments made about the levels of support are
           extremely arbitrary. Take this with a grain of salt.
 
 In this table, the numbers in cells figure the level of quality of the feature.
@@ -171,7 +171,7 @@ The only case in which you may violate the license is if you provide a shell ser
 but do not allow the user to download your Liquid Prompt version.
 For instance if you offer an access to a virtual machine through a graphical session,
 without allowing files transfer.
-In that case, you are required to explicitely indicate to your users
+In that case, you are required to explicitly indicate to your users
 where they may download the code that is running your version of Liquid Prompt
 (even if you only provide a theme on top of the base code).
 

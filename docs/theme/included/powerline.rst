@@ -381,7 +381,7 @@ _______
    :value: $LP_MARK_KUBECONTEXT
 
    The marker string used to indicate the following string is the name of a
-   kubectl context.
+   ``kubectl`` context.
 
    .. versionadded:: 2.1
 

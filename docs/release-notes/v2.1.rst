@@ -17,7 +17,7 @@ Development Environments
 ========================
 
 Multiple new development environments are now detected and displayed, including
-AWS profiles, container environment, kubectl context, Node.js, Ruby, and
+AWS profiles, container environment, ``kubectl`` context, Node.js, Ruby, and
 Terraform workspace.
 
 Some of these sections are disabled by default, so see their respective config
@@ -34,7 +34,7 @@ Linux sysfs interface
 =====================
 
 Both battery and temperature information now support reading from the sysfs
-inteface on Linux. This means ``sensors`` and ``acpi`` are no longer required
+interface on Linux. This means ``sensors`` and ``acpi`` are no longer required
 to get battery and temperature information, and the data source is much faster.
 
 Wireless Signal Strength

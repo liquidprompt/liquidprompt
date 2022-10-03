@@ -76,7 +76,7 @@ General
    :type: string
 
    .. deprecated:: 2.0
-      Use :attr:`LP_PATH_METHOD` set to "truncate_to_last_dir" instead.
+      Use :attr:`LP_PATH_METHOD` set to `truncate_to_last_dir` instead.
 
    Used to define the string used for the path. Could be used to make use of
    shell path shortening features, like ``%2~`` in Zsh to keep the last two
@@ -137,7 +137,7 @@ General
    * **truncate_chars_from_dir_middle**:  Leaves the beginning and end of a
      directory name untouched. E.g. in a directory named
      ``~/MyProjects/Office``, then it will be shortened to
-     ``~/MyS...cts/Office``. How many characters will be untouched is set by
+     ``~/MyP...cts/Office``. How many characters will be untouched is set by
      :attr:`LP_PATH_CHARACTER_KEEP`. The shortened mark is
      :attr:`LP_MARK_SHORTEN_PATH`.
    * **truncate_chars_to_unique_dir**: Truncate each directory to the shortest
@@ -147,7 +147,7 @@ General
    * **truncate_to_last_dir**: Only display the last directory in the path. In
      other words, the current directory name.
 
-   All methods (other than 'truncate_to_last_dir') start at the far left of the
+   All methods (other than `truncate_to_last_dir`) start at the far left of the
    path (limited by :attr:`LP_PATH_KEEP`). Only the minimum number of
    directories needed to fit inside :attr:`LP_PATH_LENGTH` will be shortened.
 
@@ -202,13 +202,13 @@ Features
 
    Usage example:
 
-   * if your context names are cluster-dev and cluster-test,
-     then set this to "-" in order to output "dev" and "test" in prompt.
-   * if using AWS EKS then set this to '/' to show only the cluster name,
+   * if your context names are `cluster-dev` and `cluster-test`,
+     then set this to "-" in order to output `dev` and `test` in prompt.
+   * if using AWS EKS then set this to "/" to show only the cluster name,
      without the rest of the ARN
-     (arn:aws:eks:$AWS_REGION:$ACCOUNT_ID:cluster/$CLUSTER_NAME)
-   * alternatively, if using AWS EKS, set this to ':' to show only
-     "cluster/$CLUSTER_NAME".  (Note: the prefix removed is a greedy match - it
+     (``arn:aws:eks:$AWS_REGION:$ACCOUNT_ID:cluster/$CLUSTER_NAME``)
+   * alternatively, if using AWS EKS, set this to ":" to show only
+     `cluster/$CLUSTER_NAME`.  (Note: the prefix removed is a greedy match - it
      contains all the ":"s in the input.)
 
    If set to the empty string no truncating will occur (this is the default).
@@ -227,10 +227,10 @@ Features
 
    Usage example:
 
-   * if your context names are dev-cluster and test-cluster,
-     then set this to "-" in order to output "dev" and "test" in prompt.
-   * if your context names are dev.k8s.example.com and test.k8s.example.com,
-     then set this to "." in order to output "dev" and "test" in prompt. (Note:
+   * if your context names are `dev-cluster` and `test-cluster`,
+     then set this to "-" in order to output `dev` and `test` in prompt.
+   * if your context names are `dev.k8s.example.com` and `test.k8s.example.com`,
+     then set this to "." in order to output `dev` and `test` in prompt. (Note:
      the suffix removed is a greedy match - it contains all the "."s in the
      input.)
    * if using OpenShift then set this to "/" to show only the project name
@@ -264,8 +264,8 @@ Features
    generating VCS information for the prompt would impact prompt responsiveness.
 
    Any subdirectory under the input directory is also disabled, so setting
-   "/repos" would disable VCS display when the current directory is
-   "/repos/a-repo". Setting ``("/")`` would disable VCS display completely.
+   `/repos` would disable VCS display when the current directory is
+   `/repos/a-repo`. Setting ``("/")`` would disable VCS display completely.
 
    An example value would be::
 
@@ -328,20 +328,21 @@ Features
    Displays the compiler, the generator and the build type,
    separated by :attr:`LP_MARK_CMAKE`.
 
-   Wil be disabled if ``cmake`` is not found.
+   Will be disabled if ``cmake`` is not found.
 
    The compiler is displayed without its path.
    The generator is displayed without space,
-   and some names are shortened ("Makefiles" as "Make"
-   and "Visual Studio" as "VS"), so that, for instance:
-   "Unix Makefiles" will be displayed as "UnixMake".
+   and some names are shortened (`Makefiles` as `Make`
+   and `Visual Studio` as `VS`), so that, for instance:
+   `Unix Makefiles` will be displayed as `UnixMake`.
    Both fields are randomly colored according to their hash.
 
    The common build type colors can be configured:
 
-   - "Debug", colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
-   - "RelWithDebInfo", colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by default),
-   - "Release", colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
+   - *Debug*, colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
+   - *RelWithDebInfo*, colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by
+     default),
+   - *Release*, colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
    - any other value would be colored according to its hash.
 
    .. versionadded:: 2.2
@@ -364,12 +365,12 @@ Features
    :value: 0
 
    Indicate if the shell is running in a container environment (e.g. Docker,
-   Podman, LXC, Singularity, systemd-nspawn).
+   Podman, LXC, Singularity, systemd-:spelling:word:`nspawn`).
 
    .. note::
       Containers may inherit some or even no variables from their parent shell,
-      so this may behave inconsisently with different container software.  For
-      example, Docker doesn't inherit anything unless explicitly told to.
+      so this may behave inconsistently with different container software. For
+      example, Docker does not inherit anything unless explicitly told to.
       Singularity in many configurations inherits most variables but shell
       functions and zsh hooks might not make it in.  For full functionality,
       ``liquidprompt`` may need to be sourced inside the child container.
@@ -438,7 +439,7 @@ Features
    .. note::
       This never functioned as intended, and would only show the FQDN if
       ``/etc/hostname`` contained the full domain name. For a more portable and
-      reliable version, set :attr:`LP_HOSTNAME_METHOD` to "fqdn".
+      reliable version, set :attr:`LP_HOSTNAME_METHOD` to `fqdn`.
 
    See also: :attr:`LP_HOSTNAME_ALWAYS`.
 
@@ -634,9 +635,9 @@ Features
    Will be disabled if ``sudo`` is not found.
 
    .. warning::
-      Each evocation of ``sudo`` by default writes to the syslog, and this will
-      run ``sudo`` once each prompt, unless you have NOPASSWD powers. This is
-      likely to make your sysadmin hate you.
+      Each evocation of ``sudo`` by default writes to the :spelling:word:`syslog`,
+      and this will run ``sudo`` once each prompt, unless you have `NOPASSWD`
+      powers. This is likely to make your sysadmin hate you.
 
    See also: :attr:`LP_COLOR_MARK_SUDO`.
 
@@ -809,7 +810,7 @@ Features
    :value: 0
 
    Shows the time using an analog clock instead of numeric values. The analog
-   clock is "accurate" to the nearest half hour. You must have a unicode-capable
+   clock is "accurate" to the nearest half hour. You must have a Unicode capable
    terminal and a font with the "CLOCK" characters (U+1F550 - U+1F567).
 
    Will only have an effect if :attr:`LP_ENABLE_TIME` is enabled.
@@ -871,7 +872,8 @@ Thresholds
 
    .. versionchanged:: 2.0
       Accepts float values of actual load averages.
-      Integer values of centiload are still accepted, but deprecated.
+      Integer values of :spelling:word:`centiload` are still accepted, but
+      deprecated.
 
 .. attribute:: LP_RUNTIME_THRESHOLD
    :type: int
@@ -1056,8 +1058,8 @@ Marks
 
    The display of Unicode characters varies among Terminal and Font settings,
    so you might try alternative marks. Single symbol alternatives to the
-   default "⎈" (U+2388, Helm Symbol) are "☸" (U+2638, Wheel of Dharma)
-   or "κ" (U+03BA, Greek Small Letter Kappa).
+   default `⎈` (U+2388, Helm Symbol) are `☸` (U+2638, Wheel of :spelling:word:`Dharma`)
+   or `κ` (U+03BA, Greek Small Letter Kappa).
 
    See also: :attr:`LP_ENABLE_KUBECONTEXT`.
 
@@ -1279,7 +1281,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color for the "Debug" build type of the CMake section.
+   Color for the *Debug* build type of the CMake section.
 
    See also: :attr:`LP_COLOR_CMAKE_RWDI` and :attr:`LP_COLOR_CMAKE_RELEASE`.
 
@@ -1289,7 +1291,7 @@ Valid preset color variables are:
    :type: string
    :value: $BLUE
 
-   Color for the "RelWithDebInfog" build type of the CMake section.
+   Color for the *RelWithDebInfo* build type of the CMake section.
 
    See also: :attr:`LP_COLOR_CMAKE_DEBUG` and :attr:`LP_COLOR_CMAKE_RELEASE`.
 
@@ -1299,7 +1301,7 @@ Valid preset color variables are:
    :type: string
    :value: $CYAN
 
-   Color for the "Release" build type of the CMake section.
+   Color for the *Release* build type of the CMake section.
 
    See also: :attr:`LP_COLOR_CMAKE_DEBUG` and :attr:`LP_COLOR_CMAKE_RWDI`.
 
@@ -1438,7 +1440,7 @@ Valid preset color variables are:
    :type: string
    :value: $LP_COLOR_MARK_ROOT
 
-   Color used for :attr:`LP_MARK_DEFAULT` when sudo is active, shown instead of
+   Color used for :attr:`LP_MARK_DEFAULT` when ``sudo`` is active, shown instead of
    :attr:`LP_COLOR_MARK`.
 
    See also: :attr:`LP_ENABLE_SUDO`.
@@ -1447,7 +1449,7 @@ Valid preset color variables are:
    :type: string
    :value: $LP_COLOR_VIRTUALENV
 
-   Color used for displaying a Node.js virtual env.
+   Color used for displaying a Node.js virtual environment.
 
    See also: :attr:`LP_ENABLE_NODE_VENV`.
 
@@ -1528,7 +1530,7 @@ Valid preset color variables are:
    :type: string
    :value: $LP_COLOR_VIRTUALENV
 
-   Color used for displaying a Ruby virtual env.
+   Color used for displaying a Ruby virtual environment.
 
    See also: :attr:`LP_ENABLE_RUBY_VENV`.
 
@@ -1628,7 +1630,7 @@ Valid preset color variables are:
    :type: string
    :value: $CYAN
 
-   Color used for displaying a Python virtual env or Red Hat Software
+   Color used for displaying a Python virtual environment or Red Hat Software
    Collection.
 
    See also: :attr:`LP_ENABLE_VIRTUALENV` and :attr:`LP_ENABLE_SCLS`.

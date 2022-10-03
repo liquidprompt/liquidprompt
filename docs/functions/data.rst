@@ -289,7 +289,7 @@ Jobs
    Returns ``true`` if any shell background jobs are found. Returns an integer
    count of how many jobs are running and how many are stopped.
 
-   Stopped jobs are jobs suspended with Ctrl-Z.
+   Stopped jobs are jobs suspended with `Ctrl-Z`.
 
    Running jobs are jobs started with the ``command &`` syntax, or stopped jobs
    started again with the ``bg`` command.

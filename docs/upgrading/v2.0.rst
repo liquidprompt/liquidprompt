@@ -11,6 +11,19 @@ rest are private API changes, but are still documented here.
 .. contents::
    :local:
 
+.. spelling:word-list::
+   acpi
+   bool
+   bzr
+   dirtrim
+   hg
+   jobcount
+   lp
+   sb
+   sl
+   sr
+   svn
+
 Breaking Changes
 ++++++++++++++++
 

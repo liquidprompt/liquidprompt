@@ -43,7 +43,7 @@ this.
    .. note::
 
       *lp_vcs_subtype* will not be set usually. The only currently supported
-      subtypes are "vcsh" and "svn", which are subtypes of "git".
+      subtypes are `vcsh` and `svn`, which are subtypes of `git`.
 
    .. versionadded:: 2.0
 
@@ -121,7 +121,7 @@ this.
 
 .. function:: _lp_vcs_head_status() -> var:lp_vcs_head_status, var:lp_vcs_head_details
 
-   Return ``true`` if the repo is in a special or unusual state. Return the
+   Return ``true`` if the repository is in a special or unusual state. Return the
    special status, and any extra details (like progress in a rebase) if
    applicable.
 
@@ -338,7 +338,7 @@ Fossil
 
 .. note::
    Fossil does not support unique tags. Fossil tags can refer to multiple
-   checkin IDs, so a matching tag is not a useful unique ID.
+   check-in IDs, so a matching tag is not a useful unique ID.
 
 .. note::
    Fossil does not support remote tracking branches. Fossil by default keeps the

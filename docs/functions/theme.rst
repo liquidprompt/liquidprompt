@@ -96,7 +96,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_battery_color() -> var:lp_battery_color
@@ -127,9 +127,10 @@ specific text and formatting may change.
    hash (see :func:`_lp_hash_color`). `lp_cmake_buildtype` has as configurable
    color, depending on its value:
 
-   - "Debug", colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
-   - "RelWithDebInfo", colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by default),
-   - "Release", colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
+   - *Debug*, colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
+   - *RelWithDebInfo*, colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by
+     default),
+   - *Release*, colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
    - any other value would be colored according to its hash.
 
    .. versionadded:: 2.2
@@ -142,7 +143,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_dev_env_color() -> var:lp_dev_env_color
@@ -188,7 +189,7 @@ specific text and formatting may change.
    Added color from :func:`_lp_connected_display`: either
    :attr:`LP_COLOR_X11_ON` or :attr:`LP_COLOR_X11_OFF`.
 
-   Return code is :func:`_lp_hostname` ORed with :func:`_lp_chroot`: both must
+   Return code is :func:`_lp_hostname` `ORed` with :func:`_lp_chroot`: both must
    return no data for :func:`_lp_hostname_color` to return no data.
 
    .. versionadded:: 2.0
@@ -205,7 +206,7 @@ specific text and formatting may change.
    and :func:`_lp_jobcount` with colors from :attr:`LP_COLOR_JOB_R` and
    :attr:`LP_COLOR_JOB_Z`.
 
-   Return code is :func:`_lp_detached_sessions` ORed with :func:`_lp_jobcount`:
+   Return code is :func:`_lp_detached_sessions` `ORed` with :func:`_lp_jobcount`:
    both must return no data for :func:`_lp_jobcount_color` to return no data.
 
    .. versionchanged:: 2.0
@@ -219,7 +220,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_load_color() -> var:lp_load_color
@@ -239,7 +240,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_python_env_color() -> var:lp_python_env_color
@@ -248,7 +249,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.0
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_ruby_env_color() -> var:lp_ruby_env_color
@@ -257,7 +258,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_runtime_color() -> var:lp_runtime_color
@@ -283,16 +284,16 @@ specific text and formatting may change.
 
    .. versionadded:: 2.0
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_sudo_active_color() -> var:lp_sudo_active_color
 
    Returns :func:`_lp_sudo_active` with color and marks from
-   :attr:`LP_COLOR_MARK_SUDO` if sudo is active, or
+   :attr:`LP_COLOR_MARK_SUDO` if ``sudo`` is active, or
    ``LP_COLOR_MARK_NO_SUDO`` if not.
 
-   Does not return ``1`` if sudo is not active, as the return string is still
+   Does not return ``1`` if ``sudo`` is not active, as the return string is still
    needed.
 
    .. versionchanged:: 2.0
@@ -316,7 +317,7 @@ specific text and formatting may change.
 
    .. versionadded:: 2.1
    .. versionchanged:: 2.2
-      No longer include squared brackets, superseeded by
+      No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_time_color() -> var:lp_time_color

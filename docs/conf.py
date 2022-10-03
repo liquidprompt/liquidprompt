@@ -30,6 +30,7 @@ author = 'Mark Vander Stel'
 # ones.
 extensions = [
     'sphinx_rtd_theme',
+    'sphinxcontrib.spelling',
 ]
 
 # This value determines how to group the document tree into manual pages
@@ -83,3 +84,7 @@ nitpick_ignore_regex = [
     # Our returned values are done in variables, not types.
     ('py:class', r'.*'),
 ]
+
+# This is not Python code, so don't ignore Python specific things.
+spelling_ignore_python_builtins=False
+spelling_ignore_importable_modules=False

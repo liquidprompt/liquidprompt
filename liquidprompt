@@ -240,7 +240,6 @@ __lp_source_config() {
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
-    LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
     LP_DELIMITER_KUBECONTEXT_SUFFIX=${LP_DELIMITER_KUBECONTEXT_SUFFIX:-""}
     LP_DELIMITER_KUBECONTEXT_PREFIX=${LP_DELIMITER_KUBECONTEXT_PREFIX:-""}
 
@@ -311,6 +310,10 @@ __lp_source_config() {
     LP_MARK_DIRSTACK="${LP_MARK_DIRSTACK:-"⚞"}"
     LP_MARK_SHLVL="${LP_MARK_SHLVL:-"└"}"
     LP_MARK_WIFI="${LP_MARK_WIFI:-"📶"}"
+    LP_MARK_DEV_OPEN="${LP_MARK_DEV_OPEN:-"<"}"
+    LP_MARK_DEV_CLOSE="${LP_MARK_DEV_CLOSE:-">"}"
+    LP_MARK_DEV_MID="${LP_MARK_DEV_MID:-"|"}"
+    LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
 
     LP_COLOR_PATH=${LP_COLOR_PATH:-$NO_COL}
     lp_terminal_format 8 -1 0 0 -1
@@ -929,6 +932,21 @@ __lp_theme_zsh_complete() {
     _describe 'theme' lp_theme_list
 }
 
+_lp_join() {
+    # Join the $2... array with the $1 string.
+    local delimiter=${1-}
+    local IFS=""
+    if (( _LP_SHELL_zsh )); then
+        shift 1
+        # shellcheck disable=SC2296
+        lp_join="${(pj/$delimiter/)*}"
+    else
+        local first=${2-}
+        shift 2
+        lp_join="${first}${*/#/$delimiter}"
+    fi
+}
+
 ##########################
 # Working Directory Path #
 ##########################
@@ -1261,7 +1279,7 @@ _lp_python_env() {
 _lp_python_env_color() {
     _lp_python_env || return "$?"
 
-    lp_python_env_color="[${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}]"
+    lp_python_env_color="${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}"
 }
 
 _lp_node_env() {
@@ -1286,7 +1304,7 @@ _lp_node_env() {
 _lp_node_env_color() {
     _lp_node_env || return "$?"
 
-    lp_node_env_color="[${LP_COLOR_NODE_VENV}${lp_node_env}${NO_COL}]"
+    lp_node_env_color="${LP_COLOR_NODE_VENV}${lp_node_env}${NO_COL}"
 }
 
 _lp_ruby_env() {
@@ -1310,7 +1328,7 @@ _lp_ruby_env() {
 _lp_ruby_env_color() {
     _lp_ruby_env || return "$?"
 
-    lp_ruby_env_color="[${LP_COLOR_RUBY_VENV}${lp_ruby_env}${NO_COL}]"
+    lp_ruby_env_color="${LP_COLOR_RUBY_VENV}${lp_ruby_env}${NO_COL}"
 }
 
 _lp_terraform_env() {
@@ -1335,7 +1353,7 @@ _lp_terraform_env() {
 _lp_terraform_env_color() {
     _lp_terraform_env || return "$?"
 
-    lp_terraform_env_color="[${LP_COLOR_TERRAFORM}${lp_terraform_env}${NO_COL}]"
+    lp_terraform_env_color="${LP_COLOR_TERRAFORM}${lp_terraform_env}${NO_COL}"
 }
 
 _lp_software_collections() {
@@ -1353,7 +1371,7 @@ _lp_software_collections() {
 _lp_software_collections_color() {
     _lp_software_collections || return "$?"
 
-    lp_software_collections_color="[${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}]"
+    lp_software_collections_color="${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}"
 }
 
 
@@ -1397,7 +1415,7 @@ _lp_kubernetes_context() {
 _lp_kubernetes_context_color() {
     _lp_kubernetes_context || return "$?"
 
-    lp_kubernetes_context_color="[${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}]"
+    lp_kubernetes_context_color="${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}"
 }
 
 # Same as bash '\l', but can be inlined as a constant as the value will not
@@ -3186,6 +3204,39 @@ _lp_container_color() {
     lp_container_color="«${LP_COLOR_CONTAINER}${lp_container}${NO_COL}»"
 }
 
+
+_lp_dev_env_color() {
+    # add development environments
+    local -a dev_all
+    dev_all=(
+        "${lp_software_collections_color-}"
+        "${lp_aws_profile_color-}"
+        "${lp_container_color-}"
+        "${lp_python_env_color-}"
+        "${lp_node_env_color-}"
+        "${lp_ruby_env_color-}"
+        "${lp_terraform_env_color-}"
+        "${lp_kubernetes_context_color-}"
+    )
+    local -a dev_active
+    dev_active=()
+    for i in "${dev_all[@]}"; do
+        if [[ "$i" ]]; then
+            dev_active+=("$i")
+        fi
+    done
+    if [[ ${#dev_active[@]} -gt 0 ]] ; then
+        local lp_join
+        _lp_join "${LP_MARK_DEV_MID}" "${dev_active[@]}"
+        lp_dev_env_color="${LP_MARK_DEV_OPEN}${lp_join}${LP_MARK_DEV_CLOSE}"
+        return 0
+    else
+        lp_dev_env_color=""
+        return 1
+    fi
+}
+
+
 #################
 # Default theme #
 #################
@@ -3251,6 +3302,8 @@ _lp_default_theme_directory() {
     LP_PWD="${lp_path_format}${NO_COL}"
 }
 
+# Do not complain about unused variables.
+# shellcheck disable=SC2034
 _lp_default_theme_prompt_data() {
     # left of main prompt: space at right
     if _lp_jobcount_color; then
@@ -3310,6 +3363,9 @@ _lp_default_theme_prompt_data() {
         LP_SHLVL=
     fi
 
+    # All the following "dev-related" variables may be used alone by theme designers.
+    # If you need the whole section, you can also use LP_DEV_ENV defined below.
+
     if _lp_python_env_color; then
         LP_VENV=" $lp_python_env_color"
     else
@@ -3358,6 +3414,16 @@ _lp_default_theme_prompt_data() {
         LP_AWS_PROFILE=
     fi
 
+    # End of the section for dev-related variables.
+
+    # Alternative to atomic variables above:
+    # a correctly separated string list with everything.
+    if _lp_dev_env_color ; then
+        LP_DEV_ENV=" $lp_dev_env_color"
+    else
+        LP_DEV_ENV=
+    fi
+
     if _lp_runtime_color; then
         LP_RUNTIME=" $lp_runtime_color"
     else
@@ -3390,10 +3456,10 @@ _lp_default_theme_prompt_template() {
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_JOBS}"
         # add user, host, permissions colon, working directory, and dirstack
-        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_SHLVL}"
+        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_SHLVL}"
 
-        # add development environments
-        PS1+="${LP_SCLS}${LP_AWS_PROFILE}${LP_CONTAINER}${LP_VENV}${LP_NODE_VENV}${LP_RUBY_VENV}${LP_TFSPACE}${LP_KUBECONTEXT}${LP_PROXY}"
+        # Add the list of development environments/config/etc.
+        PS1+="${LP_DEV_ENV}"
 
         # Add VCS infos
         # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT

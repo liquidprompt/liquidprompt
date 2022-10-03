@@ -95,6 +95,9 @@ specific text and formatting may change.
    Returns :func:`_lp_aws_profile` with color from :attr:`LP_COLOR_AWS_PROFILE`.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_battery_color() -> var:lp_battery_color
 
@@ -119,11 +122,34 @@ specific text and formatting may change.
 
 .. function:: _lp_container_color() -> var:_lp_container_color
 
-    Returns :func:`_lp_container`, surrounded by « and »
-    colored with :attr:`LP_COLOR_CONTAINER` if the value is true.
-    Returns no data if the value is false.
+   Returns :func:`_lp_container`, surrounded by « and »
+   colored with :attr:`LP_COLOR_CONTAINER` if the value is true.
+   Returns no data if the value is false.
 
-    .. versionadded:: 2.1
+   .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
+
+.. function:: _lp_dev_env_color() -> var:lp_dev_env_color
+
+   Assemble data related to development environment and returns a single string.
+   The returned string starts with :attr:`LP_MARK_DEV_OPEN` and ends with :attr:`LP_MARK_DEV_CLOSE`,
+   with each section separated by :attr:`LP_MARK_DEV_MID`.
+
+   Data are collected from:
+
+   - :attr:`LP_SCLS`
+   - :attr:`LP_AWS_PROFILE`
+   - :attr:`LP_CONTAINER`
+   - :attr:`LP_VENV`
+   - :attr:`LP_NODE_VENV`
+   - :attr:`LP_RUBY_VENV`
+   - :attr:`LP_TFSPACE`
+   - :attr:`LP_KUBECONTEXT`
+   - :attr:`LP_CMAKE`
+
+   .. versionadded:: 2.2
 
 .. function:: _lp_dirstack_color() -> var:lp_dirstack_color
 
@@ -178,6 +204,9 @@ specific text and formatting may change.
    :attr:`LP_COLOR_KUBECONTEXT` and using mark :attr:`LP_MARK_KUBECONTEXT`.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_load_color() -> var:lp_load_color
 
@@ -195,18 +224,27 @@ specific text and formatting may change.
    Returns :func:`_lp_node_env` with color from :attr:`LP_COLOR_NODE_VENV`.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_python_env_color() -> var:lp_python_env_color
 
    Returns :func:`_lp_python_env` with color from :attr:`LP_COLOR_VIRTUALENV`.
 
    .. versionadded:: 2.0
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_ruby_env_color() -> var:lp_ruby_env_color
 
    Returns :func:`_lp_ruby_env` with color from :attr:`LP_COLOR_RUBY_VENV`.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_runtime_color() -> var:lp_runtime_color
 
@@ -230,6 +268,9 @@ specific text and formatting may change.
    :attr:`LP_COLOR_VIRTUALENV`.
 
    .. versionadded:: 2.0
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_sudo_active_color() -> var:lp_sudo_active_color
 
@@ -260,6 +301,9 @@ specific text and formatting may change.
    Returns :func:`_lp_terraform_env` with color from :attr:`LP_COLOR_TERRAFORM`.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.2
+      No longer include squared brackets, superseeded by
+      :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and :attr:`LP_MARK_DEV_CLOSE`.
 
 .. function:: _lp_time_color() -> var:lp_time_color
 

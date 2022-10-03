@@ -193,6 +193,7 @@ General
 
 Features
 --------
+
 .. attribute:: LP_DELIMITER_KUBECONTEXT_PREFIX
    :type: string
    :value: ""
@@ -802,6 +803,7 @@ Features
    .. versionchanged:: 2.0
       The ``-1`` option was added.
 
+
 Thresholds
 ----------
 
@@ -936,6 +938,30 @@ Marks
 
    Mark used to indicate that the prompt is ready for user input, unless some
    other context overrides it, like a VCS repository.
+
+.. attribute:: LP_MARK_DEV_CLOSE
+   :type: string
+   :value: ">"
+
+   Closing of the "development tools" section.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_MARK_DEV_MID
+   :type: string
+   :value: "|"
+
+   Separator between elements of the "development tools" section.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_MARK_DEV_OPEN
+   :type: string
+   :value: "<"
+
+   Opening of the "development tools" section.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_MARK_DIRSTACK
    :type: string
@@ -1121,6 +1147,7 @@ Marks
    See also: :attr:`LP_ENABLE_WIFI_STRENGTH`.
 
    .. versionadded:: 2.1
+
 
 Colors
 ------

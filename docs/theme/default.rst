@@ -182,6 +182,11 @@ default order if the user does not configure a different template.
    If running in a terminal multiplexer, will be colored. See
    :attr:`LP_COLOR_IN_MULTIPLEXER`.
 
+.. attribute:: LP_PROXY
+
+   A ↥ (:attr:`LP_MARK_PROXY`) if an HTTP proxy is in use. See
+   :attr:`LP_ENABLE_PROXY`.
+
 .. attribute:: LP_SHLVL
 
    The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored
@@ -189,58 +194,14 @@ default order if the user does not configure a different template.
 
    .. versionadded:: 2.1
 
-.. attribute:: LP_SCLS
+.. attribute:: LP_DEV_ENV
 
-   The current Red Hat Software Collections environment. See
-   :attr:`LP_ENABLE_SCLS`.
+   Sections related to development environments (see section `dev_env`_ below).
 
-.. attribute:: LP_AWS_PROFILE
+   See also :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID`,
+   and :attr:`LP_MARK_DEV_CLOSE`.
 
-   The current active AWS Profile. See
-   :attr:`LP_ENABLE_AWS_PROFILE`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_CONTAINER
-
-   The container status for the current shell. See :attr:`LP_ENABLE_CONTAINER`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_VENV
-
-   The current Python (or Conda) virtual environment. See
-   :attr:`LP_ENABLE_VIRTUALENV`.
-
-.. attribute:: LP_NODE_VENV
-
-   The current Node.js virtual environment. See :attr:`LP_ENABLE_NODE_VENV`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_RUBY_VENV
-
-   The current Ruby virtual environment. See :attr:`LP_ENABLE_RUBY_VENV`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_TFSPACE
-
-   The current Terraform workspace. See :attr:`LP_ENABLE_TERRAFORM`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_KUBECONTEXT
-
-   The current Kubernetes context. See
-   :attr:`LP_ENABLE_KUBECONTEXT`.
-
-   .. versionadded:: 2.1
-
-.. attribute:: LP_PROXY
-
-   A ↥ (:attr:`LP_MARK_PROXY`) if an HTTP proxy is in use. See
-   :attr:`LP_ENABLE_PROXY`.
+   .. versionadded:: 2.2
 
 .. attribute:: LP_VCS
 
@@ -296,3 +257,67 @@ default order if the user does not configure a different template.
 
    Not actually a part of the default theme, it is used in the default template
    as the final section. See :attr:`LP_PS1_POSTFIX` for details.
+
+
+.. _dev_env:
+
+Development environment sections
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Version 2.2 of Liquid Prompt introduced a new way to display all sections
+related to development environments.
+All the data below are now items in the :attr:`LP_DEV_ENV` list,
+joined by :attr:`LP_MARK_DEV_MID` and surrounded by
+:attr:`LP_MARK_DEV_OPEN` and :attr:`LP_MARK_DEV_CLOSE`.
+
+If you want to change the ordering or have different marks
+for different items, you can derivate your own
+theme template and use the following sections.
+
+.. attribute:: LP_SCLS
+
+   The current Red Hat Software Collections environment. See
+   :attr:`LP_ENABLE_SCLS`.
+
+.. attribute:: LP_AWS_PROFILE
+
+   The current active AWS Profile. See
+   :attr:`LP_ENABLE_AWS_PROFILE`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_CONTAINER
+
+   The container status for the current shell. See :attr:`LP_ENABLE_CONTAINER`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_VENV
+
+   The current Python (or Conda) virtual environment. See
+   :attr:`LP_ENABLE_VIRTUALENV`.
+
+.. attribute:: LP_NODE_VENV
+
+   The current Node.js virtual environment. See :attr:`LP_ENABLE_NODE_VENV`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_RUBY_VENV
+
+   The current Ruby virtual environment. See :attr:`LP_ENABLE_RUBY_VENV`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_TFSPACE
+
+   The current Terraform workspace. See :attr:`LP_ENABLE_TERRAFORM`.
+
+   .. versionadded:: 2.1
+
+.. attribute:: LP_KUBECONTEXT
+
+   The current Kubernetes context. See
+   :attr:`LP_ENABLE_KUBECONTEXT`.
+
+   .. versionadded:: 2.1

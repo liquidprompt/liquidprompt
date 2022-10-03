@@ -710,6 +710,22 @@ function test_is_function {
   unalias not_my_function
 }
 
+function test_join {
+    _lp_join "_" "A" "B " " " " C" " D " "EE"
+    assertEquals "A_B _ _ C_ D _EE" "$lp_join"
+
+    _lp_join "-" "A"
+    assertEquals "A" "$lp_join"
+
+    _lp_join "+" ""
+    assertEquals "" "$lp_join"
+
+    typeset -a arr
+    arr=(1 2 3)
+    _lp_join "/" "${arr[@]}"
+    assertEquals "1/2/3" "$lp_join"
+}
+
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit

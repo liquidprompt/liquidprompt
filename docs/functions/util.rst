@@ -101,3 +101,10 @@ These functions are designed to be used by themes.
 
    .. versionadded:: 2.0
 
+.. function:: _lp_join(delimiter, items...) -> var:lp_join
+
+   Join all strings in items with the given deliminter.
+   Example: ``_lp_join ", " "a" "b" "c"`` will render ``lp_join="a, b, c"``
+
+   .. versionadded:: 2.2
+

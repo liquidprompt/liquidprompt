@@ -1322,6 +1322,7 @@ _lp_python_env() {
 }
 
 _lp_python_env_color() {
+    unset lp_python_env_color
     _lp_python_env || return "$?"
 
     lp_python_env_color="${LP_COLOR_VIRTUALENV}${lp_python_env}${NO_COL}"
@@ -1347,6 +1348,7 @@ _lp_node_env() {
 }
 
 _lp_node_env_color() {
+    unset lp_node_env_color
     _lp_node_env || return "$?"
 
     lp_node_env_color="${LP_COLOR_NODE_VENV}${lp_node_env}${NO_COL}"
@@ -1371,6 +1373,7 @@ _lp_ruby_env() {
 }
 
 _lp_ruby_env_color() {
+    unset lp_ruby_env_color
     _lp_ruby_env || return "$?"
 
     lp_ruby_env_color="${LP_COLOR_RUBY_VENV}${lp_ruby_env}${NO_COL}"
@@ -1396,6 +1399,7 @@ _lp_terraform_env() {
 }
 
 _lp_terraform_env_color() {
+    unset lp_terraform_env_color
     _lp_terraform_env || return "$?"
 
     lp_terraform_env_color="${LP_COLOR_TERRAFORM}${lp_terraform_env}${NO_COL}"
@@ -1414,6 +1418,7 @@ _lp_software_collections() {
 }
 
 _lp_software_collections_color() {
+    unset lp_software_collections_color
     _lp_software_collections || return "$?"
 
     lp_software_collections_color="${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}"
@@ -1458,6 +1463,7 @@ _lp_kubernetes_context() {
 }
 
 _lp_kubernetes_context_color() {
+    unset lp_kubernetes_context_color
     _lp_kubernetes_context || return "$?"
 
     lp_kubernetes_context_color="${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}"
@@ -1488,41 +1494,39 @@ _lp_cmake() {
 }
 
 _lp_cmake_color() {
-    if _lp_cmake ; then
-        local lp_hash_color
+    unset lp_cmake_color
+    _lp_cmake || return "$?"
 
-        lp_cmake_color=""
+    local lp_hash_color
 
-        if [[ -n "$lp_cmake_c_compiler" ]] ; then
-            _lp_hash_color "$lp_cmake_c_compiler"
-            lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
+    lp_cmake_color=""
+
+    if [[ -n "$lp_cmake_c_compiler" ]] ; then
+        _lp_hash_color "$lp_cmake_c_compiler"
+        lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
+    fi
+
+    if [[ -n "$lp_cmake_cxx_compiler" ]] ; then
+        _lp_hash_color "$lp_cmake_cxx_compiler"
+        lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
+    fi
+
+    if [[ -n "$lp_cmake_generator" ]] ; then
+        _lp_hash_color "$lp_cmake_generator"
+        lp_cmake_color+="$lp_hash_color${LP_MARK_CMAKE}"
+    fi
+
+    if [[ -n "$lp_cmake_buildtype" ]] ; then
+        if [[ "$lp_cmake_buildtype" == "Release" ]] ; then
+            lp_cmake_color+="${LP_COLOR_CMAKE_RELEASE}${lp_cmake_buildtype}${NO_COL}"
+        elif [[ "$lp_cmake_buildtype" == "RelWithDebInfo" ]] ; then
+            lp_cmake_color+="${LP_COLOR_CMAKE_RWDI}${lp_cmake_buildtype}${NO_COL}"
+        elif [[ "$lp_cmake_buildtype" == "Debug" ]] ; then
+            lp_cmake_color+="${LP_COLOR_CMAKE_DEBUG}${lp_cmake_buildtype}${NO_COL}"
+        else
+            _lp_hash_color "$lp_cmake_buildtype"
+            lp_cmake_color+="$lp_hash_color"
         fi
-
-        if [[ -n "$lp_cmake_cxx_compiler" ]] ; then
-            _lp_hash_color "$lp_cmake_cxx_compiler"
-            lp_cmake_color+="${lp_hash_color}${LP_MARK_CMAKE}"
-        fi
-
-        if [[ -n "$lp_cmake_generator" ]] ; then
-            _lp_hash_color "$lp_cmake_generator"
-            lp_cmake_color+="$lp_hash_color${LP_MARK_CMAKE}"
-        fi
-
-        if [[ -n "$lp_cmake_buildtype" ]] ; then
-            if [[ "$lp_cmake_buildtype" == "Release" ]] ; then
-                lp_cmake_color+="${LP_COLOR_CMAKE_RELEASE}${lp_cmake_buildtype}${NO_COL}"
-            elif [[ "$lp_cmake_buildtype" == "RelWithDebInfo" ]] ; then
-                lp_cmake_color+="${LP_COLOR_CMAKE_RWDI}${lp_cmake_buildtype}${NO_COL}"
-            elif [[ "$lp_cmake_buildtype" == "Debug" ]] ; then
-                lp_cmake_color+="${LP_COLOR_CMAKE_DEBUG}${lp_cmake_buildtype}${NO_COL}"
-            else
-                _lp_hash_color "$lp_cmake_buildtype"
-                lp_cmake_color+="$lp_hash_color"
-            fi
-        fi
-        return 0
-    else
-        return 1
     fi
 }
 
@@ -1710,6 +1714,7 @@ _lp_aws_profile() {
 }
 
 _lp_aws_profile_color() {
+    unset lp_aws_profile_color
     _lp_aws_profile || return "$?"
 
     lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
@@ -3308,6 +3313,7 @@ _lp_container() {
 }
 
 _lp_container_color() {
+    unset lp_container_color
     _lp_container || return "$?"
 
     lp_container_color="«${LP_COLOR_CONTAINER}${lp_container}${NO_COL}»"
@@ -3341,7 +3347,7 @@ _lp_dev_env_color() {
         lp_dev_env_color="${LP_MARK_DEV_OPEN}${lp_join}${LP_MARK_DEV_CLOSE}"
         return 0
     else
-        lp_dev_env_color=""
+        unset lp_dev_env_color
         return 1
     fi
 }

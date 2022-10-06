@@ -992,6 +992,68 @@ _lp_grep_fields() {
     done <"$file"
 }
 
+# Adds as much $3 character (e.g. spaces) between $1 and $2,
+# so as to make the resulting string the same width as the current terminal.
+_lp_fill() {
+
+    local left="$1" right="$2" fillchars="${3:-" "}" splitends="${4:-1}"
+
+    # Compute the gap between left and right.
+    local ret
+    __lp_strip_escapes "$left"
+    local left_as_text="$ret"
+    __lp_strip_escapes "$right"
+    local right_as_text="$ret"
+    local gap_width=$((${COLUMNS:-80}-${#left_as_text}-${#right_as_text}))
+    if [[ $gap_width -lt 0 ]] ; then
+        lp_fill="${left}${right}"
+        return 1
+    fi
+
+    local filled=""
+    __lp_strip_escapes "$fillchars"
+    local fillchars_as_text="${ret}"
+    local fillchars_as_text_width=${#fillchars_as_text}
+    local nb_fillchars=$((gap_width/fillchars_as_text_width))
+    local i
+    for (( i=0; i < nb_fillchars; i++ )) ; do
+        filled+="$fillchars"
+    done
+
+    __lp_strip_escapes "$filled"
+    local actual_width=${#ret}
+    # If there is still a gap (i.e. we have an unaligned multi-character fillchars).
+    if [[ ${actual_width} -lt ${gap_width} ]] ; then
+        # User asked for splitends.
+        if [[ $splitends -ne 0 ]] ; then
+            # The last occurence is necessarily stripped from escaped sequences,
+            # or else we may have dangling sequences.
+            for (( i=_LP_FIRST_INDEX; i < $((${#fillchars_as_text}+_LP_FIRST_INDEX)); i++ )) ; do
+                # Get one single character.
+                if (( _LP_SHELL_zsh )) ; then
+                    filled+="${fillchars_as_text[i,i]}"
+                else
+                    filled+="${fillchars_as_text:i:1}"
+                fi
+                __lp_strip_escapes "$filled"
+                actual_width=${#ret}
+                if [[ ${actual_width} -ge ${gap_width} ]] ; then
+                    # Stop at this char if we're full.
+                    break
+                fi
+            done
+        else # User asked for no splitends.
+            for (( i=actual_width; i < gap_width; i++ )) ; do
+                # Fill with spaces.
+                filled+=" "
+            done
+        fi
+    fi
+
+    # shellcheck disable=SC2034
+    lp_fill="${left}${filled}${right}"
+}
+
 
 ##########################
 # Working Directory Path #

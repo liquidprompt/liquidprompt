@@ -1,11 +1,11 @@
 Version 2.0 Upgrade Notes
 *************************
 
-Most of the changes in 2.0 are in private functions and variables.  There are a
+Most of the changes in 2.0 are in private functions and variables. There are a
 few public API changes that could impact users: :ref:`$lp_err <lp_err>`,
 :ref:`$LP_DISABLED_VCS_PATH <lp_disabled_vcs_path>`, :ref:`$LP_PATH_DEFAULT
 <lp_path_default>`, :ref:`$PROMPT_DIRTRIM <prompt_dirtrim>`,
-:ref:`$LP_PATH_KEEP=-1 <lp_path_keep>`, and :ref:`_lp_title() <lp_title>`.  The
+:ref:`$LP_PATH_KEEP=-1 <lp_path_keep>`, and :ref:`_lp_title() <lp_title>`. The
 rest are private API changes, but are still documented here.
 
 .. contents::
@@ -577,7 +577,7 @@ _lp_time()
 ----------
 
 Split into :func:`_lp_time()`, :func:`_lp_time_color()`,
-:func:`_lp_analog_time()`, and  `_lp_analog_time_color()`.
+:func:`_lp_analog_time()`, and :func:`_lp_analog_time_color()`.
 
 The return value is no longer stored in ``LP_TIME``.
 

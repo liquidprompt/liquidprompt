@@ -30,8 +30,8 @@ If you want to create your own theme, see :doc:`theme/custom`.
 Switching Themes
 ----------------
 
-Liquid Prompt can switch between themes on the fly. The shell does not need to be
-reloaded, and no files need to be sourced after the initial source.
+Liquid Prompt can switch between themes on the fly. The shell does not need to
+be reloaded, and no files need to be sourced after the initial source.
 
 To load (but not activate) a theme, simply source the theme file. For example,
 to load the included Powerline theme, source the theme file::

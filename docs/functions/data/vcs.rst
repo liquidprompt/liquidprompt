@@ -121,8 +121,8 @@ this.
 
 .. function:: _lp_vcs_head_status() -> var:lp_vcs_head_status, var:lp_vcs_head_details
 
-   Return ``true`` if the repository is in a special or unusual state. Return the
-   special status, and any extra details (like progress in a rebase) if
+   Return ``true`` if the repository is in a special or unusual state. Return
+   the special status, and any extra details (like progress in a rebase) if
    applicable.
 
    Many VCS providers do not have such information. This info is unlikely to be

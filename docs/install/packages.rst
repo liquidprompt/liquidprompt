@@ -86,7 +86,7 @@ Nix
 
 .. image:: https://repology.org/badge/version-for-repo/nix_stable/liquidprompt.svg
    :alt: nixpkgs stable package
-   :target: https://github.com/NixOS/nixpkgs/blob/master/pkgs/shells/liquidprompt/default.nix
+   :target: https://search.nixos.org/packages?query=liquidprompt
 
 .. code-block::
 

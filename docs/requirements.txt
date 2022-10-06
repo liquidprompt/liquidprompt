@@ -2,3 +2,5 @@ sphinx>=4.3.0,<4.4.0
 sphinx_rtd_theme>=1.0.0,<1.1.0
 # Might need libenchant installed from OS package manager to work.
 sphinxcontrib-spelling>=7.6.1,<7.7.0
+# Claims to need Python 3.7+, but works fine on Python 3.6. Installed using --ignore-requires-python
+sphinx-lint>=0.6.1,<0.7.0

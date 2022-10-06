@@ -39,7 +39,8 @@ Git repository on a server:
 When Liquid Prompt is displaying nearly everything, it may look like this:
 
 .. image:: alternate_vcs-long.png
-   :alt: 🕤 ⌁24% ⌂1.68 θ90° 3d/2&/1z [user@server:~/ … /liquidprompt/docs/theme ⚞3] [pyenv] main(U2 ?1 +10/-5,+3/-1)+ 20s 125 ±
+   :alt: 🕤 ⌁24% ⌂1.68 θ90° 3d/2&/1z [user@server:~/ … /liquidprompt/docs/theme
+       ⚞3] [pyenv] main(U2 ?1 +10/-5,+3/-1)+ 20s 125 ±
 
 A demo of what disabling the configuration options might look like:
 

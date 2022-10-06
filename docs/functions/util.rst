@@ -28,9 +28,10 @@ These functions are designed to be used by themes.
 
 .. function:: _lp_grep_fields(filename, delimiter, keys...) -> var:lp_grep_fields
 
-   Parse the given filename for one key/value pairs of the form "<key><delimiter><value>"
-   (e.g. "this=that") on each line.
-   Sets an array containing the parsed values, for each key in the same order the function was called.
+   Parse the given filename for one key/value pairs of the form
+   "<key><delimiter><value>" (e.g. "this=that") on each line. Sets an array
+   containing the parsed values, for each key in the same order the function was
+   called.
 
    .. code-block:: sh
       :caption: Example of use
@@ -44,11 +45,11 @@ These functions are designed to be used by themes.
       To write portable code, you should use ``_LP_FIRST_INDEX``.
 
    .. warning::
-      It is strongly advised not to loop over the items in `lp_grep_fields`.
-      If a searched key is missing in the file, its corresponding entry in the array
-      will be silently skipped, and thus the indices you would expect may
-      lead to unset variables.
-      Just use explicit indexing to access the parsed values.
+      It is strongly advised not to loop over the items in `lp_grep_fields`. If
+      a searched key is missing in the file, its corresponding entry in the
+      array will be silently skipped, and thus the indices you would expect may
+      lead to unset variables. Just use explicit indexing to access the parsed
+      values.
 
    Returns 1 if the file does not exists.
 
@@ -87,8 +88,8 @@ These functions are designed to be used by themes.
    *vcs_type* is not set, uses the value of ``lp_vcs_type`` instead.
 
    If the type is "git", matches *vcs_subtype* to see if the repository is of
-   type VCSH or ``git-svn`` instead, and return their marks if so. If *vcs_subtype*
-   is not set, uses the value of ``lp_vcs_subtype`` instead.
+   type VCSH or ``git-svn`` instead, and return their marks if so. If
+   *vcs_subtype* is not set, uses the value of ``lp_vcs_subtype`` instead.
 
    .. versionchanged:: 2.1
       Added *vcs_subtype* argument.
@@ -131,9 +132,9 @@ These functions are designed to be used by themes.
 
 .. function:: _lp_hash_color(str) -> var:lp_hash_color
 
-   Colorize the given string with a color depending on its hash.
-   The color is chosen among: (green, yellow, blue, purple, cyan).
-   Note that the red color is not a candidate, as it should be reserved for alerts.
+   Colorize the given string with a color depending on its hash. The color is
+   chosen among: (green, yellow, blue, purple, cyan). Note that the red color is
+   not a candidate, as it should be reserved for alerts.
 
    .. versionadded:: 2.2
 

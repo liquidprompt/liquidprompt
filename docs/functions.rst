@@ -1,11 +1,12 @@
 Functions
 *********
 
-Functions starting with ``lp`` or any other alphanumeric character are **public**
-functions designed to be used by users on the command line or in their config.
+Functions starting with ``lp`` or any other alphanumeric character are
+**public** functions designed to be used by users on the command line or in
+their config.
 
-Functions starting with ``_lp`` are **theme** level functions, designed to be used
-by themes. These include data, theme, and utility functions.
+Functions starting with ``_lp`` are **theme** level functions, designed to be
+used by themes. These include data, theme, and utility functions.
 
 Functions starting with ``__lp`` are **internal** functions, designed to be used
 only by Liquid Prompt internals. These functions should not be used by users or

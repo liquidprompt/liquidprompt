@@ -10,7 +10,7 @@ release is full of new features and improvements.
 Speed Improvements
 ==================
 
-By removing subshells, ``exec``, and other ``fork`` :spelling:word:`ing` calls,
+By removing subshells, ``exec``, and other ``fork``\ :spelling:word:`ing` calls,
 the whole project has seen incredible speed improvements, anywhere from 1.5 to
 10 times as fast.
 

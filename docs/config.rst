@@ -9,10 +9,10 @@ options. They can either be set before sourcing Liquid Prompt (in ``.bashrc`` or
 ``.zshrc``), or set in a Liquid Prompt config file.
 
 .. note::
-   Config variables set in a config file take precedence over variables set in the
-   environment or on the command line. Setting a config option on the command
-   line, then running :func:`lp_activate` will overwrite that option with the
-   value from the config file, if it is set there.
+   Config variables set in a config file take precedence over variables set in
+   the environment or on the command line. Setting a config option on the
+   command line, then running :func:`lp_activate` will overwrite that option
+   with the value from the config file, if it is set there.
 
 The config file is searched for in the following locations:
 
@@ -26,8 +26,8 @@ The config file is searched for in the following locations:
 
 The first file found is sourced.
 
-Liquid Prompt ships with an example config file, ``liquidpromptrc-dist``. You can
-start from this file for your config::
+Liquid Prompt ships with an example config file, ``liquidpromptrc-dist``. You
+can start from this file for your config::
 
     cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc
 
@@ -91,8 +91,8 @@ General
    The number of directories (counting '/') to display at the beginning of a
    shortened path.
 
-   Set to ``1``, will display only root. Set to ``0``, will keep nothing from the
-   beginning of the path.
+   Set to ``1``, will display only root. Set to ``0``, will keep nothing from
+   the beginning of the path.
 
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
@@ -134,7 +134,7 @@ General
      How many characters will be untouched is set by
      :attr:`LP_PATH_CHARACTER_KEEP`. The shortened mark is
      :attr:`LP_MARK_SHORTEN_PATH`.
-   * **truncate_chars_from_dir_middle**:  Leaves the beginning and end of a
+   * **truncate_chars_from_dir_middle**: Leaves the beginning and end of a
      directory name untouched. E.g. in a directory named
      ``~/MyProjects/Office``, then it will be shortened to
      ``~/MyP...cts/Office``. How many characters will be untouched is set by
@@ -208,7 +208,7 @@ Features
      without the rest of the ARN
      (``arn:aws:eks:$AWS_REGION:$ACCOUNT_ID:cluster/$CLUSTER_NAME``)
    * alternatively, if using AWS EKS, set this to ":" to show only
-     `cluster/$CLUSTER_NAME`.  (Note: the prefix removed is a greedy match - it
+     `cluster/$CLUSTER_NAME`. (Note: the prefix removed is a greedy match - it
      contains all the ":"s in the input.)
 
    If set to the empty string no truncating will occur (this is the default).
@@ -372,7 +372,7 @@ Features
       so this may behave inconsistently with different container software. For
       example, Docker does not inherit anything unless explicitly told to.
       Singularity in many configurations inherits most variables but shell
-      functions and zsh hooks might not make it in.  For full functionality,
+      functions and zsh hooks might not make it in. For full functionality,
       ``liquidprompt`` may need to be sourced inside the child container.
 
    See also: :attr:`LP_COLOR_CONTAINER`.
@@ -635,9 +635,10 @@ Features
    Will be disabled if ``sudo`` is not found.
 
    .. warning::
-      Each evocation of ``sudo`` by default writes to the :spelling:word:`syslog`,
-      and this will run ``sudo`` once each prompt, unless you have `NOPASSWD`
-      powers. This is likely to make your sysadmin hate you.
+      Each evocation of ``sudo`` by default writes to the
+      :spelling:word:`syslog`, and this will run ``sudo`` once each prompt,
+      unless you have `NOPASSWD` powers. This is likely to make your sysadmin
+      hate you.
 
    See also: :attr:`LP_COLOR_MARK_SUDO`.
 
@@ -1056,9 +1057,9 @@ Marks
    :attr:`LP_ENABLE_VIRTUALENV`) and the Red Hat Software Collection
    (see :attr:`LP_ENABLE_SCLS`).
 
-   The display of Unicode characters varies among Terminal and Font settings,
-   so you might try alternative marks. Single symbol alternatives to the
-   default `⎈` (U+2388, Helm Symbol) are `☸` (U+2638, Wheel of :spelling:word:`Dharma`)
+   The display of Unicode characters varies among Terminal and Font settings, so
+   you might try alternative marks. Single symbol alternatives to the default
+   `⎈` (U+2388, Helm Symbol) are `☸` (U+2638, Wheel of :spelling:word:`Dharma`)
    or `κ` (U+03BA, Greek Small Letter Kappa).
 
    See also: :attr:`LP_ENABLE_KUBECONTEXT`.
@@ -1440,8 +1441,8 @@ Valid preset color variables are:
    :type: string
    :value: $LP_COLOR_MARK_ROOT
 
-   Color used for :attr:`LP_MARK_DEFAULT` when ``sudo`` is active, shown instead of
-   :attr:`LP_COLOR_MARK`.
+   Color used for :attr:`LP_MARK_DEFAULT` when ``sudo`` is active, shown instead
+   of :attr:`LP_COLOR_MARK`.
 
    See also: :attr:`LP_ENABLE_SUDO`.
 

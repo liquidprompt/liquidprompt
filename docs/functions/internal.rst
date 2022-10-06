@@ -219,8 +219,8 @@ Theme
 
 .. function:: __lp_theme_list() -> var:lp_theme_list
 
-   Returns an array of Liquid Prompt themes currently loaded in memory. Looks for
-   functions matching ``_lp_*_theme_prompt``.
+   Returns an array of Liquid Prompt themes currently loaded in memory. Looks
+   for functions matching ``_lp_*_theme_prompt``.
 
    .. versionadded:: 2.0
 

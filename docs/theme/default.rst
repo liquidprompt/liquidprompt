@@ -24,7 +24,8 @@ When Liquid Prompt is displaying nearly everything (a rare event!), it may look
 like this:
 
 .. image:: default-long.png
-   :alt: 🕤 ⌁24% ⌂1.68 θ90° 3d/2&/1z [user@server:~/ … /liquidprompt/docs/theme ⚞3] [pyenv] main(+10/-5,+3/-1)+* 20s 125 ±
+   :alt: 🕤 ⌁24% ⌂1.68 θ90° 3d/2&/1z [user@server:~/ … /liquidprompt/docs/theme
+       ⚞3] [pyenv] main(+10/-5,+3/-1)+* 20s 125 ±
 
 See :ref:`Templates <templates>` for what each section will look like.
 

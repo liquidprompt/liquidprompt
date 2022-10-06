@@ -53,11 +53,11 @@ Development Environment
 
 .. function:: _lp_cmake() -> var:lp_cmake_compiler, var:lp_cmake_generator, var:lp_cmake_buildtype
 
-   Returns ``true`` if a CMake context is found.
-   Parse the data in `CMakeCache.txt` and returns the basename of the configured compiler,
-   generator (e.g. "Unix Makefiles"),
-   and build type ("Debug", "Release", etc.).
-   Some generator names are shorten: "Makefiles" becomes "Make" and "Visual Studio" becomes "VS".
+   Returns ``true`` if a CMake context is found. Parse the data in
+   `CMakeCache.txt` and returns the basename of the configured compiler,
+   generator (e.g. "Unix Makefiles"), and build type ("Debug", "Release", etc.).
+   Some generator names are shorten: "Makefiles" becomes "Make" and "Visual
+   Studio" becomes "VS".
 
    Can be disabled by :attr:`LP_ENABLE_CMAKE`.
 
@@ -179,8 +179,8 @@ Environment
 
 .. function:: _lp_container() -> var:lp_container
 
-   Returns ``true`` if the shell is running in a container.  In that case,
-   the return variable is set to a string matching the container type. Possible
+   Returns ``true`` if the shell is running in a container. In that case, the
+   return variable is set to a string matching the container type. Possible
    values include (but are not limited to):
 
    * ``Singlrty`` - running in a `Singularity`_ container
@@ -198,8 +198,8 @@ Environment
    .. _systemd-nspawn: https://www.freedesktop.org/software/systemd/man/systemd-nspawn.html
 
    It is not possible to detect more than one containerization type to be
-   returned.  The containers are checked in the order listed above, and the
-   first one found will be returned.
+   returned. The containers are checked in the order listed above, and the first
+   one found will be returned.
 
     Can be enabled by :attr:`LP_ENABLE_CONTAINER`.
 

@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: Install Python dependencies
@@ -27,26 +27,13 @@ jobs:
       - name: Create output directory
         run: mkdir -v ./.output
       - name: Create release tarball
-        run: tar --exclude-vcs --exclude='./.*' --transform 's/^\./liquidprompt/' -zcvf ./.output/liquidprompt.tar.gz .
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: tar --exclude-vcs --exclude='./.*' --transform 's/^\./liquidprompt/' -zcvf ./.output/liquidprompt-${{ github.ref_name }}.tar.gz .
+      - name: Create release and upload release asset
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Version ${{ github.ref }}
           draft: true
           prerelease: false
-      - name: Get the tag name
-        id: tag_name
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./.output/liquidprompt.tar.gz
-          asset_name: liquidprompt-${{ steps.tag_name.outputs.tag }}.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            liquidprompt
+            ./.output/liquidprompt-${{ github.ref_name }}.tar.gz

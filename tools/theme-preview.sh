@@ -1,6 +1,8 @@
 #!/bin/bash
 set -u
 
+COLUMNS=160
+
 . ./liquidprompt --no-activate
 
 # If a theme was given, use the theme and source all other arguments.
@@ -89,7 +91,7 @@ lp_activate --no-config
 lp_theme "$theme" || exit "$?"
 __lp_set_prompt
 
-printf 'Short prompt:\n\n  %s  \n\n' "$PS1"
+printf 'Short prompt:\n\n%s\n\n' "$PS1"
 
 
 ## Medium
@@ -149,7 +151,7 @@ lp_activate --no-config
 _config
 __lp_set_prompt
 
-printf 'Medium prompt:\n\n  %s  \n\n' "$PS1"
+printf 'Medium prompt:\n\n%s\n\n' "$PS1"
 
 
 ## Long
@@ -247,4 +249,4 @@ lp_activate --no-config
 _long_config
 __lp_set_prompt
 
-printf 'Long prompt:\n\n  %s  \n\n' "$PS1"
+printf 'Long prompt:\n\n%s\n\n' "$PS1"

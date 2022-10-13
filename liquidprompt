@@ -316,6 +316,7 @@ __lp_source_config() {
     LP_MARK_DEV_MID="${LP_MARK_DEV_MID:-"|"}"
     LP_MARK_CMAKE="${LP_MARK_CMAKE:-":"}"
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
+    LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-"/"}"
 
     LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
     LP_COLOR_CMAKE_RWDI=${LP_COLOR_CMAKE_RWDI:-$BLUE}
@@ -1782,11 +1783,11 @@ _lp_jobcount_color() {
 
     if _lp_jobcount; then
         if (( lp_running_jobs > 0 )); then
-            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+="$LP_MARK_JOBS_SEPARATOR"
             lp_jobcount_color+="${LP_COLOR_JOB_R}${lp_running_jobs}&${NO_COL}"
         fi
         if (( lp_stopped_jobs > 0 )); then
-            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+='/'
+            [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+="$LP_MARK_JOBS_SEPARATOR"
             lp_jobcount_color+="${LP_COLOR_JOB_Z}${lp_stopped_jobs}z${NO_COL}"
         fi
     fi

@@ -229,6 +229,13 @@ default order if the user does not configure a different template.
    The error code of the last command, if it is non-zero. See
    :attr:`LP_ENABLE_ERROR`.
 
+.. attribute:: LP_ERR_MEANING
+
+   A guess on the meaning of the last error. See
+   :attr:`LP_ENABLE_ERROR_MEANING` and :attr:`LP_ERR`.
+
+   .. versionadded:: 2.2
+
 :attr:`LP_MARK_PREFIX`
 
    Not actually a part of the default theme, it is used in the default template

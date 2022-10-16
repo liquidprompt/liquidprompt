@@ -231,6 +231,15 @@ Environment
 
    .. versionadded:: 2.0
 
+.. function:: _lp_error_meaning() -> var:lp_error_meaning
+
+   Returns ``true`` if the last user shell command returned a non-zero exit
+   code. Returns (in the return variable) a guess of the meaning of that error.
+
+   Can be disabled by :attr:`LP_ENABLE_ERROR_MEANING`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_http_proxy() -> var:lp_http_proxy
 
    Returns ``true`` if an HTTP or HTTPS proxy is enabled through environment

@@ -279,6 +279,8 @@ __lp_source_config() {
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
+    LP_ENABLE_ERROR_MEANING=${LP_ENABLE_ERROR:-0}
+    LP_ENABLE_ERROR_MEANING_EXTENDED=${LP_ENABLE_ERROR:-0}
     LP_ENABLE_DIRSTACK=${LP_ENABLE_DIRSTACK:-0}
     LP_ENABLE_KUBECONTEXT=${LP_ENABLE_KUBECONTEXT:-0}
     LP_ENABLE_KUBE_NAMESPACE=${LP_ENABLE_KUBE_NAMESPACE:-0}
@@ -334,6 +336,7 @@ __lp_source_config() {
     LP_COLOR_JOB_R=${LP_COLOR_JOB_R:-$BOLD_YELLOW}
     LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
     LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
+    LP_COLOR_ERR_MEANING=${LP_COLOR_ERR_MEANING:-$LP_COLOR_ERR}
     LP_COLOR_MARK=${LP_COLOR_MARK:-$BOLD}
     LP_COLOR_MARK_ROOT=${LP_COLOR_MARK_ROOT:-$BOLD_RED}
     LP_COLOR_MARK_SUDO=${LP_COLOR_MARK_SUDO:-$LP_COLOR_MARK_ROOT}
@@ -1318,6 +1321,202 @@ _lp_error_color() {
     _lp_error || return "$?"
 
     lp_error_color="${LP_COLOR_ERR}${lp_error}${NO_COL}"
+}
+
+_lp_error_meaning() {
+    # Reasonable codes for a POSIX env.
+
+    (( LP_ENABLE_ERROR_MEANING )) || return 2
+
+    (( lp_error != 0 )) || return 1
+
+    local meaning=
+    case $lp_error in
+        # Common
+        1 )
+            meaning="error"        #1
+            ;;
+        2 )
+            meaning="usage"        #2
+            ;;
+        126 )
+            meaning="no perm"      #126
+            ;;
+        127 )
+            meaning="not found"    #127
+            ;;
+        128 )
+            meaning="bad exit"     #128
+            ;;
+
+        # Portable and meaningful codes from signal.h:
+        130 )
+            meaning="interrupted"  #128+2  SIGINT    Ctrl-C
+            ;;
+        131 )
+            meaning="quit"         #128+3  SIGQUIT
+            ;;
+        137 )
+            meaning="killed"       #128+9  SIGKILL
+            ;;
+        139 )
+            meaning="segfault"     #128+11 SIGSEGV
+            ;;
+        143 )
+            meaning="terminated"   #128+15 SIGTERM
+            ;;
+        141 )
+            meaning="pipe"         #128+13 SIGPIPE
+            ;;
+        # Not including the widespread SIGUSR* because they are not portable across architectures.
+
+        *)
+            if ((LP_ENABLE_ERROR_MEANING_EXTENDED)); then
+                case $lp_error in
+
+                    # sysexit.h
+                    64 )
+                        meaning="usage"        #64+0
+                        ;;
+                    65 )
+                        meaning="data format"  #64+1
+                        ;;
+                    66 )
+                        meaning="no input"     #64+2
+                        ;;
+                    67 )
+                        meaning="no user"      #64+3
+                        ;;
+                    68 )
+                        meaning="no host"      #64+4
+                        ;;
+                    69 )
+                        meaning="unavailable"  #64+5
+                        ;;
+                    70 )
+                        meaning="internal"     #64+6
+                        ;;
+                    71 )
+                        meaning="OS error"     #64+7
+                        ;;
+                    72 )
+                        meaning="OS file"      #64+8
+                        ;;
+                    73 )
+                        meaning="file create"  #64+9
+                        ;;
+                    74 )
+                        meaning="I/O err"      #64+10
+                        ;;
+                    75 )
+                        meaning="temporary"    #64+11
+                        ;;
+                    76 )
+                        meaning="protocol"     #64+12
+                        ;;
+                    77 )
+                        meaning="no perm"      #64+13
+                        ;;
+                    78 )
+                        meaning="bad config"   #64+14
+                        ;;
+
+                    # signal.h for POSIX on x86/ARM (from `man 7 signal`)
+                    # The OS will exit with 128 + the actual signal ID.
+                    # [action] indicates the default OS action, ignored/continue are not raised up to the shell,
+                    # and thus may be commented out if needed (but the OS config may differ, so they are kept here).
+                    129 )
+                        meaning="hangup"       #128+1  SIGHUP
+                        ;;
+                    132 )
+                        meaning="illegal"      #128+4  SIGILL
+                        ;;
+                    133 )
+                        meaning="trap"         #128+5  SIGTRAP
+                        ;;
+                    134 )
+                        meaning="I/O trap"     #128+6  SIGIOT
+                        ;;
+                    135 )
+                        meaning="bus"          #128+7  SIGBUS    (10, on SPARC, MIPS and RISC)
+                        ;;
+                    136 )
+                        meaning="arithmetic"   #128+8  SIGFPE
+                        ;;
+                    138 )
+                        meaning="user 1"       #128+10 SIGUSR1   (30 on SPARC, 16 on MIPS & RISC)
+                        ;;
+                    140 )
+                        meaning="user 2"       #128+12 SIGUSR2   (31 on SPARC, 17 on MIPS & RISC)
+                        ;;
+                    142 )
+                        meaning="alarm"        #128+14 SIGALRM
+                        ;;
+                    144 )
+                        meaning="stack fault"  #128+16 SIGSTKFLT (7 on RISC, not on SPARC & MPIS)
+                        ;;
+                    145 )
+                        meaning="child"        #128+17 SIGCHLD   (20 on SPARC, 18 on MIPS & RISC)      [ignored ]
+                        ;;
+                    146 )
+                        meaning="continue"     #128+18 SIGCONT   (19 on SPARC, 25 on MIPS, 26 on RISC) [continue]
+                        ;;
+                    147 )
+                        meaning="stop"         #128+19 SIGSTOP   (17 on SPARC, 23 on MIPS, 24 on RISC)
+                        ;;
+                    148 )
+                        meaning="term stop"    #128+20 SIGTSTP   (18 on SPARC, 24 on MIPS, 25 on RISC)
+                        ;;
+                    149 )
+                        meaning="bckgrd read"  #128+21 SIGTTIN   (26 on MIPS, 27 on RISC)
+                        ;;
+                    150 )
+                        meaning="bckgrd write" #128+22 SIGTTOU   (27 on MIPS, 28 on RISC)
+                        ;;
+                    151 )
+                        meaning="socket"       #128+23 SIGURG    (16 on SPARC, 21 on MIPS, 29 on RISC) [ignored ] +BSD
+                        ;;
+                    152 )
+                        meaning="CPU limit"    #128+24 SIGXCPU   (30 on MIPS, 12 on RISC)
+                        ;;
+                    153 )
+                        meaning="file size"    #128+25 SIGXFSZ   (31 on MIPS, 30 on SPARC)                        +BSD
+                        ;;
+                    154 )
+                        meaning="virt. alarm"  #128+26 SIGVTALRM (28 o MIPS, 20 on RISC)                          +BSD
+                        ;;
+                    155 )
+                        meaning="profilr time" #128+27 SIGPROF   (29 on MIPS, 21 on RISC)
+                        ;;
+                    156 )
+                        meaning="win resize"   #128+28 SIGWINCH  (20 on MIPS, 23 on RISC)              [ignored ] +BSD, Sun
+                        ;;
+                    157 )
+                        meaning="I/O allowed"  #128+29 SIGIO     (23 on SPARC, 22 on MIPS & RISC)                 +BSD
+                        ;;
+                    158 )
+                        meaning="power fail"   #128+30 SIGPWR    (29 on SPARC, 19 on MIPS & RISC)
+                        ;;
+                    159 )
+                        meaning="bad sys call" #128+31 SIGSYS    (12 on SPARC & MIPS)
+                        ;;
+                    *)
+                        return 1 # No known error meaning.
+                        ;;
+                esac
+            else
+                return 1 # We do not want to display those error meanings.
+            fi
+            ;; # End of * for simple case switch.
+    esac
+    lp_error_meaning="${meaning}"
+}
+
+_lp_error_meaning_color() {
+    _lp_error_meaning || return "$?"
+    # Not sure if we would want to make the parentheses configurable.
+    # Assumed no, as the meaning is straightforward and this function is simple to bypass in a theme.
+    lp_error_meaning_color="${LP_COLOR_ERR_MEANING}(${lp_error_meaning})${NO_COL}"
 }
 
 # shellcheck disable=SC2034
@@ -3621,6 +3820,12 @@ _lp_default_theme_prompt_data() {
         LP_ERR=
     fi
 
+    if _lp_error_meaning_color; then
+        LP_ERR_MEANING="$lp_error_meaning_color"
+    else
+        LP_ERR_MEANING=
+    fi
+
     if _lp_find_vcs && _lp_vcs_details_color; then
         LP_VCS=" $lp_vcs_details_color"
     else
@@ -3652,7 +3857,7 @@ _lp_default_theme_prompt_template() {
         PS1+="${LP_VCS}"
 
         # add return code and prompt mark
-        PS1+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+        PS1+="${LP_RUNTIME}${LP_ERR}${LP_ERR_MEANING}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # Get the core sections without prompt escapes and make them into a title.
         _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"

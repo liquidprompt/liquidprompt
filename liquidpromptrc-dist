@@ -201,6 +201,12 @@ LP_ENABLE_SSH_COLORS=0
 # Show the error code of the last command if it was not 0
 LP_ENABLE_ERROR=1
 
+# Show the (guessed) error meaning after the error code.
+LP_ENABLE_ERROR_MEANING=0
+
+# Extends the list of guessed error meanings (may produce wrong meanings).
+LP_ENABLE_ERROR_MEANING_EXTENDED=0
+
 # Specify an array of absolute paths in which all vcs will be disabled.
 # Ex: ("/root" "/home/me/large-remove-svn-repo")
 LP_DISABLED_VCS_PATHS=()

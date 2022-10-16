@@ -182,6 +182,13 @@ specific text and formatting may change.
 
    .. versionadded:: 2.0
 
+.. function:: _lp_error_meaning_color() -> var:lp_error_meaning_color
+
+   Returns :func:`_lp_error_meaning` with color from :attr:`LP_COLOR_ERR`
+   and surrounded by parentheses.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_hostname_color() -> var:lp_hostname_color
 
    Returns :func:`_lp_hostname`, with added data from :func:`_lp_chroot`.

@@ -1,0 +1,35 @@
+
+_lp_unfold_theme_activate() {
+    _lp_default_theme_activate
+}
+
+_lp_unfold_theme_directory() {
+    _lp_default_theme_directory
+}
+
+_lp_unfold_theme_prompt() {
+    _lp_default_theme_prompt_data
+
+    # add title escape time, jobs, load and battery
+    local left="${LP_PS1_PREFIX}"
+    # add user, host, permissions colon, working directory, and dirstack
+    left+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_SHLVL}"
+
+    # Add VCS infos
+    # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+    # is set.
+    left+="${LP_VCS}"
+
+    # Add the list of development environments/config/etc.
+    local right+="${LP_DEV_ENV}${LP_JOBS}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_TIME}"
+
+    # add return code and prompt mark
+    local main+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+
+    local n=$'\n'
+    _lp_fill "$left" "$right"
+    PS1="${lp_fill}${n}${main}"
+
+    # Get the core sections without prompt escapes and make them into a title.
+    _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+}

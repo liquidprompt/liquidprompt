@@ -14,6 +14,11 @@ Using the default theme:
 .. image:: theme/default-med.png
    :alt: 1& [user@server:~/liquidprompt] main ±
 
+The Unfold theme, very similar to the default theme,
+but spread on two lines and a right-aligned section:
+
+.. image:: theme/included/unfold-med.png
+
 Using the Powerline theme:
 
 .. image:: theme/included/powerline-med.png

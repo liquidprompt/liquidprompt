@@ -13,3 +13,4 @@ exec shellcheck \
 
 . ./themes/alternate_vcs/alternate_vcs.theme
 . ./themes/powerline/powerline.theme
+. ./themes/unfold/unfold.theme

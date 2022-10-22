@@ -1261,10 +1261,10 @@ _lp_error_color() {
 # shellcheck disable=SC2034
 _lp_multiplexer() {
     if [[ -n ${TMUX-} ]]; then
-        lp_mulitplexer=tmux
+        lp_multiplexer=tmux
         return 0
     elif [[ "${TERM-}" == screen* ]]; then
-        lp_mulitplexer=screen
+        lp_multiplexer=screen
         return 0
     fi
     return 1

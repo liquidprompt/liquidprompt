@@ -240,7 +240,7 @@ Environment
 
    .. versionadded:: 2.0
 
-.. function:: _lp_multiplexer() -> var:lp_mulitplexer
+.. function:: _lp_multiplexer() -> var:lp_multiplexer
 
    Returns ``true`` if the current shell context is inside a terminal
    multiplexer. Returns a string matching the multiplexer:

@@ -104,8 +104,8 @@ Adjust the path if you installed to a different location than the suggested
    :envvar:`PROMPT_COMMAND`.
 
 .. warning::
-   If you are using `bash-preexec <https://github.com/rcaloras/bash-preexec>`_, be
-   aware that bash-preexec **must** come **before** liquidprompt in your
+   If you are using `bash-preexec <https://github.com/rcaloras/bash-preexec>`_,
+   be aware that bash-preexec **must** come **before** liquidprompt in your
    ``.bashrc``. This
    contradicts their documentation, which says `"[bash-preexec] must be the last
    thing imported in your bash profile"

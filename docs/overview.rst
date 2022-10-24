@@ -124,6 +124,48 @@ Those show up only if you enter a configured directory, or have configured
 environment variables.
 
 
+Features Disabled by Default
+----------------------------
+
+Some features are disabled by default,
+generally because they are expected to be rarely used
+or to not behave consistently on *all* systems.
+
+You may want to enable those features,
+by setting the following configuration variables to **1**
+in your configuration file(s)
+(see the :doc:`config` section to find out how to do it).
+
+Shell essentials:
+
+- :attr:`LP_ENABLE_DIRSTACK`
+- :attr:`LP_HOSTNAME_ALWAYS`
+- :attr:`LP_ENABLE_RUNTIME_BELL`
+- :attr:`LP_ENABLE_SSH_COLORS`
+- :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable that)
+
+Development environments:
+
+- :attr:`LP_ENABLE_CMAKE`
+- :attr:`LP_ENABLE_CONTAINER` (may behave inconsistently)
+- :attr:`LP_ENABLE_KUBECONTEXT`
+- :attr:`LP_ENABLE_KUBE_NAMESPACE`
+- :attr:`LP_ENABLE_NODE_VENV`
+- :attr:`LP_ENABLE_TERRAFORM`
+
+Miscellaneous:
+
+- :attr:`LP_ENABLE_TIME`
+- :attr:`LP_TIME_ANALOG`
+- :attr:`LP_ENABLE_TITLE` (may behave inconsistently on exotic terminals)
+- :attr:`LP_ENABLE_SCREEN_TITLE`
+- :attr:`LP_ENABLE_WIFI_STRENGTH` (Linux or MacOS)
+
+Disabled by default for security:
+
+- :attr:`LP_ENABLE_VCS_ROOT` (enable at your own risk!)
+
+
 Known Limitations and Bugs
 --------------------------
 

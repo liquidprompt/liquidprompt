@@ -785,6 +785,32 @@ _lp_create_link() {  # url, text
     link="$_LP_OPEN_ESC"$'\E]8;;'"${1}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${2}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
 }
 
+# Add a link to a path element, with protocol depending on the connection.
+_lp_create_link_path() { # path
+    local path="$1"
+    if (( LP_ENABLE_HYPERLINKS )); then
+        _lp_connection
+
+        if [[ "$lp_connection" == "ssh" ]]; then
+            # SSH connection needs the `sftp` protocol to reach the remote host.
+            local hostname=$(hostname -f 2>/dev/null)
+            local username=${USER:-${USERNAME:-${LOGNAME-}}}
+            _lp_create_link "sftp://${username}@${hostname}/${PWD}/" "$path"
+            lp_link_path="$link"
+
+        elif [[ "$lp_connection" == "su" || "$lp_connection" == "lcl" ]]; then
+            # Reach local host with the `file` protocol.
+            _lp_create_link "file://${PWD}/" "$path"
+            lp_link_path="$link"
+
+        else # no link for telnet.
+            lp_link_path="$path"
+        fi
+    else # No link.
+        lp_link_path="$path"
+    fi
+}
+
 # Return true if the input is the name of a function.
 __lp_is_function() {
     if (( _LP_SHELL_bash )); then
@@ -1151,15 +1177,11 @@ _lp_path_format() {
         __lp_escape "$lp_path"
 
         if [[ $display_path == "$vcs_root_directory" ]]; then
-            lp_path_format="${vcs_root_format}${ret}"
+            _lp_create_link_path "${vcs_root_format}${ret}"
+            lp_path_format="$lp_link_path"
         else
-            lp_path_format="${last_directory_format}"
-        fi
-
-        if _lp_create_link "file://${PWD}/" "$ret"; then
-            lp_path_format+=$link
-        else
-            lp_path_format+=$ret
+            _lp_create_link_path "${last_directory_format}${ret}"
+            lp_path_format="$lp_link_path"
         fi
 
         return
@@ -1284,11 +1306,9 @@ _lp_path_format() {
         fi
 
         if (( ! is_shortening )); then
-            if _lp_create_link "file://${current_path/#"~/"/"$HOME/"}/" "$ret"; then
-                lp_path_format+=$link
-            else
-                lp_path_format+=$ret
-            fi
+
+            _lp_create_link_path "$ret"
+            lp_path_format+="$lp_link_path"
 
             if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then
                 if [[ $current_path != "/" ]]; then
@@ -1920,6 +1940,7 @@ _lp_hostname() {
         local ret
         __lp_escape "$lp_hostname"
         lp_hostname=$ret
+
     else
         return 2
     fi
@@ -1940,14 +1961,21 @@ _lp_hostname_color() {
     fi
 
     if _lp_hostname; then
+
         case "$lp_connection" in
         lcl)
             lp_hostname_color+="@${LP_COLOR_HOST}${lp_hostname}${NO_COL}"
             ;;
         ssh)
+            local hostname=
+            if _lp_create_link "ssh://${lp_hostname}" "$lp_hostname"; then
+                hostname="$link"
+            else
+                hostname="$lp_hostname"
+            fi
             # If we want a different color for each host
             (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-            lp_hostname_color+="@${LP_COLOR_SSH}${lp_hostname}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_SSH}${hostname}${NO_COL}"
             ;;
         su)
             lp_hostname_color+="@${LP_COLOR_SU}${lp_hostname}${NO_COL}"

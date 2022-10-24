@@ -699,6 +699,27 @@ function test_path_format_last_dir() {
   assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
 }
 
+function test_path_links() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  _lp_find_vcs() {
+    return 1
+  }
+
+  LP_ENABLE_SHORTEN_PATH=0
+  LP_ENABLE_HYPERLINKS=1
+  LP_PATH_VCS_ROOT=1
+
+  typeset lp_path lp_path_format
+
+  _lp_path_format '{format}'
+  assertEquals "root directory" '/' "$lp_path"
+  assertContains "root directory formatting" "$lp_path_format" '{format}/'
+
+  # FIXME How to test OSC-8 escape sequences?
+}
+
 function test_lp_fill {
     local lp_fill
 

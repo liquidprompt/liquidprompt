@@ -496,6 +496,42 @@ Features
 
    See also: :attr:`LP_MARK_HG` and :attr:`LP_HG_COMMAND`.
 
+.. attribute:: LP_ENABLE_HYPERLINKS
+   :type: bool
+   :value: 0
+
+   Adds clickable links to some elements of the prompt:
+
+   - If locally connected, adds a link to
+     each displayed elements of the path, using the ``file://`` scheme.
+   - Within remote SSH connections, adds a link to
+     each element of the path, but using the ``sftp://`` protocol,
+     configured with the *current* username and hostname.
+   - If the hostname is displayed within an SSH connection,
+     adds a ``ssh://`` URL to it.
+
+   The links take the form of a OSC-8 escape sequences containing an Uniform Resource Locator,
+   which should be interpreted by the terminal emulator.
+   If your terminal emulator does not support OSC-8, it may display escapement garbage.
+   As not all terminal emulator support links, this feature is disabled by default.
+
+   .. warning:: Your system should be configured to handle the aforementioned link schemes.
+                If nothing happen when you click on the link, or if the wrong application is used,
+                there is a configuration problem on your system or with your terminal emulator
+                (not with Liquid Prompt).
+
+   .. note:: Liquid Prompt cannot possibly follow complex remote connections.
+             Remote links are thus configured with the *current* username,
+             and the *current* fully qualified domain name,
+             as ``sftp://<username>@<hostname>/<path>``.
+             It is possible that this URL does not work the same way than a manual connection.
+             For instance, if you proxy jumped
+             (i.e. if you jumped from one connection to the other),
+             and/or you logged in with another user, and/or used SSH aliases,
+             then the links probably won't work the way you may expect.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_JOBS
    :type: bool
    :value: 1

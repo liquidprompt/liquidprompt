@@ -26,6 +26,41 @@ These functions are designed to be used by themes.
 
    The returned string is a fully escaped terminal formatting sequence.
 
+.. function:: _lp_fill(left, right, [fillstring], [splitends]) -> var:lp_fill
+
+   Adds as much *fillstring* (e.g. spaces) between *left* and *right*,
+   so as to make the resulting string the same width as the current terminal.
+
+   If *fillstring* is omitted, it defaults to one space.
+
+   If *fillstring* is a string with several characters
+   and *splitends* is 1 (the default),
+   then the final occurrence of *fillstring*
+   will have its end cut, so as to fit the terminal width.
+
+   If *fillstring* has multiple characters and *splitends* is 0,
+   some spaces will be inserted after the last occurrence of *fillstring*,
+   so as to match the exact width of the terminal.
+
+   *fillstring* may contains escaped sequences (such as colors).
+
+   .. note:: If *fillstring* have multiple characters and *splitends* is 1,
+             then **the last occurrence** of *fillstring*
+             is stripped of any escaped sequences
+             and only its printable characters are inserted.
+
+   If the available number of columns in the terminal is smaller than
+   the width of *left* and *right* combined, then
+   the function will return code 1 and set *lp_fill* to
+   *left* and *right*, concatenated.
+
+   For example, ``_lp_fill "Left part·" "·right part" "⣀⠔⠉⠢" 1`` will render
+   (in a terminal being 32 characters large):
+
+      Left part·⣀⠔⠉⠢⣀⠔⠉⠢⣀⠔⠉·right part
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_grep_fields(filename, delimiter, keys...) -> var:lp_grep_fields
 
    Parse the given filename for one key/value pairs of the form

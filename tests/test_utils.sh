@@ -694,6 +694,70 @@ function test_path_format_last_dir() {
   assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
 }
 
+function test_lp_fill {
+    local lp_fill
+
+    COLUMNS=80
+    _lp_fill "Left" "Right" " "
+    assertEquals "full width" 80 ${#lp_fill}
+
+    COLUMNS=3
+    _lp_fill "L" "R" "-"
+    assertEquals "single fill" "L-R" "$lp_fill"
+
+    _lp_fill "L" "R" ""
+    assertEquals "defaults to space" "L R" "$lp_fill"
+
+    COLUMNS=5
+    _lp_fill "L" "R" "~"
+    assertEquals "simple fill 5" "L~~~R" "$lp_fill"
+
+    COLUMNS=6
+    _lp_fill "L" "R" "+-"
+    assertEquals "multi-fill 6" "L+-+-R" "$lp_fill"
+
+    _lp_fill "L" "R" "123" 1
+    assertEquals "multi-fill 6 split" "L1231R" "$lp_fill"
+
+    _lp_fill "L" "R" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 0
+    assertEquals "multi-fill 6 with escape and no split" "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123 R" "$lp_fill"
+
+    _lp_fill "L" "R" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 1
+    assertEquals "multi-fill 6 with escape and split" "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231R" "$lp_fill"
+
+    COLUMNS=11
+    _lp_fill "Left" "Right" "="
+    assertEquals "regular fill 11" "Left==Right" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "+-"
+    assertEquals "multi-fill 11 split default" "Le+-+-+-+Ri" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "+-" 0
+    assertEquals "multi-fill 11 no split" "Le+-+-+- Ri" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "+-" 1
+    assertEquals "multi-fill 11 explicit split" "Le+-+-+-+Ri" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "123" 1
+    assertEquals "multi-fill 11 with split" "Le1231231Ri" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 0
+    assertEquals "multi-fill 11 with escape and no split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123 Ri" "$lp_fill"
+
+    _lp_fill "Le" "Ri" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 1
+    assertEquals "multi-fill 11 with escape and split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231Ri" "$lp_fill"
+
+    # The Windows runners have issues with these Unicode characters.
+    if [[ ${RUNNER_OS-} == "Windows" ]]; then
+        # Skip all the following tests.
+        startSkipping
+    fi
+
+    COLUMNS=32
+    _lp_fill "Left part·" "·right part" "⣀⠔⠉⠢" 1
+    assertEquals "beautiful fill" "Left part·⣀⠔⠉⠢⣀⠔⠉⠢⣀⠔⠉·right part" "$lp_fill"
+}
+
 function test_is_function {
   function my_function { :; }
 

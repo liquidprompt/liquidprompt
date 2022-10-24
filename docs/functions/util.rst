@@ -26,6 +26,22 @@ These functions are designed to be used by themes.
 
    The returned string is a fully escaped terminal formatting sequence.
 
+.. function:: _lp_create_link(url, text) -> var:lp_link
+
+   Adds the *url* link to the given *text*.
+
+   See :attr:`LP_ENABLE_HYPERLINKS`.
+
+.. function:: _lp_create_link_path(path) -> lp_link_path
+
+   Adds a link on the given path, with the protocol scheme
+   depending on the current connection type.
+
+   If the current connection is *SSH*, adds an ``SFTP://`` URL,
+   if it is *su* or *lcl* (see :func:`_lp_connection`), adds a ``file://`` one.
+
+   See also :attr:`LP_ENABLE_HYPERLINKS` and :func:`_lp_create_link`.
+
 .. function:: _lp_fill(left, right, [fillstring], [splitends]) -> var:lp_fill
 
    Adds as much *fillstring* (e.g. spaces) between *left* and *right*,

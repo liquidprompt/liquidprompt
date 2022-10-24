@@ -92,7 +92,7 @@ function test_acpi_temperature {
   # Stub needed to test acpi with no output.
   sensors() { :; }
 
-  local valid
+  typeset valid
 
   for (( index=0; index < ${#temp_values[@]}; index++ )); do
     __temp_output=${temp_outputs[$index]}

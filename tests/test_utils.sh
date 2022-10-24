@@ -5,7 +5,7 @@ set -u
 . ../liquidprompt --no-activate
 
 function test_strip_escape {
-  local ret
+  typeset ret
 
   # The escape sequences are different on Bash and Zsh
   __lp_strip_escapes "${_LP_OPEN_ESC}bad text${_LP_CLOSE_ESC}a normal string without ${_LP_OPEN_ESC}color${_LP_CLOSE_ESC}colors"
@@ -112,7 +112,7 @@ function test_get_last_command_line() {
     printf '%s\n' "$history_line"
   }
 
-  local command
+  typeset command
 
   history_line=' 100  command'
   __lp_get_last_command_line
@@ -699,8 +699,65 @@ function test_path_format_last_dir() {
   assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
 }
 
+function test_path_links() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+  typeset SSH_CONNECTION="1.2.3.4 111 5.6.7.8 222"
+
+  _lp_find_vcs() {
+    return 1
+  }
+
+  LP_ENABLE_SHORTEN_PATH=0
+  LP_ENABLE_HYPERLINKS=0
+  LP_PATH_VCS_ROOT=1
+
+  typeset lp_path lp_path_format
+
+  _lp_path_format '{format}'
+  assertEquals "root directory" '/' "$lp_path"
+  assertContains "root directory formatting" "$lp_path_format" '{format}/'
+
+  LP_ENABLE_HYPERLINKS=1
+
+  typeset url="https://test.io/"
+  typeset label="liquid link"
+  typeset expected_link="$_LP_OPEN_ESC"$'\E]8;;'"${url}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${label}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+  _lp_create_link "$url" "$label"
+  assertEquals "typical OSC-8 escape sequence" "$expected_link" "$lp_link"
+
+  url="https://test&eacute;.io/?var=1&dbg=2"
+  label="liquid\tlink"
+  expected_link="$_LP_OPEN_ESC"$'\E]8;;'"${url}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${label}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+  _lp_create_link "$url" "$label"
+  assertEquals "typical OSC-8 escape sequence with complex text" "$expected_link" "$lp_link"
+
+  typeset pathword="home"
+  typeset PWD="/home/nojhan"
+  typeset USER="nojhan"
+
+  typeset SSH_CLIENT="ssh"
+  typeset expected_url="sftp://$USER@5.6.7.8:111/$PWD/"
+  expected_link="$_LP_OPEN_ESC"$'\E]8;;'"${expected_url}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}home${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+  _lp_create_link_path "$pathword"
+  assertEquals "SSH: path element linked to SFTP" "$expected_link" "$lp_link_path"
+
+  unset SSH_CLIENT
+  ps() {
+    printf "su"
+  }
+  typeset expected_url="file://$PWD/"
+  expected_link="$_LP_OPEN_ESC"$'\E]8;;'"${expected_url}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}home${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+  _lp_create_link_path "$pathword"
+  assertEquals "su: path element linked to FILE" "$expected_link" "$lp_link_path"
+
+  typeset REMOTEHOST="spongebob"
+  _lp_create_link_path "$pathword"
+  assertEquals "telnet: path element not linked" "$pathword" "$lp_link_path"
+}
+
 function test_lp_fill {
-    local lp_fill
+    typeset lp_fill
 
     COLUMNS=80
     _lp_fill "Left" "Right" " "
@@ -897,7 +954,7 @@ function test_version {
 }
 
 function test_substitute {
-    local sub
+    typeset sub
     sub=(
         "When"  "NOK"
         "What?" "NOPE"

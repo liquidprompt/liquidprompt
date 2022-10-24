@@ -954,11 +954,34 @@ _lp_color_map() {
 # Generate a terminal hyperlink from a URL and text.
 _lp_create_link() {  # url, text
     (( LP_ENABLE_HYPERLINKS )) || return 2
+    lp_link="$_LP_OPEN_ESC"$'\E]8;;'"${1}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${2}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+}
 
-    local ret
-    __lp_escape "$1"
+# Add a link to a path element, with protocol depending on the connection.
+_lp_create_link_path() { # path
+    local path="$1"
+    if (( LP_ENABLE_HYPERLINKS )); then
+        _lp_connection
 
-    link="$_LP_OPEN_ESC"$'\E]8;;'"${1}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${2}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+        if [[ "$lp_connection" == "ssh" ]]; then
+            # SSH connection needs the `sftp` protocol to reach the remote host.
+            local client_ip client_port server_ip server_port
+            IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
+            local username=${USER:-${USERNAME:-${LOGNAME-}}}
+            _lp_create_link "sftp://${username}@${server_ip}:${client_port}/${PWD}/" "$path"
+            lp_link_path="$lp_link"
+
+        elif [[ "$lp_connection" == "su" || "$lp_connection" == "lcl" ]]; then
+            # Reach local host with the `file` protocol.
+            _lp_create_link "file://${PWD}/" "$path"
+            lp_link_path="$lp_link"
+
+        else # no link for telnet.
+            lp_link_path="$path"
+        fi
+    else # No link.
+        lp_link_path="$path"
+    fi
 }
 
 # Return true if the input is the name of a function.
@@ -1351,7 +1374,7 @@ _lp_path_format() {
     lp_path=
     lp_path_format=
 
-    local ret link
+    local ret lp_link_path
 
     local lp_pwd_tilde
     __lp_pwd_tilde
@@ -1377,15 +1400,11 @@ _lp_path_format() {
         __lp_escape "$lp_path"
 
         if [[ $display_path == "$vcs_root_directory" ]]; then
-            lp_path_format="${vcs_root_format}${ret}"
+            _lp_create_link_path "${ret}"
+            lp_path_format="${vcs_root_format}$lp_link_path"
         else
-            lp_path_format="${last_directory_format}"
-        fi
-
-        if _lp_create_link "file://${PWD}/" "$ret"; then
-            lp_path_format+=$link
-        else
-            lp_path_format+=$ret
+            _lp_create_link_path "${ret}"
+            lp_path_format="${last_directory_format}$lp_link_path"
         fi
 
         return
@@ -1510,11 +1529,9 @@ _lp_path_format() {
         fi
 
         if (( ! is_shortening )); then
-            if _lp_create_link "file://${current_path/#"~/"/"$HOME/"}/" "$ret"; then
-                lp_path_format+=$link
-            else
-                lp_path_format+=$ret
-            fi
+
+            _lp_create_link_path "$ret"
+            lp_path_format+="$lp_link_path"
 
             if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then
                 if [[ $current_path != "/" ]]; then
@@ -2219,6 +2236,7 @@ _lp_hostname() {
         local ret
         __lp_escape "$lp_hostname"
         lp_hostname=$ret
+
     else
         return 2
     fi
@@ -2239,14 +2257,25 @@ _lp_hostname_color() {
     fi
 
     if _lp_hostname; then
+
         case "$lp_connection" in
         lcl)
             lp_hostname_color+="@${LP_COLOR_HOST}${lp_hostname}${NO_COL}"
             ;;
         ssh)
+            local client_ip client_port server_ip server_port hostname=
+            # client_* are unused
+            # shellcheck disable=SC2034
+            IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
+            local username=${USER:-${USERNAME:-${LOGNAME-}}}
+            if _lp_create_link "ssh://${username}@${server_ip}:${server_port}" "$lp_hostname"; then
+                hostname="$lp_link"
+            else
+                hostname="$lp_hostname"
+            fi
             # If we want a different color for each host
             (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-            lp_hostname_color+="@${LP_COLOR_SSH}${lp_hostname}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_SSH}${hostname}${NO_COL}"
             ;;
         su)
             lp_hostname_color+="@${LP_COLOR_SU}${lp_hostname}${NO_COL}"

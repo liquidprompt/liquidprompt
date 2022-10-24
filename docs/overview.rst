@@ -168,6 +168,7 @@ Miscellaneous:
 - :attr:`LP_ENABLE_TITLE` (may behave inconsistently on exotic terminals)
 - :attr:`LP_ENABLE_SCREEN_TITLE`
 - :attr:`LP_ENABLE_WIFI_STRENGTH` (Linux or MacOS)
+- :attr:`LP_ENABLE_HYPERLINKS` (not supported by all terminal emulators)
 
 Disabled by default for security:
 

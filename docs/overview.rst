@@ -197,10 +197,10 @@ Prompt's design, you may be interested in one of those popular prompts:
 - `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to
   :spelling:word:`Starship` (with a few fewer features), but only for Zsh.
 - `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of
-  everything, and thus does not really shine at anything. Only for Zsh.
+  everything, largest set of themes (albeit not very diverse). Only for Zsh.
 - `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular
-  on Github, focused on fancy theming, but to the expense of the UX. Only
-  supports Zsh.
+  on Github, focused on fancy features (like transitive prompt),
+  but to the expense of the UX. Only supports Zsh.
 - `Powerline <https://github.com/powerline/powerline>`_: primarily a
   daemon-based status line generator, hence with good support for
   latency-expensive features. Probably the largest feature set for various

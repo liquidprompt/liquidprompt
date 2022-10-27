@@ -124,6 +124,49 @@ Those show up only if you enter a configured directory, or have configured
 environment variables.
 
 
+Features Disabled by Default
+----------------------------
+
+Some features are disabled by default,
+generally because they are expected to be rarely used
+or to not behave consistently on *all* systems.
+
+You may want to enable those features,
+by setting the following configuration variables to **1**
+in your configuration file(s)
+(see the :doc:`config` section to find out how to do it).
+
+Shell essentials:
+
+- :attr:`LP_ENABLE_DIRSTACK`
+- :attr:`LP_HOSTNAME_ALWAYS`
+- :attr:`LP_ENABLE_RUNTIME_BELL`
+- :attr:`LP_ENABLE_SSH_COLORS`
+- :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable
+  that)
+
+Development environments:
+
+- :attr:`LP_ENABLE_CMAKE`
+- :attr:`LP_ENABLE_CONTAINER` (may behave inconsistently)
+- :attr:`LP_ENABLE_KUBECONTEXT`
+- :attr:`LP_ENABLE_KUBE_NAMESPACE`
+- :attr:`LP_ENABLE_NODE_VENV`
+- :attr:`LP_ENABLE_TERRAFORM`
+
+Miscellaneous:
+
+- :attr:`LP_ENABLE_TIME`
+- :attr:`LP_TIME_ANALOG`
+- :attr:`LP_ENABLE_TITLE` (may behave inconsistently on exotic terminals)
+- :attr:`LP_ENABLE_SCREEN_TITLE`
+- :attr:`LP_ENABLE_WIFI_STRENGTH` (Linux or MacOS)
+
+Disabled by default for security:
+
+- :attr:`LP_ENABLE_VCS_ROOT` (enable at your own risk!)
+
+
 Known Limitations and Bugs
 --------------------------
 
@@ -155,10 +198,10 @@ Prompt's design, you may be interested in one of those popular prompts:
 - `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to
   :spelling:word:`Starship` (with a few fewer features), but only for Zsh.
 - `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of
-  everything, and thus does not really shine at anything. Only for Zsh.
+  everything, largest set of themes (albeit not very diverse). Only for Zsh.
 - `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular
-  on Github, focused on fancy theming, but to the expense of the UX. Only
-  supports Zsh.
+  on Github, focused on fancy features (like transitive prompt),
+  but to the expense of the UX. Only supports Zsh.
 - `Powerline <https://github.com/powerline/powerline>`_: primarily a
   daemon-based status line generator, hence with good support for
   latency-expensive features. Probably the largest feature set for various

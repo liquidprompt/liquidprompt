@@ -142,7 +142,8 @@ Shell essentials:
 - :attr:`LP_HOSTNAME_ALWAYS`
 - :attr:`LP_ENABLE_RUNTIME_BELL`
 - :attr:`LP_ENABLE_SSH_COLORS`
-- :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable that)
+- :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable
+  that)
 
 Development environments:
 

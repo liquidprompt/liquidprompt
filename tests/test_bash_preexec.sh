@@ -82,6 +82,7 @@ function test_bash_preexec_with_LP_ERR {
     false # should get "1" in prompt
     $PROMPT_COMMAND
     assertContains $lp_error_color 1
+    assertContains $lp_error_meaning_color "(error)"
   )
 }
 
@@ -93,6 +94,7 @@ function test_no_bash_preexec_with_LP_ERR {
     false # should get "1" in prompt
     $PROMPT_COMMAND
     assertContains $lp_error_color 1
+    assertContains $lp_error_meaning_color "(error)"
   )
 }
 

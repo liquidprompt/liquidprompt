@@ -415,6 +415,38 @@ Features
 
    .. versionadded:: 2.0
 
+.. attribute:: LP_ENABLE_ERROR_MEANING
+   :type: bool
+   :value: 0
+
+   Display a guess on the last error meaning.
+
+   .. note:: This only enable a limited subset of error codes,
+             that are very probably in use on several systems.
+             To enable more codes (and probably more false positives)
+             see :attr:`LP_ENABLE_ERROR_MEANING_EXTENDED`.
+
+   See also: :attr:`LP_COLOR_ERR`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_ERROR_MEANING_EXTENDED
+   :type: bool
+   :value: 0
+
+   Extends the set of interpreted error codes to a larger set of (POSIX) codes.
+
+   .. note:: This use a reasonable set of error codes
+             that are common on POSIX systems on x86 or ARM architectures
+             (most notably from ``sysexit.h`` and ``signal.h``).
+             But any software may use its own set of codes,
+             and thus the guess may be wrong.
+
+   This has no effect if :attr:`LP_ENABLE_ERROR_MEANING` is disabled.
+   See also: :attr:`LP_COLOR_ERR`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_FOSSIL
    :type: bool
    :value: 1

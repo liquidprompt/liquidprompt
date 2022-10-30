@@ -3,6 +3,8 @@
 # An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
+_LP_VERSION=(2 2 0 alpha 1)
+
 # Licensed under the AGPL version 3
 #
 # This program is free software: you can redistribute it and/or modify
@@ -153,6 +155,35 @@ esac
 #################
 # CONFIGURATION #
 #################
+
+# Return true if the current Liquid Prompt version is greater than or equal to the specified version.
+# [OPTIONAL?] Return 1 if minor or less version difference, 2 if major difference.
+_lp_version() {  # major, minor, [patch], [string], [number]
+    local major="$1" minor="$2" patch="${3-}" string="${4-}" number="${5-}"
+    if (( major > _LP_VERSION[0] )); then
+        return 2
+    elif (( major == _LP_VERSION[0] )); then
+        if (( minor > _LP_VERSION[1] )); then
+            return 1
+        elif (( minor == _LP_VERSION[1] )) && [[ -n $patch ]]; then
+            if (( patch > _LP_VERSION[2] )); then
+                return 1
+            elif (( patch == _LP_VERSION[2] )) && [[ -n $string && -n $number ]]; then
+                if [[ $string == "${_LP_VERSION[3]}" ]]; then
+                    if (( number > _LP_VERSION[4] )); then
+                        return 1
+                    fi
+                elif [[ ${_LP_VERSION[3]} == "alpha" || \
+                        ( ${_LP_VERSION[3]} == "beta" && \
+                        $string == "rc" ) ]]; then
+                    return 1
+                fi
+            fi
+        fi
+    fi
+
+    return 0
+}
 
 # Load the user configuration and setup defaults.
 # shellcheck disable=SC2034

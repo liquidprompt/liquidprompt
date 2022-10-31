@@ -78,6 +78,7 @@ function test_no_bash_preexec_with_LP_RUNTIME {
 function test_bash_preexec_with_LP_ERR {
   (
     setup
+    LP_ENABLE_ERROR_MEANING=1
 
     false # should get "1" in prompt
     $PROMPT_COMMAND
@@ -90,6 +91,7 @@ function test_bash_preexec_with_LP_ERR {
 function test_no_bash_preexec_with_LP_ERR {
   (
     setup_liquidprompt
+    LP_ENABLE_ERROR_MEANING=1
 
     false # should get "1" in prompt
     $PROMPT_COMMAND

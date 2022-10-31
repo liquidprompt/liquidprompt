@@ -61,6 +61,17 @@ These functions are designed to be used by themes.
 
    .. versionadded:: 2.2
 
+.. function:: _lp_formatted_title(title)
+
+   Sets the theme generated title to *title*. The input is escaped using
+   :func:`__lp_strip_escapes` to strip terminal formatting from being added to
+   the title.
+
+   This function will do nothing and return ``2`` if :attr:`LP_ENABLE_TITLE`
+   is disabled.
+
+   .. versionadded:: 2.0
+
 .. function:: _lp_grep_fields(filename, delimiter, keys...) -> var:lp_grep_fields
 
    Parse the given filename for one key/value pairs of the form
@@ -89,6 +100,32 @@ These functions are designed to be used by themes.
    Returns 1 if the file does not exists.
 
    .. versionadded:: 2.2
+
+.. function:: _lp_hash_color(str) -> var:lp_hash_color
+
+   Colorize the given string with a color depending on its hash. The color is
+   chosen among: (green, yellow, blue, purple, cyan). Note that the red color is
+   not a candidate, as it should be reserved for alerts.
+
+   .. versionadded:: 2.2
+
+.. function:: _lp_join(delimiter, items...) -> var:lp_join
+
+   Join all strings in items with the given delimiter.
+   Example: ``_lp_join ", " "a" "b" "c"`` will render ``lp_join="a, b, c"``
+
+   .. versionadded:: 2.2
+
+.. function:: _lp_raw_title(title)
+
+   Sets the theme generated title to *title*. The input is not escaped in any
+   way: if the input contains terminal formatting, use
+   :func:`_lp_formatted_title` instead.
+
+   This function will do nothing and return ``2`` if :attr:`LP_ENABLE_TITLE`
+   is disabled.
+
+   .. versionadded:: 2.0
 
 .. function:: _lp_sb(string) -> stdout
 
@@ -143,40 +180,29 @@ These functions are designed to be used by themes.
 
    This function will do nothing if :attr:`LP_ENABLE_TITLE` is disabled.
 
-.. function:: _lp_formatted_title(title)
+.. function:: _lp_version_greatereq(major, minor, [patch, [string, [number]]])
 
-   Sets the theme generated title to *title*. The input is escaped using
-   :func:`__lp_strip_escapes` to strip terminal formatting from being added to
-   the title.
+   Returns true (0) if Liquid Prompt version is greater than
+   or equal to the the given version.
+   Returns 1 (false) if there is a *minor* or less version difference,
+   and 2 (false) if it is a *major* difference.
 
-   This function will do nothing and return ``2`` if :attr:`LP_ENABLE_TITLE`
-   is disabled.
+   See also :func:`_lp_version_string`.
 
-   .. versionadded:: 2.0
-
-.. function:: _lp_raw_title(title)
-
-   Sets the theme generated title to *title*. The input is not escaped in any
-   way: if the input contains terminal formatting, use
-   :func:`_lp_formatted_title` instead.
-
-   This function will do nothing and return ``2`` if :attr:`LP_ENABLE_TITLE`
-   is disabled.
-
-   .. versionadded:: 2.0
-
-.. function:: _lp_hash_color(str) -> var:lp_hash_color
-
-   Colorize the given string with a color depending on its hash. The color is
-   chosen among: (green, yellow, blue, purple, cyan). Note that the red color is
-   not a candidate, as it should be reserved for alerts.
+   .. warning:: This only supports the following input values for `strings`:
+                "alpha", "beta" and "rc".
 
    .. versionadded:: 2.2
 
-.. function:: _lp_join(delimiter, items...) -> var:lp_join
+.. function:: _lp_version_string([major, [minor, [patch, [string, [number]]]]]) -> var:lp_version
 
-   Join all strings in items with the given delimiter.
-   Example: ``_lp_join ", " "a" "b" "c"`` will render ``lp_join="a, b, c"``
+   Formats the given version number in a version string of the form:
+   "${major}.${minor}.${patch}-${string}.${number}"
+
+   If no version is given, formats the current version number of Liquid Prompt.
+   If a version number is given, *major* and *minor* are both mandatory.
+
+   See also :func:`_lp_version_greatereq`.
 
    .. versionadded:: 2.2
 

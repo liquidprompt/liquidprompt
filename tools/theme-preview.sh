@@ -30,9 +30,14 @@ fi
 # Liquid Prompt depends on PS1 being set to detect if it has installed itself.
 PS1="$ "
 
-# Since the shell is not evaluating PS1, we don't need these.
-_LP_OPEN_ESC=""
-_LP_CLOSE_ESC=""
+# Since the shell is not evaluating PS1, if we print the PS1 to the console,
+# the shell escape sequences will not be hidden, and it will look wrong. We
+# cannot strip them ahead of time, since they are required to know where to
+# look to remove formatting, so we have to do it right before printing it.
+__remove_shell_escapes() {  # PS1 -> PS1
+  PS1="${PS1//${_LP_OPEN_ESC}/}"
+  PS1="${PS1//${_LP_CLOSE_ESC}/}"
+}
 
 
 ## Short
@@ -90,6 +95,7 @@ lp_activate --no-config
 # Only needs to be done once
 lp_theme "$theme" || exit "$?"
 __lp_set_prompt
+__remove_shell_escapes
 
 printf 'Short prompt:\n\n%s\n\n' "$PS1"
 
@@ -150,6 +156,7 @@ PWD=$HOME/liquidprompt
 lp_activate --no-config
 _config
 __lp_set_prompt
+__remove_shell_escapes
 
 printf 'Medium prompt:\n\n%s\n\n' "$PS1"
 
@@ -248,5 +255,6 @@ PWD="${HOME}/code/liquidprompt/docs/theme"
 lp_activate --no-config
 _long_config
 __lp_set_prompt
+__remove_shell_escapes
 
 printf 'Long prompt:\n\n%s\n\n' "$PS1"

@@ -34,6 +34,7 @@ pre
 preexec
 rebase
 refactored
+rc
 runtime
 shareable
 startup

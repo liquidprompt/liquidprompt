@@ -9,4 +9,5 @@ them as they are added to Liquid Prompt.
 
    included/alternate_vcs
    included/powerline
+   included/unfold
 

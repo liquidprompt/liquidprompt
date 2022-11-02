@@ -55,7 +55,7 @@ There are many prompts configurations out there, but here is what makes Liquid P
   Liquid Prompt shows you the features that are actually useful while you actually use the shell.
 - **Configurability**: All aspects of Liquid Prompt are configurable, down to the core.
 
-To see what that entails, see the [features overview](https://liquidprompt.readthedocs.io/en/stable/overview.html)
+To see what that entails, see the [latest features overview](https://liquidprompt.readthedocs.io/en/latest/overview.html)
 (which also presents a comparison with other prompt systems).
 
 You may also take a closer look at this screenshot of a session showing various features, in the default theme:

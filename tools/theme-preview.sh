@@ -35,8 +35,8 @@ PS1="$ "
 # cannot strip them ahead of time, since they are required to know where to
 # look to remove formatting, so we have to do it right before printing it.
 __remove_shell_escapes() {  # PS1 -> PS1
-  PS1="${PS1//${_LP_OPEN_ESC}/}"
-  PS1="${PS1//${_LP_CLOSE_ESC}/}"
+  PS1="${PS1//"${_LP_OPEN_ESC}"/}"
+  PS1="${PS1//"${_LP_CLOSE_ESC}"/}"
 }
 
 

@@ -390,6 +390,33 @@ OS
       No longer sets ``LP_HOST_SYMBOL`` to the same return string.
       Added :attr:`LP_HOSTNAME_METHOD` to configure display method.
 
+.. function:: _lp_os() -> var:lp_os_arch, var:lp_os_family, var:lp_os_kernel, var:lp_os_distrib, var:lp_os_version
+
+   Gather data about the current Operating System.
+
+   Returns ``true`` if it was able to gather all possible data.
+   Returns ``1`` if some expected information was missing.
+   Returns ``2`` if the user disabled the feature with :attr:`LP_ENABLE_OS`.
+
+   Returns data in ``lp_os_*`` variables:
+
+   - processor architecture (e.g. x86_64, i686, etc.),
+   - OS family (BSD, UNIX, GNU or Windows),
+   - OS kernel (Linux, Darwin, Cygwin, etc.),
+   - Linux *distribution* (e.g. ubuntu, arch, mandrake, etc.),
+   - Linux distribution *version codename* (e.g. focal, ada, buzz, etc.)
+
+   Each data source can be disabled
+   via its corresponding configuration variable:
+
+   - :attr:`LP_ENABLE_OS_ARCH`
+   - :attr:`LP_ENABLE_OS_FAMILY`
+   - :attr:`LP_ENABLE_OS_KERNEL`
+   - :attr:`LP_ENABLE_OS_DISTRIB`
+   - :attr:`LP_ENABLE_OS_VERSION`
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_sudo_active()
 
    Returns ``true`` if ``sudo`` is currently activated with valid credentials.

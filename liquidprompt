@@ -152,6 +152,136 @@ case "$(uname)" in
     *)         LP_OS=Linux   ;;
 esac
 
+_lp_os() {
+    # Fine-grained OS detection: family, kernel, distrib, version.
+    (( LP_ENABLE_OS )) || return 2
+
+    # Output variables:
+    lp_os_arch=
+    lp_os_family=
+    lp_os_kernel=
+    lp_os_distrib=
+    lp_os_version=
+
+    local uname_sm kernel
+
+    # Get the kernel (and possibly the arch).
+    if (( LP_ENABLE_OS_ARCH )); then
+        # We can get the arch along, with a single subshell.
+        uname_sm="$(uname -s -m)"
+        IFS=' ' read -r kernel lp_os_arch <<<"$uname_sm"
+    else # In any case, we need to know the kernel.
+        kernel="$(uname -s)"
+    fi
+
+    if (( LP_ENABLE_OS_KERNEL
+       || LP_ENABLE_OS_FAMILY
+       || LP_ENABLE_OS_DISTRIB
+       || LP_ENABLE_OS_VERSION )); then
+
+        case "$kernel" in
+            FreeBSD)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=BSD; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=FreeBSD; fi
+                ;;
+            DragonFly)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=BSD; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=DragonFly; fi
+                ;;
+            OpenBSD)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=BSD; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=OpenBSD; fi
+                ;;
+            Darwin)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=BSD; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=Darwin; fi
+                ;;
+            SunOS)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=UNIX; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=SunOS; fi
+                ;;
+            CYGWIN*)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=Windows; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=Cygwin; fi
+                ;;
+            MSYS*)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=Windows; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=MSYS; fi
+                ;;
+            MINGW*)
+                if (( LP_ENABLE_OS_FAMILY )); then lp_os_family=Windows; fi
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=MinGW; fi
+                ;;
+            Linux)
+                if (( LP_ENABLE_OS_KERNEL )); then lp_os_kernel=Linux; fi
+                if (( LP_ENABLE_OS_FAMILY )); then
+                    if [[ "$kernel" == "Linux" ]]; then
+                        osfamily="$(uname -o)"
+                        if [[ "$osfamily" == "Android" ]]; then
+                            lp_os_family=Android
+                            return
+                        fi # Android
+                    fi # Linux
+                    lp_os_family=GNU
+                fi
+                # TODO parse HOME_URL and add an hyperlink.
+                if (( LP_ENABLE_OS_DISTRIB && LP_ENABLE_OS_VERSION )); then
+                    if _lp_grep_fields "/etc/os-release" "=" "ID" "VERSION_CODENAME"; then
+                        lp_os_distrib=${lp_grep_fields[_LP_FIRST_INDEX+0]-}
+                        lp_os_version=${lp_grep_fields[_LP_FIRST_INDEX+1]-}
+                    fi
+                elif (( LP_ENABLE_OS_DISTRIB )); then
+                    if _lp_grep_fields "/etc/os-release" "=" "ID"; then
+                        lp_os_distrib=${lp_grep_fields[_LP_FIRST_INDEX+0]-}
+                    fi
+                elif (( LP_ENABLE_OS_VERSION )); then
+                    if _lp_grep_fields "/etc/os-release" "=" "VERSION_CODENAME"; then
+                        lp_os_version=${lp_grep_fields[_LP_FIRST_INDEX+0]-}
+                    fi
+                fi
+                ;;
+        esac
+    fi
+
+    if [[ -z "${lp_os_arch}${lp_os_family}${lp_os_kernel}${lp_os_distrib}${lp_os_version}" ]]; then
+        return 1
+    fi
+}
+
+_lp_os_color() {
+    # Substitute lp_os_* names with icons/colored strings (from LP_MARK_OS),
+    # or hash colored versions.
+    # Join everything with LP_MARK_OS_SEP.
+
+    lp_os_color=
+    local lp_os_arch lp_os_family lp_os_kernel lp_os_distrib lp_os_version
+
+    _lp_os || return "$?"
+
+    local lp_substitute lp_hash_color lp_join
+    local active
+    active=()
+    for value in \
+        "$lp_os_arch" "$lp_os_family" "$lp_os_kernel" "$lp_os_distrib" "$lp_os_version"; do
+        if [[ -n "$value" ]]; then
+            if _lp_substitute "$value" "${LP_MARK_OS[@]}"; then
+                active+=("$lp_substitute")
+            elif _lp_hash_color "$value"; then
+                active+=("$lp_hash_color")
+            else
+                active+=("$value")
+            fi
+        fi
+    done
+
+    if [[ ${#active} -gt 0 ]]; then
+        _lp_join "$LP_MARK_OS_SEP" "${active[@]}"
+        lp_os_color="$lp_join"
+    else
+        return 1
+    fi
+}
+
 #################
 # CONFIGURATION #
 #################
@@ -320,6 +450,12 @@ __lp_source_config() {
     LP_ENABLE_CMAKE=${LP_ENABLE_CMAKE:-0}
     LP_ENABLE_SHLVL=${LP_ENABLE_SHLVL:-1}
     LP_ENABLE_WIFI_STRENGTH=${LP_ENABLE_WIFI_STRENGTH:-0}
+    LP_ENABLE_OS=${LP_ENABLE_OS:-0}
+    LP_ENABLE_OS_ARCH=${LP_ENABLE_OS_ARCH:-0}
+    LP_ENABLE_OS_FAMILY=${LP_ENABLE_OS_FAMILY:-0}
+    LP_ENABLE_OS_KERNEL=${LP_ENABLE_OS_KERNEL:-1}
+    LP_ENABLE_OS_DISTRIB=${LP_ENABLE_OS_DISTRIB:-0}
+    LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -355,6 +491,8 @@ __lp_source_config() {
     LP_MARK_CMAKE="${LP_MARK_CMAKE:-":"}"
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
     LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-"/"}"
+    LP_MARK_OS_SEP=${LP_MARK_OS_SEP:-"/"}
+    LP_MARK_OS=( ${LP_MARK_OS[@]+"${LP_MARK_OS[@]}"} )
 
     LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
     LP_COLOR_CMAKE_RWDI=${LP_COLOR_CMAKE_RWDI:-$BLUE}
@@ -1010,6 +1148,7 @@ _lp_join() {
 
 _lp_grep_fields() {
     # Open file $1 and parse it for key/value pairs having delimiter $2, for each key in $3...
+    # Silently bypass inexisting fields.
     local file="$1"
     [[ -f "$file" ]] || return 1
 
@@ -1121,6 +1260,27 @@ _lp_version_string() { # [major, [minor, [patch, [string, [number]]]]]
             fi
         fi
     fi
+}
+
+_lp_substitute() { # string pairs_array
+    # Replace string with the "right" part of the first pair in the given array, if the "left" part matches the string.
+    # FIXME If we ever support Bash>4.3, this would be better implemented with associative arrays.
+    lp_substitute=""
+    local string="${1}"
+    shift 1
+    local pairs
+    pairs=("$@")
+    [[ -n "${pairs[*]}" ]] || return 2
+
+    local i key
+    for (( i=0; i < ${#pairs[@]}; i+=2 )); do
+        key=${pairs[_LP_FIRST_INDEX+i]}
+        if [[ "$key" == "$string" ]]; then
+            lp_substitute=${pairs[_LP_FIRST_INDEX+i+1]-}
+            return 0 # Found.
+        fi
+    done
+    return 1 # Not found.
 }
 
 
@@ -3732,6 +3892,7 @@ _lp_dev_env_color() {
         "${lp_terraform_env_color-}"
         "${lp_kubernetes_context_color-}"
         "${lp_cmake_color-}"
+        "${lp_os_color-}"
     )
     local -a dev_active
     dev_active=()
@@ -3939,6 +4100,12 @@ _lp_default_theme_prompt_data() {
         LP_CMAKE=" $lp_cmake_color"
     else
         LP_CMAKE=
+    fi
+
+    if _lp_os_color; then
+        LP_OPSYS=" $lp_os_color"
+    else
+        LP_OPSYS=
     fi
 
     # End of the section for dev-related variables.

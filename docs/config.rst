@@ -578,6 +578,84 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENABLE_OS
+   :type: bool
+   :value: 0
+
+   Display information about the current Operating System.
+
+   Degree of details is controlled by:
+
+   - :attr:`LP_ENABLE_OS_ARCH`
+   - :attr:`LP_ENABLE_OS_FAMILY`
+   - :attr:`LP_ENABLE_OS_KERNEL`
+   - :attr:`LP_ENABLE_OS_DISTRIB`
+   - :attr:`LP_ENABLE_OS_VERSION`
+
+   .. note:: As of now, only Linux may have detailed information
+             about the distribution and version.
+
+   See also :attr:`LP_MARK_OS` and :attr:`LP_MARK_OS_SEP`
+   for configuring the appearance.
+
+   If no replacement string is provided with :attr:`LP_MARK_OS`,
+   each item will be randomly colored, according to its hash.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_OS_ARCH
+   :type: bool
+   :value: 0
+
+   Display the processor architecture of the current OS.
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_OS_DISTRIB
+   :type: bool
+   :value: 0
+
+   Display the current Linux distribution.
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_OS_FAMILY
+   :type: bool
+   :value: 0
+
+   Display the family of the current OS (UNIX, BSD, GNU, or Windows).
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_OS_KERNEL
+   :type: bool
+   :value: 1
+
+   Display the name of the kernel type for the current OS.
+
+   This may be "Linux", "FreeBSD", "SunOS", "Darwin", "Cygwin", "MSYS",
+   "MinGW", "OpenBSD", "DragonFly".
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_OS_VERSION
+   :type: bool
+   :value: 1
+
+   Display the version "codename" of the current Linux distribution.
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_PERM
    :type: bool
    :value: 1
@@ -1246,6 +1324,68 @@ Marks
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_MARK_OS
+   :type: array<string>
+   :value: ()
+
+   A list of pair of strings to be replaced by another string
+   when displaying information about the OS.
+
+   Each pair in the list configures the match, then the replacement string.
+
+   For instance, if you set ``LP_MARK_OS=("Linux" "L")``
+   and ``LP_ENABLE_OS=1 ; LP_ENABLE_OS_FAMILY=1``,
+   then any occurrence of "Linux" will be replaced by an "L"
+   in the OS section.
+
+   It is possible to use presets colors in the replacement string
+   (see the :ref:`Colors` section below).
+   Note that if a replacement occurs,
+   the result will *not* be colored automatically.
+
+   For example, to shorten known names,
+   you can use the following configuration
+   (if your font supports those characters):
+
+   .. code-block:: shell
+
+       LP_MARK_OS=(
+           # Arch
+           "x86_64"    "${BLUE}x64${NO_COL}"
+           "i386"      "i3"
+           "i686"      "i6"
+           "aarch64"   "${GREEN}a64${NO_COL}"
+           # Families
+           "BSD"       "${RED}BSD${NO_COL}"
+           "Windows"   "🪟"
+           "Unix"      "U"
+           "GNU"       "🐮"
+           # Kernels
+           "FreeBSD"   "👹"
+           "DragonFly" "🦋"
+           "OpenBSD"   "🐡"
+           "Darwin"    "🍎"
+           "SunOS"     "${BOLD_YELLOW}☀${NO_COL}"
+           "Cygwin"    "🦢"
+           "MSYS"      "M"
+           "MinGW"     "GW"
+           "Linux"     "🐧"
+       )
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_MARK_OS_SEP
+   :type: string
+   :value: "/"
+
+   The character used to separate items of the OS section.
+
+   See :attr:`LP_ENABLE_OS`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_MARK_PERM
    :type: string
    :value: ":"
@@ -1336,6 +1476,8 @@ Marks
 
    .. versionadded:: 2.1
 
+
+.. _Colors:
 
 Colors
 ------

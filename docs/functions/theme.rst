@@ -271,6 +271,29 @@ specific text and formatting may change.
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and
       :attr:`LP_MARK_DEV_CLOSE`.
 
+.. function:: _lp_os_color() -> var:lp_os_color
+
+   Gather information about the Operating System.
+
+   Any string encountered in the process may be replaced by a user-defined
+   counterpart, using the :attr:`LP_MARK_OS` configuration array.
+
+   If the string was not replaced, it is colored with a random color
+   depending on its hash (see :func:`_lp_hash_color`).
+
+   All fields gathered via the :func:`_lp_os` function
+   are joined with the :attr:`LP_MARK_OS_SEP` string,
+   in the following order: arch, family, kernel, distribution, codename.
+   The corresponding data are returned as a single string
+   via the ``lp_os_color`` variable.
+
+   The function returns ``2`` if the user disabled the feature
+   with :attr:`LP_ENABLE_OS`,
+   ``1`` if no field was filled in with data,
+   and ``true`` otherwise.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_python_env_color() -> var:lp_python_env_color
 
    Returns :func:`_lp_python_env` with color from :attr:`LP_COLOR_VIRTUALENV`.

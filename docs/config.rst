@@ -447,6 +447,25 @@ Features
 
    .. versionadded:: 2.2
 
+.. attribute:: LP_ENABLE_ENV_VARS
+   :type: bool
+   :value: 1
+
+   Display a user-defined set of environment variables.
+   May show if the variables are unset, set, or their actual content.
+
+   Watched variables should be added to the :attr:`LP_ENV_VARS` array.
+
+   The resulting prompt section is configured by:
+
+   - :attr:`LP_MARK_ENV_VARS_OPEN`
+   - :attr:`LP_MARK_ENV_VARS_SEP`
+   - :attr:`LP_MARK_ENV_VARS_CLOSE`
+   - :attr:`LP_COLOR_ENV_VARS_SET`
+   - :attr:`LP_COLOR_ENV_VARS_UNSET`
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_FOSSIL
    :type: bool
    :value: 1
@@ -773,6 +792,43 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENV_VARS
+   :type: array<string>
+   :value: ()
+
+   The set of environment variables that the user wants to watch.
+
+   Items should be a string with three space-separated elements
+   of the form `"<name> <set>[ <unset>]"`, containing:
+
+   - the name of the variable to watch,
+   - the string to display if the variable is set,
+   - (optionally) the string to display if the variable is not set.
+
+   The string used when the variable is set may contain the ``%s`` mark,
+   which is replaced by the actual content of the variable.
+
+   For example::
+
+    LP_ENV_VARS=(
+        # Display "V" if VERBOSE is set, nothing if it's unset.
+        "VERBOSE V"
+        # Display the name of the desktop session, if set, T if unset.
+        "DESKTOP_SESSION %s T"
+        # Display "ed:" followed the name of the default editor, nothing if unset.
+        "EDITOR ed:%s"
+    )
+
+   See also :attr:`LP_ENABLE_ENV_VARS`.
+
+   The resulting prompt section is configured by:
+
+   -  :attr:`LP_MARK_ENV_VARS_OPEN`
+   -  :attr:`LP_MARK_ENV_VARS_SEP`
+   -  :attr:`LP_MARK_ENV_VARS_CLOSE`
+   -  :attr:`LP_COLOR_ENV_VARS_SET`
+   -  :attr:`LP_COLOR_ENV_VARS_UNSET`
+
 .. attribute:: LP_HG_COMMAND
    :type: string
    :value: "hg"
@@ -1050,6 +1106,58 @@ Marks
 
    Mark used instead of :attr:`LP_MARK_DEFAULT` to indicate that the current
    directory is disabled for VCS display through :attr:`LP_DISABLED_VCS_PATHS`.
+
+.. attribute:: LP_MARK_ENV_VARS_OPEN
+   :type: string
+   :value: "("
+
+   Mark used to start the user-defined environment variables watch list.
+
+   See also:
+
+   - :attr:`LP_ENABLE_ENV_VARS`
+   - :attr:`LP_ENV_VARS`
+   - :attr:`LP_MARK_ENV_VARS_SEP`
+   - :attr:`LP_MARK_ENV_VARS_CLOSE`
+   - :attr:`LP_COLOR_ENV_VARS_SET`
+   - :attr:`LP_COLOR_ENV_VARS_UNSET`
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_MARK_ENV_VARS_SEP
+   :type: string
+   :value: " "
+
+   Mark used to separate items of the user-defined
+   environment variables watch list.
+
+   See also:
+
+   - :attr:`LP_ENABLE_ENV_VARS`
+   - :attr:`LP_ENV_VARS`
+   - :attr:`LP_MARK_ENV_VARS_OPEN`
+   - :attr:`LP_MARK_ENV_VARS_CLOSE`
+   - :attr:`LP_COLOR_ENV_VARS_SET`
+   - :attr:`LP_COLOR_ENV_VARS_UNSET`
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_MARK_ENV_VARS_CLOSE
+   :type: string
+   :value: ")"
+
+   Mark used to end the user-defined environment variables watch list.
+
+   See also:
+
+   - :attr:`LP_ENABLE_ENV_VARS`
+   - :attr:`LP_ENV_VARS`
+   - :attr:`LP_MARK_ENV_VARS_OPEN`
+   - :attr:`LP_MARK_ENV_VARS_SEP`
+   - :attr:`LP_COLOR_ENV_VARS_SET`
+   - :attr:`LP_COLOR_ENV_VARS_UNSET`
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_MARK_FOSSIL
    :type: string
@@ -1416,6 +1524,42 @@ Valid preset color variables are:
    Color used to indicate the last command exited with a non-zero return code.
 
    See also: :attr:`LP_ENABLE_ERROR`.
+
+.. attribute:: LP_COLOR_ENV_VARS_SET
+   :type: string
+   :value: $BOLD_BLUE
+
+   Color of the environment variables that are set,
+   in the user-defined watch list.
+
+   See also:
+
+   - :attr:`LP_ENABLE_ENV_VARS`
+   - :attr:`LP_ENV_VARS`
+   - :attr:`LP_COLOR_ENV_VARS_UNSET`
+   - :attr:`LP_MARK_ENV_VARS_OPEN`
+   - :attr:`LP_MARK_ENV_VARS_SEP`
+   - :attr:`LP_MARK_ENV_VARS_CLOSE`
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_ENV_VARS_UNSET
+   :type: string
+   :value: $BLUE
+
+   Color of the environment variables that are unset,
+   in the user-defined watch list.
+
+   See also:
+
+   - :attr:`LP_ENABLE_ENV_VARS`
+   - :attr:`LP_ENV_VARS`
+   - :attr:`LP_COLOR_ENV_VARS_SET`
+   - :attr:`LP_MARK_ENV_VARS_OPEN`
+   - :attr:`LP_MARK_ENV_VARS_SEP`
+   - :attr:`LP_MARK_ENV_VARS_CLOSE`
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_HOST
    :type: string

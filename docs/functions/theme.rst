@@ -176,6 +176,21 @@ specific text and formatting may change.
 
     .. versionadded:: 2.0
 
+.. function:: _lp_env_vars_color() -> var:lp_env_vars_color
+
+   Returns the elements of the array set by :func:`_lp_env_vars`,
+   joined with the :attr:`LP_MARK_ENV_VARS_SEP` marker,
+   and surrounded by :attr:`LP_MARK_ENV_VARS_OPEN`
+   and :attr:`LP_MARK_ENV_VARS_CLOSE`.
+
+   If a matching environment variable is set,
+   it is colored with :attr:`LP_COLOR_ENV_VARS_SET`,
+   if it is unset, it is colored with :attr:`LP_COLOR_ENV_VARS_UNSET`.
+
+   See also :attr:`LP_ENV_VARS`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_error_color() -> var:lp_error_color
 
    Returns :func:`_lp_error` with color from :attr:`LP_COLOR_ERR`.

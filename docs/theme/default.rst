@@ -188,6 +188,16 @@ default order if the user does not configure a different template.
    A ↥ (:attr:`LP_MARK_PROXY`) if an HTTP proxy is in use. See
    :attr:`LP_ENABLE_PROXY`.
 
+.. attribute:: LP_ENVVARS
+
+   Some user-defined environment variable's states.
+   Watched variables should be defined in the :attr:`LP_ENV_VARS` array.
+
+   Set variables are displayed in bold blue, unset variables in blue.
+   See also :attr:`LP_ENABLE_ENV_VARS`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_SHLVL
 
    The number of nested shells, prefixed with :attr:`LP_MARK_SHLVL`, all colored

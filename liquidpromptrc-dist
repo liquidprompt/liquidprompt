@@ -65,6 +65,25 @@ LP_USER_ALWAYS=1
 # Defaults to 1 (display percentages)
 LP_PERCENTS_ALWAYS=1
 
+# Display a user-defined set of environment variables.
+# May show if the variables are unset, set, or their actual content
+# (see below to configure which variables to watch).
+LP_ENABLE_ENV_VARS=1
+
+# The set of environment variables that the user wants to watch.
+# Items should be a string with three space-separated elements
+# of the form `"<name> <set>[ <unset>]"`
+# The string used when the variable is set may contain the `%s` mark,
+# which is replaced by the actual content of the variable.
+LP_ENV_VARS=(
+# # Display "V" if VERBOSE is set, nothing if it's unset.
+# "VERBOSE V"
+# # Display the name of the desktop session, if set, T if unset.
+# "DESKTOP_SESSION %s T"
+# # Display "ed:" followed the name of the default editor, nothing if unset.
+# "EDITOR ed:%s"
+)
+
 # Use the permissions feature and display a red ':' before the prompt to show
 # when you don't have write permission to the current directory.
 # Recommended value is 1

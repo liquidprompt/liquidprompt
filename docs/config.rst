@@ -58,7 +58,9 @@ General
    String added directly before :attr:`LP_MARK_DEFAULT`, after all other
    parts of the prompt. Can be used to tag the prompt in a way that is less
    intrusive than :attr:`LP_PS1_PREFIX`, or add a newline before the prompt
-   mark. For example::
+   mark.
+
+   For example::
 
       LP_MARK_PREFIX=$'\n'
 
@@ -74,6 +76,7 @@ General
 
 .. attribute:: LP_PATH_DEFAULT
    :type: string
+   :value: ""
 
    .. deprecated:: 2.0
       Use :attr:`LP_PATH_METHOD` set to `truncate_to_last_dir` instead.
@@ -1005,7 +1008,9 @@ Features
    :type: int
    :value: 0
 
-   Determine when the hostname should be displayed. Valid values are:
+   Determine when the hostname should be displayed.
+
+   Valid values are:
 
    * ``0`` - show the hostname, except when locally connected
    * ``1`` - always show the hostname
@@ -1069,7 +1074,9 @@ Features
    :type: int
    :value: 1
 
-   Determine when the username should be displayed. Valid values are:
+   Determine when the username should be displayed.
+
+   Valid values are:
 
    * ``0`` - show the username, except when the user is the login user
    * ``1`` - always show the username
@@ -1254,8 +1261,9 @@ Marks
    :type: string
    :value: "⚞"
 
-   Mark used to indicate the size of the directory stack. Here are some
-   alternative marks you might like: ⚟ = ≡ ≣
+   Mark used to indicate the size of the directory stack.
+
+   Here are some alternative marks you might like: ⚟ = ≡ ≣
 
    See also: :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
 
@@ -1618,6 +1626,7 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLORMAP
    :type: array<string>
+   :value: ( "" $GREEN $BOLD_GREEN $YELLOW $BOLD_YELLOW $RED $BOLD_RED $WARN_RED $CRIT_RED $DANGER_RED )
 
    An array of colors that is used by the battery, load, temperature, and
    wireless signal strength features to indicate the severity level of their
@@ -1727,7 +1736,7 @@ Valid preset color variables are:
    :type: string
    :value: $BOLD_BLUE
 
-   Color used to indicate that the current shell is running in a container
+   Color used to indicate that the current shell is running in a container.
 
    .. versionadded:: 2.1
 

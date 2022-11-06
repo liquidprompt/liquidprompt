@@ -615,7 +615,7 @@ __lp_source_config() {
 
     for configfile in "${configfiles[@]}"; do
         if [[ -f "$configfile" ]]; then
-            # shellcheck source=liquidpromptrc-dist
+            # shellcheck source=/dev/null
             source "$configfile"
             break
         fi
@@ -633,7 +633,7 @@ __lp_source_config() {
         done
     fi
 
-    # Delete this code in version 1.11
+    # FIXME Delete this code in version 1.11
     if [[ -n "${LP_COLORMAP_1-}" ]]; then
         echo "liquidprompt: LP_COLORMAP_x variables are deprecated. Update your theme to use LP_COLORMAP array." >&2
         LP_COLORMAP=(

@@ -15,7 +15,7 @@ if [ -t 1 ]; then
   printf 'This script must be redirected to a file, or special characters will be lost
   Ex: %s > output.txt\nOr, to upload directly:
   %s | curl -F "sprunge=<-" "http://sprunge.us"\n' "$0" "$0"
-  exit 1
+  exit 2
 fi
 
 # Export needed variables

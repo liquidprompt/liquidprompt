@@ -8,6 +8,11 @@ The :doc:`theme/default` has a templating engine (previously called "themes" in
 Liquid Prompt version 1), that allows for custom prompt ordering in the default
 theme.
 
+If you just want to change icons and/or colors, you can just rely on "presets",
+which are just regular configuration files.
+Presets can generally be combined, and some themes may use
+—or be compatible with— different presets. See :doc:`config`.
+
 Liquid Prompt ships with some :doc:`theme/included` other than the default as
 well.
 
@@ -58,3 +63,4 @@ To switch back to the default theme, call :func:`lp_theme` again with
 
 If you add the theme source commands to your shell startup file, you will have
 your favorite themes ready to be switched to at any time.
+

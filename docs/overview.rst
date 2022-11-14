@@ -150,8 +150,10 @@ Shell essentials:
 - :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable
   that)
 
-Development environments:
+Development/environments:
 
+- :attr:`LP_ENV_VARS` is empty by default
+  (but :attr:`LP_ENABLE_ENV_VARS` is enabled).
 - :attr:`LP_ENABLE_CMAKE`
 - :attr:`LP_ENABLE_CONTAINER` (may behave inconsistently)
 - :attr:`LP_ENABLE_KUBECONTEXT`

@@ -242,10 +242,12 @@ __lp_source_config() {
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
     LP_DELIMITER_KUBECONTEXT_SUFFIX=${LP_DELIMITER_KUBECONTEXT_SUFFIX:-""}
     LP_DELIMITER_KUBECONTEXT_PREFIX=${LP_DELIMITER_KUBECONTEXT_PREFIX:-""}
+    LP_ENV_VARS=( ${LP_ENV_VARS[@]+"${LP_ENV_VARS[@]}"} )
 
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+    LP_ENABLE_ENV_VARS=${LP_ENABLE_ENV_VARS:-1}
     LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
     LP_ENABLE_DETACHED_SESSIONS=${LP_ENABLE_DETACHED_SESSIONS:-1}
@@ -294,6 +296,9 @@ __lp_source_config() {
     LP_MARK_LOAD="${LP_MARK_LOAD:-"⌂"}"
     LP_MARK_TEMP="${LP_MARK_TEMP:-"θ"}"
     LP_MARK_PROXY="${LP_MARK_PROXY:-"↥"}"
+    LP_MARK_ENV_VARS_OPEN="${LP_MARK_ENV_VARS_OPEN:-"("}"
+    LP_MARK_ENV_VARS_SEP="${LP_MARK_ENV_VARS_SEP:-" "}"
+    LP_MARK_ENV_VARS_CLOSE="${LP_MARK_ENV_VARS_CLOSE:-")"}"
     LP_MARK_HG="${LP_MARK_HG:-"☿"}"
     LP_MARK_SVN="${LP_MARK_SVN:-"‡"}"
     LP_MARK_GIT="${LP_MARK_GIT:-"±"}"
@@ -332,6 +337,8 @@ __lp_source_config() {
     LP_COLOR_PATH_LAST_DIR=${LP_COLOR_PATH_LAST_DIR:-$lp_terminal_format}
     LP_COLOR_PATH_ROOT=${LP_COLOR_PATH_ROOT:-$BOLD_YELLOW}
     LP_COLOR_PROXY=${LP_COLOR_PROXY:-$BOLD_BLUE}
+    LP_COLOR_ENV_VARS_UNSET=${LP_COLOR_ENV_VARS_UNSET:-$BLUE}
+    LP_COLOR_ENV_VARS_SET=${LP_COLOR_ENV_VARS_SET:-$BOLD_BLUE}
     LP_COLOR_JOB_D=${LP_COLOR_JOB_D:-$YELLOW}
     LP_COLOR_JOB_R=${LP_COLOR_JOB_R:-$BOLD_YELLOW}
     LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
@@ -1549,6 +1556,77 @@ _lp_http_proxy_color() {
 
     lp_http_proxy_color="${LP_COLOR_PROXY}${LP_MARK_PROXY}${NO_COL}"
 }
+
+_lp_env_vars() { # [color_set, [color_unset]]
+    # Expects LP_ENV_VARS to be an array containing items of the form:
+    # "<ENV_VAR_NAME> <string if set>[ <string if unset>]"
+    # Strings may be `%s`, which will be replaced by the variable's actual content.
+
+    (( LP_ENABLE_ENV_VARS )) || return 2
+
+    local color_set="${1-}"
+    local color_unset="${2-}"
+    local color_no="${NO_COL}"
+    if [[ -z "$color_set" && -z "$color_unset" ]]; then
+        color_no=""
+    fi
+
+    local var_rep var evar fmt_if_set fmt_if_unset
+
+    lp_env_vars=()
+    # For all user-defined setup.
+    for var_rep in ${LP_ENV_VARS[@]+"${LP_ENV_VARS[@]}"}; do
+        IFS=' ' read -r var fmt_if_set fmt_if_unset <<<"$var_rep"
+        # Variable name and set format has to be set, but unset format is optional.
+        if [[ -n "${var}" && -n "${fmt_if_set}" ]]; then
+            # Expands the underlying variable name.
+            local var_is_set=
+            if (( _LP_SHELL_zsh )); then
+                # From https://www.shellcheck.net/wiki/SC2296 :
+                # "Some Zsh specific parameter expansions like ${(q)value} trigger this warning,
+                # but ShellCheck does not support Zsh."
+                # shellcheck disable=SC2296
+                var_is_set="${(P)var+IS_SET}"
+            else
+                # NOTE: indirection expansion are deprecated starting at bash 4.3, should use nameref.
+                var_is_set="${!var+IS_SET}"
+            fi
+
+            if [[ -n "$var_is_set" ]]; then
+                if [[ "${fmt_if_set}" == *"%s"* ]]; then
+                    local evar=
+                    if (( _LP_SHELL_zsh )); then
+                        # shellcheck disable=SC2296
+                        evar="${(P)var}"
+                    else
+                        evar="${!var}"
+                    fi
+                    # Print content.
+                    lp_env_vars+=( "${color_set}${fmt_if_set/\%s/${evar}}${color_no}" )
+                else
+                    # Print tag.
+                    lp_env_vars+=( "${color_set}${fmt_if_set}${color_no}" )
+                fi
+            elif [[ -n "$fmt_if_unset" ]]; then
+                # Print default.
+                lp_env_vars+=( "${color_unset}${fmt_if_unset}${color_no}" )
+            fi
+        fi
+    done
+    if [[ -z "${lp_env_vars-}" ]]; then
+        return 1
+    fi
+}
+
+_lp_env_vars_color() {
+    if _lp_env_vars "${LP_COLOR_ENV_VARS_SET}" "${LP_COLOR_ENV_VARS_UNSET}"; then
+        _lp_join "${LP_MARK_ENV_VARS_SEP}" "${lp_env_vars[@]}"
+        lp_env_vars_color="${LP_MARK_ENV_VARS_OPEN}${lp_join}${LP_MARK_ENV_VARS_CLOSE}"
+    else
+        return "$?"
+    fi
+}
+
 
 _lp_python_env() {
     (( LP_ENABLE_VIRTUALENV )) || return 2
@@ -3735,6 +3813,12 @@ _lp_default_theme_prompt_data() {
         LP_PROXY=
     fi
 
+    if _lp_env_vars_color; then
+        LP_ENVVARS="$lp_env_vars_color"
+    else
+        LP_ENVVARS=
+    fi
+
     if _lp_shell_level_color; then
         LP_SHLVL="$lp_shell_level_color"
     else
@@ -3846,7 +3930,7 @@ _lp_default_theme_prompt_template() {
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_JOBS}"
         # add user, host, permissions colon, working directory, and dirstack
-        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_SHLVL}"
+        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
 
         # Add the list of development environments/config/etc.
         PS1+="${LP_DEV_ENV}"

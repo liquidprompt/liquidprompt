@@ -215,6 +215,29 @@ Environment
 
     .. versionadded:: 2.0
 
+.. function:: _lp_env_vars([color_if_set, [color_if_unset]]) -> var:lp_env_vars
+
+   Gather the states of the environment variables indicated in the
+   :attr:`LP_ENV_VARS` array,
+   and put them in the ``lp_env_vars`` array.
+
+   :attr:`LP_ENV_VARS` should be a list of environment variable names
+   to look for, along with the string to be displayed if the variable is set,
+   and an optional string to be displayed if the variable is not set.
+   The string to be displayed may contain a ``%s`` marker,
+   which will be replaced by the variable's content.
+
+   If ``color_if_set`` is passed, it will be used to color the *set*
+   variables string. If ``color_if_unset`` is passed, it will be used to color
+   the *unset* variables string.
+
+   Returns ``true`` if at least one variable representation is added to
+   the result array. Returns ``1`` if the no variable representation is set.
+   Returns ``2`` if the user disabled the feature
+   with :attr:`LP_ENABLE_ENV_VARS`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_error() -> var:lp_error
 
    Returns ``true`` if the last user shell command returned a non-zero exit

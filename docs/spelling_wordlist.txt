@@ -25,6 +25,8 @@ FreeBSD
 hostname
 incrementing
 js
+kibi
+KiB
 kubernetes
 liquidprompt
 lowlighted
@@ -32,6 +34,7 @@ multi
 MinGW
 namespace
 OpenBSD
+PiB
 podman
 postpend
 postpended

@@ -204,6 +204,18 @@ General
 Features
 --------
 
+.. attribute:: LP_ALWAYS_DISPLAY_VALUES
+   :type: bool
+   :value: 1
+
+   Display the actual values of load, batteries, and wifi signal strength along
+   with their corresponding marks. Disable to only print the colored marks.
+
+   See also: :attr:`LP_ENABLE_LOAD`, :attr:`LP_ENABLE_BATT`,
+   :attr:`LP_ENABLE_DISK`, and :attr:`LP_ENABLE_WIFI_STRENGTH`.
+
+   .. versionadded: 2.2
+
 .. attribute:: LP_DELIMITER_KUBECONTEXT_PREFIX
    :type: string
    :value: ""
@@ -285,6 +297,17 @@ Features
 
    .. versionadded:: 2.0
 
+.. attribute:: LP_DISPLAY_VALUES_AS_PERCENTS
+   :type: bool
+   :value: 0
+
+   When displaying a value, show it as a percentage if possible.
+
+   Used in sensors for capacities, see :attr:`LP_ENABLE_DISK`,
+   :attr:`LP_ENABLE_BATT`.
+
+   .. versionadded: 2.2
+
 .. attribute:: LP_ENABLE_AWS_PROFILE
    :type: bool
    :value: 1
@@ -308,7 +331,7 @@ Features
 
    Display the status of the battery, if there is one, using color and marks.
    Add battery percentage colored with :attr:`LP_COLORMAP` if
-   :attr:`LP_PERCENTS_ALWAYS` is enabled.
+   :attr:`LP_ALWAYS_DISPLAY_VALUES` is enabled.
 
    Will be disabled if ``acpi`` is not found on Linux, fails to read the Linux
    sysfs system, or ``pmset`` is not found on MacOS.
@@ -414,6 +437,33 @@ Features
    See also: :attr:`LP_MARK_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
 
    .. versionadded:: 2.0
+
+.. attribute:: LP_ENABLE_DISK
+   :type: bool
+   :value: 1
+
+   Display :attr:`LP_MARK_DISK` if the free space on the hard drive hosting the
+   current directory goes below a threshold.
+
+   Thresholds can be stated either:
+
+   * as a percentage with :attr:`LP_DISK_THRESHOLD_PERC`,
+   * or an absolute number *of kilobytes* with :attr:`LP_DISK_THRESHOLD`.
+
+   Display will occur if one of the thresholds is met.
+
+   If :attr:`LP_ALWAYS_DISPLAY_VALUES` is enabled, the prompt will show the
+   available space along with :attr:`LP_MARK_DISK`, if disabled, it will show
+   only the mark.
+
+   The precision of the available space can be configured with
+   :attr:`LP_DISK_PRECISION`.
+
+   If :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is enabled, it will show the
+   percentage, if it is disabled, it will show the absolute value in a
+   human-readable form (i.e. with metric prefixed units).
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_ENABLE_ERROR
    :type: bool
@@ -616,6 +666,8 @@ Features
    Display the load average over the past 1 minutes when above the threshold.
 
    See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
+   :attr:`LP_MARK_LOAD`, :attr:`LP_ALWAYS_DISPLAY_VALUES`,
+   and :attr:`LP_COLORMAP`.
    :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.
 
 .. attribute:: LP_ENABLE_MODULES
@@ -964,7 +1016,7 @@ Features
 
    Display an indicator if any wireless signal strength percentage is below
    :attr:`LP_WIFI_STRENGTH_THRESHOLD`. Also show the strength percentage if
-   :attr:`LP_PERCENTS_ALWAYS` is enabled.
+   :attr:`LP_ALWAYS_DISPLAY_VALUES` is enabled.
 
    Both Linux and MacOS are supported.
 
@@ -1057,6 +1109,10 @@ Features
    :type: bool
    :value: 1
 
+   .. deprecated:: 2.2
+      Use :attr:`LP_ALWAYS_DISPLAY_VALUES`
+      and :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` instead.
+
    Display the actual values of load, batteries, and wifi signal strength along
    with their corresponding marks. Disable to only print the colored marks.
 
@@ -1118,6 +1174,47 @@ Thresholds
    :attr:`LP_COLOR_CHARGING_ABOVE` or :attr:`LP_COLOR_DISCHARGING_ABOVE` color.
 
    :attr:`LP_ENABLE_BATT` must be enabled to have any effect.
+
+.. attribute:: LP_DISK_PRECISION
+   :type: int
+   :value: 2
+
+   Control the numbers of decimals when displaying the absolute available space
+   of the current hard drive. If set to 0, don't display decimals. If set to 1
+   or 2, display decimals.
+
+   See :attr:`LP_ENABLE_DISK`, :attr:`LP_ALWAYS_DISPLAY_VALUES`, and
+   :attr:`LP_DISPLAY_VALUES_AS_PERCENTS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_DISK_THRESHOLD
+   :type: int
+   :value: 100000
+
+   Display something if the available space on the hard drive hosting the
+   current directory goes below this absolute threshold *in kilobytes*.
+
+   The threshold for disk can also be set with :attr:`LP_DISK_THRESHOLD_PERC`,
+   the first one to be reached triggering the display.
+
+   See also :attr:`LP_ENABLE_DISK`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_DISK_THRESHOLD_PERC
+   :type: int
+   :value: 10
+
+   Display something if the available space on the hard drive hosting the
+   current directory goes below this percentage.
+
+   The threshold for disk can also be set with :attr:`LP_DISK_THRESHOLD`,
+   the first one to be reached triggering the display..
+
+   See also :attr:`LP_ENABLE_DISK`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_LOAD_CAP
    :type: float
@@ -1291,6 +1388,15 @@ Marks
 
    Mark used instead of :attr:`LP_MARK_DEFAULT` to indicate that the current
    directory is disabled for VCS display through :attr:`LP_DISABLED_VCS_PATHS`.
+
+.. attribute:: LP_MARK_DISK
+   :type: string
+   :value: "🖴 "
+
+   Mark used to indicate that the available disk space is too low.
+   See :attr:`LP_ENABLE_DISK`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_MARK_ENV_VARS_OPEN
    :type: string
@@ -1807,6 +1913,30 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_BATT`.
 
+.. attribute:: LP_COLOR_DISK
+   :type: string
+   :value: $BOLD_RED
+
+   Color used for displaying information about the hard drive hosting the
+   current directory.
+
+   See also :attr:`LP_COLOR_DISK_UNITS`, :attr:`LP_ENABLE_DISK`,
+   :attr:`LP_ALWAYS_DISPLAY_VALUES`, and :attr:`LP_PERCENTS_ALWAYS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_DISK_UNITS
+   :type: string
+   :value: $RED
+
+   Color used for displaying the unit of the used space on the hard drive
+   hosting the current directory.
+
+   See also :attr:`LP_COLOR_DISK`, :attr:`LP_ENABLE_DISK`,
+   :attr:`LP_ALWAYS_DISPLAY_VALUES`, and :attr:`LP_PERCENTS_ALWAYS`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_COLOR_ERR
    :type: string
    :value: $PURPLE
@@ -1823,15 +1953,12 @@ Valid preset color variables are:
    in the user-defined watch list.
 
    See also:
-
    - :attr:`LP_ENABLE_ENV_VARS`
    - :attr:`LP_ENV_VARS`
    - :attr:`LP_COLOR_ENV_VARS_UNSET`
    - :attr:`LP_MARK_ENV_VARS_OPEN`
    - :attr:`LP_MARK_ENV_VARS_SEP`
    - :attr:`LP_MARK_ENV_VARS_CLOSE`
-
-   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_ENV_VARS_UNSET
    :type: string

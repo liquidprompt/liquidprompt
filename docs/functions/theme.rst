@@ -176,6 +176,23 @@ specific text and formatting may change.
 
     .. versionadded:: 2.0
 
+.. function:: _lp_disk_color() -> var:lp_disk_color
+
+   Returns information about occupied space of the hard drive hosting the
+   current directory.
+
+   If :attr:`LP_ALWAYS_DISPLAY_VALUES` is ``false``, displays a colored mark
+   (using :attr:`LP_MARK_DISK`), if the available disk space goes below
+   :attr:`LP_DISK_THRESHOLD` or :attr:`LP_DISK_THRESHOLD_PERC`.
+   If it is ``true``, displays the corresponding value, either as a percentage
+   (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``true``) or as a human-
+   readable quantity (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``false``).
+
+   The mark and the value itself are colored with :attr:`LP_COLOR_DISK`, while
+   the unit is colored with :attr:`LP_COLOR_DISK_UNITS`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_env_vars_color() -> var:lp_env_vars_color
 
    Returns the elements of the array set by :func:`_lp_env_vars`,

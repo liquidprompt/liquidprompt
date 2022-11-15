@@ -140,6 +140,31 @@ Development Environment
    .. versionadded:: 2.1
 
 
+Disks and Memory
+----------------
+
+.. function:: _lp_disk -> var:lp_disk, var:lp_disk_human, var:lp_disk_perc
+
+   Gather information about the current state of the hard drive hosting the
+   *current directory*:
+
+   * occupied space in kibi-bytes (``lp_disk``, that is, 1024 bytes),
+   * occupied space in human-readable form, using binary unit prefixes
+     (``lp_disk_human``, see also :func:`__lp_bytes_to_human`).
+   * occupied space as a percentage of total (``lp_disk_perc``).
+
+   Returns ``true`` if the used space is below at least one of the user-defined
+   thresholds:
+
+   * :attr:`LP_DISK_THRESHOLD`
+   * :attr:`LP_DISK_THRESHOLD_PERC`
+
+   Can be disabled by :attr:`LP_ENABLE_DISK`.
+
+   .. versionadded:: 2.2
+
+
+
 Environment
 -----------
 

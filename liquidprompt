@@ -3,6 +3,8 @@
 # An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
+_LP_VERSION=(2 2 0 alpha 1)
+
 # Licensed under the AGPL version 3
 #
 # This program is free software: you can redistribute it and/or modify
@@ -153,6 +155,35 @@ esac
 #################
 # CONFIGURATION #
 #################
+
+# Return true if the current Liquid Prompt version is greater than or equal to the specified version.
+# [OPTIONAL?] Return 1 if minor or less version difference, 2 if major difference.
+_lp_version_greatereq() {  # major, minor, [patch], [string], [number]
+    local major="$1" minor="$2" patch="${3-}" string="${4-}" number="${5-}"
+    if (( major > _LP_VERSION[_LP_FIRST_INDEX+0] )); then
+        return 2
+    elif (( major == _LP_VERSION[_LP_FIRST_INDEX+0] )); then
+        if (( minor > _LP_VERSION[_LP_FIRST_INDEX+1] )); then
+            return 1
+        elif (( minor == _LP_VERSION[_LP_FIRST_INDEX+1] )) && [[ -n $patch ]]; then
+            if (( patch > _LP_VERSION[_LP_FIRST_INDEX+2] )); then
+                return 1
+            elif (( patch == _LP_VERSION[_LP_FIRST_INDEX+2] )) && [[ -n $string && -n $number ]]; then
+                if [[ $string == "${_LP_VERSION[_LP_FIRST_INDEX+3]}" ]]; then
+                    if (( number > _LP_VERSION[_LP_FIRST_INDEX+4] )); then
+                        return 1
+                    fi
+                elif [[ ${_LP_VERSION[_LP_FIRST_INDEX+3]} == "alpha" || \
+                        ( ${_LP_VERSION[_LP_FIRST_INDEX+3]} == "beta" && \
+                        $string == "rc" ) ]]; then
+                    return 1
+                fi
+            fi
+        fi
+    fi
+
+    return 0
+}
 
 # Load the user configuration and setup defaults.
 # shellcheck disable=SC2034
@@ -1062,6 +1093,34 @@ _lp_fill() {
 
     # shellcheck disable=SC2034
     lp_fill="${left}${filled}${right}"
+}
+
+_lp_version_string() { # [major, [minor, [patch, [string, [number]]]]]
+
+    if [[ $# -eq 0 ]]; then
+        local major="${_LP_VERSION[_LP_FIRST_INDEX+0]}"
+        local minor="${_LP_VERSION[_LP_FIRST_INDEX+1]}"
+        local patch="${_LP_VERSION[_LP_FIRST_INDEX+2]-}"
+        local string="${_LP_VERSION[_LP_FIRST_INDEX+3]-}"
+        local number="${_LP_VERSION[_LP_FIRST_INDEX+4]-}"
+    else
+        local major="${1}"
+        local minor="${2}"
+        local patch="${3-}"
+        local string="${4-}"
+        local number="${5-}"
+    fi
+    #shellcheck disable=SC2034
+    lp_version="${major}.${minor}"
+    if [[ -n "$patch" ]]; then
+        lp_version+=".${patch}"
+        if [[ -n "$string" ]]; then
+            lp_version+="-${string}"
+            if [[ -n "$number" ]]; then
+                lp_version+=".${number}"
+            fi
+        fi
+    fi
 }
 
 

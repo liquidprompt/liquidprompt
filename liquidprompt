@@ -2496,16 +2496,16 @@ _lp_git_head_status() {
     if [[ -f "${lp_vcs_dir}/MERGE_HEAD" ]]; then
         lp_vcs_head_status="MERGING"
     elif [[ -d "${lp_vcs_dir}/rebase-merge" ]]; then
-        read -r step <"${lp_vcs_dir}/rebase-merge/msgnum"
-        read -r total <"${lp_vcs_dir}/rebase-merge/end"
+        test -r "${lp_vcs_dir}/rebase-merge/msgnum" && read -r step <"${lp_vcs_dir}/rebase-merge/msgnum"
+        test -r "${lp_vcs_dir}/rebase-merge/end" && read -r total <"${lp_vcs_dir}/rebase-merge/end"
         if [[ -f "${lp_vcs_dir}/rebase-merge/interactive" ]]; then
             lp_vcs_head_status="REBASE-i"
         else
             lp_vcs_head_status="REBASE-m"
         fi
     elif [[ -d "${lp_vcs_dir}/rebase-apply" ]]; then
-        read -r step <"${lp_vcs_dir}/rebase-apply/next"
-        read -r total <"${lp_vcs_dir}/rebase-apply/last"
+        test -r "${lp_vcs_dir}/rebase-apply/next" && read -r step <"${lp_vcs_dir}/rebase-apply/next"
+        test -r "${lp_vcs_dir}/rebase-apply/last" && read -r total <"${lp_vcs_dir}/rebase-apply/last"
         if [[ -f "${lp_vcs_dir}/rebase-apply/rebasing" ]]; then
             lp_vcs_head_status="REBASE"
         elif [[ -f "${lp_vcs_dir}/rebase-apply/applying" ]]; then

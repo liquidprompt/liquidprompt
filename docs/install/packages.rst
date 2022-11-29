@@ -84,8 +84,8 @@ Homebrew
 Nix
 ---
 
-.. image:: https://repology.org/badge/version-for-repo/nix_stable/liquidprompt.svg
-   :alt: nixpkgs stable package
+.. image:: https://repology.org/badge/version-for-repo/nix_unstable/liquidprompt.svg
+   :alt: nixpkgs unstable package
    :target: https://search.nixos.org/packages?query=liquidprompt
 
 .. code-block::

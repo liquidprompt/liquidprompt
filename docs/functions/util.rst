@@ -166,6 +166,26 @@ These functions are designed to be used by themes.
    .. versionchanged:: 2.1
       Added *vcs_subtype* argument.
 
+.. function:: _lp_substitute(string, pairs_array) -> var:lp_substitute
+
+   If the given string is found in the given array of pairs,
+   return the second element of the pair for which
+   the first element matches the string.
+
+   For instance:
+
+   .. code-block:: shell
+
+       pairs=(
+           "A" "B" # Replace A by B.
+           "something" "dead pixels"
+           "I see" "nothing"
+       )
+       _lp_substitute "something" "${pairs[@]}"
+       # "$lp_substitute" == "dead pixels"
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_title(title) -> stdout
 
    Not to be confused with :func:`lp_title`.

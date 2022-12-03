@@ -44,6 +44,9 @@ test_tool() {
 }
 
 test_tool uname
+test_tool uname -s
+test_tool uname -s -m
+test_tool uname -o
 
 hostname_cksum() {
   hostname | cksum

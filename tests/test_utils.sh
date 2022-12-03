@@ -891,6 +891,17 @@ function test_version {
     assertEquals "5.4" "$lp_version"
 }
 
+function test_substitute {
+    local sub
+    sub=(
+        "When"  "NOK"
+        "What?" "NOPE"
+        "What"  "OK"
+    )
+    _lp_substitute "What" "${sub[@]}"
+    assertEquals "OK" "$lp_substitute"
+}
+
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit

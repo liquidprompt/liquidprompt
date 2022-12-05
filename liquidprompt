@@ -1858,9 +1858,11 @@ _lp_python_env() {
         if [[ -r "$virtualenv_config" ]]; then
             local line
             while IFS='' read -r line ; do
-                if [[ $line == "prompt = "* ]]; then
-                    line="${line#"prompt = '"}"
-                    line="${line%"'"}"
+                if [[ $line == "prompt"*"="* ]]; then
+                    line="${line#"prompt"*"="}"
+                    line="${line#[[:space:]]}"
+                    line="${line#[\'\"]}"
+                    line="${line%[\'\"]}"
                     __lp_escape "$line"
                     break
                 fi

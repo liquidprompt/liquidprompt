@@ -1,4 +1,5 @@
 #!/bin/bash
+#shellcheck disable=SC2317
 set -u
 
 COLUMNS=160

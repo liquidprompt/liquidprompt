@@ -22,10 +22,8 @@ else
   theme=$1
   shift
 
-  for file in "$@"; do
-    # shellcheck disable=SC1090
-    . "$file"
-  done
+  # We will source the given config files after each prompt activation,
+  # so as to allow presets using public functions (like `lp_terminal_format`).
 fi
 
 # Liquid Prompt depends on PS1 being set to detect if it has installed itself.
@@ -40,6 +38,13 @@ __remove_shell_escapes() {  # PS1 -> PS1
   PS1="${PS1//"${_LP_CLOSE_ESC}"/}"
 }
 
+# Source whatever files are passed as arguments.
+__load_args() {
+  for file in "$@"; do
+    # shellcheck disable=SC1090
+    . "$file"
+  done
+}
 
 ## Short
 
@@ -93,6 +98,7 @@ PWD=$HOME
 # Activate and generate
 
 lp_activate --no-config
+__load_args "$@"
 # Only needs to be done once
 lp_theme "$theme" || exit "$?"
 __lp_set_prompt
@@ -157,6 +163,7 @@ PWD=$HOME/liquidprompt
 
 lp_activate --no-config
 _config
+__load_args "$@"
 __lp_set_prompt
 __remove_shell_escapes
 
@@ -256,6 +263,7 @@ PWD="${HOME}/code/liquidprompt/docs/theme"
 
 lp_activate --no-config
 _long_config
+__load_args "$@"
 __lp_set_prompt
 __remove_shell_escapes
 

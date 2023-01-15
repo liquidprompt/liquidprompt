@@ -264,11 +264,17 @@ _lp_os_color() {
     local active
     active=()
     for value in \
-        "$lp_os_arch" "$lp_os_family" "$lp_os_kernel" "$lp_os_distrib" "$lp_os_version"; do
-        if [[ -n "$value" ]]; then
+        "${LP_COLOR_OS_ARCH}${lp_os_arch}${NO_COL}" \
+        "${LP_COLOR_OS_FAMILY}${lp_os_family}${NO_COL}" \
+        "${LP_COLOR_OS_KERNEL}${lp_os_kernel}${NO_COL}" \
+        "${LP_COLOR_OS_DISTRIB}${lp_os_distrib}${NO_COL}" \
+        "${LP_COLOR_OS_VERSION}${lp_os_version}${NO_COL}"; do
+        __lp_strip_escapes "$value"
+        if [[ -n "$ret" ]]; then
             if _lp_substitute "$value" "${LP_MARK_OS[@]}"; then
                 active+=("$lp_substitute")
-            elif _lp_hash_color "$value"; then
+            elif (( LP_ENABLE_OS_COLORS )); then
+                _lp_hash_color "$value"
                 active+=("$lp_hash_color")
             else
                 active+=("$value")
@@ -462,6 +468,7 @@ __lp_source_config() {
     LP_ENABLE_OS_DISTRIB=${LP_ENABLE_OS_DISTRIB:-0}
     LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
     LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
+    LP_ENABLE_OS_COLORS=${LP_ENABLE_OS_COLORS:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -500,7 +507,7 @@ __lp_source_config() {
     LP_MARK_CMAKE="${LP_MARK_CMAKE:-":"}"
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
     LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-"/"}"
-    LP_MARK_OS_SEP=${LP_MARK_OS_SEP:-"/"}
+    LP_MARK_OS_SEP=${LP_MARK_OS_SEP:-":"}
     LP_MARK_OS=( ${LP_MARK_OS[@]+"${LP_MARK_OS[@]}"} )
 
     LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
@@ -558,6 +565,11 @@ __lp_source_config() {
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
     LP_COLOR_MODULES=${LP_COLOR_MODULES:-$BLUE}
     LP_COLOR_SHLVL=${LP_COLOR_SHLVL:-$BOLD_GREEN}
+    LP_COLOR_OS_ARCH=${LP_COLOR_OS_ARCH:-$MAGENTA}
+    LP_COLOR_OS_FAMILY=${LP_COLOR_OS_FAMILY:-$BOLD_MAGENTA}
+    LP_COLOR_OS_KERNEL=${LP_COLOR_OS_KERNEL:-$MAGENTA}
+    LP_COLOR_OS_DISTRIB=${LP_COLOR_OS_DISTRIB:-$BOLD_MAGENTA}
+    LP_COLOR_OS_VERSION=${LP_COLOR_OS_VERSION:-$MAGENTA}
 
     LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
     if [[ ${#LP_COLORMAP[@]} == 0 ]]; then

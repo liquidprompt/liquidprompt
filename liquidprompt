@@ -4055,6 +4055,7 @@ _lp_dev_env_color() {
         "${lp_os_color-}"
         "${lp_modules_color-}"
         "${lp_software_collections_color-}"
+        "${lp_os_color-}"
         "${lp_aws_profile_color-}"
         "${lp_container_color-}"
         "${lp_terraform_env_color-}"

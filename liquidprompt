@@ -4034,18 +4034,20 @@ _lp_container_color() {
 _lp_dev_env_color() {
     # add development environments
     local -a dev_all
+    # Ordered: OS, containers, virtual envs, cmake.
     dev_all=(
         "${lp_modules_color-}"
         "${lp_software_collections_color-}"
+        "${lp_os_color-}"
         "${lp_aws_profile_color-}"
         "${lp_container_color-}"
+        "${lp_terraform_env_color-}"
+        "${lp_kubernetes_context_color-}"
+        "${lp_software_collections_color-}"
         "${lp_python_env_color-}"
         "${lp_node_env_color-}"
         "${lp_ruby_env_color-}"
-        "${lp_terraform_env_color-}"
-        "${lp_kubernetes_context_color-}"
         "${lp_cmake_color-}"
-        "${lp_os_color-}"
     )
     local -a dev_active
     dev_active=()
@@ -4315,7 +4317,7 @@ _lp_default_theme_prompt_template() {
         # add title escape time, jobs, load and battery
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_JOBS}"
         # add user, host, permissions colon, working directory, and dirstack
-        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
+        PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_SHLVL}${LP_ENVVARS}"
 
         # Add the list of development environments/config/etc.
         PS1+="${LP_DEV_ENV}"

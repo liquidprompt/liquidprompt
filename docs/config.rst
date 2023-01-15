@@ -345,8 +345,25 @@ Features
    - *Debug*, colored with :attr:`LP_COLOR_CMAKE_DEBUG` (magenta, by default),
    - *RelWithDebInfo*, colored with :attr:`LP_COLOR_CMAKE_RWDI` (blue, by
      default),
-   - *Release*, colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default),
-   - any other value would be colored according to its hash.
+   - *Release*, colored with :attr:`LP_COLOR_CMAKE_RELEASE` (cyan, by default).
+
+   If :attr:`LP_ENABLE_CMAKE_COLORS` is set, any other value would be colored
+   according to its hash. If not, colors for each fields can be set via:
+
+   - :attr:`LP_COLOR_CMAKE_C`,
+   - :attr:`LP_COLOR_CMAKE_CXX`,
+   - :attr:`LP_COLOR_CMAKE_GEN`,
+   - :attr:`LP_COLOR_CMAKE_BUILD`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_CMAKE_COLORS
+   :type: bool
+   :value: 1
+
+   If set, each of the CMake data field is colored according to its hash.
+
+   See: :attr:`LP_ENABLE_CMAKE`.
 
    .. versionadded:: 2.2
 
@@ -1686,6 +1703,36 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_BATT`.
 
+.. attribute:: LP_COLOR_CMAKE_BUILD
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the build type in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_C
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the C compilator in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_CXX
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the C++ compilator in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_COLOR_CMAKE_DEBUG
    :type: string
    :value: $MAGENTA
@@ -1693,6 +1740,16 @@ Valid preset color variables are:
    Color for the *Debug* build type of the CMake section.
 
    See also: :attr:`LP_COLOR_CMAKE_RWDI` and :attr:`LP_COLOR_CMAKE_RELEASE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_GEN
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the generator in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
 
    .. versionadded:: 2.2
 
@@ -1918,6 +1975,56 @@ Valid preset color variables are:
 
    See also: :attr:`LP_ENABLE_PERM` and :attr:`LP_COLOR_WRITE`.
 
+.. attribute:: LP_COLOR_OS_ARCH
+   :type: string
+   :value: $MAGENTA
+
+   Color used for :attr:`LP_OS_ARCH`.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_ARCH`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_DISTRIB
+   :type: string
+   :value: $MAGENTA
+
+   Color used for :attr:`LP_OS_DISTRIB`.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_DISTRIB`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_FAMILY
+   :type: string
+   :value: $MAGENTA
+
+   Color used for :attr:`LP_OS_FAMILY`.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_FAMILY`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_KERNEL
+   :type: string
+   :value: $MAGENTA
+
+   Color used for :attr:`LP_OS_KERNEL`.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_KERNEL`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_VERSION
+   :type: string
+   :value: $MAGENTA
+
+   Color used for :attr:`LP_OS_VERSION`.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_VERSION`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_COLOR_PATH
    :type: string
    :value: ""
@@ -2007,6 +2114,16 @@ Valid preset color variables are:
    See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_MARK_SHLVL`.
 
    .. versionadded:: 2.1
+
+.. attribute:: LP_COLOR_SCLS
+   :type: string
+   :value: $CYAN
+
+   Color used for RedHat Software Collections environment.
+
+   See also: :attr:`LP_ENABLE_SCLS`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_SSH
    :type: string

@@ -561,7 +561,7 @@ __lp_source_config() {
     LP_COLOR_IN_MULTIPLEXER=${LP_COLOR_IN_MULTIPLEXER:-$BOLD_BLUE}
     LP_COLOR_RUNTIME=${LP_COLOR_RUNTIME:-$YELLOW}
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
-    LP_COLOR_SOFTCOL=${LP_COLOR_SOFTCOL:-$LP_COLOR_VIRTUALENV}
+    LP_COLOR_SCLS=${LP_COLOR_SCLS:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_NODE_VENV=${LP_COLOR_NODE_VENV:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_RUBY_VENV=${LP_COLOR_RUBY_VENV:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_TERRAFORM=${LP_COLOR_TERRAFORM:-$PINK}
@@ -2052,7 +2052,7 @@ _lp_software_collections_color() {
     unset lp_software_collections_color
     _lp_software_collections || return "$?"
 
-    lp_software_collections_color="${LP_COLOR_SOFTCOL}${lp_software_collections}${NO_COL}"
+    lp_software_collections_color="${LP_COLOR_SCLS}${lp_software_collections}${NO_COL}"
 }
 
 

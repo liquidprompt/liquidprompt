@@ -57,6 +57,17 @@ function test_os {
     _lp_grep_fields() { lp_grep_fields=("ubuntu" "focal"); }
     LP_MARK_OS=("FreeBSD" "NOPE" "x86" "NOPE" "GNU" "G" "Linux" "L" "x86_64" "6" "ubuntu" "U" "focal" "F")
 
+    # Configure no color.
+    lp_terminal_format -1 -1 0 0 -1 -1
+    LP_COLOR_OS_ARCH="$lp_terminal_format"
+    LP_COLOR_OS_DISTRIB="$lp_terminal_format"
+    LP_COLOR_OS_FAMILY="$lp_terminal_format"
+    LP_COLOR_OS_KERNEL="$lp_terminal_format"
+    LP_COLOR_OS_VERSION="$lp_terminal_format"
+    NO_COL="$lp_terminal_format"
+
+    # _lp_os_color gathers all fields as one,
+    # so we can test that.
     LP_MARK_OS_SEP="+"
     LP_ENABLE_OS_ARCH=1
     LP_ENABLE_OS_FAMILY=1

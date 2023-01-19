@@ -30,7 +30,6 @@ printf "# This file shows the default presets configuration for Liquid Prompt.
 # We test for $line in the loop is here to ensure that we read the last line,
 # even if the file does not ends with a \n.
 # This bypass a known behavior of the C standard, not fixed in POSIX.
-attributes=()
 while IFS='' read -r line || [[ -n "$line" ]] ; do
     if [[ "$line" == *".. attribute:: LP_"* ]]; then
         att="${line##*' '}"
@@ -38,7 +37,7 @@ while IFS='' read -r line || [[ -n "$line" ]] ; do
         IFS=' ' read -r v avalue
         if [[ "$t" == ":type:" && "$v" == ":value:" ]]; then
             if [[ "$avalue" == *"lp_terminal_format"* ]]; then
-                printf "WARNING: attribute $att default shows lp_terminal_format.\n" 1>&2
+                printf "WARNING: attribute %s default shows lp_terminal_format.\n" "$att" 1>&2
             fi
             IFS='' read -r # Empty line
             IFS='' read -r line
@@ -53,22 +52,22 @@ while IFS='' read -r line || [[ -n "$line" ]] ; do
                     doc="${doc//   / }" # Remove all triple saces (indentations).
                     doc="${doc//\`\`/\`}" # Remove all double back ticks.
                     if [[ "${doc:0-1}" != "." ]]; then
-                        printf "WARNING: doc for attribute $att do not end with a period.\n" 1>&2
+                        printf "WARNING: doc for attribute %s do not end with a period.\n" "$att" 1>&2
                     fi
 
                     # Everything should be good here, we print.
                     moreinfo="https://liquidprompt.readthedocs.io/en/stable/config.html#${att}"
                     all="#${doc}\n# Type: ${atype}, more information: ${moreinfo}\n#${att}=${avalue}\n\n"
                     all="${all//%/%%}" # Escape percents.
-                    printf "$all"
+                    printf "%s" "$all"
                 else
-                    printf "NOTE: attribute $att is deprecated, bypass.\n" 1>&2
+                    printf "NOTE: attribute %s is deprecated, bypass.\n" "$att" 1>&2
                 fi
             else
-                printf "WARNING: attribute $att does not have doc.\n" 1>&2
+                printf "WARNING: attribute %s does not have doc.\n" "$att" 1>&2
             fi
         else
-            printf "WARNING: attribute $att does not have type or value.\n" 1>&2
+            printf "WARNING: attribute %s does not have type or value.\n" "$att" 1>&2
         fi
     fi
 done <"$file"

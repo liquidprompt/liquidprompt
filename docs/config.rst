@@ -6,7 +6,7 @@ Config Options
 
 Almost every feature in Liquid Prompt can be turned on or off using these config
 options. They can either be set before sourcing Liquid Prompt (in ``.bashrc`` or
-``.zshrc``), or set in a Liquid Prompt config file.
+``.zshrc``, or sourcing a preset), or set in a Liquid Prompt config file.
 
 .. note::
    Config variables set in a config file take precedence over variables set in
@@ -44,6 +44,10 @@ as these::
    The example config file does not include every config option, and the
    comments describing the options are less verbose than the descriptions on
    this page.
+
+Several example of configurations are given in the ``contrib/presets``
+directory. Some of these presets can be combined, for instance for changing
+the icons, along with the colors.
 
 Each config option is documented with its default value.
 Options of type ``bool`` accept values of ``1`` for true and ``0`` for false.
@@ -1717,7 +1721,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used to display the C compilator in the CMake segment.
+   Color used to display the C compiler in the CMake segment.
 
    See :attr:`LP_ENABLE_CMAKE`.
 
@@ -1727,7 +1731,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used to display the C++ compilator in the CMake segment.
+   Color used to display the C++ compiler in the CMake segment.
 
    See :attr:`LP_ENABLE_CMAKE`.
 
@@ -1979,7 +1983,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used for :attr:`LP_OS_ARCH`.
+   Color used for OS' architecture (e.g. "x86_64", "i686"…).
 
    See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_ARCH`.
 
@@ -1989,7 +1993,9 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used for :attr:`LP_OS_DISTRIB`.
+   Color used for OS' distribution (e.g. "Ubuntu", "Debian"…).
+
+   .. note:: Will probably only work on Linux-like systems.
 
    See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_DISTRIB`.
 
@@ -1999,7 +2005,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used for :attr:`LP_OS_FAMILY`.
+   Color used for OS' family (e.g. "BSD", "GNU"…).
 
    See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_FAMILY`.
 
@@ -2009,7 +2015,7 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used for :attr:`LP_OS_KERNEL`.
+   Color used for OS' kernel (e.g. "Linux", "MinGW"…).
 
    See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_KERNEL`.
 
@@ -2019,7 +2025,9 @@ Valid preset color variables are:
    :type: string
    :value: $MAGENTA
 
-   Color used for :attr:`LP_OS_VERSION`.
+   Color used for OS' version codename (e.g. "focal", "buster"…).
+
+   .. note:: Will probably only work on Linux-like systems.
 
    See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_VERSION`.
 

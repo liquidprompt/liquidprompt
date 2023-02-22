@@ -435,6 +435,9 @@ __lp_source_config() {
     LP_ENABLE_CONTAINER=${LP_ENABLE_CONTAINER:-0}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
     LP_ENABLE_AWS_PROFILE=${LP_ENABLE_AWS_PROFILE:-1}
+    LP_ENABLE_MODULES=${LP_ENABLE_MODULES:-1}
+    LP_ENABLE_MODULES_VERSIONS=${LP_ENABLE_MODULES_VERSIONS:-1}
+    LP_ENABLE_MODULES_HASHCOLOR=${LP_ENABLE_MODULES_HASHCOLOR:-0}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
@@ -491,6 +494,9 @@ __lp_source_config() {
     LP_MARK_DEV_OPEN="${LP_MARK_DEV_OPEN:-"<"}"
     LP_MARK_DEV_CLOSE="${LP_MARK_DEV_CLOSE:-">"}"
     LP_MARK_DEV_MID="${LP_MARK_DEV_MID:-"|"}"
+    LP_MARK_MODULES_OPEN="${LP_MARK_MODULES_OPEN:-""}"
+    LP_MARK_MODULES_SEP="${LP_MARK_MODULES_SEP:-":"}"
+    LP_MARK_MODULES_CLOSE="${LP_MARK_MODULES_CLOSE:-""}"
     LP_MARK_CMAKE="${LP_MARK_CMAKE:-":"}"
     LP_MARK_KUBECONTEXT=${LP_MARK_KUBECONTEXT:-"⎈"}
     LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-"/"}"
@@ -550,6 +556,7 @@ __lp_source_config() {
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
     LP_COLOR_KUBECONTEXT=${LP_COLOR_KUBECONTEXT:-$CYAN}
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
+    LP_COLOR_MODULES=${LP_COLOR_MODULES:-$BLUE}
     LP_COLOR_SHLVL=${LP_COLOR_SHLVL:-$BOLD_GREEN}
 
     LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
@@ -2133,6 +2140,60 @@ _lp_cmake_color() {
             _lp_hash_color "$lp_cmake_buildtype"
             lp_cmake_color+="$lp_hash_color"
         fi
+    fi
+}
+
+_lp_modules() {
+    (( LP_ENABLE_MODULES )) || return 2
+    lp_modules=()
+    # # Module sets the LOADEDMODULES environment variable.
+    if [[ -n "${LOADEDMODULES-}" ]]; then
+        # Outer test should be faster.
+        if (( LP_ENABLE_MODULES_VERSIONS )); then
+            local IFS=':'
+            for mod in $LOADEDMODULES; do
+                lp_modules+=("${mod}")
+            done
+        else
+            local IFS=':'
+            for mod in $LOADEDMODULES; do
+                # Simply remove the part after the slash.
+                # Should work on both Bash and Zsh.
+                lp_modules+=("${mod%/*}")
+            done
+        fi
+        if (( ${#lp_modules[@]} == 0 )); then
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+
+_lp_modules_color() {
+    lp_modules_color=
+    if _lp_modules; then
+        if (( LP_ENABLE_COLOR )); then
+            local lp_join
+            if (( LP_ENABLE_MODULES_HASHCOLOR )); then
+                local modules=()
+                for mod in "${lp_modules[@]}"; do
+                    _lp_hash_color "${mod}"
+                    modules+=("${lp_hash_color}")
+                done
+                # Do not color marks and separators.
+                _lp_join "${NO_COL}${LP_MARK_MODULES_SEP}" "${modules[@]}"
+                lp_modules_color="${LP_MARK_MODULES_OPEN}${lp_join}${NO_COL}${LP_MARK_MODULES_CLOSE}"
+            else # No hashcolor.
+                _lp_join "${NO_COL}${LP_MARK_MODULES_SEP}${LP_COLOR_MODULES}" "${lp_modules[@]}"
+                lp_modules_color="${LP_MARK_MODULES_OPEN}${LP_COLOR_MODULES}${lp_join}${NO_COL}${LP_MARK_MODULES_CLOSE}"
+            fi
+        else # No color.
+            _lp_join "${LP_MARK_MODULES_SEP}" "${lp_modules[@]}"
+            lp_modules_color="${LP_MARK_MODULES_OPEN}${lp_join}${LP_MARK_MODULES_CLOSE}"
+        fi
+    else
+        return "$?"
     fi
 }
 
@@ -3942,6 +4003,7 @@ _lp_dev_env_color() {
     # add development environments
     local -a dev_all
     dev_all=(
+        "${lp_modules_color-}"
         "${lp_software_collections_color-}"
         "${lp_aws_profile_color-}"
         "${lp_container_color-}"
@@ -4165,6 +4227,12 @@ _lp_default_theme_prompt_data() {
         LP_OPSYS=" $lp_os_color"
     else
         LP_OPSYS=
+    fi
+
+    if _lp_modules_color; then
+        LP_MODULES=" $lp_modules_color"
+    else
+        LP_MODULES=
     fi
 
     # End of the section for dev-related variables.

@@ -608,6 +608,46 @@ Features
    See also: :attr:`LP_LOAD_THRESHOLD`, :attr:`LP_LOAD_CAP`,
    :attr:`LP_MARK_LOAD`, :attr:`LP_PERCENTS_ALWAYS`, and :attr:`LP_COLORMAP`.
 
+.. attribute:: LP_ENABLE_MODULES
+   :type: bool
+   :value: 1
+
+   Display the currently loaded `Modules <https://modules.readthedocs.io/>`_.
+
+   See also:
+   * :attr:`LP_ENABLE_MODULES_VERSIONS`,
+   * :attr:`LP_ENABLE_MODULES_HASHCOLOR`,
+   * :attr:`LP_COLOR_MODULES`,
+   * :attr:`LP_MARK_MODULES_OPEN`,
+   * :attr:`LP_MARK_MODULES_SEP`,
+   * :attr:`LP_MARK_MODULES_CLOSE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_MODULES_VERSIONS
+   :type: bool
+   :value: 1
+
+   Display the currently loaded modules' versions, after their names
+   (separated by a slash, as in the ``module list`` command).
+
+   If disabled, only the name of the module is displayed.
+
+   See :attr:`LP_ENABLE_MODULES`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_MODULES_HASHCOLOR
+   :type: bool
+   :value: 0
+
+   If enabled, each item in the modules section will be randomly colored,
+   according to its hash, instead of using :attr:`LP_COLOR_MODULES`.
+
+   See :attr:`LP_ENABLE_MODULES`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_NODE_VENV
    :type: bool
    :value: 0
@@ -1345,6 +1385,30 @@ Marks
 
    See also: :attr:`LP_ENABLE_LOAD`.
 
+.. attribute:: LP_MARK_MODULES_OPEN
+   :type: string
+   :value: ""
+
+   Mark used before displaying loaded modules.
+
+   See also: :attr:`LP_ENABLE_MODULES`.
+
+.. attribute:: LP_MARK_MODULES_CLOSE
+   :type: string
+   :value: ""
+
+   Mark used after displaying loaded modules.
+
+   See also: :attr:`LP_ENABLE_MODULES`.
+
+.. attribute:: LP_MARK_MODULES_SEP
+   :type: string
+   :value: ":"
+
+   Mark used between loaded modules.
+
+   See also: :attr:`LP_ENABLE_MODULES`.
+
 .. attribute:: LP_MARK_MULTIPLEXER_CLOSE
    :type: string
    :value: $LP_MARK_BRACKET_CLOSE
@@ -1816,6 +1880,15 @@ Valid preset color variables are:
    of :attr:`LP_COLOR_MARK`.
 
    See also: :attr:`LP_ENABLE_SUDO`.
+
+.. attribute:: LP_COLOR_MODULES
+   :type: string
+   :value: $BLUE
+
+   Color used for displaying currently loaded modules
+   (if :attr:`LP_ENABLE_MODULES_HASHCOLOR` is disabled).
+
+   See also: :attr:`LP_ENABLE_MODULES`.
 
 .. attribute:: LP_COLOR_NODE_VENV
    :type: string

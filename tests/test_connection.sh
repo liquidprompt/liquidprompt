@@ -98,7 +98,7 @@ values+=(lcl)
 
 
 function test_connection {
-  local SSH_CLIENT REMOTEHOST SSH2_CLIENT="" SSH_TTY=""
+  typeset SSH_CLIENT REMOTEHOST SSH2_CLIENT="" SSH_TTY=""
 
   ps() {
     printf '%s\n' "$__ps_output"

@@ -43,6 +43,7 @@ if test -n "${BASH_VERSION-}"; then
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
+    _LP_BACKSLASH='\\' # must be escaped on bash
 
     # Escape the given strings
     # Must be used for all strings injected in PS1 that may comes from remote sources,
@@ -89,6 +90,7 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_FIRST_INDEX=1
     _LP_PERCENT='%%'
+    _LP_BACKSLASH='\'
 
     __lp_escape() {
         ret="${1//\\/\\\\}"
@@ -456,6 +458,7 @@ __lp_source_config() {
     LP_ENABLE_OS_KERNEL=${LP_ENABLE_OS_KERNEL:-1}
     LP_ENABLE_OS_DISTRIB=${LP_ENABLE_OS_DISTRIB:-0}
     LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
+    LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -948,6 +951,39 @@ _lp_color_map() {
     ret="${LP_COLORMAP[_LP_FIRST_INDEX+value*${#LP_COLORMAP[*]}/scale]}"
 }
 
+# Generate a terminal hyperlink from a URL and text.
+_lp_create_link() {  # url, text
+    (( LP_ENABLE_HYPERLINKS )) || return 2
+    lp_link="$_LP_OPEN_ESC"$'\E]8;;'"${1}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}${2}${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
+}
+
+# Add a link to a path element, with protocol depending on the connection.
+_lp_create_link_path() { # path
+    local path="$1"
+    if (( LP_ENABLE_HYPERLINKS )); then
+        _lp_connection
+
+        if [[ "$lp_connection" == "ssh" ]]; then
+            # SSH connection needs the `sftp` protocol to reach the remote host.
+            local client_ip client_port server_ip server_port
+            IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
+            local username=${USER:-${USERNAME:-${LOGNAME-}}}
+            _lp_create_link "sftp://${username}@${server_ip}:${client_port}/${PWD}/" "$path"
+            lp_link_path="$lp_link"
+
+        elif [[ "$lp_connection" == "su" || "$lp_connection" == "lcl" ]]; then
+            # Reach local host with the `file` protocol.
+            _lp_create_link "file://${PWD}/" "$path"
+            lp_link_path="$lp_link"
+
+        else # no link for telnet.
+            lp_link_path="$path"
+        fi
+    else # No link.
+        lp_link_path="$path"
+    fi
+}
+
 # Return true if the input is the name of a function.
 __lp_is_function() {
     if (( _LP_SHELL_bash )); then
@@ -1338,7 +1374,7 @@ _lp_path_format() {
     lp_path=
     lp_path_format=
 
-    local ret
+    local ret lp_link_path
 
     local lp_pwd_tilde
     __lp_pwd_tilde
@@ -1364,10 +1400,13 @@ _lp_path_format() {
         __lp_escape "$lp_path"
 
         if [[ $display_path == "$vcs_root_directory" ]]; then
-            lp_path_format="${vcs_root_format}${ret}"
+            _lp_create_link_path "${ret}"
+            lp_path_format="${vcs_root_format}$lp_link_path"
         else
-            lp_path_format="${last_directory_format}${ret}"
+            _lp_create_link_path "${ret}"
+            lp_path_format="${last_directory_format}$lp_link_path"
         fi
+
         return
     else
         if [[ $separator != "/" && ${display_path:0:1} == "/" ]]; then
@@ -1409,13 +1448,13 @@ _lp_path_format() {
             # No shortening
             lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path_format+="${vcs_root_format}${ret}"
+            lp_path_format+="${vcs_root_format}"
         elif [[ -z $path_to_proccess ]]; then
             __lp_end_path_left_shortening
             # Last directory
             lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path_format+="${last_directory_format}${ret}"
+            lp_path_format+="${last_directory_format}"
         elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
             && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
 
@@ -1424,7 +1463,7 @@ _lp_path_format() {
 
                 lp_path+=$lp_unique_directory
                 __lp_escape "$lp_unique_directory"
-                lp_path_format+="${shortened_directory_format}${ret}"
+                lp_path_format+="${shortened_directory_format}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
                 # The only way to know if this consecutive directory shortening
@@ -1455,7 +1494,7 @@ _lp_path_format() {
                     shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
                     lp_path+=$shortened_path
                     __lp_escape "$shortened_path"
-                    lp_path_format+="${shortened_directory_format}${ret}"
+                    lp_path_format+="${shortened_directory_format}"
 
                     is_shortening=0
                 fi
@@ -1465,7 +1504,7 @@ _lp_path_format() {
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
                 lp_path+=$shortened_path
                 __lp_escape "$shortened_path"
-                lp_path_format+="${shortened_directory_format}${ret}"
+                lp_path_format+="${shortened_directory_format}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
             elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
                 (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
@@ -1473,27 +1512,33 @@ _lp_path_format() {
                 shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
                 lp_path+=$shortened_path
                 __lp_escape "$shortened_path"
-                lp_path_format+="${shortened_directory_format}${ret}"
+                lp_path_format+="${shortened_directory_format}"
                 shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
             else
                 # Need to shorten, but no method matched, or the matched method
                 # did not make the string any shorter.
                 lp_path+=$current_directory
                 __lp_escape "$current_directory"
-                lp_path_format+="${path_format}${ret}"
+                lp_path_format+="${path_format}"
             fi
         else
             __lp_end_path_left_shortening
             lp_path+=$current_directory
             __lp_escape "$current_directory"
-            lp_path_format+="${path_format}${ret}"
+            lp_path_format+="${path_format}"
         fi
 
-        if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]] && (( ! is_shortening )); then
-            if [[ $current_path != "/" ]]; then
-                lp_path+="/"
+        if (( ! is_shortening )); then
+
+            _lp_create_link_path "$ret"
+            lp_path_format+="$lp_link_path"
+
+            if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then
+                if [[ $current_path != "/" ]]; then
+                    lp_path+="/"
+                fi
+                lp_path_format+="${separator_format}${separator}"
             fi
-            lp_path_format+="${separator_format}${separator}"
         fi
     done
 }
@@ -2191,6 +2236,7 @@ _lp_hostname() {
         local ret
         __lp_escape "$lp_hostname"
         lp_hostname=$ret
+
     else
         return 2
     fi
@@ -2211,14 +2257,25 @@ _lp_hostname_color() {
     fi
 
     if _lp_hostname; then
+
         case "$lp_connection" in
         lcl)
             lp_hostname_color+="@${LP_COLOR_HOST}${lp_hostname}${NO_COL}"
             ;;
         ssh)
+            local client_ip client_port server_ip server_port hostname=
+            # client_* are unused
+            # shellcheck disable=SC2034
+            IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
+            local username=${USER:-${USERNAME:-${LOGNAME-}}}
+            if _lp_create_link "ssh://${username}@${server_ip}:${server_port}" "$lp_hostname"; then
+                hostname="$lp_link"
+            else
+                hostname="$lp_hostname"
+            fi
             # If we want a different color for each host
             (( LP_ENABLE_SSH_COLORS )) && LP_COLOR_SSH="$LP_COLOR_HOST_HASH"
-            lp_hostname_color+="@${LP_COLOR_SSH}${lp_hostname}${NO_COL}"
+            lp_hostname_color+="@${LP_COLOR_SSH}${hostname}${NO_COL}"
             ;;
         su)
             lp_hostname_color+="@${LP_COLOR_SU}${lp_hostname}${NO_COL}"

@@ -3,6 +3,7 @@
 set -u
 
 LP_ROOT="${PWD%/tests}"
+SSH_CONNECTION="1.2.3.4 111 5.6.7.8 222"
 
 function setUp {
   cd "$LP_ROOT"

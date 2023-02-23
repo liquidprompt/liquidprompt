@@ -16,7 +16,7 @@ to showcase Liquid Prompt themes.
 
 Example usage: %s powerline themes/powerline/powerline.theme
 ' "$0" "$0"
-  exit 1
+  exit 2
 
 else
   theme=$1

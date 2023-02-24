@@ -61,6 +61,38 @@ function test_env_vars {
     assertEquals "$?" "1"
 }
 
+function test_modules {
+
+    LP_ENABLE_MODULES=1
+    LP_ENABLE_MODULES_VERSIONS=1
+    LP_MARK_MODULES_OPEN="<"
+    LP_MARK_MODULES_CLOSE=">"
+    LP_MARK_MODULES_SEP="|"
+    LP_ENABLE_COLOR=0
+
+    LOADEDMODULES="trololo/1.2.3:tralala/0:trylyly/4.5.6.7-pre-alpha-turbo"
+
+    _lp_modules_color
+    assertEquals "<trololo/1.2.3|tralala/0|trylyly/4.5.6.7-pre-alpha-turbo>" "$lp_modules_color"
+
+    LP_ENABLE_MODULES_VERSIONS=0
+    _lp_modules_color
+    assertEquals "<trololo|tralala|trylyly>" "$lp_modules_color"
+
+    LOADEDMODULES="trilili/1.2.3.4"
+    _lp_modules_color
+    assertEquals "<trilili>" "$lp_modules_color"
+
+    LP_ENABLE_MODULES_VERSIONS=1
+    LOADEDMODULES="trululu/1"
+    _lp_modules_color
+    assertEquals "<trululu/1>" "$lp_modules_color"
+
+    LOADEDMODULES=""
+    _lp_modules_color
+    assertEquals "" "$lp_modules_color"
+}
+
 if [ -n "${ZSH_VERSION-}" ]; then
   SHUNIT_PARENT="$0"
   setopt shwordsplit

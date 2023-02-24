@@ -126,6 +126,7 @@ _lp_hostname() {
 }
 _lp_connection() {
   lp_connection=ssh
+  SSH_CONNECTION="192.168.0.254 56314 192.168.0.1 22"
 }
 _lp_connected_display() { return 1; }
 _lp_find_vcs() {

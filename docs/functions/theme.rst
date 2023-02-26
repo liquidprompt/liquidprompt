@@ -178,7 +178,7 @@ specific text and formatting may change.
 
 .. function:: _lp_disk_color() -> var:lp_disk_color
 
-   Returns information about occupied space of the hard drive hosting the
+   Returns information about available space of the hard drive hosting the
    current directory.
 
    If :attr:`LP_ALWAYS_DISPLAY_VALUES` is ``false``, displays a colored mark
@@ -321,6 +321,23 @@ specific text and formatting may change.
       No longer include squared brackets, superseded by
       :attr:`LP_MARK_DEV_OPEN`, :attr:`LP_MARK_DEV_MID` and
       :attr:`LP_MARK_DEV_CLOSE`.
+
+.. function:: _lp_ram_color() -> var:lp_ram_color
+
+   Returns information about available RAM.
+
+   If :attr:`LP_ALWAYS_DISPLAY_VALUES` is ``false``, displays a colored mark
+   (using :attr:`LP_MARK_RAM`), if the available ram goes below
+   :attr:`LP_RAM_THRESHOLD` or :attr:`LP_RAM_THRESHOLD_PERC`.
+   If it is ``true``, displays the corresponding value, either as a percentage
+   (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``true``) or as a
+   human-readable quantity (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is
+   ``false``).
+
+   The mark and the value itself are colored with :attr:`LP_COLOR_RAM`, while
+   the unit is colored with :attr:`LP_COLOR_RAM_UNITS`.
+
+   .. versionadded:: 2.2
 
 .. function:: _lp_ruby_env_color() -> var:lp_ruby_env_color
 

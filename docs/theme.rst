@@ -28,7 +28,21 @@ If you want to create your own theme, see :doc:`theme/custom`.
    :local:
 
 Switching Themes
-----------------
+================
+
+In a nutshell
+-------------
+
+To use a theme, just source its file in your shell configuration file,
+after having load the liquidprompt, and then call ``lp_theme``::
+
+   source <your_path>/liquidprompt
+   source <your_path>/themes/unfold/unfold.theme
+   lp_theme unfold
+
+
+More Details
+------------
 
 Liquid Prompt can switch between themes on the fly. The shell does not need to
 be reloaded, and no files need to be sourced after the initial source.

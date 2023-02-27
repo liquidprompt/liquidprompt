@@ -4275,14 +4275,14 @@ _lp_default_theme_prompt_data() {
 
 _lp_default_theme_prompt_template() {
     if [[ -f "${LP_PS1_FILE-}" ]]; then
-        # shellcheck source=liquid.ps1
+        # shellcheck source=themes/minimal/minimal.ps1
         source "$LP_PS1_FILE"
     fi
 
     if [[ -z "${LP_PS1-}" ]]; then
-        # add title escape time, jobs, load and battery
+        # Add user-defined prefix, time, battery, load, temperature, wifi and jobs.
         PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_JOBS}"
-        # add user, host, permissions colon, working directory, and dirstack
+        # Add multiplexer brackets, user, host, permissions colon, working directory, dirstack, proxy, watched environment variables and nested shell level.
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
 
         # Add the list of development environments/config/etc.
@@ -4293,7 +4293,7 @@ _lp_default_theme_prompt_template() {
         # is set.
         PS1+="${LP_VCS}"
 
-        # add return code and prompt mark
+        # Add last runtime, return code & meaning, prompt mark and user-defined postfix.
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_ERR_MEANING}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # Get the core sections without prompt escapes and make them into a title.

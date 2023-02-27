@@ -18,31 +18,31 @@ By default, every key=value are commented out.
 You must edit it manually to get a working configuration file.
 
 You may enable warning about the parsing with the '--verbose' flag.
-Warnings will be printed of stderr and will not appear in the output file.
+Warnings will be printed to stderr and will not appear in the output file.
 
 The output is made so that it can be easily manipulated.
-For instance if you want to get rid of comments and enable every features:
+For instance if you want to get rid of comments and enable every feature:
     ./tools/config-from-doc.sh | grep '^#\S' | sed 's/=0$/=1/' > full_raw.conf
 "
 
 if [ -t 1 ]; then
     # Error if the output is a terminal
     printf 'ERROR: This script must be redirected to a file or piped.\n\n' 1>&2
-    printf "$usage" 1>&2
+    printf "%s" "$usage" 1>&2
     exit 2
-    fi
+fi
 
 if [[ $# -gt 1 ]]; then
-    printf "ERROR: This script don't take more than one argument.\n\n" 1>&2
-    printf "$usage" 1>&2
+    printf "ERROR: This script does not accept more than one argument.\n\n" 1>&2
+    printf "%s" "$usage" 1>&2
     exit 2
 fi
 
 verbose=0
 if [[ $# -eq 1 ]]; then
     if [[ "$1" != "--verbose" ]]; then
-        printf "ERROR: unknown argument: \"${1}\".\n\n" 1>&2
-        printf "$usage" 1>&2
+        printf "ERROR: unknown argument: \"%s\".\n\n" "${1}" 1>&2
+        printf "%s" "$usage" 1>&2
         exit 2
     else
         verbose=1

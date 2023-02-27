@@ -26,10 +26,13 @@ The config file is searched for in the following locations:
 
 The first file found is sourced.
 
-Liquid Prompt ships with an example config file, ``liquidpromptrc-dist``. You
-can start from this file for your config::
+To get your own configuration, you may want to generate a default configuration
+by calling the following script::
 
-    cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc
+    ./tools/config-from-doc.sh > my_liquidpromptrc
+
+Then edit the ``my_liquidpromptrc`` file to suits your needs
+and copy/link it where you want.
 
 In the event that you synchronize your configuration file across multiple
 computers, or if you have an ``/etc/liquidpromptrc`` system-wide from which

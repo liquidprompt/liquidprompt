@@ -28,6 +28,9 @@ build() {
   fi
   git reset --hard
   msg "GIT checkout done."
+  msg "Generate default config file..."
+  ./tools/config-from-doc.sh > liquidpromptrc-dist
+  msg "done."
 }
 
 package() {

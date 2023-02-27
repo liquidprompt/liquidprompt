@@ -635,7 +635,7 @@ __lp_source_config() {
 
     for configfile in "${configfiles[@]}"; do
         if [[ -f "$configfile" ]]; then
-            # shellcheck source=liquidpromptrc-dist
+            # shellcheck source=/dev/null
             source "$configfile"
             break
         fi

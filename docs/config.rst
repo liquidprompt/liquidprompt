@@ -1633,27 +1633,13 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLORMAP
    :type: array<string>
-   :value: ( "" $GREEN $BOLD_GREEN $YELLOW $BOLD_YELLOW $RED $BOLD_RED $WARN_RED $CRIT_RED $DANGER_RED )
+   :value: ( "" $GREEN $BOLD_GREEN $YELLOW $BOLD_YELLOW $RED $BOLD_RED
+                $WARN_RED $CRIT_RED $DANGER_RED )
 
    An array of colors that is used by the battery, load, temperature, and
    wireless signal strength features to indicate the severity level of their
    status. A normal or low status will use the first index, while the last index
    is the most severe.
-
-   The default array is::
-
-      (
-          ""
-          $GREEN
-          $BOLD_GREEN
-          $YELLOW
-          $BOLD_YELLOW
-          $RED
-          $BOLD_RED
-          $WARN_RED
-          $CRIT_RED
-          $DANGER_RED
-      )
 
    See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`,
    :attr:`LP_ENABLE_TEMP`, and :attr:`LP_ENABLE_WIFI_STRENGTH`.

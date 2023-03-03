@@ -63,10 +63,10 @@ printf "# This file shows the default presets configuration for Liquid Prompt.
 # their value from the default.
 #
 # Note that the file is automatically extracted from the documentation,
-# but do not show all the help for each entry.
-# You should refer to the full documentation to get more details:
-# https://liquidprompt.readthedocs.io/ (in the 'Config Options' section).
-#
+# but does not show all the help for each entry.
+# You should refer to the full documentation to get more details,
+# in the 'Config Options' section:
+# https://liquidprompt.readthedocs.io/en/stable/config.html
 # You can also load multiple presets files in sequence.
 # See the 'contrib/presets/' directories for examples.
 

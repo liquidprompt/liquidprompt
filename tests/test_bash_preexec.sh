@@ -41,6 +41,7 @@ function setup_liquidprompt() {
   LP_RUNTIME_THRESHOLD=1
   LP_ENABLE_ERROR=1
   LP_ENABLE_TITLE=1
+  LP_ENABLE_SCREEN_TITLE=1
   lp_activate --no-config
   lp_theme default
 }

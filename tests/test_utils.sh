@@ -742,7 +742,7 @@ function test_path_links() {
   _lp_create_link_path "$pathword"
   assertEquals "SSH: path element linked to SFTP" "$expected_link" "$lp_link_path"
 
-  unset SSH_CLIENT
+  unset SSH_CLIENT SSH2_CLIENT SSH_TTY
   ps() {
     printf "su"
   }
@@ -809,8 +809,10 @@ function test_lp_fill {
     _lp_fill "Le" "Ri" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 1
     assertEquals "multi-fill 11 with escape and split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231Ri" "$lp_fill"
 
+    # The following tests require a UTF-8 locale to be set.
     # The Windows runners have issues with these Unicode characters.
-    if [[ ${RUNNER_OS-} == "Windows" ]]; then
+    if [[ ! ( ${LC_CTYPE-} == *UTF-8 || ${LANG-} == *UTF-8 || ${LC_ALL-} == *UTF-8 ) \
+          || ${RUNNER_OS-} == "Windows" ]]; then
         # Skip all the following tests.
         startSkipping
     fi

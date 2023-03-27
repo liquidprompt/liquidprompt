@@ -739,6 +739,14 @@ Features
 
    .. versionadded:: 2.2
 
+.. attribute:: LP_ENABLE_PATH
+   :type: bool
+   :value: 1
+
+   Display the current working directory.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_PERM
    :type: bool
    :value: 1

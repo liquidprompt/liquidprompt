@@ -67,9 +67,9 @@ For a template file to be loaded, its filepath must be set in
 A template file does nothing more than set :attr:`LP_PS1` to a value. The
 following sections are available to be used.
 
-An example template file is available: liquid.ps1_.
+An example template file is available: minimal.ps1_.
 
-.. _liquid.ps1: https://github.com/nojhan/liquidprompt/blob/master/liquid.ps1
+.. _minimal.ps1: https://github.com/nojhan/liquidprompt/blob/master/themes/minimal/minimal.ps1
 
 Template Sections
 -----------------

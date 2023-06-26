@@ -1372,6 +1372,8 @@ __lp_end_path_left_shortening() {
 #   truncate_chars_to_unique_dir
 #   truncate_to_last_dir
 _lp_path_format() {
+    ((LP_ENABLE_PATH)) || return 2
+
     local path_format="${1-$LP_COLOR_PATH}"
     local last_directory_format="${2:-$path_format}"
     local vcs_root_format="${3:-$last_directory_format}"

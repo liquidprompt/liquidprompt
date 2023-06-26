@@ -201,12 +201,13 @@ Competitors
 All prompt systems tend to focus on some feature sets. If you don't like Liquid
 Prompt's design, you may be interested in one of those popular prompts:
 
-- `Starship <https://starship.rs/>`_: focused on showing development contexts.
-  Probably the largest set of detected languages.
+- `Starship <https://starship.rs/>`_: focused on showing development contexts,
+  across various shells. Probably the largest set of detected languages.
 - `Spaceship <https://spaceship-prompt.sh/>`_: similar spirit to
   :spelling:word:`Starship` (with a few fewer features), but only for Zsh.
 - `Oh-My-Posh <https://ohmyposh.dev/>`_: tries to support a little bit of
-  everything, largest set of themes (albeit not very diverse). Only for Zsh.
+  everything, across various shells, largest set of themes
+  (albeit not very diverse).
 - `Powerlevel10k <https://github.com/romkatv/powerlevel10k>`_: the most popular
   on Github, focused on fancy features (like transitive prompt),
   but to the expense of the UX. Only supports Zsh.

@@ -746,6 +746,7 @@ Features
    Display the current working directory.
 
    .. versionadded:: 2.2
+      Before this version, this feature was always enabled.
 
 .. attribute:: LP_ENABLE_PERM
    :type: bool

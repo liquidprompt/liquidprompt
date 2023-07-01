@@ -462,6 +462,7 @@ __lp_source_config() {
     LP_ENABLE_OS_DISTRIB=${LP_ENABLE_OS_DISTRIB:-0}
     LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
     LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
+    LP_ENABLE_PATH=${LP_ENABLE_PATH:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -1371,6 +1372,8 @@ __lp_end_path_left_shortening() {
 #   truncate_chars_to_unique_dir
 #   truncate_to_last_dir
 _lp_path_format() {
+    ((LP_ENABLE_PATH)) || return 2
+
     local path_format="${1-$LP_COLOR_PATH}"
     local last_directory_format="${2:-$path_format}"
     local vcs_root_format="${3:-$last_directory_format}"
@@ -4039,8 +4042,12 @@ _lp_dev_env_color() {
 #################
 
 _lp_default_theme_activate() {
-    # Default value for LP_PERM when LP_ENABLE_PERM is 0
-    LP_PERM=${LP_MARK_PERM}   # without color
+    if ((LP_ENABLE_PATH)); then
+        # Default value for LP_PERM when LP_ENABLE_PERM is 0
+        LP_PERM=${LP_MARK_PERM}   # without color
+    else
+        LP_PERM=
+    fi
 
     _lp_user
     local -i user_type="$?"
@@ -4081,22 +4088,27 @@ _lp_default_theme_activate() {
 }
 
 _lp_default_theme_directory() {
-    # LP_PERM: shows a ":"
-    # - colored in green if user has write permission on the current dir
-    # - colored in red if not
-    # - can set another symbol with LP_MARK_PERM
-    if (( LP_ENABLE_PERM )); then
-        if [[ -w "${PWD}" ]]; then
-            LP_PERM="${LP_COLOR_WRITE}${LP_MARK_PERM}${NO_COL}"
-        else
-            LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
+    if ((LP_ENABLE_PATH)); then
+        # LP_PERM: shows a ":"
+        # - colored in green if user has write permission on the current dir
+        # - colored in red if not
+        # - can set another symbol with LP_MARK_PERM
+        if (( LP_ENABLE_PERM )); then
+            if [[ -w "${PWD}" ]]; then
+                LP_PERM="${LP_COLOR_WRITE}${LP_MARK_PERM}${NO_COL}"
+            else
+                LP_PERM="${LP_COLOR_NOWRITE}${LP_MARK_PERM}${NO_COL}"
+            fi
         fi
+
+        local lp_path_format
+        _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
+
+        LP_PWD="${lp_path_format}${NO_COL}"
+    else
+        LP_PWD=
+        return 2
     fi
-
-    local lp_path_format
-    _lp_path_format "$LP_COLOR_PATH" "$LP_COLOR_PATH_LAST_DIR" "$LP_COLOR_PATH_VCS_ROOT" "$LP_COLOR_PATH_SHORTENED" "/" "$LP_COLOR_PATH_SEPARATOR"
-
-    LP_PWD="${lp_path_format}${NO_COL}"
 }
 
 # Do not complain about unused variables.

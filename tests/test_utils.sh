@@ -186,6 +186,8 @@ function test_path_format_from_path_left() {
   typeset HOME="/home/user"
   typeset PWD="/"
 
+  LP_ENABLE_PATH=1
+
   _lp_find_vcs() {
     return 1
   }
@@ -335,6 +337,8 @@ function test_path_format_from_dir_right {
   typeset HOME="/home/user"
   typeset PWD="/"
 
+  LP_ENABLE_PATH=1
+
   _lp_find_vcs() {
     return 1
   }
@@ -434,6 +438,7 @@ function test_path_format_from_dir_middle {
     return 1
   }
 
+  LP_ENABLE_PATH=1
   LP_ENABLE_SHORTEN_PATH=1
   LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
@@ -539,6 +544,7 @@ function test_path_format_unique() {
     return 1
   }
 
+  LP_ENABLE_PATH=1
   LP_ENABLE_SHORTEN_PATH=1
   LP_ENABLE_HYPERLINKS=0
   typeset COLUMNS=100
@@ -632,6 +638,7 @@ function test_path_format_last_dir() {
     return 1
   }
 
+  LP_ENABLE_PATH=1
   LP_ENABLE_SHORTEN_PATH=1
   LP_ENABLE_HYPERLINKS=0
   LP_PATH_VCS_ROOT=1
@@ -699,6 +706,16 @@ function test_path_format_last_dir() {
   assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
 }
 
+function test_no_path_format() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  LP_ENABLE_PATH=0
+
+  _lp_path_format '{format}'
+  assertEquals "$?" "2"
+}
+
 function test_path_links() {
   typeset HOME="/home/user"
   typeset PWD="/"
@@ -708,6 +725,7 @@ function test_path_links() {
     return 1
   }
 
+  LP_ENABLE_PATH=1
   LP_ENABLE_SHORTEN_PATH=0
   LP_ENABLE_HYPERLINKS=0
   LP_PATH_VCS_ROOT=1

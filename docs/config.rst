@@ -312,8 +312,8 @@ Features
    :type: bool
    :value: 1
 
-   Display VCS information inside `Bazaar <https://wikipedia.org/wiki/GNU_Bazaar>`_
-   repositories.
+   Display VCS information inside
+   `Bazaar <https://wikipedia.org/wiki/GNU_Bazaar>`_ repositories.
 
    Will be disabled if ``bzr`` is not found.
 

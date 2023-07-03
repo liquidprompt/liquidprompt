@@ -6,7 +6,7 @@ Config Options
 
 Almost every feature in Liquid Prompt can be turned on or off using these config
 options. They can either be set before sourcing Liquid Prompt (in ``.bashrc`` or
-``.zshrc``), or set in a Liquid Prompt config file.
+``.zshrc``, or sourcing a preset), or set in a Liquid Prompt config file.
 
 .. note::
    Config variables set in a config file take precedence over variables set in
@@ -26,10 +26,13 @@ The config file is searched for in the following locations:
 
 The first file found is sourced.
 
-Liquid Prompt ships with an example config file, ``liquidpromptrc-dist``. You
-can start from this file for your config::
+To get your own configuration, you may want to generate a default configuration
+by calling the following script::
 
-    cp ~/liquidprompt/liquidpromptrc-dist ~/.config/liquidpromptrc
+    ./tools/config-from-doc.sh > my_liquidpromptrc
+
+Then edit the ``my_liquidpromptrc`` file to suits your needs
+and copy/link it where you want.
 
 In the event that you synchronize your configuration file across multiple
 computers, or if you have an ``/etc/liquidpromptrc`` system-wide from which
@@ -45,6 +48,10 @@ as these::
    comments describing the options are less verbose than the descriptions on
    this page.
 
+Several example of configurations are given in the ``contrib/presets``
+directory. Some of these presets can be combined, for instance for changing
+the icons, along with the colors.
+
 Each config option is documented with its default value.
 Options of type ``bool`` accept values of ``1`` for true and ``0`` for false.
 
@@ -58,7 +65,9 @@ General
    String added directly before :attr:`LP_MARK_DEFAULT`, after all other
    parts of the prompt. Can be used to tag the prompt in a way that is less
    intrusive than :attr:`LP_PS1_PREFIX`, or add a newline before the prompt
-   mark. For example::
+   mark.
+
+   For example::
 
       LP_MARK_PREFIX=$'\n'
 
@@ -74,6 +83,7 @@ General
 
 .. attribute:: LP_PATH_DEFAULT
    :type: string
+   :value: ""
 
    .. deprecated:: 2.0
       Use :attr:`LP_PATH_METHOD` set to `truncate_to_last_dir` instead.
@@ -1014,7 +1024,9 @@ Features
    :type: int
    :value: 0
 
-   Determine when the hostname should be displayed. Valid values are:
+   Determine when the hostname should be displayed.
+
+   Valid values are:
 
    * ``0`` - show the hostname, except when locally connected
    * ``1`` - always show the hostname
@@ -1078,7 +1090,9 @@ Features
    :type: int
    :value: 1
 
-   Determine when the username should be displayed. Valid values are:
+   Determine when the username should be displayed.
+
+   Valid values are:
 
    * ``0`` - show the username, except when the user is the login user
    * ``1`` - always show the username
@@ -1263,8 +1277,9 @@ Marks
    :type: string
    :value: "⚞"
 
-   Mark used to indicate the size of the directory stack. Here are some
-   alternative marks you might like: ⚟ = ≡ ≣
+   Mark used to indicate the size of the directory stack.
+
+   Here are some alternative marks you might like: ⚟ = ≡ ≣
 
    See also: :attr:`LP_ENABLE_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
 
@@ -1627,26 +1642,13 @@ Valid preset color variables are:
 
 .. attribute:: LP_COLORMAP
    :type: array<string>
+   :value: ( "" $GREEN $BOLD_GREEN $YELLOW $BOLD_YELLOW $RED $BOLD_RED
+                $WARN_RED $CRIT_RED $DANGER_RED )
 
    An array of colors that is used by the battery, load, temperature, and
    wireless signal strength features to indicate the severity level of their
    status. A normal or low status will use the first index, while the last index
    is the most severe.
-
-   The default array is::
-
-      (
-          ""
-          $GREEN
-          $BOLD_GREEN
-          $YELLOW
-          $BOLD_YELLOW
-          $RED
-          $BOLD_RED
-          $WARN_RED
-          $CRIT_RED
-          $DANGER_RED
-      )
 
    See also: :attr:`LP_ENABLE_BATT`, :attr:`LP_ENABLE_LOAD`,
    :attr:`LP_ENABLE_TEMP`, and :attr:`LP_ENABLE_WIFI_STRENGTH`.
@@ -1685,6 +1687,36 @@ Valid preset color variables are:
    :attr:`LP_BATTERY_THRESHOLD`.
 
    See also: :attr:`LP_ENABLE_BATT`.
+
+.. attribute:: LP_COLOR_CMAKE_BUILD
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the build type in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_C
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the C compiler in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_CMAKE_CXX
+   :type: string
+   :value: $MAGENTA
+
+   Color used to display the C++ compiler in the CMake segment.
+
+   See :attr:`LP_ENABLE_CMAKE`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_CMAKE_DEBUG
    :type: string
@@ -1736,7 +1768,7 @@ Valid preset color variables are:
    :type: string
    :value: $BOLD_BLUE
 
-   Color used to indicate that the current shell is running in a container
+   Color used to indicate that the current shell is running in a container.
 
    .. versionadded:: 2.1
 
@@ -1917,6 +1949,60 @@ Valid preset color variables are:
    permissions to the current working directory.
 
    See also: :attr:`LP_ENABLE_PERM` and :attr:`LP_COLOR_WRITE`.
+
+.. attribute:: LP_COLOR_OS_ARCH
+   :type: string
+   :value: $MAGENTA
+
+   Color used for OS' architecture (e.g. "x86_64", "i686"…).
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_ARCH`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_DISTRIB
+   :type: string
+   :value: $MAGENTA
+
+   Color used for OS' distribution (e.g. "Ubuntu", "Debian"…).
+
+   .. note:: Will probably only work on Linux-like systems.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_DISTRIB`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_FAMILY
+   :type: string
+   :value: $MAGENTA
+
+   Color used for OS' family (e.g. "BSD", "GNU"…).
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_FAMILY`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_KERNEL
+   :type: string
+   :value: $MAGENTA
+
+   Color used for OS' kernel (e.g. "Linux", "MinGW"…).
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_KERNEL`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_OS_VERSION
+   :type: string
+   :value: $MAGENTA
+
+   Color used for OS' version codename (e.g. "focal", "buster"…).
+
+   .. note:: Will probably only work on Linux-like systems.
+
+   See also: :attr:`LP_ENABLE_OS` and :attr:`LP_ENABLE_OS_VERSION`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_PATH
    :type: string

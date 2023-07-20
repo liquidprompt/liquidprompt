@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 . ../liquidprompt --no-activate
 
 # Liquid Prompt depends on PS1 being set to detect if it has installed itself.
@@ -37,10 +42,5 @@ function test_rbenv {
     assertEquals "rbenv returns at index ${index}" "${rbenv_return_strings[$index]}" "$lp_ruby_env"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

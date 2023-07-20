@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit
+fi
+
 . ../liquidprompt --no-activate
 
 function test_strip_escape {
@@ -983,10 +988,5 @@ function test_substitute {
     _lp_substitute "What" "${sub[@]}"
     assertEquals "OK" "$lp_substitute"
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit
-fi
 
 . ./shunit2

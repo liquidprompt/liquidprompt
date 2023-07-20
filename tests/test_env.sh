@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit
+fi
+
 . ../liquidprompt --no-activate
 
 
@@ -92,10 +97,5 @@ function test_modules {
     _lp_modules_color
     assertEquals "" "$lp_modules_color"
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit
-fi
 
 . ./shunit2

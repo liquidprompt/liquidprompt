@@ -1,6 +1,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit
+fi
+
 . ../liquidprompt --no-activate
 
 function test_os {
@@ -160,10 +165,5 @@ function test_os {
     unset -f _lp_grep_fields
 
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit
-fi
 
 . ./shunit2

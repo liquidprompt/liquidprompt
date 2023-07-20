@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit
+fi
+
 function test_test {
   assertTrue "[[ form of test" '[[ 1 -eq 1 ]]'
 
@@ -492,10 +497,5 @@ function test_dynamic_function_call {
 
   unset -f my_bar my_qux
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit
-fi
 
 . ./shunit2

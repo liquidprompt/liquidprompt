@@ -88,7 +88,11 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_MARK_SYMBOL='%%'
 
-    _LP_FIRST_INDEX=1
+    if [[ -o ksh_arrays ]]; then
+      _LP_FIRST_INDEX=0
+    else
+      _LP_FIRST_INDEX=1
+    fi
     _LP_PERCENT='%%'
     _LP_BACKSLASH='\'
 

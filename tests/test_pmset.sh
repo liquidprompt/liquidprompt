@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 # Load MacOS version of _lp_battery()
 uname() { printf 'Darwin'; }
 
@@ -102,10 +107,5 @@ function test_pmset {
     assertEquals "pmset battery value at index ${index}" "${values[$index]}" "$lp_battery"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

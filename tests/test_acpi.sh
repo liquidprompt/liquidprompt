@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 # Load Linux version of _lp_battery()
 uname() { printf 'Linux'; }
 
@@ -122,10 +127,5 @@ function test_acpi_temperature {
     assertEquals "ACPI temperature return output at index ${index}" "${temp_values[$index]}" "${lp_temperature-}"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

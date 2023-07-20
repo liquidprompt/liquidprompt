@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 . ../liquidprompt --no-activate
 
 typeset -a tty_outputs values
@@ -40,10 +45,5 @@ function test_terminal_device {
     assertEquals "Terminal device basename at index ${index}" "${values[$index]}" "$lp_terminal_device"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

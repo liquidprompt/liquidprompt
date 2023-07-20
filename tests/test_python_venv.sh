@@ -1,6 +1,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 . ../liquidprompt --no-activate
 
 LP_ENABLE_VIRTUALENV=1
@@ -36,10 +41,5 @@ test_python_venv() {
   _lp_python_env
   assertEquals "Python venv config file double quotes" "second venv" "$lp_python_env"
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

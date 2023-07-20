@@ -1,6 +1,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 # Load Linux version of _lp_battery()
 uname() { printf 'Linux'; }
 
@@ -121,10 +126,5 @@ test_sysfs_temperature() {
   assertEquals "sysfs temperature above returns at index" 0 "$?"
   assertEquals "sysfs temperature value" 27 "${lp_temperature-}"
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

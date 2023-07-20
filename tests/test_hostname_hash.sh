@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 . ../liquidprompt --no-activate
 
 typeset -a host_cksum_outputs values
@@ -34,10 +39,5 @@ function test_hostname_hash {
     assertEquals "Hostname cksum hash at index ${index}" "${values[$index]}" "$lp_hostname_hash"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

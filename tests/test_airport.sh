@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 # Load MacOS version
 uname() { printf 'Darwin'; }
 
@@ -79,10 +84,5 @@ function test_airport {
     assertEquals "airport wireless value at index ${index}" "${values[$index]}" "$lp_wifi_signal_strength"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

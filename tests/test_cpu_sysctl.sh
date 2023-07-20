@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 # Load MacOS version of CPU functions
 uname() { printf 'Darwin'; }
 
@@ -49,10 +54,5 @@ function test_sysctl_vm_loadavg {
     assertEquals "CPU load at index ${index}" "${loadavg_values[$index]}" "$lp_cpu_load"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

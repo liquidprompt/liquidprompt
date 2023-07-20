@@ -2,6 +2,11 @@
 # Error on unset variables
 set -u
 
+if [ -n "${ZSH_VERSION-}" ]; then
+  SHUNIT_PARENT="$0"
+  setopt shwordsplit ksh_arrays
+fi
+
 . ../liquidprompt --no-activate
 
 LP_ENABLE_DETACHED_SESSIONS=1
@@ -99,10 +104,5 @@ function test_tmux_sessions {
     assertEquals "Tmux sessions output at index ${index}" "${tmux_values[$index]}" "$lp_detached_sessions"
   done
 }
-
-if [ -n "${ZSH_VERSION-}" ]; then
-  SHUNIT_PARENT="$0"
-  setopt shwordsplit ksh_arrays
-fi
 
 . ./shunit2

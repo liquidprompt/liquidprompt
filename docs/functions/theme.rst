@@ -185,8 +185,9 @@ specific text and formatting may change.
    (using :attr:`LP_MARK_DISK`), if the available disk space goes below
    :attr:`LP_DISK_THRESHOLD` or :attr:`LP_DISK_THRESHOLD_PERC`.
    If it is ``true``, displays the corresponding value, either as a percentage
-   (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``true``) or as a human-
-   readable quantity (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``false``).
+   (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is ``true``) or as a
+   human-readable quantity (if :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is
+   ``false``).
 
    The mark and the value itself are colored with :attr:`LP_COLOR_DISK`, while
    the unit is colored with :attr:`LP_COLOR_DISK_UNITS`.

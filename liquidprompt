@@ -385,10 +385,12 @@ __lp_source_config() {
     __lp_foreground_color "$(( 1 + lp_hostname_hash % 6 ))"
     LP_COLOR_HOST_HASH="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
 
-
     # Default values (globals)
     LP_TIME_FORMAT=${LP_TIME_FORMAT:-"%H:%M:%S"}
     LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
+    LP_DISK_THRESHOLD=${LP_DISK_THRESHOLD:-102400} # 100 MiB in KiB
+    LP_DISK_THRESHOLD_PERC=${LP_DISK_THRESHOLD_PERC:-10} # 10% or less
+    LP_DISK_PRECISION=${LP_DISK_PRECISION:-2}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
     LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
@@ -403,7 +405,8 @@ __lp_source_config() {
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_HOSTNAME_METHOD=${LP_HOSTNAME_METHOD:-short}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
-    LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
+    LP_ALWAYS_DISPLAY_VALUES=${LP_ALWAYS_DISPLAY_VALUES:-1}
+    LP_DISPLAY_VALUES_AS_PERCENTS=${LP_DISPLAY_VALUES_AS_PERCENTS:-0}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_PS1_POSTFIX=${LP_PS1_POSTFIX:-""}
@@ -420,6 +423,7 @@ __lp_source_config() {
     LP_ENABLE_DETACHED_SESSIONS=${LP_ENABLE_DETACHED_SESSIONS:-1}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
+    LP_ENABLE_DISK=${LP_ENABLE_DISK:-0}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
@@ -507,6 +511,7 @@ __lp_source_config() {
     LP_MARK_JOBS_SEPARATOR="${LP_MARK_JOBS_SEPARATOR:-"/"}"
     LP_MARK_OS_SEP=${LP_MARK_OS_SEP:-"/"}
     LP_MARK_OS=( ${LP_MARK_OS[@]+"${LP_MARK_OS[@]}"} )
+    LP_MARK_DISK="${LP_MARK_DISK:-"🖴 "}"
 
     LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
     LP_COLOR_CMAKE_RWDI=${LP_COLOR_CMAKE_RWDI:-$BLUE}
@@ -563,6 +568,8 @@ __lp_source_config() {
     LP_COLOR_AWS_PROFILE=${LP_COLOR_AWS_PROFILE:-$YELLOW}
     LP_COLOR_MODULES=${LP_COLOR_MODULES:-$BLUE}
     LP_COLOR_SHLVL=${LP_COLOR_SHLVL:-$BOLD_GREEN}
+    LP_COLOR_DISK=${LP_COLOR_DISK:-$BOLD_RED}
+    LP_COLOR_DISK_UNITS=${LP_COLOR_DISK_UNITS:-$RED}
 
     LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
     if [[ ${#LP_COLORMAP[@]} == 0 ]]; then
@@ -688,6 +695,12 @@ __lp_source_config() {
               or LP_HOSTNAME_METHOD=fqdn instead." >&2
         LP_HOSTNAME_METHOD="full"
     fi
+
+    if [[ -n ${LP_PERCENTS_ALWAYS-} ]]; then
+        echo "liquidprompt: LP_PERCENTS_ALWAYS is deprecated. Update your config to set LP_ALWAYS_DISPLAY_VALUES and LP_DISPLAY_VALUES_AS_PERCENTS instead." >&2
+        LP_ALWAYS_DISPLAY_VALUES=${LP_PERCENTS_ALWAYS}
+        LP_DISPLAY_VALUES_AS_PERCENTS=${LP_PERCENTS_ALWAYS}
+    fi
 }
 
 # Initialize features based on the user config.
@@ -770,6 +783,7 @@ lp_activate() {
     _lp_require_tool HG "$LP_HG_COMMAND"
     _lp_require_tool BZR bzr
     _lp_require_tool CMAKE cmake
+    _lp_require_tool DISK df
 
     _LP_ENABLED_VCSS=()
     (( LP_ENABLE_GIT )) && _LP_ENABLED_VCSS+=(git)
@@ -3453,7 +3467,7 @@ _lp_wifi_signal_strength_color() {
     _lp_color_map "$(( 100 - lp_wifi_signal_strength ))"
     lp_wifi_signal_strength_color="${ret}${LP_MARK_WIFI}"
 
-    if (( LP_PERCENTS_ALWAYS )); then
+    if (( LP_ALWAYS_DISPLAY_VALUES )); then
         lp_wifi_signal_strength_color+="${lp_wifi_signal_strength}"
     fi
     lp_wifi_signal_strength_color+="${NO_COL}"
@@ -3607,7 +3621,7 @@ _lp_battery_color() {
     else
         lp_battery_color="${LP_COLOR_DISCHARGING_UNDER}${LP_MARK_BATTERY}${NO_COL}"
 
-        if (( LP_PERCENTS_ALWAYS )); then
+        if (( LP_ALWAYS_DISPLAY_VALUES )); then
             local -i idx
             if   (( lp_battery <=  0 )); then
                 idx=0
@@ -3739,7 +3753,7 @@ _lp_load_color() {
     _lp_color_map "$lp_load_adjusted" "$_LP_LOAD_CAP"
     lp_load_color="${ret}${LP_MARK_LOAD}"
 
-    if (( LP_PERCENTS_ALWAYS )); then
+    if (( LP_ALWAYS_DISPLAY_VALUES )); then
         lp_load_color+="${lp_load}"
     fi
     lp_load_color+="$NO_COL"
@@ -3841,6 +3855,113 @@ _lp_temperature_color() {
     _lp_color_map "$lp_temperature" 120
     lp_temperature_color="${LP_MARK_TEMP}${ret}${lp_temperature}°${NO_COL}"
 }
+
+######################
+# Current Disk Usage #
+######################
+
+# Convert bytes in human-readable, binary-prefixed notation (using powers of 2).
+# Precision can be 0, 1 or 2 digits. If not given, precision is two digits.
+__lp_bytes_to_human() { # bytes, [precision] -> lp_bytes, lp_bytes_units
+    local i="$1" prec="${2:-2}" size remainder=""
+    # This has to be split on multiple lines for Zsh 5.0 (see wiki).
+    local -a units
+    # Not much point in going past PiB, as Bash and Zsh start failing int math.
+    units=("B" "KiB" "MiB" "GiB" "TiB" "PiB" "EiB" "YiB" "ZiB")
+
+    for ((size=0; i > 1024 && size < ${#units[@]}-1; size++)); do
+        remainder=$((i % 1024 * 100 / 1024))
+        i=$((i / 1024))
+    done
+
+    if [[ -n $remainder ]]; then
+        if ((remainder < 10)); then
+            remainder="0$remainder"
+        fi
+    else
+        # Bytes case.
+        remainder="00"
+    fi
+
+    # Precision formating.
+    remainder="${remainder:0:$prec}"
+    if [[ -n $remainder ]]; then
+        remainder=".$remainder"
+    fi
+
+    lp_bytes="$i$remainder"
+    lp_bytes_units="${units[$size+$_LP_FIRST_INDEX]}"
+}
+
+
+_lp_disk() {
+    ((LP_ENABLE_DISK)) || return 2
+
+    lp_disk=
+    lp_disk_human=
+    lp_disk_perc=
+
+    # df -P . prints only the current FS, in a portable format.
+    # -k to get values in kB (supposedly more portable).
+    # LANG is set to avoid locale mangling with the words number.
+    # Backslash avoids any alias of df.
+    local df="$(LANG=C \df -k -P . 2>/dev/null)"
+    # Example output:
+    # Filesystem     1024-blocks      Used Available Capacity Mounted on
+    # /dev/nvme0n1p2   479608528 425188220  30011332      94% /
+
+    # Placeholder and capacity.
+    local _ capa
+    # Compute location of the targeted column on the safe line.
+    local short="${df#*1024-blocks}"
+    # Second line.
+    local second="${df#*$'\n'}"
+    # Consider only targeted columns.
+    # This may be extended to get other information if needed:
+    #       +- total
+    #       | +- used        +- mount point (may have spaces)
+    #       | |              |
+    #       v v              v
+    read -r _ _ lp_disk capa _ <<<"${second:${#df}-${#short}-11}"
+
+    # Without percent character.
+    lp_disk_perc=$(( 100 - ${capa:0:${#capa}-1} ))
+
+    [[ -z ${lp_disk} || -z ${lp_disk_perc} ]] && return 1
+
+    # Comparison in KiB.
+    if (( lp_disk <= LP_DISK_THRESHOLD || lp_disk_perc <= LP_DISK_THRESHOLD_PERC )); then
+        # df outputs in KiB, but it's more robust to implement lp_human in bytes,
+        # so we need to convert b in KiB here.
+        local lp_bytes lp_bytes_units
+        __lp_bytes_to_human $((lp_disk*1024)) "$LP_DISK_PRECISION"
+        lp_disk_human="${lp_bytes}"
+        lp_disk_human_units="${lp_bytes_units}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+_lp_disk_color() {
+    if _lp_disk; then
+        if (( LP_ALWAYS_DISPLAY_VALUES )); then
+            if (( LP_DISPLAY_VALUES_AS_PERCENTS )); then
+                lp_disk_color="${LP_COLOR_DISK}${LP_MARK_DISK}${lp_disk_perc}${NO_COL}${LP_COLOR_DISK_UNITS}${_LP_PERCENT}${NO_COL}"
+            else
+                # Metric SI norms ask for a space, but we prefer to stay compact.
+                # Coloring value differently from unit helps readability.
+                # The mark should be different enough to not be a problem.
+                lp_disk_color="${LP_COLOR_DISK}${LP_MARK_DISK}${lp_disk_human}${NO_COL}${LP_COLOR_DISK_UNITS}${lp_disk_human_units}${NO_COL}"
+            fi
+        else
+            lp_disk_color="${LP_COLOR_DISK}${LP_MARK_DISK}${NO_COL}"
+        fi
+    else
+        return $?
+    fi
+}
+
 
 ##########
 # Title #
@@ -4144,6 +4265,11 @@ _lp_default_theme_prompt_data() {
     else
         LP_WIFI=
     fi
+    if _lp_disk_color; then
+        LP_DISK="$lp_disk_color "
+    else
+        LP_DISK=
+    fi
 
     if _lp_time_color; then
         LP_TIME="$lp_time_color "
@@ -4296,9 +4422,10 @@ _lp_default_theme_prompt_template() {
     fi
 
     if [[ -z "${LP_PS1-}" ]]; then
-        # Add user-defined prefix, time, battery, load, temperature, wifi and jobs.
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_JOBS}"
-        # Add multiplexer brackets, user, host, permissions colon, working directory, dirstack, proxy, watched environment variables and nested shell level.
+        # add title escape time, jobs, load and battery
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_DISK}${LP_WIFI}${LP_JOBS}"
+
+        # add user, host, permissions colon, working directory, and dirstack
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
 
         # Add the list of development environments/config/etc.

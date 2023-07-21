@@ -17,6 +17,20 @@ These functions are designed to be used by themes.
    Stores the *code* in a variable named *variable*. If *code* is not set, uses
    the last return code instead.
 
+.. function:: __lp_bytes_to_human(bytes, [precision]) -> var:lp_bytes, var:lp_bytes_units
+
+   Convert the given bytes into a human readable format, using binary
+   multiple-byte units. E.g.: KiB instead of KB, 1024 instead of 1000.
+
+   Precision can be 0, 1 or 2 digits. If not given, precision is two digits.
+
+   Converted value goes into ``lp_bytes`` and its unit in ``lp_bytes_units``.
+
+   Note that after petabytes (PiB) of data, Bash and Zsh will start failing
+   at integer computations.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_color_map(value, scale=100) -> var:ret
 
    Returns a color from the configured or default color map based on *value*

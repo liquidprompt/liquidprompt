@@ -992,6 +992,20 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENABLE_VCS_REMOTE
+   :type: bool
+   :value: 0
+
+   Enable the display of the remote repository in the VCS state section.
+
+   If enabled, will display :attr:`LP_MARK_VCS_REMOTE`, followed by the remote
+   repository name.
+
+   If the remote repository has commits not pulled in the local one,
+   the mark will be showed in :attr:`LP_COLOR_COMMITS_BEHIND`.
+   If the local repository has commits not pushed to the remote one,
+   the remote name is shown in :attr:`LP_COLOR_COMMITS`.
+
 .. attribute:: LP_ENABLE_VCS_ROOT
    :type: bool
    :value: 0
@@ -1693,6 +1707,14 @@ Marks
    Mark used to indicate untracked or extra files exist in the current
    repository.
 
+.. attribute:: LP_MARK_VCS_REMOTE
+   :type: string
+   :value: "⭚"
+
+   Mark used to indicate the VCS remote repository name and status.
+
+   See :attr:`LP_ENABLE_VCS_REMOTE`.
+
 .. attribute:: LP_MARK_VCSH
    :type: string
    :value: "|"
@@ -1861,6 +1883,8 @@ Valid preset color variables are:
    Color used to indicate that the current repository has a remote tracking
    branch that has commits that the local branch does not.
 
+   May be used by :attr:`LP_ENABLE_VCS_REMOTE`.
+
 .. attribute:: LP_COLOR_COMMITS
    :type: string
    :value: $YELLOW
@@ -1868,7 +1892,7 @@ Valid preset color variables are:
    Color used to indicate that the current repository has commits on the local
    branch that the remote tracking branch does not.
 
-   Also used to color :attr:`LP_MARK_STASH`.
+   Also used to color :attr:`LP_MARK_STASH` and :attr:`LP_MARK_VCS_REMOTE`.
 
 .. attribute:: LP_COLOR_CONTAINER
    :type: string

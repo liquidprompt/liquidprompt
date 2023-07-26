@@ -430,6 +430,7 @@ __lp_source_config() {
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_HG_COMMAND=${LP_HG_COMMAND:-hg}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
+    LP_ENABLE_VCS_REMOTE=${LP_ENABLE_VCS_REMOTE:-0}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_TIME_ANALOG=${LP_TIME_ANALOG:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
@@ -490,6 +491,7 @@ __lp_source_config() {
     LP_MARK_DISABLED="${LP_MARK_DISABLED:-"⌀"}"
     LP_MARK_UNTRACKED="${LP_MARK_UNTRACKED:-"*"}"
     LP_MARK_STASH="${LP_MARK_STASH:-"+"}"
+    LP_MARK_VCS_REMOTE="${LP_MARK_VCS_REMOTE:-"⭚"}"
     LP_MARK_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN:-"["}"
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_MULTIPLEXER_OPEN="${LP_MARK_MULTIPLEXER_OPEN:-"$LP_MARK_BRACKET_OPEN"}"
@@ -2669,6 +2671,21 @@ _lp_vcs_details_color() {
         fi
     fi
 
+    if (( LP_ENABLE_VCS_REMOTE )); then
+        if _lp_vcs_remote; then
+            if [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
+                lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}"
+            else
+                lp_vcs_details_color+="${NO_COL}${LP_MARK_VCS_REMOTE}"
+            fi
+            if [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
+                lp_vcs_details_color+="${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
+            else
+                lp_vcs_details_color+="${NO_COL}${lp_vcs_remote}"
+            fi
+        fi
+    fi
+
     lp_vcs_details_color+="$NO_COL"
 }
 
@@ -2747,6 +2764,11 @@ _lp_vcs_staged_files() {
 # Get the number of changed lines in staging compared to the last or checked out commit.
 _lp_vcs_staged_lines() {
     "_lp_${lp_vcs_type}_staged_lines"
+}
+
+# Get the remote name for the current branch.
+_lp_vcs_remote() {
+    "_lp_${lp_vcs_type}_remote"
 }
 
 # GIT #
@@ -2971,6 +2993,48 @@ _lp_git_staged_lines() {
     lp_vcs_staged_d_lines=$lp_git_diff_shortstat_d_lines
 }
 
+# Get the remote name for the current branch.
+# NOTE: Assumes that `_lp_find_vcs` and `_lp_vcs_branch` (costly functions) have been called.
+_lp_git_remote() {
+    lp_vcs_remote=""
+
+    # If there is no branch…
+    if [[ -z "$lp_vcs_branch" ]]; then
+        # … then there is no remote.
+        return 1
+    fi
+
+    # If we don't have a VCS root…
+    if [[ -z "$lp_vcs_root" ]]; then
+        # … we cannot find the config file.
+        return 1
+    fi
+
+    local file="${lp_vcs_root}/.git/config"
+    local delimiter=" = " # With spaces.
+    local in_branch=0
+    # We test for $line in the loop is here to ensure that we read the last line,
+    # even if the file does not ends with a \n.
+    # This bypass a known behavior of the C standard, not fixed in POSIX.
+    while IFS='' read -r line || [[ -n "$line" ]] ; do
+        # If we are in the branch config section.
+        if [[ "$line" == "[branch \"${lp_vcs_branch}\"]" ]]; then
+            in_branch=1
+        elif [[ "$line" == *"remote${delimiter}"* ]] ; then
+            if [[ "$in_branch" ]]; then
+                # Remove first part until delimiter.
+                lp_vcs_remote="${line#*"${key}${delimiter}"}"
+                return 0
+            else
+                in_branch=0
+            fi
+        fi
+    done <"$file"
+
+    # Remote not found.
+    return 1
+}
+
 # MERCURIAL #
 
 # Check if Mercurial is enabled in Liquid Prompt and the current directory is a
@@ -3087,6 +3151,8 @@ _lp_hg_unstaged_files() { return 2 ; }
 _lp_hg_unstaged_lines() { return 2 ; }
 _lp_hg_staged_files() { return 2 ; }
 _lp_hg_staged_lines() { return 2 ; }
+
+_lp_hg_remote() { return 2 ; } # FIXME This should be implemented.
 
 # SUBVERSION #
 
@@ -3293,6 +3359,7 @@ _lp_fossil_unstaged_files() { return 2 ; }
 _lp_fossil_unstaged_lines() { return 2 ; }
 _lp_fossil_staged_files() { return 2 ; }
 _lp_fossil_staged_lines() { return 2 ; }
+_lp_fossil_remote() { return 2 ; }
 
 # Bazaar #
 
@@ -3398,6 +3465,7 @@ _lp_fossil_unstaged_files() { return 2 ; }
 _lp_fossil_unstaged_lines() { return 2 ; }
 _lp_fossil_staged_files() { return 2 ; }
 _lp_fossil_staged_lines() { return 2 ; }
+_lp_fossil_remote() { return 2 ; }
 
 ####################
 # Wifi link status #

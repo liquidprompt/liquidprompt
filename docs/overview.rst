@@ -152,6 +152,7 @@ Shell essentials:
 
 Development/environments:
 
+- :attr:`LP_ENABLE_VCS_REMOTE`
 - :attr:`LP_ENV_VARS` is empty by default
   (but :attr:`LP_ENABLE_ENV_VARS` is enabled).
 - :attr:`LP_ENABLE_CMAKE`

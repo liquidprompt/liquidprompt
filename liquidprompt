@@ -2782,6 +2782,7 @@ _lp_git_active() {
 
 # Get the branch name of the Git repo in the current directory.
 _lp_git_branch() {
+    lp_vcs_branch=""
     local branch ret
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
@@ -3461,11 +3462,11 @@ _lp_bzr_uncommitted_lines() {
 }
 
 # Bazaar does not support a staging area.
-_lp_fossil_unstaged_files() { return 2 ; }
-_lp_fossil_unstaged_lines() { return 2 ; }
-_lp_fossil_staged_files() { return 2 ; }
-_lp_fossil_staged_lines() { return 2 ; }
-_lp_fossil_remote() { return 2 ; }
+_lp_bzr_unstaged_files() { return 2 ; }
+_lp_bzr_unstaged_lines() { return 2 ; }
+_lp_bzr_staged_files() { return 2 ; }
+_lp_bzr_staged_lines() { return 2 ; }
+_lp_bzr_remote() { return 2 ; }
 
 ####################
 # Wifi link status #

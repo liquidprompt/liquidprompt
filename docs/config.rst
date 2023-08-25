@@ -827,6 +827,33 @@ Features
 
    See also: :attr:`LP_COLOR_PROXY`.
 
+.. attribute:: LP_ENABLE_RAM
+   :type: bool
+   :value: 1
+
+   Display a :attr:`LP_MARK_RAM` mark when the available amount of
+   Random Access Memory goes below a threshold.
+
+   Thresholds can be stated either:
+
+   * as a percentage with :attr:`LP_RAM_THRESHOLD_PERC`,
+   * or an absolute number *of kilobytes* with :attr:`LP_RAM_THRESHOLD`.
+
+   Display will occur if one of the thresholds is met.
+
+   If :attr:`LP_ALWAYS_DISPLAY_VALUES` is enabled, the prompt will show the
+   available space along with :attr:`LP_MARK_RAM`, if disabled, it will show
+   only the mark.
+
+   The precision of the displayed available space can be configured with
+   :attr:`LP_RAM_PRECISION`.
+
+   If :attr:`LP_DISPLAY_VALUES_AS_PERCENTS` is enabled, it will show the
+   percentage, if it is disabled, it will show the absolute value in a
+   human-readable form (i.e. with metric prefixed units).
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_RUBY_VENV
    :type: bool
    :value: 1
@@ -1245,6 +1272,46 @@ Thresholds
       Integer values of :spelling:word:`centiload` are still accepted, but
       deprecated.
 
+.. attribute:: LP_RAM_PRECISION
+   :type: int
+   :value: 2
+
+   Control the numbers of decimals when displaying the absolute available space
+   of the current system RAM. If set to 0, don't display decimals. If set to 1
+   or 2, display decimals.
+
+   See :attr:`LP_ENABLE_RAM`, :attr:`LP_ALWAYS_DISPLAY_VALUES`, and
+   :attr:`LP_DISPLAY_VALUES_AS_PERCENTS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_RAM_THRESHOLD
+   :type: int
+   :value: 100000
+
+   Display something if the available RAM space goes below this absolute
+   threshold *in kilobytes*.
+
+   The threshold for RAM can also be set with :attr:`LP_RAM_THRESHOLD_PERC`,
+   the first one to be reached triggering the display.
+
+   See also :attr:`LP_ENABLE_RAM`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_RAM_THRESHOLD_PERC
+   :type: int
+   :value: 10
+
+   Display something if the available RAM space goes below this percentage.
+
+   The threshold for RAM can also be set with :attr:`LP_RAM_THRESHOLD`,
+   the first one to be reached triggering the display..
+
+   See also :attr:`LP_ENABLE_RAM`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_RUNTIME_THRESHOLD
    :type: int
    :value: 2
@@ -1642,6 +1709,15 @@ Marks
 
    See also: :attr:`LP_ENABLE_PROXY`.
 
+.. attribute:: LP_MARK_RAM
+   :type: string
+   :value: M
+
+   Mark used before displaying available Random Access Memory.
+   See :attr:`LP_ENABLE_RAM`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_MARK_SHLVL
    :type: string
    :value: "└"
@@ -1929,7 +2005,7 @@ Valid preset color variables are:
    :type: string
    :value: $RED
 
-   Color used for displaying the unit of the used space on the hard drive
+   Color used for displaying the unit of the available space on the hard drive
    hosting the current directory.
 
    See also :attr:`LP_COLOR_DISK`, :attr:`LP_ENABLE_DISK`,
@@ -2192,6 +2268,28 @@ Valid preset color variables are:
    Color used for :attr:`LP_MARK_PROXY`.
 
    See also: :attr:`LP_ENABLE_PROXY`.
+
+.. attribute:: LP_COLOR_RAM
+   :type: string
+   :value: $BOLD_RED
+
+   Color used for displaying information about the available RAM.
+
+   See also :attr:`LP_COLOR_RAM_UNITS`, :attr:`LP_ENABLE_RAM`,
+   :attr:`LP_ALWAYS_DISPLAY_VALUES`, and :attr:`LP_PERCENTS_ALWAYS`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_COLOR_RAM_UNITS
+   :type: string
+   :value: $RED
+
+   Color used for displaying the unit of the available RAM.
+
+   See also :attr:`LP_COLOR_RAM`, :attr:`LP_ENABLE_RAM`,
+   :attr:`LP_ALWAYS_DISPLAY_VALUES`, and :attr:`LP_PERCENTS_ALWAYS`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_RUBY_VENV
    :type: string

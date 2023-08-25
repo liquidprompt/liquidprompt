@@ -391,6 +391,9 @@ __lp_source_config() {
     LP_DISK_THRESHOLD=${LP_DISK_THRESHOLD:-102400} # 100 MiB in KiB
     LP_DISK_THRESHOLD_PERC=${LP_DISK_THRESHOLD_PERC:-10} # 10% or less
     LP_DISK_PRECISION=${LP_DISK_PRECISION:-2}
+    LP_RAM_THRESHOLD=${LP_RAM_THRESHOLD:-102400} # 100 MiB in KiB
+    LP_RAM_THRESHOLD_PERC=${LP_RAM_THRESHOLD_PERC:-10} # 10% or less
+    LP_RAM_PRECISION=${LP_RAM_PRECISION:-2}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-0.60}
     LP_LOAD_CAP=${LP_LOAD_CAP:-2.0}
     LP_TEMP_THRESHOLD=${LP_TEMP_THRESHOLD:-60}
@@ -423,6 +426,7 @@ __lp_source_config() {
     LP_ENABLE_DETACHED_SESSIONS=${LP_ENABLE_DETACHED_SESSIONS:-1}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
+    LP_ENABLE_RAM=${LP_ENABLE_RAM:-1}
     LP_ENABLE_DISK=${LP_ENABLE_DISK:-0}
     LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
@@ -512,6 +516,7 @@ __lp_source_config() {
     LP_MARK_OS_SEP=${LP_MARK_OS_SEP:-"/"}
     LP_MARK_OS=( ${LP_MARK_OS[@]+"${LP_MARK_OS[@]}"} )
     LP_MARK_DISK="${LP_MARK_DISK:-"🖴 "}"
+    LP_MARK_RAM="${LP_MARK_RAM:-"M"}"
 
     LP_COLOR_CMAKE_DEBUG=${LP_COLOR_CMAKE_DEBUG:-$MAGENTA}
     LP_COLOR_CMAKE_RWDI=${LP_COLOR_CMAKE_RWDI:-$BLUE}
@@ -570,6 +575,8 @@ __lp_source_config() {
     LP_COLOR_SHLVL=${LP_COLOR_SHLVL:-$BOLD_GREEN}
     LP_COLOR_DISK=${LP_COLOR_DISK:-$BOLD_RED}
     LP_COLOR_DISK_UNITS=${LP_COLOR_DISK_UNITS:-$RED}
+    LP_COLOR_RAM=${LP_COLOR_RAM:-$BOLD_RED}
+    LP_COLOR_RAM_UNITS=${LP_COLOR_RAM_UNITS:-$RED}
 
     LP_COLORMAP=( ${LP_COLORMAP[@]+"${LP_COLORMAP[@]}"} )
     if [[ ${#LP_COLORMAP[@]} == 0 ]]; then
@@ -591,6 +598,8 @@ __lp_source_config() {
     _LP_LINUX_POWERSUPPLY_PATH="/sys/class/power_supply"
     _LP_LINUX_WIRELESS_FILE="/proc/net/wireless"
     _LP_AIRPORT_BIN="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
+    _LP_LINUX_RAM_FILE="/proc/meminfo"
+    _LP_BSD_RAM_FILE="/var/run/dmesg.boot"
 
     if (( _LP_SHELL_zsh )); then
         setopt local_options nullglob
@@ -793,6 +802,7 @@ lp_activate() {
 
     if [[ "$LP_OS" = Darwin ]]; then
         _lp_require_tool BATT pmset
+        _lp_require_tool RAM vm_stat
     elif (( LP_ENABLE_BATT )); then
         __lp_battery_detect || LP_ENABLE_BATT=0
     fi
@@ -3759,6 +3769,148 @@ _lp_load_color() {
     lp_load_color+="$NO_COL"
 }
 
+#################
+# Available RAM #
+#################
+
+# Get RAM percentage.
+case "$LP_OS" in
+    Linux)
+        # Parse /proc/meminfo
+        __lp_ram_bytes() {
+            lp_ram_avail_bytes=
+            lp_ram_total_bytes=
+            local id value _
+            while IFS=$' \t' read -r id value _ ; do
+                if [[ $id == 'MemTotal:' ]]; then
+                    lp_ram_total_bytes=$value
+                elif [[ $id == 'MemAvailable:' ]]; then
+                    lp_ram_avail_bytes=$value
+                    # Note: this is the best conservative estimate from the kernel
+                    # of the memory than may be available for a process.
+                    # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=34e431b0ae398fc54ea69ff85ec700722c9da773
+                fi
+                if [[ -n "$lp_ram_total_bytes" && -n "$lp_ram_avail_bytes" ]]; then
+                    break
+                fi
+            # Assumes file exists.
+            done < "$_LP_LINUX_RAM_FILE"
+            # Used memory may be used in a theme.
+            # shellcheck disable=SC2034
+            lp_ram_used_bytes=$((lp_ram_total_bytes-lp_ram_avail_bytes))
+        }
+        ;;
+    FreeBSD|OpenBSD)
+        # Parse dmesg.boot
+        __lp_ram_bytes() {
+            lp_ram_avail_bytes=
+            lp_ram_total_bytes=
+            local first second _ value
+            while IFS=' ' read -r first second _ value _ _ ; do
+                if [[ $second == 'memory' ]]; then
+                    if [[ $first == 'usable' ]]; then
+                        lp_ram_total_bytes=$value
+                    elif [[ $first == 'avail' ]]; then
+                        lp_ram_avail_bytes=$value
+                    fi
+                fi
+                if [[ -n "$lp_ram_total_bytes" && -n "$lp_ram_avail_bytes" ]]; then
+                    break
+                fi
+            done < "$_LP_BSD_RAM_FILE"
+            # shellcheck disable=SC2034
+            lp_ram_used_bytes=$((lp_ram_total_bytes-lp_ram_avail_bytes))
+        }
+        ;;
+    Darwin)
+        # Parse vm_stat
+        __lp_ram_bytes() {
+            lp_ram_avail_bytes=0
+            lp_ram_total_bytes=0
+
+            # Call vm_stat.
+            local stat="$(vm_stat 2>/dev/null)"
+
+            # Read first line.
+            local page_size _ second third fourth fifth
+            IFS=' ' read -r _ _ _ _ _ _ _ page_size _ <<< "$stat"
+
+            # Read all other lines.
+            while IFS=' ' read -r _ second third fourth fifth ; do
+                case "$second" in
+                    free:)
+                        # Remove the last "." character.
+                        lp_ram_avail_bytes="${third:0:${#third}-1}"
+                        ;;
+                    active:|inactive:|speculative:|throttled:)
+                        lp_ram_total_bytes=$((lp_ram_total_bytes + ${third:0:${#third}-1}))
+                        ;;
+                    wired)
+                        lp_ram_total_bytes=$((lp_ram_total_bytes + ${fourth:0:${#fourth}-1}))
+                        ;;
+                    occupied)
+                        lp_ram_total_bytes=$((lp_ram_total_bytes + ${fifth:0:${#fifth}-1}))
+                        ;;
+                esac
+            done <<< "$stat"
+            lp_ram_avail_bytes=$((lp_ram_avail_bytes * page_size))
+            lp_ram_total_bytes=$(( lp_ram_avail_bytes + lp_ram_total_bytes * page_size))
+            # shellcheck disable=SC2034
+            lp_ram_used_bytes=$((lp_ram_total_bytes-lp_ram_avail_bytes))
+        }
+        ;;
+    *)
+        # Not implemented.
+        __lp_ram_bytes() {
+            return 5 # Same code as in _lp_battery.
+        }
+        ;;
+esac
+
+_lp_ram() {
+    (( LP_ENABLE_RAM )) || return 2
+
+    # Call the OS-specific function measuring RAM.
+    __lp_ram_bytes || return "$?"
+    # Now we have: lp_ram_avail_bytes, lp_ram_total_bytes, lp_ram_used_bytes.
+
+    lp_ram=
+    lp_ram_human=
+    lp_ram_perc=
+
+    lp_ram=$(( lp_ram_avail_bytes * 1024 )) # in KiB
+    lp_ram_perc=$(( 100 * lp_ram_avail_bytes / lp_ram_total_bytes ))
+
+    if (( lp_ram <= LP_RAM_THRESHOLD || lp_ram_perc <= LP_RAM_THRESHOLD_PERC )); then
+        local lp_bytes lp_bytes_units
+        __lp_bytes_to_human "${lp_ram}" "$LP_RAM_PRECISION"
+        lp_ram_human="${lp_bytes}"
+        lp_ram_human_units="${lp_bytes_units}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+_lp_ram_color() {
+    if _lp_ram; then
+        if (( LP_ALWAYS_DISPLAY_VALUES )); then
+            if (( LP_DISPLAY_VALUES_AS_PERCENTS )); then
+                lp_ram_color="${LP_COLOR_RAM}${LP_MARK_RAM}${lp_ram_perc}${NO_COL}${LP_COLOR_RAM_UNITS}${_LP_PERCENT}${NO_COL}"
+            else
+                # Metric SI norms ask for a space, but we prefer to stay compact.
+                # Coloring value differently from unit helps readability.
+                # The mark should be different enough to not be a problem.
+                lp_ram_color="${LP_COLOR_RAM}${LP_MARK_RAM}${lp_ram_human}${NO_COL}${LP_COLOR_RAM_UNITS}${lp_ram_human_units}${NO_COL}"
+            fi
+        else
+            lp_ram_color="${LP_COLOR_RAM}${LP_MARK_RAM}${NO_COL}"
+        fi
+    else
+        return $?
+    fi
+}
+
 ######################
 # System temperature #
 ######################
@@ -4265,6 +4417,11 @@ _lp_default_theme_prompt_data() {
     else
         LP_WIFI=
     fi
+    if _lp_ram_color; then
+        LP_RAM="$lp_ram_color "
+    else
+        LP_RAM=
+    fi
     if _lp_disk_color; then
         LP_DISK="$lp_disk_color "
     else
@@ -4422,10 +4579,10 @@ _lp_default_theme_prompt_template() {
     fi
 
     if [[ -z "${LP_PS1-}" ]]; then
-        # add title escape time, jobs, load and battery
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_DISK}${LP_WIFI}${LP_JOBS}"
+        # Add title escape time, battery, load, temperature, RAM, disk, wifi, jobs.
+        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_JOBS}"
 
-        # add user, host, permissions colon, working directory, and dirstack
+        # Add multiplexer brackets, user, host, permissions colon, working directory, dirstack, proxy, watched environment variables and nested shell level.
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
 
         # Add the list of development environments/config/etc.

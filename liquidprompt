@@ -3795,6 +3795,9 @@ case "$LP_OS" in
                 fi
             # Assumes file exists.
             done < "$_LP_LINUX_RAM_FILE"
+            # Values in file are in KiB.
+            lp_ram_total_bytes=$(( lp_ram_total_bytes * 1024 ))
+            lp_ram_avail_bytes=$(( lp_ram_avail_bytes * 1024 ))
             # Used memory may be used in a theme.
             # shellcheck disable=SC2034
             lp_ram_used_bytes=$((lp_ram_total_bytes-lp_ram_avail_bytes))
@@ -3874,16 +3877,15 @@ _lp_ram() {
     __lp_ram_bytes || return "$?"
     # Now we have: lp_ram_avail_bytes, lp_ram_total_bytes, lp_ram_used_bytes.
 
-    lp_ram=
     lp_ram_human=
     lp_ram_perc=
 
-    lp_ram=$(( lp_ram_avail_bytes * 1024 )) # in KiB
+    lp_ram=$(( lp_ram_avail_bytes / 1024 )) # in KiB
     lp_ram_perc=$(( 100 * lp_ram_avail_bytes / lp_ram_total_bytes ))
 
     if (( lp_ram <= LP_RAM_THRESHOLD || lp_ram_perc <= LP_RAM_THRESHOLD_PERC )); then
         local lp_bytes lp_bytes_units
-        __lp_bytes_to_human "${lp_ram}" "$LP_RAM_PRECISION"
+        __lp_bytes_to_human "${lp_ram_avail_bytes}" "$LP_RAM_PRECISION"
         lp_ram_human="${lp_bytes}"
         lp_ram_human_units="${lp_bytes_units}"
         return 0

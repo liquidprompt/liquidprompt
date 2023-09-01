@@ -16,8 +16,8 @@ typeset -a os outputs values_avail values_total
 os+=('Linux')
 outputs+=('MemTotal: 2048 kB
 MemAvailable: 1024 kB')
-values_avail+=('1024')
-values_total+=('2048')
+values_avail+=('1048576')
+values_total+=('2097152')
 
 # Linux 5.4.0-139-generic #156-Ubuntu SMP Fri Jan 20 17:27:18 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
 os+=('Linux')
@@ -76,8 +76,8 @@ DirectMap2M:     7710720 kB
 DirectMap1G:     1048576 kB
 '
 )
-values_avail+=('6899116')
-values_total+=('8033668')
+values_avail+=('7064694784')
+values_total+=('8226476032')
 
 
 # (Free?)BSD, unknown version
@@ -133,7 +133,7 @@ function test_ram() {
 
     # Iterate over tests.
     for (( i=0; i < ${#values_avail[@]}; i++ )); do
-        # Load Linux version.
+        # Load correct version for OS.
         uname() { printf "${os[$i]}"; }
         . ../liquidprompt --no-activate
         unset -f uname

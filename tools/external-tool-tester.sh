@@ -85,7 +85,9 @@ test_tool pmset -g batt
 test_tool nproc
 # Not actually a command used, we read directly from the file
 test_tool cat /proc/loadavg
+test_tool cat /proc/meminfo
 test_tool cat /proc/net/wireless
+test_tool cat /var/run/dmesg.boot
 test_tool /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport --getinfo
 test_tool sysctl -n hw.ncpu
 test_tool sysctl -n vm.loadavg

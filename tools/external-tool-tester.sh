@@ -3,13 +3,6 @@
 # Do NOT error on failed commands
 set +e
 
-# Don't error (or do anything) for no matching globs.
-if [ -n "${ZSH_VERSION-}" ]; then
-  setopt nullglob
-else  # Bash
-  shopt -s nullglob
-fi
-
 # Error if the output is a terminal
 if [ -t 1 ]; then
   printf 'This script must be redirected to a file, or special characters will be lost
@@ -42,6 +35,9 @@ test_tool() {
   { stderr="$( { "$@"; } 2>&1 1>&3 3>&- )"; } 3>&1
   printf '\n--------stderr--------\n%s\n----------------------\nReturn code: "%s"\n' "$stderr" "$?"
 }
+
+test_tool bash --version
+test_tool zsh --version
 
 test_tool uname
 test_tool uname -s
@@ -96,15 +92,12 @@ test_tool uptime
 
 test_tool sensors -u
 test_tool acpi -t
-_LP_LINUX_TEMPERATURE_FILES=(
-  /sys/class/hwmon/hwmon*/temp*_input
-  # CentOS has an intermediate /device directory:
-  /sys/class/hwmon/hwmon*/device/temp*_input
-  /sys/devices/platform/coretemp.*/hwmon/hwmon*/temp*_input
-  # Older, fallback option
-  /sys/class/thermal/thermal_zone*/temp
-)
-for interface in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
+for interface in \
+    /sys/class/hwmon/hwmon*/temp*_input \
+    /sys/class/hwmon/hwmon*/device/temp*_input \
+    /sys/devices/platform/coretemp.*/hwmon/hwmon*/temp*_input \
+    /sys/class/thermal/thermal_zone*/temp \
+  ; do
   test_tool cat "$interface"
 done
 

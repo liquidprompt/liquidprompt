@@ -3,6 +3,12 @@
 # Do NOT error on failed commands
 set +e
 
+# Don't error (or do anything) for no matching globs.
+if [ -n "${ZSH_VERSION-}" ]; then
+  setopt nullglob
+fi
+
+
 # Error if the output is a terminal
 if [ -t 1 ]; then
   printf 'This script must be redirected to a file, or special characters will be lost
@@ -30,7 +36,6 @@ cat /proc/version 2>/dev/null </dev/null || printf '<none>\n'
 printf '\nSpecial character check: \a\b\t\001\r\n'
 
 test_tool() {
-  local stderr
   printf '\nCommand: "%s"\n--------stdout--------\n' "$*"
   { stderr="$( { "$@"; } 2>&1 1>&3 3>&- )"; } 3>&1
   printf '\n--------stderr--------\n%s\n----------------------\nReturn code: "%s"\n' "$stderr" "$?"

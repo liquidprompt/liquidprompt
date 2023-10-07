@@ -3024,7 +3024,7 @@ _lp_git_remote() {
         elif [[ "$line" == *"remote${delimiter}"* ]] ; then
             if [[ "$in_branch" ]]; then
                 # Remove first part until delimiter.
-                lp_vcs_remote="${line#*"${key}${delimiter}"}"
+                lp_vcs_remote="${line#*"remote${delimiter}"}"
                 return 0
             else
                 in_branch=0

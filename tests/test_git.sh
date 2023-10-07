@@ -18,6 +18,9 @@ function test_git {
     LP_ENABLE_VCS_ROOT=0
     LP_ENABLE_VCS_REMOTE=1
 
+    PS1=""
+    lp_activate
+
     wd="${SHUNIT_TMPDIR}/test_remote/"
     mkdir -p "$wd"
     cd "$wd"
@@ -26,27 +29,31 @@ function test_git {
     assertTrue "VCS are enabled here." "$?"
 
     git init
+    # We need a commit to have a branch that can have a remote.
+    touch test
+    git add test
+    git commit -m "test"
+    # Ensure we use "main" and not "master".
+    git branch -m main
 
     _lp_find_vcs
     assertTrue "We detect a VCS updir." "$?"
     assertEquals "We found a Git repo." "git" "$lp_vcs_type"
-    assertEquals "We see the repo." "$wd" "$lp_vcs_root"
+    assertEquals "We see the repo." "$wd" "$lp_vcs_root/"
 
     _lp_vcs_active
     assertTrue "Git detects the repository." "$?"
 
-    _lp_vcs_branch
-    assertEquals "Default branch is master." "master" "$lp_vcs_branch"
-
-    git branch -m notsomain
+    git checkout -b notsomain
 
     _lp_vcs_branch
     assertEquals "Branch change is detected." "notsomain" "$lp_vcs_branch"
 
-    git remote add notsoremote git@nojhan.github:nojhan/liquidprompt.git
+    # Use a local remote or else one could have problems.
+    git branch -u main
 
     _lp_git_remote
-    assetEquals "Remote is found." "notsoremote." "$lp_vcs_remote"
+    assertEquals "Remote is found." "." "$lp_vcs_remote"
 }
 
 . ./shunit2

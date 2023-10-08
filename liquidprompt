@@ -3841,11 +3841,11 @@ case "$LP_OS" in
             # Read all other lines.
             while IFS=' ' read -r _ second third fourth fifth ; do
                 case "$second" in
-                    free:)
+                    free:|inactive:)
                         # Remove the last "." character.
                         lp_ram_avail_bytes="${third:0:${#third}-1}"
                         ;;
-                    active:|inactive:|speculative:|throttled:)
+                    active:|speculative:|throttled:)
                         lp_ram_total_bytes=$((lp_ram_total_bytes + ${third:0:${#third}-1}))
                         ;;
                     wired)
@@ -3857,7 +3857,7 @@ case "$LP_OS" in
                 esac
             done <<< "$stat"
             lp_ram_avail_bytes=$((lp_ram_avail_bytes * page_size))
-            lp_ram_total_bytes=$(( lp_ram_avail_bytes + lp_ram_total_bytes * page_size))
+            lp_ram_total_bytes=$((lp_ram_avail_bytes + lp_ram_total_bytes * page_size))
             # shellcheck disable=SC2034
             lp_ram_used_bytes=$((lp_ram_total_bytes-lp_ram_avail_bytes))
         }

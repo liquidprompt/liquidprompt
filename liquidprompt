@@ -3843,7 +3843,7 @@ case "$LP_OS" in
                 case "$second" in
                     free:|inactive:)
                         # Remove the last "." character.
-                        lp_ram_avail_bytes="${third:0:${#third}-1}"
+                        lp_ram_avail_bytes=$((lp_ram_avail_bytes + ${third:0:${#third}-1}))
                         ;;
                     active:|speculative:|throttled:)
                         lp_ram_total_bytes=$((lp_ram_total_bytes + ${third:0:${#third}-1}))

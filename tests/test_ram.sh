@@ -137,15 +137,45 @@ Pageouts:                                 11829.
 Swapins:                                   6144.
 Swapouts:                                  6656.
 ')
-# free  * page_size
-# 77936 * 4096
-values_avail+=('319225856')
+# (free + inactive) * page_size
+# (77936+ 1684334 ) * 4096
+values_avail+=('7218257920')
 # (free + active + inactive + speculative + throttled + wired down + occupied by compressor) * page_size
 # (77936+ 1729321+ 1684334  + 45972       + 0         + 620324     + 35785                 ) * 4096
 values_total+=('17177280512')
-values_remaining+=('311744')
-values_human+=('304MiB')
+values_remaining+=('7049080')
+values_human+=('6GiB')
 
+# Darwin 22.6.0 Darwin Kernel Version 22.6.0: Wed Jul  5 22:22:05 PDT 2023; root:xnu-8796.141.3~6/RELEASE_ARM64_T6000 arm64
+os+=('Darwin')
+outputs+=('Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                             1415073.
+Pages active:                           1261473.
+Pages inactive:                          940337.
+Pages speculative:                       324830.
+Pages throttled:                              0.
+Pages wired down:                        197899.
+Pages purgeable:                          96625.
+"Translation faults":                 513307041.
+Pages copy-on-write:                   29469303.
+Pages zero filled:                    207776720.
+Pages reactivated:                       864998.
+Pages purged:                           1374714.
+File-backed pages:                      1140390.
+Anonymous pages:                        1386250.
+Pages stored in compressor:                   0.
+Pages occupied by compressor:                 0.
+Decompressions:                               0.
+Compressions:                                 0.
+Pageins:                                2250761.
+Pageouts:                                     0.
+Swapins:                                      0.
+Swapouts:                                     0.
+')
+values_avail+=('38591037440')
+values_total+=('67823403008')
+values_remaining+=('37686560')
+values_human+=('35GiB')
 
 function test_ram() {
     _LP_LINUX_RAM_FILE="${SHUNIT_TMPDIR}/lpraminfo"

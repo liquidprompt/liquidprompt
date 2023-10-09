@@ -3780,7 +3780,7 @@ case "$LP_OS" in
         __lp_ram_bytes() {
             lp_ram_avail_bytes=
             lp_ram_total_bytes=
-            local id value _
+            local id value free _
             while IFS=$' \t' read -r id value _ ; do
                 if [[ $id == 'MemTotal:' ]]; then
                     lp_ram_total_bytes=$value
@@ -3789,12 +3789,18 @@ case "$LP_OS" in
                     # Note: this is the best conservative estimate from the kernel
                     # of the memory than may be available for a process.
                     # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=34e431b0ae398fc54ea69ff85ec700722c9da773
+                elif [[ $id == 'MemFree:' ]]; then
+                    free=$value
                 fi
                 if [[ -n "$lp_ram_total_bytes" && -n "$lp_ram_avail_bytes" ]]; then
                     break
                 fi
             # Assumes file exists.
             done < "$_LP_LINUX_RAM_FILE"
+            if [[ -z $lp_ram_avail_bytes && -n ${free-} ]]; then
+                # Very old kernels and Cygwin lack MemAvailable, so fallback to MemFree.
+                lp_ram_avail_bytes=$free
+            fi
             # Values in file are in KiB.
             lp_ram_total_bytes=$(( lp_ram_total_bytes * 1024 ))
             lp_ram_avail_bytes=$(( lp_ram_avail_bytes * 1024 ))

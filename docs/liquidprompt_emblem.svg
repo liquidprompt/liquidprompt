@@ -1069,7 +1069,7 @@
              id="textPath30104"
              style="fill:gray;stroke-width:0.132292"><tspan
                id="tspan29996"
-               style="fill:gray;stroke:none;stroke-width:0.132292">      https://github.com/   nojhan/liquidprompt</tspan></textPath></text></g></g><path
+               style="fill:gray;stroke:none;stroke-width:0.132292">      https://github.com/   liquidprompt/liquidprompt</tspan></textPath></text></g></g><path
        style="fill:#784421;fill-opacity:1;stroke:none;stroke-width:0.529167;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 156.82085,156.34121 C 156.82085,156.34121 152.50059,155.85817 150.33078,155.83505 C 147.79689,155.80805 142.74081,156.2645 142.74081,156.2645 C 142.74081,156.2645 147.71124,156.51374 150.19867,156.52271 C 152.40688,156.53067 156.82085,156.34121 156.82085,156.34121 Z"
        id="path15629"
@@ -1800,4 +1800,4 @@
        sodipodi:open="true"
        transform="rotate(-139.08652)" /></g><metadata
      id="metadata27173"><rdf:RDF><cc:Work
-         rdf:about=""><dc:title>Liquid Prompt Emblem</dc:title><dc:date>2022-08-22</dc:date><dc:creator><cc:Agent><dc:title>nojhan</dc:title></cc:Agent></dc:creator><dc:subject><rdf:Bag><rdf:li>Liquid Prompt</rdf:li><rdf:li>Bash</rdf:li><rdf:li>Zsh</rdf:li><rdf:li>AGPL</rdf:li><rdf:li>~</rdf:li><rdf:li>$</rdf:li><rdf:li>&gt;</rdf:li></rdf:Bag></dc:subject><dc:identifier>https://raw.githubusercontent.com/nojhan/liquidprompt/master/docs/liquidprompt_emblem.svg</dc:identifier><dc:language>en_US</dc:language><dc:description>A ship with black sails, three of which are printed with the symbols &quot;~&quot;, &quot;$&quot;, and &quot;&gt;&quot;; going out of a circling boat wheel with sun rays in her back; and navigating a blue wave with froth going over a banner that reads &quot;Liquid Prompt&quot;.</dc:description></cc:Work></rdf:RDF></metadata></svg>
+         rdf:about=""><dc:title>Liquid Prompt Emblem</dc:title><dc:date>2022-08-22</dc:date><dc:creator><cc:Agent><dc:title>nojhan</dc:title></cc:Agent></dc:creator><dc:subject><rdf:Bag><rdf:li>Liquid Prompt</rdf:li><rdf:li>Bash</rdf:li><rdf:li>Zsh</rdf:li><rdf:li>AGPL</rdf:li><rdf:li>~</rdf:li><rdf:li>$</rdf:li><rdf:li>&gt;</rdf:li></rdf:Bag></dc:subject><dc:identifier>https://raw.githubusercontent.com/liquidprompt/liquidprompt/master/docs/liquidprompt_emblem.svg</dc:identifier><dc:language>en_US</dc:language><dc:description>A ship with black sails, three of which are printed with the symbols &quot;~&quot;, &quot;$&quot;, and &quot;&gt;&quot;; going out of a circling boat wheel with sun rays in her back; and navigating a blue wave with froth going over a banner that reads &quot;Liquid Prompt&quot;.</dc:description></cc:Work></rdf:RDF></metadata></svg>

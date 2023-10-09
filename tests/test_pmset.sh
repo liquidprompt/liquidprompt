@@ -18,34 +18,34 @@ LP_ENABLE_BATT=1
 typeset -a outputs statuses values
 
 # Simulated, originally from ./pmset-simulator
-# https://github.com/nojhan/liquidprompt/issues/315
+# https://github.com/liquidprompt/liquidprompt/issues/315
 outputs+=(
 "Now drawing from 'AC Power'"
 )
 statuses+=(4)
 values+=('')
-# https://github.com/nojhan/liquidprompt/issues/326#issuecomment-66120495
+# https://github.com/liquidprompt/liquidprompt/issues/326#issuecomment-66120495
 outputs+=(
 "Now drawing from 'AC Power'
  -InternalBattery-0 37%; AC attached; not charging"
 )
 statuses+=(2)
 values+=(37)
-# https://github.com/nojhan/liquidprompt/issues/326
+# https://github.com/liquidprompt/liquidprompt/issues/326
 outputs+=(
 "Now drawing from 'AC Power'
  -InternalBattery-0 8%; charging; 2:46 remaining"
 )
 statuses+=(2)
 values+=(8)
-# https://github.com/nojhan/liquidprompt/issues/326
+# https://github.com/liquidprompt/liquidprompt/issues/326
 outputs+=(
 "Now drawing from 'Battery Power'
  -InternalBattery-0 9%; discharging; (no estimate)"
 )
 statuses+=(0)
 values+=(9)
-# https://github.com/nojhan/liquidprompt/issues/326
+# https://github.com/liquidprompt/liquidprompt/issues/326
 outputs+=(
 "Now drawing from 'Battery Power'
  -InternalBattery-0 7%; discharging; 0:13 remaining

@@ -69,7 +69,7 @@ following sections are available to be used.
 
 An example template file is available: minimal.ps1_.
 
-.. _minimal.ps1: https://github.com/nojhan/liquidprompt/blob/master/themes/minimal/minimal.ps1
+.. _minimal.ps1: https://github.com/liquidprompt/liquidprompt/blob/master/themes/minimal/minimal.ps1
 
 Template Sections
 -----------------

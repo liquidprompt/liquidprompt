@@ -596,7 +596,7 @@ Mercurial
 
    .. versionadded:: 2.0
 
-   .. _`issue #217`: https://github.com/nojhan/liquidprompt/issues/217
+   .. _`issue #217`: https://github.com/liquidprompt/liquidprompt/issues/217
 
 .. function:: _lp_hg_head_status() -> var:lp_vcs_head_status
 

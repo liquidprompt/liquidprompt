@@ -77,5 +77,5 @@ theme shareable.
 
 The `Themes`_ wiki page is where you can share your theme with other users.
 
-.. _`Themes`: https://github.com/nojhan/liquidprompt/wiki/Themes
-.. _`Theme sharing`: https://github.com/nojhan/liquidprompt/wiki/Theme-sharing
+.. _`Themes`: https://github.com/liquidprompt/liquidprompt/wiki/Themes
+.. _`Theme sharing`: https://github.com/liquidprompt/liquidprompt/wiki/Theme-sharing

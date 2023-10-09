@@ -8,4 +8,4 @@ Recommends: acpi
 Suggests: git, svn, fossil, mercurial, bzr, cmake, screen, tmux
 Maintainer: Julien Pecqueur <jpec@julienpecqueur.net>
 Description: A full-featured & carefully designed adaptive prompt for Bash & Zsh.
-Homepage: http://github.com/nojhan/liquidprompt
+Homepage: http://github.com/liquidprompt/liquidprompt

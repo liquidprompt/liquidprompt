@@ -21,15 +21,15 @@ manager with our :doc:`install/packages`.
 
 To download to ``~/liquidprompt``, run::
 
-   git clone --branch stable https://github.com/nojhan/liquidprompt.git ~/liquidprompt
+   git clone --branch stable https://github.com/liquidprompt/liquidprompt.git ~/liquidprompt
 
 Or, if you want to use the development (non-stable) branch::
 
-   git clone https://github.com/nojhan/liquidprompt.git ~/liquidprompt
+   git clone https://github.com/liquidprompt/liquidprompt.git ~/liquidprompt
 
 If you do not have ``git``, you can download and extract the source in zip or
 gzip format directly from the `release page
-<https://github.com/nojhan/liquidprompt/releases/latest>`_.
+<https://github.com/liquidprompt/liquidprompt/releases/latest>`_.
 
 Installation via Antigen
 ------------------------
@@ -37,7 +37,7 @@ Installation via Antigen
 To install via `Antigen <https://antigen.sharats.me/>`_, simply add the
 following line in your ``.zshrc`` after activating Antigen::
 
-   antigen bundle nojhan/liquidprompt
+   antigen bundle liquidprompt/liquidprompt
 
 Installation via Zinit
 ----------------------
@@ -46,7 +46,7 @@ To install via `Zinit <https://github.com/zdharma-continuum/zinit>`_, simply
 add the following lines in your ``.zshrc`` after activating Zinit::
 
     zinit ice ver"stable" lucid nocd
-    zinit light nojhan/liquidprompt
+    zinit light liquidprompt/liquidprompt
 
 Dependencies
 ============

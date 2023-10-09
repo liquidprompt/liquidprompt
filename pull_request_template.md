@@ -6,7 +6,7 @@
 
 # Technical checklist:
 
-- code follows our [shell standards](https://github.com/nojhan/liquidprompt/wiki/Shell-standards):
+- code follows our [shell standards](https://github.com/liquidprompt/liquidprompt/wiki/Shell-standards):
     - [ ] correct use of `IFS`
     - [ ] careful quoting
     - [ ] cautious array access

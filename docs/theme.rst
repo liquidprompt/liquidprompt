@@ -20,7 +20,7 @@ See the `Liquid Prompt Theme List`_ on the wiki for user created themes.
 
 If you want to create your own theme, see :doc:`theme/custom`.
 
-.. _`Liquid Prompt Theme List`: https://github.com/nojhan/liquidprompt/wiki/Themes
+.. _`Liquid Prompt Theme List`: https://github.com/liquidprompt/liquidprompt/wiki/Themes
 
 .. toctree::
    :maxdepth: 2

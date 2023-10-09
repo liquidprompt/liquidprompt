@@ -7,11 +7,11 @@ using the resources below.
 
 ## Did you find a bug?
 
-* **Check the [FAQs](https://github.com/nojhan/liquidprompt/wiki/FAQ)**. We
+* **Check the [FAQs](https://github.com/liquidprompt/liquidprompt/wiki/FAQ)**. We
   try to keep it updated with the latest hot questions.
 
 * **Ensure the bug was not already reported** by searching on GitHub under
-  [Issues](https://github.com/nojhan/liquidprompt/issues). If there is an open
+  [Issues](https://github.com/liquidprompt/liquidprompt/issues). If there is an open
   issue that matches your problem, you can add a comment to the issue if you
   have something new or helpful to add. If your comment would be ":+1:",
   please add that as a reaction on the issue instead.
@@ -22,7 +22,7 @@ using the resources below.
   on the `master` branch, we have already fixed it.
 
 * If you're unable to find an open issue addressing the problem, [open a new
-  one](https://github.com/nojhan/liquidprompt/issues/new/choose). Be sure to
+  one](https://github.com/liquidprompt/liquidprompt/issues/new/choose). Be sure to
   include a **title and clear description**, as much relevant information as
   possible, such as shell version, and a **code sample** or a **test case**
   demonstrating the expected behavior that is not occurring. If we can't
@@ -31,11 +31,11 @@ using the resources below.
 
 ## Enhancement / Feature request
 
-Same as with bugs, **check the [FAQs](https://github.com/nojhan/liquidprompt/wiki/FAQ)
-and open [Issues](https://github.com/nojhan/liquidprompt/issues)** so you don't
+Same as with bugs, **check the [FAQs](https://github.com/liquidprompt/liquidprompt/wiki/FAQ)
+and open [Issues](https://github.com/liquidprompt/liquidprompt/issues)** so you don't
 duplicate a feature request.
 
-[Open a new Issue](https://github.com/nojhan/liquidprompt/issues/new/choose),
+[Open a new Issue](https://github.com/liquidprompt/liquidprompt/issues/new/choose),
 and add as much detail as you can. Make sure to at least explain:
 
 1. **Why** you want this feature. How will it be useful to users?
@@ -49,7 +49,7 @@ on it.
 
 ### Your first contribution / what can I help with?
 If you just want to help, but don't have a specific issue in mind, you can
-look at the [help wanted](https://github.com/nojhan/liquidprompt/labels/help%20wanted)
+look at the [help wanted](https://github.com/liquidprompt/liquidprompt/labels/help%20wanted)
 tagged issues.
 
 ### Code style and standards
@@ -60,12 +60,12 @@ is our style guide, with the following modifications:
 * Don't always prefer `${var}` over `$var` (see standards)
 * Use `typeset`, not `local` or `declare` (see standards)
 
-See our [shell standards wiki page](https://github.com/nojhan/liquidprompt/wiki/Shell-standards)
+See our [shell standards wiki page](https://github.com/liquidprompt/liquidprompt/wiki/Shell-standards)
 for our standards on shell language.
 
 ### How do I make a pull request??
 
-    $ git clone -o upstream git://github.com/nojhan/liquidprompt.git
+    $ git clone -o upstream git://github.com/liquidprompt/liquidprompt.git
     $ cd liquidprompt
 
     # Run Liquid Prompt and check that your issue is still on that branch
@@ -101,7 +101,7 @@ for our standards on shell language.
 Here is a list of technical details that will be checked when making any
 code change:
 
-- code follows our [shell standards](https://github.com/nojhan/liquidprompt/wiki/Shell-standards):
+- code follows our [shell standards](https://github.com/liquidprompt/liquidprompt/wiki/Shell-standards):
     - [ ] correct use of `IFS`
     - [ ] careful quoting
     - [ ] cautious array access

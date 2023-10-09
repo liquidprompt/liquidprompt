@@ -3061,7 +3061,7 @@ _lp_hg_stash_count() {
     (( lp_vcs_stash_count ))
 }
 
-# https://github.com/nojhan/liquidprompt/issues/217
+# https://github.com/liquidprompt/liquidprompt/issues/217
 # return: always false (2: disabled).
 _lp_hg_commits_off_remote() {
     #commits=$("$LP_HG_COMMAND" outgoing --no-merges 2>/dev/null | GREP_OPTIONS='' \grep -c '\(^changeset\:\)')
@@ -4643,7 +4643,7 @@ __lp_set_prompt() {
         # Prefix with 'LP:' to prevent Zsh with AUTO_NAME_DIRS enabled using
         # this var as a name for the working directory, that will be used by
         # the '%' and related prompt sequences.
-        # See https://github.com/nojhan/liquidprompt/issues/124 for details.
+        # See https://github.com/liquidprompt/liquidprompt/issues/124 for details.
         LP_OLD_PWD="LP:$PWD"
     fi
 

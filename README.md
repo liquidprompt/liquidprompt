@@ -1,7 +1,7 @@
 <h1 align="center">
     <img
         width="500"
-        src="https://raw.githubusercontent.com/nojhan/liquidprompt/master/docs/liquidprompt_emblem.svg"
+        src="https://raw.githubusercontent.com/liquidprompt/liquidprompt/master/docs/liquidprompt_emblem.svg"
         alt="Liquid Prompt"
     />
     <br/>
@@ -30,11 +30,11 @@ Below are screenshots of typical states that you would see in everyday use.
 
 Using the default theme:
 
-![Screenshot](https://raw.githubusercontent.com/nojhan/liquidprompt/master/docs/theme/default-med.png)
+![Screenshot](https://raw.githubusercontent.com/liquidprompt/liquidprompt/master/docs/theme/default-med.png)
 
 Using the Powerline theme:
 
-![Screenshot](https://raw.githubusercontent.com/nojhan/liquidprompt/master/docs/theme/included/powerline-med.png)
+![Screenshot](https://raw.githubusercontent.com/liquidprompt/liquidprompt/master/docs/theme/included/powerline-med.png)
 
 Of course, Liquid Prompt may display much more information, depending on the status of your system.
 
@@ -60,12 +60,12 @@ To see what that entails, see the [latest features overview](https://liquidpromp
 
 You may also take a closer look at this screenshot of a session showing various features, in the default theme:
 
-![Screenshot](https://raw.github.com/nojhan/liquidprompt/master/demo.png)
+![Screenshot](https://raw.github.com/liquidprompt/liquidprompt/master/demo.png)
 
 
 ## Documentation
 
-![Tests](https://github.com/nojhan/liquidprompt/workflows/tests/badge.svg)
+![Tests](https://github.com/liquidprompt/liquidprompt/workflows/tests/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/liquidprompt/badge/?version=stable)](https://liquidprompt.readthedocs.io/)
 
 See the [Liquidprompt documentation](https://liquidprompt.readthedocs.io/) for

@@ -32,7 +32,7 @@ function test_git {
     # We need a commit to have a branch that can have a remote.
     touch test
     git add test
-    git commit -m "test"
+    git commit -m "test" --author="A U Thor <author@example.com>" --no-verify --no-gpg-sign
     # Ensure we use "main" and not "master".
     git branch -m main
 

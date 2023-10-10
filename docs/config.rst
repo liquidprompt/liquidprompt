@@ -1006,6 +1006,8 @@ Features
    If the local repository has commits not pushed to the remote one,
    the remote name is shown in :attr:`LP_COLOR_COMMITS`.
 
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_VCS_ROOT
    :type: bool
    :value: 0
@@ -1023,7 +1025,7 @@ Features
 
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
- 
+
    .. versionadded:: 2.
 
 .. attribute:: LP_ENABLE_WIFI_STRENGTH
@@ -1716,6 +1718,8 @@ Marks
    Mark used to indicate the VCS remote repository name and status.
 
    See :attr:`LP_ENABLE_VCS_REMOTE`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_MARK_VCSH
    :type: string

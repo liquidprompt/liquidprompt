@@ -29,10 +29,12 @@ function test_git {
     assertTrue "VCS are enabled here." "$?"
 
     git init
+    git config --local user.email "author@example.com"
+    git config --local user.name "A U Thor"
     # We need a commit to have a branch that can have a remote.
     touch test
     git add test
-    git commit -m "test" --author="A U Thor <author@example.com>" --no-verify --no-gpg-sign
+    git commit -m "test" --no-verify --no-gpg-sign
     # Ensure we use "main" and not "master".
     git branch -m main
 

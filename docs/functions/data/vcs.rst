@@ -150,6 +150,18 @@ this.
 
    .. versionadded:: 2.0
 
+.. function:: _lp_vcs_remote() -> var:lp_vcs_remote
+
+   Return ``true`` if the current branch is a remote tracking branch. The
+   remote name is returned in *lp_vcs_remote*.
+
+   Many VCS providers do not have such information. Currently this is only
+   implemented for Git.
+
+   Can be enabled by :attr:`LP_ENABLE_VCS_REMOTE`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_vcs_staged_files() -> var:lp_vcs_staged_files
 
    Returns ``true`` if any staged files exist in the repository. In other words,

@@ -2677,18 +2677,16 @@ _lp_vcs_details_color() {
         fi
     fi
 
-    if (( LP_ENABLE_VCS_REMOTE )); then
-        if _lp_vcs_remote; then
-            if [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
-                lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}"
-            else
-                lp_vcs_details_color+="${NO_COL}${LP_MARK_VCS_REMOTE}"
-            fi
-            if [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
-                lp_vcs_details_color+="${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
-            else
-                lp_vcs_details_color+="${NO_COL}${lp_vcs_remote}"
-            fi
+    if _lp_vcs_remote; then
+        if [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}"
+        else
+            lp_vcs_details_color+="${NO_COL}${LP_MARK_VCS_REMOTE}"
+        fi
+        if [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
+        else
+            lp_vcs_details_color+="${NO_COL}${lp_vcs_remote}"
         fi
     fi
 
@@ -2774,6 +2772,7 @@ _lp_vcs_staged_lines() {
 
 # Get the remote name for the current branch.
 _lp_vcs_remote() {
+    (( LP_ENABLE_VCS_REMOTE )) || return 2
     "_lp_${lp_vcs_type}_remote"
 }
 
@@ -3251,6 +3250,8 @@ _lp_svn_unstaged_files() { return 2 ; }
 _lp_svn_unstaged_lines() { return 2 ; }
 _lp_svn_staged_files() { return 2 ; }
 _lp_svn_staged_lines() { return 2 ; }
+# Subversion does not have remotes.
+_lp_svn_remote() { return 2 ; }
 
 # FOSSIL #
 

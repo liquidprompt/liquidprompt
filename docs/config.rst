@@ -1026,8 +1026,6 @@ Features
    .. _Python: https://docs.python.org/tutorial/venv.html
    .. _Conda: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 
-   .. versionadded:: 2.
-
 .. attribute:: LP_ENABLE_WIFI_STRENGTH
    :type: bool
    :value: 0

@@ -91,6 +91,10 @@ test_tool sysctl -n hw.ncpu
 test_tool sysctl -n vm.loadavg
 test_tool kstat -m cpu_info
 test_tool uptime
+test_tool df -k -P
+test_tool vm_stat
+test_tool cat /proc/meminfo
+test_tool cat /var/run/dmesg.boot
 
 test_tool sensors -u
 test_tool acpi -t

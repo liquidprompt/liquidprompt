@@ -4630,6 +4630,10 @@ __lp_set_prompt() {
         printf '%s' "$_LP_TI_BELL"
     fi
 
+    if [[ "$_LP_OLD_THEME" != "$LP_THEME" ]]; then
+        lp_theme "$LP_THEME" >/dev/null 2>&1
+    fi
+
     # Localize cache data variables
     local _lp_git_diff_shortstat_uncommitted _lp_git_diff_shortstat_unstaged _lp_git_diff_shortstat_staged
 
@@ -4881,10 +4885,13 @@ prompt_OFF() {
 lp_theme() {
     local theme="${1-}"
 
+    LP_THEME="$theme"
+
     if [[ $theme == '--list' ]]; then
         local -a lp_theme_list
         __lp_theme_list
         printf '%s\n' "${lp_theme_list[@]}"
+        LP_THEME="$_LP_OLD_THEME"
         return
     fi
 
@@ -4894,12 +4901,14 @@ lp_theme() {
         printf '%s\n%s\n' \
             'Must pass in the name of a theme. If you meant the default Liquid Prompt theme, try "default".' \
             'Run "lp_theme --list" to see all loaded and available themes.' 2>&1
+        LP_THEME="$_LP_OLD_THEME"
         return 1
     fi
 
     if ! __lp_is_function "$f_prompt"; then
         printf 'Loading theme "%s" failed: cannot find function "%s". Please source the theme file first.\n' \
             "$theme" "$f_prompt" 2>&1
+        LP_THEME="$_LP_OLD_THEME"
         return 2
     fi
     if ! __lp_is_function "$f_dir"; then
@@ -4912,6 +4921,7 @@ lp_theme() {
     _LP_THEME_ACTIVATE_FUNCTION=$f_activate
     _LP_THEME_DIRECTORY_FUNCTION=$f_dir
     _LP_THEME_PROMPT_FUNCTION=$f_prompt
+    _LP_OLD_THEME="$theme"
 
     "$f_activate"
     prompt_on

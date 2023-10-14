@@ -71,4 +71,6 @@ virtualenv
 whitespace
 wifi
 workspace
+worktree
+worktrees
 zsh

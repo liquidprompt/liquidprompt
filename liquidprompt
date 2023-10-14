@@ -1412,7 +1412,7 @@ _lp_path_format() {
 
     local -i path_length="${#display_path}"
 
-    local lp_vcs_root lp_vcs_dir lp_vcs_type lp_vcs_subtype
+    local lp_vcs_root lp_vcs_dir lp_vcs_specific_dir lp_vcs_type lp_vcs_subtype
     local vcs_root_directory=
     if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
         __lp_pwd_tilde "$lp_vcs_root"
@@ -2558,6 +2558,12 @@ _lp_find_vcs() {
     fi
 
     if [[ $lp_vcs_type == git ]]; then
+        lp_vcs_specific_dir="$lp_vcs_dir"
+        if [[ -f "${lp_vcs_dir}/gitdir" ]]; then
+            # Then this is a worktree, and the config exists two levels up.
+            lp_vcs_dir="${lp_vcs_dir}/../.."
+        fi
+
         if [[ -n "${VCSH_DIRECTORY-}" ]]; then
             lp_vcs_subtype="vcsh"
         elif [[ -d "${lp_vcs_dir}/svn" ]]; then
@@ -2817,31 +2823,31 @@ _lp_git_commit_id() {
 _lp_git_head_status() {
     local IFS="" step total
 
-    if [[ -f "${lp_vcs_dir}/MERGE_HEAD" ]]; then
+    if [[ -f "${lp_vcs_specific_dir}/MERGE_HEAD" ]]; then
         lp_vcs_head_status="MERGING"
-    elif [[ -d "${lp_vcs_dir}/rebase-merge" ]]; then
-        test -r "${lp_vcs_dir}/rebase-merge/msgnum" && read -r step <"${lp_vcs_dir}/rebase-merge/msgnum"
-        test -r "${lp_vcs_dir}/rebase-merge/end" && read -r total <"${lp_vcs_dir}/rebase-merge/end"
-        if [[ -f "${lp_vcs_dir}/rebase-merge/interactive" ]]; then
+    elif [[ -d "${lp_vcs_specific_dir}/rebase-merge" ]]; then
+        test -r "${lp_vcs_specific_dir}/rebase-merge/msgnum" && read -r step <"${lp_vcs_specific_dir}/rebase-merge/msgnum"
+        test -r "${lp_vcs_specific_dir}/rebase-merge/end" && read -r total <"${lp_vcs_specific_dir}/rebase-merge/end"
+        if [[ -f "${lp_vcs_specific_dir}/rebase-merge/interactive" ]]; then
             lp_vcs_head_status="REBASE-i"
         else
             lp_vcs_head_status="REBASE-m"
         fi
-    elif [[ -d "${lp_vcs_dir}/rebase-apply" ]]; then
-        test -r "${lp_vcs_dir}/rebase-apply/next" && read -r step <"${lp_vcs_dir}/rebase-apply/next"
-        test -r "${lp_vcs_dir}/rebase-apply/last" && read -r total <"${lp_vcs_dir}/rebase-apply/last"
-        if [[ -f "${lp_vcs_dir}/rebase-apply/rebasing" ]]; then
+    elif [[ -d "${lp_vcs_specific_dir}/rebase-apply" ]]; then
+        test -r "${lp_vcs_specific_dir}/rebase-apply/next" && read -r step <"${lp_vcs_specific_dir}/rebase-apply/next"
+        test -r "${lp_vcs_specific_dir}/rebase-apply/last" && read -r total <"${lp_vcs_specific_dir}/rebase-apply/last"
+        if [[ -f "${lp_vcs_specific_dir}/rebase-apply/rebasing" ]]; then
             lp_vcs_head_status="REBASE"
-        elif [[ -f "${lp_vcs_dir}/rebase-apply/applying" ]]; then
+        elif [[ -f "${lp_vcs_specific_dir}/rebase-apply/applying" ]]; then
             lp_vcs_head_status="AM"
         else
             lp_vcs_head_status="AM/REBASE"
         fi
-    elif [[ -f "${lp_vcs_dir}/CHERRY_PICK_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/CHERRY_PICK_HEAD" ]]; then
         lp_vcs_head_status="CHERRY-PICKING"
-    elif [[ -f "${lp_vcs_dir}/REVERT_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/REVERT_HEAD" ]]; then
         lp_vcs_head_status="REVERTING"
-    elif [[ -f "${lp_vcs_dir}/BISECT_START" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/BISECT_START" ]]; then
         lp_vcs_head_status="BISECTING"
     else
         return 1
@@ -2999,19 +3005,17 @@ _lp_git_staged_lines() {
 _lp_git_remote() {
     lp_vcs_remote=""
 
-    # If there is no branch…
     if [[ -z "$lp_vcs_branch" ]]; then
-        # … then there is no remote.
+        # There is no remote.
         return 1
     fi
 
-    # If we don't have a VCS root…
-    if [[ -z "$lp_vcs_root" ]]; then
-        # … we cannot find the config file.
+    if [[ -z "$lp_vcs_dir" ]]; then
+        # Cannot find the config file.
         return 1
     fi
 
-    local file="${lp_vcs_root}/.git/config"
+    local file="${lp_vcs_dir}/config"
     local delimiter=" = " # With spaces.
     local in_branch=0
     # We test for $line in the loop is here to ensure that we read the last line,

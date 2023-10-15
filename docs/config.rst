@@ -1001,10 +1001,11 @@ Features
    If enabled, will display :attr:`LP_MARK_VCS_REMOTE`, followed by the remote
    repository name.
 
-   If the remote repository has commits not pulled in the local one,
-   the mark will be showed in :attr:`LP_COLOR_COMMITS_BEHIND`.
-   If the local repository has commits not pushed to the remote one,
-   the remote name is shown in :attr:`LP_COLOR_COMMITS`.
+   In the default theme, if the remote repository has commits not pulled in the
+   local branch, the mark will be showed in :attr:`LP_COLOR_COMMITS_BEHIND`. If
+   the local repository has commits not pushed to the remote branch, the remote
+   name is shown in :attr:`LP_COLOR_COMMITS`. If neither is the case, nothing
+   will be shown.
 
    .. versionadded:: 2.2
 

@@ -2678,15 +2678,19 @@ _lp_vcs_details_color() {
     fi
 
     if _lp_vcs_remote; then
-        if [[ "$lp_vcs_commit_behind" -ne "0" ]]; then
-            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}"
-        else
-            lp_vcs_details_color+="${NO_COL}${LP_MARK_VCS_REMOTE}"
-        fi
-        if [[ "$lp_vcs_commit_ahead" -ne "0" ]]; then
-            lp_vcs_details_color+="${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
-        else
-            lp_vcs_details_color+="${NO_COL}${lp_vcs_remote}"
+        # Commits behind but not ahead.
+        if   [[ "$lp_vcs_commit_behind" -ne 0 && "$lp_vcs_commit_ahead" -eq 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}${lp_vcs_remote}${NO_COL}"
+
+        # Commits ahead but not behind.
+        elif [[ "$lp_vcs_commit_behind" -eq 0 && "$lp_vcs_commit_ahead" -ne 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS}${LP_MARK_VCS_REMOTE}${lp_vcs_remote}${NO_COL}"
+
+        # Commits both ahead and behind: the mark is colored differently.
+        elif [[ "$lp_vcs_commit_behind" -ne 0 && "$lp_vcs_commit_ahead" -ne 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
+
+        # else: display nothing.
         fi
     fi
 

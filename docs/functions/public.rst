@@ -49,9 +49,9 @@ their config.
    The optional flag ``--list`` will instead list all currently loaded
    themes.
 
-   The variable :envvar:`LP_THEME` can be set to a theme name which functions
-   like calling this function. :envvar:`LP_THEME` will always hold the
-   currently active theme; it is updated by this function. If
+   The variable :envvar:`LP_THEME` can be set to a theme name, which is
+   essentially equivalent to calling this function. :envvar:`LP_THEME` will
+   always hold the currently active theme; it is updated by this function. If
    :envvar:`LP_THEME` is set to an invalid theme name, it will be reset to the
    previous value.
 

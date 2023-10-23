@@ -3038,14 +3038,10 @@ _lp_git_remote() {
         # If we are in the branch config section.
         if [[ "$line" == "[branch \"${lp_vcs_branch}\"]" ]]; then
             in_branch=1
-        elif [[ "$line" == *"remote${delimiter}"* ]] ; then
-            if [[ "$in_branch" ]]; then
-                # Remove first part until delimiter.
-                lp_vcs_remote="${line#*"remote${delimiter}"}"
-                return 0
-            else
-                in_branch=0
-            fi
+        elif [[ "$line" == *"remote${delimiter}"* ]] && (( $in_branch )); then
+            # Remove first part until delimiter.
+            lp_vcs_remote="${line#*"remote${delimiter}"}"
+            return 0
         fi
     done <"$file"
 

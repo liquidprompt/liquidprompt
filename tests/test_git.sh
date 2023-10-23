@@ -56,6 +56,22 @@ function test_git {
 
     _lp_git_remote
     assertEquals "Remote is found." "." "$lp_vcs_remote"
+
+
+    mkdir remote/
+    cp -r .git remote/
+
+    git remote add foo ./remote/
+    git fetch foo
+    git checkout -b other
+
+    _lp_vcs_branch
+    assertEquals "Branch change is detected." "other" "$lp_vcs_branch"
+
+    git branch -u foo/main
+
+    _lp_git_remote
+    assertEquals "Remote foo is found." "foo" "$lp_vcs_remote"
 }
 
 . ./shunit2

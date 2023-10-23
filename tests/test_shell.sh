@@ -17,6 +17,11 @@ function test_test {
   assertFalse "[[ -z" '[[ -z foo ]]'
   assertFalse "[[ -z quoted" '[[ -z "foo" ]]'
   assertTrue "[[ -z empty quoted" '[[ -z "" ]]'
+
+  assertTrue "[[ nonempty" '[[ foo ]]'
+  assertTrue "[[ nonempty 1" '[[ 1 ]]'
+  assertTrue "[[ nonempty 0" '[[ 0 ]]'
+  assertFalse "[[ empty quoted" '[[ "" ]]'
 }
 
 function test_redirection {
@@ -431,6 +436,7 @@ function test_integer {
 
   int+=1
   assertEquals "Int increment" 1 $int
+  assertTrue "Int true" "(( int ))"
 
   int+=5
   assertEquals "Int increment" 6 $int

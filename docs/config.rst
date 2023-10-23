@@ -1025,7 +1025,7 @@ Features
 
    Sets the title of the Tmux pane instead of the window.
 
-   :attr:`LP_ENABLE_TITLE` and attr:`LP_ENABLE_SCREEN_TITLE` must be enabled to
+   :attr:`LP_ENABLE_TITLE` and :attr:`LP_ENABLE_SCREEN_TITLE` must be enabled to
    have any effect.
 
    .. versionadded:: 2.2

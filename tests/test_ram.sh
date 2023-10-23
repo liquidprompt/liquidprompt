@@ -111,6 +111,18 @@ values_total+=('34346901504')
 values_remaining+=('32362436')
 values_human+=('30GiB')
 
+# FreeBSD 13.2-RELEASE-p1 GENERIC amd64
+os+=('FreeBSD')
+outputs+=('Hypervisor: Origin = "KVMKVMKVM"
+real memory  = 8589934592 (8192 MB)
+avail memory = 8270389248 (7887 MB)
+Event timer "LAPIC" quality 600
+ACPI APIC Table: <BOCHS  BXPCAPIC>')
+values_avail+=('8270389248')
+values_total+=('8589934592')
+values_remaining+=('8076552')
+values_human+=('7GiB')
+
 # Darwin 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan 30 20:42:11 PST 2023; root:xnu-8792.81.3~2/RELEASE_X86_64 x86_64
 os+=('Darwin')
 outputs+=('Mach Virtual Memory Statistics: (page size of 4096 bytes)

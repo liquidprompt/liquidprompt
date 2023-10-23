@@ -3896,7 +3896,7 @@ case "$LP_OS" in
             local first second _ value
             while IFS=' ' read -r first second _ value _ _ ; do
                 if [[ $second == 'memory' ]]; then
-                    if [[ $first == 'usable' ]]; then
+                    if [[ $first == 'usable' || $first == 'real' ]]; then
                         lp_ram_total_bytes=$value
                     elif [[ $first == 'avail' ]]; then
                         lp_ram_avail_bytes=$value

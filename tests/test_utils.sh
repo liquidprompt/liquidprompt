@@ -153,7 +153,7 @@ function test_pwd_tilde {
 }
 
 function pathSetUp {
-  # We cannot use SHUNIT_TEMPDIR because we need to know the start of the path
+  # We cannot use SHUNIT_TMPDIR because we need to know the start of the path
   typeset long_path="/tmp/_lp/a/very/long/pathname"
   mkdir -p "${long_path}/" "${long_path/name/foo}/"
 }

@@ -16,7 +16,7 @@ See the default theme function :func:`_lp_vcs_details_color` for an example of
 this.
 
 .. function:: _lp_find_vcs() -> var:lp_vcs_type, var:lp_vcs_root, \
-   var:lp_vcs_dir, var:lp_vcs_subtype
+   var:lp_vcs_dir, var:lp_vcs_specific_dir, var:lp_vcs_subtype
 
    Returns ``true`` if the current directory is part of a version control
    repository. If not, returns ``1``. Returns the VCS type ID, subtype if one
@@ -35,10 +35,21 @@ this.
    if the database is valid or healthy. Use :func:`_lp_vcs_active` to test for
    that.
 
+   Git worktrees have two Git directories: one is the main directory in
+   *lp_vcs_dir*, which holds the DB and config. The other is the worktree
+   specific directory in *lp_vcs_specific_dir*, which holds working directory
+   specific information, like index and status like merge or rebase in
+   progress.
+
    .. note::
 
       *lp_vcs_dir* will not be set for Fossil repositories. Protect it with
       ``"${lp_vcs_dir-}"``.
+
+   .. note::
+
+      *lp_vcs_specific dir* will only be set for Git repositories. Protect it
+      with ``"${lp_vcs_specific_dir-}"``.
 
    .. note::
 
@@ -50,6 +61,9 @@ this.
    .. versionchanged:: 2.1
       Added the *lp_vcs_dir* and *lp_vcs_subtype* return values.
       Added support for checking the :envvar:`GIT_DIR` environment variable.
+
+   .. versionchanged:: 2.2
+      Added the *lp_vcs_specific_dir* return value.
 
 .. function:: _lp_are_vcs_enabled()
 
@@ -135,6 +149,18 @@ this.
       ``"${lp_vcs_head_details-}"``.
 
    .. versionadded:: 2.0
+
+.. function:: _lp_vcs_remote() -> var:lp_vcs_remote
+
+   Return ``true`` if the current branch is a remote tracking branch. The
+   remote name is returned in *lp_vcs_remote*.
+
+   Many VCS providers do not have such information. Currently this is only
+   implemented for Git.
+
+   Can be enabled by :attr:`LP_ENABLE_VCS_REMOTE`.
+
+   .. versionadded:: 2.2
 
 .. function:: _lp_vcs_staged_files() -> var:lp_vcs_staged_files
 

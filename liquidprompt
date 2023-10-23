@@ -434,6 +434,7 @@ __lp_source_config() {
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_HG_COMMAND=${LP_HG_COMMAND:-hg}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
+    LP_ENABLE_VCS_REMOTE=${LP_ENABLE_VCS_REMOTE:-0}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_TIME_ANALOG=${LP_TIME_ANALOG:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
@@ -494,6 +495,7 @@ __lp_source_config() {
     LP_MARK_DISABLED="${LP_MARK_DISABLED:-"⌀"}"
     LP_MARK_UNTRACKED="${LP_MARK_UNTRACKED:-"*"}"
     LP_MARK_STASH="${LP_MARK_STASH:-"+"}"
+    LP_MARK_VCS_REMOTE="${LP_MARK_VCS_REMOTE:-"⭚"}"
     LP_MARK_BRACKET_OPEN="${LP_MARK_BRACKET_OPEN:-"["}"
     LP_MARK_BRACKET_CLOSE="${LP_MARK_BRACKET_CLOSE:-"]"}"
     LP_MARK_MULTIPLEXER_OPEN="${LP_MARK_MULTIPLEXER_OPEN:-"$LP_MARK_BRACKET_OPEN"}"
@@ -1420,7 +1422,7 @@ _lp_path_format() {
 
     local -i path_length="${#display_path}"
 
-    local lp_vcs_root lp_vcs_dir lp_vcs_type lp_vcs_subtype
+    local lp_vcs_root lp_vcs_dir lp_vcs_specific_dir lp_vcs_type lp_vcs_subtype
     local vcs_root_directory=
     if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
         __lp_pwd_tilde "$lp_vcs_root"
@@ -2566,6 +2568,12 @@ _lp_find_vcs() {
     fi
 
     if [[ $lp_vcs_type == git ]]; then
+        lp_vcs_specific_dir="$lp_vcs_dir"
+        if [[ -f "${lp_vcs_dir}/gitdir" ]]; then
+            # Then this is a worktree, and the config exists two levels up.
+            lp_vcs_dir="${lp_vcs_dir}/../.."
+        fi
+
         if [[ -n "${VCSH_DIRECTORY-}" ]]; then
             lp_vcs_subtype="vcsh"
         elif [[ -d "${lp_vcs_dir}/svn" ]]; then
@@ -2679,6 +2687,23 @@ _lp_vcs_details_color() {
         fi
     fi
 
+    if _lp_vcs_remote; then
+        # Commits behind but not ahead.
+        if   [[ "$lp_vcs_commit_behind" -ne 0 && "$lp_vcs_commit_ahead" -eq 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}${lp_vcs_remote}${NO_COL}"
+
+        # Commits ahead but not behind.
+        elif [[ "$lp_vcs_commit_behind" -eq 0 && "$lp_vcs_commit_ahead" -ne 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS}${LP_MARK_VCS_REMOTE}${lp_vcs_remote}${NO_COL}"
+
+        # Commits both ahead and behind: the mark is colored differently.
+        elif [[ "$lp_vcs_commit_behind" -ne 0 && "$lp_vcs_commit_ahead" -ne 0 ]]; then
+            lp_vcs_details_color+="${LP_COLOR_COMMITS_BEHIND}${LP_MARK_VCS_REMOTE}${LP_COLOR_COMMITS}${lp_vcs_remote}${NO_COL}"
+
+        # else: display nothing.
+        fi
+    fi
+
     lp_vcs_details_color+="$NO_COL"
 }
 
@@ -2759,6 +2784,12 @@ _lp_vcs_staged_lines() {
     "_lp_${lp_vcs_type}_staged_lines"
 }
 
+# Get the remote name for the current branch.
+_lp_vcs_remote() {
+    (( LP_ENABLE_VCS_REMOTE )) || return 2
+    "_lp_${lp_vcs_type}_remote"
+}
+
 # GIT #
 
 # Check if Git is enabled in Liquid Prompt and the current directory is a valid
@@ -2770,6 +2801,7 @@ _lp_git_active() {
 
 # Get the branch name of the Git repo in the current directory.
 _lp_git_branch() {
+    lp_vcs_branch=""
     local branch ret
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
@@ -2804,31 +2836,31 @@ _lp_git_commit_id() {
 _lp_git_head_status() {
     local IFS="" step total
 
-    if [[ -f "${lp_vcs_dir}/MERGE_HEAD" ]]; then
+    if [[ -f "${lp_vcs_specific_dir}/MERGE_HEAD" ]]; then
         lp_vcs_head_status="MERGING"
-    elif [[ -d "${lp_vcs_dir}/rebase-merge" ]]; then
-        test -r "${lp_vcs_dir}/rebase-merge/msgnum" && read -r step <"${lp_vcs_dir}/rebase-merge/msgnum"
-        test -r "${lp_vcs_dir}/rebase-merge/end" && read -r total <"${lp_vcs_dir}/rebase-merge/end"
-        if [[ -f "${lp_vcs_dir}/rebase-merge/interactive" ]]; then
+    elif [[ -d "${lp_vcs_specific_dir}/rebase-merge" ]]; then
+        test -r "${lp_vcs_specific_dir}/rebase-merge/msgnum" && read -r step <"${lp_vcs_specific_dir}/rebase-merge/msgnum"
+        test -r "${lp_vcs_specific_dir}/rebase-merge/end" && read -r total <"${lp_vcs_specific_dir}/rebase-merge/end"
+        if [[ -f "${lp_vcs_specific_dir}/rebase-merge/interactive" ]]; then
             lp_vcs_head_status="REBASE-i"
         else
             lp_vcs_head_status="REBASE-m"
         fi
-    elif [[ -d "${lp_vcs_dir}/rebase-apply" ]]; then
-        test -r "${lp_vcs_dir}/rebase-apply/next" && read -r step <"${lp_vcs_dir}/rebase-apply/next"
-        test -r "${lp_vcs_dir}/rebase-apply/last" && read -r total <"${lp_vcs_dir}/rebase-apply/last"
-        if [[ -f "${lp_vcs_dir}/rebase-apply/rebasing" ]]; then
+    elif [[ -d "${lp_vcs_specific_dir}/rebase-apply" ]]; then
+        test -r "${lp_vcs_specific_dir}/rebase-apply/next" && read -r step <"${lp_vcs_specific_dir}/rebase-apply/next"
+        test -r "${lp_vcs_specific_dir}/rebase-apply/last" && read -r total <"${lp_vcs_specific_dir}/rebase-apply/last"
+        if [[ -f "${lp_vcs_specific_dir}/rebase-apply/rebasing" ]]; then
             lp_vcs_head_status="REBASE"
-        elif [[ -f "${lp_vcs_dir}/rebase-apply/applying" ]]; then
+        elif [[ -f "${lp_vcs_specific_dir}/rebase-apply/applying" ]]; then
             lp_vcs_head_status="AM"
         else
             lp_vcs_head_status="AM/REBASE"
         fi
-    elif [[ -f "${lp_vcs_dir}/CHERRY_PICK_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/CHERRY_PICK_HEAD" ]]; then
         lp_vcs_head_status="CHERRY-PICKING"
-    elif [[ -f "${lp_vcs_dir}/REVERT_HEAD" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/REVERT_HEAD" ]]; then
         lp_vcs_head_status="REVERTING"
-    elif [[ -f "${lp_vcs_dir}/BISECT_START" ]]; then
+    elif [[ -f "${lp_vcs_specific_dir}/BISECT_START" ]]; then
         lp_vcs_head_status="BISECTING"
     else
         return 1
@@ -2981,6 +3013,46 @@ _lp_git_staged_lines() {
     lp_vcs_staged_d_lines=$lp_git_diff_shortstat_d_lines
 }
 
+# Get the remote name for the current branch.
+# NOTE: Assumes that `_lp_find_vcs` and `_lp_vcs_branch` (costly functions) have been called.
+_lp_git_remote() {
+    lp_vcs_remote=""
+
+    if [[ -z "$lp_vcs_branch" ]]; then
+        # There is no remote.
+        return 1
+    fi
+
+    if [[ -z "$lp_vcs_dir" ]]; then
+        # Cannot find the config file.
+        return 1
+    fi
+
+    local file="${lp_vcs_dir}/config"
+    local delimiter=" = " # With spaces.
+    local in_branch=0
+    # We test for $line in the loop is here to ensure that we read the last line,
+    # even if the file does not ends with a \n.
+    # This bypass a known behavior of the C standard, not fixed in POSIX.
+    while IFS='' read -r line || [[ -n "$line" ]] ; do
+        # If we are in the branch config section.
+        if [[ "$line" == "[branch \"${lp_vcs_branch}\"]" ]]; then
+            in_branch=1
+        elif [[ "$line" == *"remote${delimiter}"* ]] ; then
+            if [[ "$in_branch" ]]; then
+                # Remove first part until delimiter.
+                lp_vcs_remote="${line#*"remote${delimiter}"}"
+                return 0
+            else
+                in_branch=0
+            fi
+        fi
+    done <"$file"
+
+    # Remote not found.
+    return 1
+}
+
 # MERCURIAL #
 
 # Check if Mercurial is enabled in Liquid Prompt and the current directory is a
@@ -3098,6 +3170,8 @@ _lp_hg_unstaged_lines() { return 2 ; }
 _lp_hg_staged_files() { return 2 ; }
 _lp_hg_staged_lines() { return 2 ; }
 
+_lp_hg_remote() { return 2 ; } # FIXME This should be implemented.
+
 # SUBVERSION #
 
 # Check if Subversion is enabled in Liquid Prompt and the current directory is a
@@ -3190,6 +3264,8 @@ _lp_svn_unstaged_files() { return 2 ; }
 _lp_svn_unstaged_lines() { return 2 ; }
 _lp_svn_staged_files() { return 2 ; }
 _lp_svn_staged_lines() { return 2 ; }
+# Subversion does not have remotes.
+_lp_svn_remote() { return 2 ; }
 
 # FOSSIL #
 
@@ -3303,6 +3379,7 @@ _lp_fossil_unstaged_files() { return 2 ; }
 _lp_fossil_unstaged_lines() { return 2 ; }
 _lp_fossil_staged_files() { return 2 ; }
 _lp_fossil_staged_lines() { return 2 ; }
+_lp_fossil_remote() { return 2 ; }
 
 # Bazaar #
 
@@ -3404,10 +3481,11 @@ _lp_bzr_uncommitted_lines() {
 }
 
 # Bazaar does not support a staging area.
-_lp_fossil_unstaged_files() { return 2 ; }
-_lp_fossil_unstaged_lines() { return 2 ; }
-_lp_fossil_staged_files() { return 2 ; }
-_lp_fossil_staged_lines() { return 2 ; }
+_lp_bzr_unstaged_files() { return 2 ; }
+_lp_bzr_unstaged_lines() { return 2 ; }
+_lp_bzr_staged_files() { return 2 ; }
+_lp_bzr_staged_lines() { return 2 ; }
+_lp_bzr_remote() { return 2 ; }
 
 ####################
 # Wifi link status #

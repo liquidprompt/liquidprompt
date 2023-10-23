@@ -1044,7 +1044,8 @@ __lp_line_count() {
 
 __lp_hostname_hash() {
     # cksum is separated with tab on SunOS, space on others
-    local cksum="$(hostname | cksum)"
+    # Newline is required to keep the same color as before.
+    local cksum="$(printf '%s\n' "${HOSTNAME:-${HOST-}}" | cksum)"
     lp_hostname_hash=${cksum%%[$' \t']*}
 }
 

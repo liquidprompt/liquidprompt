@@ -1019,6 +1019,17 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENABLE_TMUX_TITLE_PANES
+   :type: bool
+   :value: 1
+
+   Sets the title of the Tmux pane instead of the window.
+
+   :attr:`LP_ENABLE_TITLE` and attr:`LP_ENABLE_SCREEN_TITLE` must be enabled to
+   have any effect.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_VCS_REMOTE
    :type: bool
    :value: 0

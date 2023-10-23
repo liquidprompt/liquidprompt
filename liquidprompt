@@ -455,6 +455,7 @@ __lp_source_config() {
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_TITLE_COMMAND=${LP_ENABLE_TITLE_COMMAND:-1}
+    LP_ENABLE_TMUX_TITLE_PANES=${LP_ENABLE_TMUX_TITLE_PANES:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
@@ -840,7 +841,11 @@ lp_activate() {
     # If we are running in a terminal multiplexer, special title escapes
     if _lp_multiplexer; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
-        LP_TITLE_OPEN=$'\Ek'
+        if (( LP_ENABLE_TMUX_TITLE_PANES )) && [[ $lp_multiplexer == tmux ]]; then
+            LP_TITLE_OPEN=$'\E]2'
+        else
+            LP_TITLE_OPEN=$'\Ek'
+        fi
         LP_TITLE_CLOSE=$'\E\\'
     else
         LP_TITLE_OPEN=$'\E]0;'

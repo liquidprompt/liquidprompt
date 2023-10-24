@@ -122,6 +122,7 @@ Thanks again to everyone for all of the help and support!
 * Mark Korondi (@kmARC)
 * Thomas Guimbretiere (@ProfMobius)
 * Marco d'Itri (@rfc1036)
+* @go2null
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -261,3 +262,13 @@ Thanks again to everyone for all of the help and support!
 * François GUÉRIN (@frague59)
 * Florian "KopfKrieg" (@KopfKrieg)
 * @tsangal
+* František Trebuňa (@gortibaldik)
+* Pablo Mora (@kiteloopdesign)
+* @ShrykeWindgrace
+* Zach Callear (@Magotchi)
+* Tom Hoover (@tomhoover)
+* Maxime U Garcia (@maxulysse)
+* Mark Korondi (@kmARC)
+* Riccardo Mollo (@rm1984)
+* @webbb82
+* Aurélien (@orel1)

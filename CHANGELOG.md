@@ -6,6 +6,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0-rc.1] - 2023-10-23
+### Added
+- **general**: `_lp_fill()` function for use by themes ([#738])
+- **general**: `_lp_join()` function for use by themes ([67a4221])
+- **general**: `_lp_version_greatereq()` function for use by themes ([#752])
+- **general**: `_lp_version_string()` function for use by themes ([#752])
+- **general**: `config-from-doc.sh` script ([#772])
+- **general**: Multple config presets ([#755], [#772])
+- **cmake**: CMake option display ([d8254c6])
+- **disk**: Disk space display ([#771])
+- **docs**: List features disabled by default ([#750])
+- **docs**: Spell checking workflow ([787e03e])
+- **env**: User defined env variables section ([#722], [#754])
+- **error**: Display meaning of exit code ([#729], [#745])
+- **git**: Display of remote for branch ([#784])
+- **jobs**: Configurable jobs separator ([#743])
+- **modules**: Environment modules support ([#763], [#766])
+- **os**: Display OS data ([#724], [#756])
+- **path**: Option to disable path display ([#775])
+- **path**: Path sections as hyperlinks ([#659], [#668])
+- **ram**: Display available RAM ([#770], [#788])
+- **theme**: Dev env section ([67a4221])
+- **theme**: New Unfold theme ([#746])
+- **theme**: Status bar example scripts ([#775])
+- **theme**: `LP_THEME` variable to set current theme ([#792])
+- **tmux**: `LP_ENABLE_TMUX_TITLE_PANES` option ([c74a9e4])
+
+### Fixed
+- **docs**: Improved docs on theme switching ([#765, [#767])
+- **git**: Printed error if error during interactive rebase ([#758], [#759])
+- **hostname**: Hostname hash on systems without `hostname` binary ([#776])
+- **load**: Load display on Android systems ([#587])
+- **multiplexer**: `_lp_multiplexer()` return variable incorrectly named
+  `lp_mulitplexer` ([#748])
+- **python**: Poetry virtualenvs showing "prompt =" ([#760])
+- **tests**: Bash preexec tests not working in screen/tmux ([#773])
+- **theme-preview**: Set SSH context for display ([#769])
+- **theme-preview**: Stop indenting prompts to fix multiline prompts ([#744])
+- **zsh**: errors when `ksh_arrays` set ([708635b])
+
+### Changed
+- **general**: Move project to "liquidprompt" GitHub organization.
+- **docs**: Unifiy project name as "Liquid Prompt" ([#677])
+- **docs**: Improve marketing ([#731])
+- **tests**: Print name of failed tests at end of script ([9992fce])
+
 ## [2.1.2] - 2022-06-08
 ### Fixed
 - **bash**: `PROMPT_COMMAND` not saved and respected on first load ([#715])
@@ -564,7 +610,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/liquidprompt/liquidprompt/compare/v2.1.2...master
+[Unreleased]: https://github.com/liquidprompt/liquidprompt/compare/v2.2.0...master
+[2.2.0]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.2.0
 [2.1.2]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.1.2
 [2.1.1]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.1.1
 [2.1.0]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.1.0
@@ -710,6 +757,7 @@ for help.
 [#578]: https://github.com/liquidprompt/liquidprompt/pull/578
 [#581]: https://github.com/liquidprompt/liquidprompt/issues/581
 [#582]: https://github.com/liquidprompt/liquidprompt/pull/582
+[#587]: https://github.com/liquidprompt/liquidprompt/pull/587
 [#592]: https://github.com/liquidprompt/liquidprompt/issues/592
 [#596]: https://github.com/liquidprompt/liquidprompt/issues/596
 [#604]: https://github.com/liquidprompt/liquidprompt/pull/604
@@ -734,17 +782,20 @@ for help.
 [#656]: https://github.com/liquidprompt/liquidprompt/issues/656
 [#657]: https://github.com/liquidprompt/liquidprompt/issues/657
 [#658]: https://github.com/liquidprompt/liquidprompt/issues/658
+[#659]: https://github.com/liquidprompt/liquidprompt/issues/659
 [#662]: https://github.com/liquidprompt/liquidprompt/pull/662
 [#663]: https://github.com/liquidprompt/liquidprompt/pull/663
 [#664]: https://github.com/liquidprompt/liquidprompt/pull/664
 [#665]: https://github.com/liquidprompt/liquidprompt/pull/665
 [#667]: https://github.com/liquidprompt/liquidprompt/issues/667
+[#668]: https://github.com/liquidprompt/liquidprompt/pull/668
 [#669]: https://github.com/liquidprompt/liquidprompt/pull/669
 [#670]: https://github.com/liquidprompt/liquidprompt/issues/670
 [#671]: https://github.com/liquidprompt/liquidprompt/pull/671
 [#672]: https://github.com/liquidprompt/liquidprompt/pull/672
 [#673]: https://github.com/liquidprompt/liquidprompt/pull/673
 [#676]: https://github.com/liquidprompt/liquidprompt/issues/676
+[#677]: https://github.com/liquidprompt/liquidprompt/pull/677
 [#678]: https://github.com/liquidprompt/liquidprompt/pull/678
 [#679]: https://github.com/liquidprompt/liquidprompt/pull/679
 [#681]: https://github.com/liquidprompt/liquidprompt/pull/681
@@ -761,6 +812,38 @@ for help.
 [#709]: https://github.com/liquidprompt/liquidprompt/issues/709
 [#713]: https://github.com/liquidprompt/liquidprompt/issues/713
 [#715]: https://github.com/liquidprompt/liquidprompt/issues/715
+[#722]: https://github.com/liquidprompt/liquidprompt/issues/722
+[#724]: https://github.com/liquidprompt/liquidprompt/issues/724
+[#729]: https://github.com/liquidprompt/liquidprompt/issues/729
+[#731]: https://github.com/liquidprompt/liquidprompt/pull/731
+[#738]: https://github.com/liquidprompt/liquidprompt/pull/738
+[#743]: https://github.com/liquidprompt/liquidprompt/pull/743
+[#744]: https://github.com/liquidprompt/liquidprompt/pull/744
+[#745]: https://github.com/liquidprompt/liquidprompt/pull/745
+[#746]: https://github.com/liquidprompt/liquidprompt/pull/746
+[#748]: https://github.com/liquidprompt/liquidprompt/pull/748
+[#750]: https://github.com/liquidprompt/liquidprompt/pull/750
+[#752]: https://github.com/liquidprompt/liquidprompt/pull/752
+[#754]: https://github.com/liquidprompt/liquidprompt/pull/754
+[#755]: https://github.com/liquidprompt/liquidprompt/issues/755
+[#756]: https://github.com/liquidprompt/liquidprompt/pull/756
+[#758]: https://github.com/liquidprompt/liquidprompt/issues/758
+[#759]: https://github.com/liquidprompt/liquidprompt/pull/759
+[#760]: https://github.com/liquidprompt/liquidprompt/issues/760
+[#763]: https://github.com/liquidprompt/liquidprompt/issues/763
+[#765]: https://github.com/liquidprompt/liquidprompt/issues/765
+[#766]: https://github.com/liquidprompt/liquidprompt/pull/766
+[#767]: https://github.com/liquidprompt/liquidprompt/pull/767
+[#769]: https://github.com/liquidprompt/liquidprompt/pull/769
+[#770]: https://github.com/liquidprompt/liquidprompt/pull/770
+[#771]: https://github.com/liquidprompt/liquidprompt/pull/771
+[#772]: https://github.com/liquidprompt/liquidprompt/pull/772
+[#773]: https://github.com/liquidprompt/liquidprompt/pull/773
+[#775]: https://github.com/liquidprompt/liquidprompt/pull/775
+[#776]: https://github.com/liquidprompt/liquidprompt/issues/776
+[#784]: https://github.com/liquidprompt/liquidprompt/pull/784
+[#788]: https://github.com/liquidprompt/liquidprompt/pull/788
+[#792]: https://github.com/liquidprompt/liquidprompt/pull/792
 
 [0200b99]: https://github.com/liquidprompt/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/liquidprompt/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -841,6 +924,7 @@ for help.
 [63b9f73]: https://github.com/liquidprompt/liquidprompt/commit/63b9f73d72218d4e72c0d43bc6a60a82ea0e15e8
 [64029ad]: https://github.com/liquidprompt/liquidprompt/commit/64029ad75d108a0619958c337fd64fe18560988e
 [66d1d2b]: https://github.com/liquidprompt/liquidprompt/commit/66d1d2ba3baade138d7470317aca527c138732fe
+[67a4221]: https://github.com/liquidprompt/liquidprompt/commit/67a4221a955a83c00c44bca5eb276b9f02074d15
 [67dc0a9]: https://github.com/liquidprompt/liquidprompt/commit/67dc0a9ae9eebf0c2b85b4ee6fc2d6b5562b6412
 [695d629]: https://github.com/liquidprompt/liquidprompt/commit/695d629dd5cf7109e8892075d4cf7fadd8c17d94
 [6961f99]: https://github.com/liquidprompt/liquidprompt/commit/6961f998b83f491995ce731bd232c5170cf4be5f
@@ -848,6 +932,7 @@ for help.
 [6cdb860]: https://github.com/liquidprompt/liquidprompt/commit/6cdb86006e4d2ad6dee06e60e229842144305594
 [6d94db6]: https://github.com/liquidprompt/liquidprompt/commit/6d94db6de7de879c14da842df535163a57dce638
 [6ea54e9]: https://github.com/liquidprompt/liquidprompt/commit/6ea54e91f84be1c491314c3680e82b06d769218e
+[708635b]: https://github.com/liquidprompt/liquidprompt/commit/708635b938c643948e83e4f9855410a1a816b082
 [70b4ef6]: https://github.com/liquidprompt/liquidprompt/commit/70b4ef65c034c5050173dbe70178b459e5acddc2
 [70ce708]: https://github.com/liquidprompt/liquidprompt/commit/70ce708b8142d71647c14817cb40801c5dfdb756
 [73f2057]: https://github.com/liquidprompt/liquidprompt/commit/73f205748fe6f09abcfe01ec150a456518aecc18
@@ -855,6 +940,7 @@ for help.
 [7602c09]: https://github.com/liquidprompt/liquidprompt/commit/7602c09fd7754f371db98bfad15bc075ef1ec93a
 [77dc561]: https://github.com/liquidprompt/liquidprompt/commit/77dc561c707a88ab9158f3f00231137f8f34c624
 [782fad0]: https://github.com/liquidprompt/liquidprompt/commit/782fad08fd37cbf2144ea203430f37608b156ae8
+[787e03e]: https://github.com/liquidprompt/liquidprompt/commit/787e03e9ee5dd09e146c58880e922d9e30c2585f
 [78dee3c]: https://github.com/liquidprompt/liquidprompt/commit/78dee3c70ab73eee04a5e869172e5f07ac916774
 [7c21470]: https://github.com/liquidprompt/liquidprompt/commit/7c214708d72a4fa7d298678167450693a1ffbc00
 [7db4ada]: https://github.com/liquidprompt/liquidprompt/commit/7db4ada711c5e9859ea79a11a1d03ca7d7311547
@@ -876,6 +962,7 @@ for help.
 [954bace]: https://github.com/liquidprompt/liquidprompt/commit/954bace48637528795743785c4cc8cb42f204a7e
 [9604203]: https://github.com/liquidprompt/liquidprompt/commit/9604203fb9f90b44a8c806f32e7746588b70a83b
 [9633ac8]: https://github.com/liquidprompt/liquidprompt/commit/9633ac83cad5f5702c1e853940c0ab2e166961bf
+[9992fce]: https://github.com/liquidprompt/liquidprompt/commit/9992fce5faf8af2aeec9e6ca753ab9a3404b0785
 [9a00ead]: https://github.com/liquidprompt/liquidprompt/commit/9a00eada113cb1d5e33aa177f5b9180c25d6a843
 [9a2c067]: https://github.com/liquidprompt/liquidprompt/commit/9a2c06709544ce7609b432aa03d81f7cf4750283
 [9b40ca1]: https://github.com/liquidprompt/liquidprompt/commit/9b40ca139a43e51b4d0fbdc780d0661bfffbf6ae
@@ -908,6 +995,7 @@ for help.
 [bf2b9c6]: https://github.com/liquidprompt/liquidprompt/commit/bf2b9c60a788c32f38078f580b79ba80540d3bdf
 [c0e74b8]: https://github.com/liquidprompt/liquidprompt/commit/c0e74b8953db777e1ae84fa5faa3620af5247511
 [c3d4970]: https://github.com/liquidprompt/liquidprompt/commit/c3d49708e598a79eca50caa0f96fca6230ce204e
+[c74a9e4]: https://github.com/liquidprompt/liquidprompt/commit/c74a9e4bdea7a4cf19ac368316ff724c42b3205e
 [c7b5003]: https://github.com/liquidprompt/liquidprompt/commit/c7b5003616d769ac1a4edc06d28ba6b84bfe0418
 [c946155]: https://github.com/liquidprompt/liquidprompt/commit/c9461552d9618548d4a858b0153671cf0fdbdac3
 [c98f16d]: https://github.com/liquidprompt/liquidprompt/commit/c98f16d52f9cc22723679124c3d64b06cbcb6e6e
@@ -922,6 +1010,8 @@ for help.
 [d41b5c8]: https://github.com/liquidprompt/liquidprompt/commit/d41b5c8361381fcc785494f5552a2b5319c3c9d1
 [d485ed1]: https://github.com/liquidprompt/liquidprompt/commit/d485ed191fb6b896290a32848c4fefd0342e2046
 [d62bf31]: https://github.com/liquidprompt/liquidprompt/commit/d62bf310d0d5a30fac6d047f03d832b81070c884
+[d66f720]: https://github.com/liquidprompt/liquidprompt/commit/d66f7209591a733e55b10d715d58d259327b67f5
+[d8254c6]: https://github.com/liquidprompt/liquidprompt/commit/d8254c646296ce864e8cd60eff5e860fa5356f5b
 [d9cb55d]: https://github.com/liquidprompt/liquidprompt/commit/d9cb55da834720ac3cd4893bb4a35808ab67d376
 [dc11eb4]: https://github.com/liquidprompt/liquidprompt/commit/dc11eb48ecb133930355f396578e5c9b06b49afc
 [dc7be25]: https://github.com/liquidprompt/liquidprompt/commit/dc7be2540d677600a484dcd0c2d05dc0945382e5

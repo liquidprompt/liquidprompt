@@ -12,8 +12,8 @@ _lp_unfold_theme_prompt() {
 
     # add title escape time, jobs, load and battery
     local left="${LP_PS1_PREFIX}"
-    # add user, host, permissions colon, working directory, and dirstack
-    left+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_SHLVL}"
+    # add user, host, permissions colon, working directory, proxy, user-defined env, and dirstack
+    left+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
 
     # Add VCS infos
     # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
@@ -21,7 +21,7 @@ _lp_unfold_theme_prompt() {
     left+="${LP_VCS}"
 
     # Add the list of development environments/config/etc.
-    local right+="${LP_DEV_ENV}${LP_JOBS}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_WIFI}${LP_TIME}"
+    local right+="${LP_DEV_ENV}${LP_JOBS}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_TIME}"
 
     # add return code and prompt mark
     local main+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"

@@ -63,6 +63,7 @@ templated
 templating
 terraform
 theming
+tmux
 ubuntu
 unstaged
 untracked

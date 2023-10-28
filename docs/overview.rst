@@ -74,16 +74,22 @@ These are some of the most popular features:
 - **Jobs**: show counters for background, sleeping, and detached jobs.
 - **Time**: display the current time, using clock icons if you want a compact
   view.
+- **Memory**: display the available memory, if not enough RAM remains.
 - **Filesystem permission**: indicate if the current directory is writable or
   not.
+- **System load**: warn if the load is too high.
 - **Remote shell**: discreetly denote if you are connected through SSH, under
   Tmux and with X Forwarding capability.
+- **Disk**: display the free disk space if it is too small.
 - **Shell level**: displays the number of nested shells if it starts being too
   much.
+- **Sudo**: show if the user currently has *sudo* rights.
+- **Multiplexers**: indicate if you are in a terminal multiplexer session
+  (i.e. tmux or screen).
 - **Proxy**: indicate whether a proxy is configured.
 - **Temperature**: warn if the temperature goes too high.
-- **Prompt switch**: command allowing you to rapidly go back to the default
-  prompt, or the even most simple possible.
+- **Hot prompt switch**: commands allowing you to rapidly switch the theme,
+  go back to the default prompt, or even the most simple prompt possible.
 - **Wifi**: shows the wireless network signal strength.
 - **Dir stack**: helps you follow the state of this overlooked, but neat,
   feature of modern shells.
@@ -123,7 +129,8 @@ you are:
 - **Container**,
 - **Node env**,
 - **Ruby venv**,
-- **Software Collections**.
+- **Software Collections**,
+- **CMake**.
 
 Those show up only if you enter a configured directory, or have configured
 environment variables.
@@ -149,6 +156,16 @@ Shell essentials:
 - :attr:`LP_ENABLE_SSH_COLORS`
 - :attr:`LP_ENABLE_SUDO` (double-check with your sysadmin if you can enable
   that)
+- :attr:`LP_ENABLE_DISK`
+- :attr:`LP_ENABLE_ERROR_MEANING`
+- :attr:`LP_ENABLE_ERROR_MEANING_EXTENDED`
+
+Operating System:
+
+- :attr:`LP_ENABLE_OS`
+- :attr:`LP_ENABLE_OS_ARCH`
+- :attr:`LP_ENABLE_OS_FAMILY`
+- :attr:`LP_ENABLE_OS_DISTRIB`
 
 Development/environments:
 
@@ -161,6 +178,7 @@ Development/environments:
 - :attr:`LP_ENABLE_KUBE_NAMESPACE`
 - :attr:`LP_ENABLE_NODE_VENV`
 - :attr:`LP_ENABLE_TERRAFORM`
+- :attr:`LP_ENABLE_MODULES_HASHCOLOR`
 
 Miscellaneous:
 

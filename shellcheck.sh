@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck shell=bash
+
 # shellcheck disable=SC2093
 exec shellcheck \
   --shell=bash \
@@ -14,3 +16,5 @@ exec shellcheck \
 . ./themes/alternate_vcs/alternate_vcs.theme
 . ./themes/powerline/powerline.theme
 . ./themes/unfold/unfold.theme
+
+# vim: ft=sh et sts=2 sw=2 tw=120

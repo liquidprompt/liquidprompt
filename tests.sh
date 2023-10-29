@@ -39,3 +39,5 @@ done
 printf '%s\n' "${errors[@]}"
 
 exit "$fail"
+
+# vim: ft=sh et sts=2 sw=2 tw=120

@@ -118,3 +118,5 @@ while IFS='' read -r line || [[ -n "$line" ]] ; do
         fi
     fi
 done <"$file"
+
+# vim: ft=sh et sts=4 sw=4 tw=120

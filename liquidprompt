@@ -3,6 +3,8 @@
 # An intelligent and non-intrusive prompt for Bash and zsh
 ################################################################################
 
+# shellcheck shell=bash
+
 _LP_VERSION=(2 2 0 alpha 1)
 
 # Licensed under the AGPL version 3
@@ -5028,4 +5030,4 @@ if [ "${1-}" != "--no-activate" ]; then
     lp_activate
 fi
 
-# vim: set et sts=4 sw=4 tw=120 ft=sh:
+# vim: ft=sh et sts=4 sw=4 tw=120

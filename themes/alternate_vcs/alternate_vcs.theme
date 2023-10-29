@@ -1,4 +1,6 @@
 
+# shellcheck shell=bash
+
 _lp_alternate_vcs_theme_activate() {
     _lp_default_theme_activate
 
@@ -139,3 +141,5 @@ _lp_alternate_vcs_details() {
 
     lp_alternate_vcs_details+="$NO_COL"
 }
+
+# vim: ft=sh et sts=4 sw=4 tw=120

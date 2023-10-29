@@ -116,3 +116,5 @@ test_tool basename -- /dev/pts/0
 
 # shellcheck disable=SC2016
 printf 'Tests complete.\nMake sure to upload the file directly, do not `cat` and copy paste!\n' >&2
+
+# vim: ft=sh et sts=2 sw=2 tw=120

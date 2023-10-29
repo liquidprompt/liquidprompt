@@ -17,3 +17,5 @@ sphinx-lint \
 make linkcheck || error=1
 
 exit "$error"
+
+# vim: ft=sh et sts=2 sw=2 tw=120

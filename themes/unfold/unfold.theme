@@ -1,4 +1,6 @@
 
+# shellcheck shell=bash
+
 _lp_unfold_theme_activate() {
     _lp_default_theme_activate
 }
@@ -33,3 +35,5 @@ _lp_unfold_theme_prompt() {
     # Get the core sections without prompt escapes and make them into a title.
     _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
 }
+
+# vim: ft=sh et sts=4 sw=4 tw=120

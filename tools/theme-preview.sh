@@ -260,3 +260,5 @@ __lp_set_prompt
 __remove_shell_escapes
 
 printf 'Long prompt:\n\n%s\n\n' "$PS1"
+
+# vim: ft=sh et sts=2 sw=2 tw=120

@@ -1,4 +1,6 @@
 
+# shellcheck shell=bash
+
 _lp_powerline_theme_activate() {
     # Load default markers if not already defined
     POWERLINE_HARD_DIVIDER=${POWERLINE_HARD_DIVIDER:-""}    # U+E0B0
@@ -435,3 +437,4 @@ __powerline_vcs_section() {
     fi
 }
 
+# vim: ft=sh et sts=4 sw=4 tw=120

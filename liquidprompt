@@ -159,7 +159,7 @@ case "$(uname)" in
 esac
 
 _lp_os() {
-    # Fine-grained OS detection: family, kernel, distrib, version.
+    # Fine-grained OS detection: arch, family, kernel, distrib, version.
     (( LP_ENABLE_OS )) || return 2
 
     # Output variables:
@@ -978,7 +978,7 @@ _lp_bool() {
     return "$res"
 }
 
-_lp_color_map() {
+_lp_color_map() { # value [scale=100]
     # Default scale: 0..100
     # Custom scale: 0..$2
     local -i scale value
@@ -1867,16 +1867,18 @@ _lp_http_proxy_color() {
     lp_http_proxy_color="${LP_COLOR_PROXY}${LP_MARK_PROXY}${NO_COL}"
 }
 
-_lp_env_vars() { # [color_set, [color_unset]]
+_lp_env_vars() { # [color_set, [color_unset, [end_color]]]
     # Expects LP_ENV_VARS to be an array containing items of the form:
     # "<ENV_VAR_NAME> <string if set>[ <string if unset>]"
     # Strings may be `%s`, which will be replaced by the variable's actual content.
+    # <end_color> is added after each variable.
+    # If end_color is not passed, it will default to $NO_COL.
 
     (( LP_ENABLE_ENV_VARS )) || return 2
 
     local color_set="${1-}"
     local color_unset="${2-}"
-    local color_no="${NO_COL}"
+    local color_no="${3-$NO_COL}"
     if [[ -z "$color_set" && -z "$color_unset" ]]; then
         color_no=""
     fi

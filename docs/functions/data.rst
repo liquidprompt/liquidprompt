@@ -258,7 +258,7 @@ Environment
 
     .. versionadded:: 2.0
 
-.. function:: _lp_env_vars([color_if_set, [color_if_unset]]) -> var:lp_env_vars
+.. function:: _lp_env_vars([color_if_set, [color_if_unset, [end_color]]]) -> var:lp_env_vars
 
    Gather the states of the environment variables indicated in the
    :attr:`LP_ENV_VARS` array,
@@ -273,6 +273,9 @@ Environment
    If ``color_if_set`` is passed, it will be used to color the *set*
    variables string. If ``color_if_unset`` is passed, it will be used to color
    the *unset* variables string.
+
+   ``end_color`` is added at the end of each variable string.
+   It defaults to "$NO_COL" (color reset).
 
    Returns ``true`` if at least one variable representation is added to
    the result array. Returns ``1`` if the no variable representation is set.

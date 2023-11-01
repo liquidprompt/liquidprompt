@@ -202,6 +202,9 @@ Environment
 
    .. versionadded:: 2.0
 
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_DISPLAY`.
+
 .. function:: _lp_connection() -> var:lp_connection
 
    Returns a string matching the connection context of the shell. Valid values:
@@ -325,6 +328,9 @@ Environment
 
    .. versionadded:: 2.0
 
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_MUX`.
+
 .. function:: _lp_shell_level() -> var:lp_shell_level
 
     Returns ``true`` if the shell is a nested shell inside another shell.
@@ -416,6 +422,9 @@ OS
    matching the chroot string if one is found.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_CHROOT`.
 
 .. function:: _lp_hostname() -> var:lp_hostname
 

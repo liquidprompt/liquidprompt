@@ -352,6 +352,14 @@ Features
 
    See also: :attr:`LP_MARK_BZR`.
 
+.. attribute:: LP_ENABLE_CHROOT
+   :type: bool
+   :value: 1
+
+   Display whether a *chroot* environment is active.
+
+   .. versionadded: 2.2
+
 .. attribute:: LP_ENABLE_CMAKE
    :type: bool
    :value: 0
@@ -437,6 +445,17 @@ Features
    See also: :attr:`LP_MARK_DIRSTACK` and :attr:`LP_COLOR_DIRSTACK`.
 
    .. versionadded:: 2.0
+
+.. attribute:: LP_ENABLE_DISPLAY
+   :type: bool
+   :value: 1
+
+   Displays a green ``@`` if the connection has X11 support;
+   a yellow one if not.
+
+   See also :attr:`LP_COLOR_X11_ON` and :attr:`LP_COLOR_X11_OFF`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_ENABLE_DISK
    :type: bool
@@ -707,6 +726,21 @@ Features
    according to its hash, instead of using :attr:`LP_COLOR_MODULES`.
 
    See :attr:`LP_ENABLE_MODULES`.
+
+   .. versionadded:: 2.2
+
+.. attribute:: LP_ENABLE_MUX
+   :type: bool
+   :value: 1
+
+   Allows getting the name of the current multiplexer session
+   (*screen* or *tmux*).
+
+   If set to ``0``, also disables:
+
+   * :attr:`LP_COLOR_IN_MULTIPLEXER`,
+   * :attr:`LP_MARK_MULTIPLEXER_OPEN` and :attr:`LP_MARK_MULTIPLEXER_CLOSE`,
+   * :attr:`LP_ENABLE_SCREEN_TITLE` and :attr:`LP_ENABLE_TMUX_TITLE_PANES`.
 
    .. versionadded:: 2.2
 
@@ -1645,6 +1679,9 @@ Marks
 
    .. versionadded:: 2.1
 
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_MUX`.
+
 .. attribute:: LP_MARK_MULTIPLEXER_OPEN
    :type: string
    :value: $LP_MARK_BRACKET_OPEN
@@ -1655,6 +1692,9 @@ Marks
    See also: :attr:`LP_MARK_MULTIPLEXER_CLOSE`, :attr:`LP_MARK_BRACKET_OPEN`.
 
    .. versionadded:: 2.1
+
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_MUX`.
 
 .. attribute:: LP_MARK_OS
    :type: array<string>
@@ -2109,6 +2149,9 @@ Valid preset color variables are:
    Color used for :attr:`LP_MARK_MULTIPLEXER_OPEN` and
    :attr:`LP_MARK_MULTIPLEXER_CLOSE` if the terminal is in a multiplexer.
 
+   .. versionchanged:: 2.2
+      Can be disabled by :attr:`LP_ENABLE_MUX`.
+
 .. attribute:: LP_COLOR_JOB_D
    :type: string
    :value: $YELLOW
@@ -2455,8 +2498,12 @@ Valid preset color variables are:
 
    Color used for indicating that a display is not connected.
 
+   See also :attr:`LP_ENABLE_DISPLAY`.
+
 .. attribute:: LP_COLOR_X11_ON
    :type: string
    :value: $GREEN
 
    Color used for indicating that a display is connected.
+
+   See also :attr:`LP_ENABLE_DISPLAY`.

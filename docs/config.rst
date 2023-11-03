@@ -450,8 +450,9 @@ Features
    :type: bool
    :value: 1
 
-   Displays a green ``@`` if the connection has X11 support;
-   a yellow one if not.
+   Detect if the connection has X11 support.
+   
+   In the default them, display a green ``@`` if it does; a yellow one if not.
 
    See also :attr:`LP_COLOR_X11_ON` and :attr:`LP_COLOR_X11_OFF`.
 

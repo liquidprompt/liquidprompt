@@ -1845,7 +1845,8 @@ _lp_error_meaning_color() {
 
 # shellcheck disable=SC2034
 _lp_multiplexer() {
-    (( LP_ENABLE_MULTIPLEXER )) || return 2
+    (( LP_ENABLE_SCREEN_TITLE || LP_ENABLE_TMUX_TITLE_PANES || LP_ENABLE_MULTIPLEXER )) || return 2
+
     if [[ -n ${TMUX-} ]]; then
         lp_multiplexer=tmux
         return 0
@@ -4455,7 +4456,7 @@ _lp_default_theme_activate() {
     LP_HOST="$lp_hostname_color"
 
     # If we are running in a terminal multiplexer, brackets are colored
-    if _lp_multiplexer; then
+    if (( LP_ENABLE_MULTIPLEXER && _lp_multiplexer  )); then
         LP_BRACKET_OPEN="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_MULTIPLEXER_OPEN}${NO_COL}"
         LP_BRACKET_CLOSE="${LP_COLOR_IN_MULTIPLEXER}${LP_MARK_MULTIPLEXER_CLOSE}${NO_COL}"
     else

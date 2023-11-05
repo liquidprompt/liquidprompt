@@ -56,7 +56,7 @@ These functions are designed to be used by themes.
 
    See also :attr:`LP_ENABLE_HYPERLINKS` and :func:`_lp_create_link`.
 
-.. function:: _lp_fill(left, right, [fillstring], [splitends]) -> var:lp_fill
+.. function:: _lp_fill(left, right, [fillstring], [splitends, [fillprefix, [fillsuffix]]]) -> var:lp_fill
 
    Adds as much *fillstring* (e.g. spaces) between *left* and *right*,
    so as to make the resulting string the same width as the current terminal.
@@ -72,12 +72,12 @@ These functions are designed to be used by themes.
    some spaces will be inserted after the last occurrence of *fillstring*,
    so as to match the exact width of the terminal.
 
-   *fillstring* may contains escaped sequences (such as colors).
+   *fillstring* may NOT contains escaped sequences (such as colors).
 
-   .. note:: If *fillstring* have multiple characters and *splitends* is 1,
-             then **the last occurrence** of *fillstring*
-             is stripped of any escaped sequences
-             and only its printable characters are inserted.
+  .. note:: Any escaped sequence in *fillstring* will be removed automatically.
+
+   *fillprefix* and *fillsuffix* may be used to add escaped sequences at the
+   beginning and, respectively, the end of the filling sequence.
 
    If the available number of columns in the terminal is smaller than
    the width of *left* and *right* combined, then

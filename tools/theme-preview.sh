@@ -2,29 +2,84 @@
 #shellcheck disable=SC2317
 set -u
 
-. ./liquidprompt --no-activate
-
-# If a theme was given, use the theme and source all other arguments.
-if [[ -z ${1-} || $1 == --help ]]; then
+usage() {
   printf '
-Usage: %s theme [sourced files...]
+Usage: %s theme [options...] [sourced files...]
 
 Print out example prompts based on a standard set of input conditions. Designed
 to showcase Liquid Prompt themes.
 
-Example usage: %s powerline themes/powerline/powerline.theme
+Options:
+  --config-file=<filename> Load <filename> as an additional Liquid Prompt
+                           config file.
+  --user-config            Load the user, or if not found, the system config
+                           file.
+  --reproducible           Set the terminal size to a static value. Load no
+                           config files. Overrides any --config-file or
+                           --user-config arguments.
+  -h, --help               Print this help text.
+
+Example usage: %s unfold themes/unfold/unfold.theme
 ' "$0" "$0"
-  exit 2
+}
 
-else
-  theme=$1
+sourced_files=()
+config_files=()
+options_ended=false
+user_config=false
+reproducible=false
+unset theme
+
+while [[ -n ${1-} ]]; do
+  if [[ ($1 == "--"* || $1 == "-h") && $options_ended == "false" ]]; then
+    if [[ $1 == "--" ]]; then
+      options_ended=true
+    elif [[ $1 == "--help" || $1 == "-h" ]]; then
+      usage
+      exit 0
+    elif [[ $1 == "--config-file" ]]; then
+      config_files+=("$2")
+      shift
+    elif [[ $1 == "--config-file="* ]]; then
+      config_files+=("${1#"--config-file="}")
+    elif [[ $1 == "--user-config" ]]; then
+      user_config=true
+    elif [[ $1 == "--reproducible" ]]; then
+      reproducible=true
+    else
+      printf 'Error: unknown option "%s"\n' "$1"
+      exit 1
+    fi
+  elif [[ -z ${theme+x} ]]; then
+    theme=$1
+  else
+    sourced_files+=("$1")
+  fi
   shift
+done
 
-  for file in "$@"; do
-    # shellcheck disable=SC1090
-    . "$file"
-  done
+if [[ -z ${theme-} ]]; then
+  usage
+  exit 2
 fi
+
+activate_args=()
+if [[ $user_config == "false" ]]; then
+  activate_args+=("--no-config")
+fi
+activate_args+=(${config_files[@]+"${config_files[@]}"})
+
+if [[ $reproducible == "true" ]]; then
+  # Reset args to only no config.
+  activate_args=("--no-config")
+fi
+
+. ./liquidprompt --no-activate
+
+for file in ${sourced_files[@]+"${sourced_files[@]}"}; do
+  # shellcheck disable=SC1090
+  . "$file"
+done
 
 # Liquid Prompt depends on PS1 being set to detect if it has installed itself.
 PS1="$ "
@@ -90,9 +145,12 @@ PWD=$HOME
 
 # Activate and generate
 
-lp_activate --no-config
+lp_activate ${activate_args[@]+"${activate_args[@]}"}
 # Only needs to be done once
 lp_theme "$theme" || exit "$?"
+if [[ $reproducible == "true" ]]; then
+  COLUMNS=160
+fi
 __lp_set_prompt
 __remove_shell_escapes
 
@@ -109,6 +167,10 @@ _config() {
   LP_ENABLE_JOBS=1
   LP_HOSTNAME_ALWAYS=1
   LP_ENABLE_GIT=1
+
+  if [[ $reproducible == "true" ]]; then
+    COLUMNS=160
+  fi
 }
 _config
 
@@ -153,7 +215,7 @@ PWD=$HOME/liquidprompt
 
 # Activate and generate
 
-lp_activate --no-config
+lp_activate ${activate_args[@]+"${activate_args[@]}"}
 _config
 __lp_set_prompt
 __remove_shell_escapes
@@ -182,7 +244,12 @@ _long_config() {
   LP_ENABLE_ERROR=1
   LP_ENABLE_DIRSTACK=1
   LP_ENABLE_SHLVL=1
-  LP_PERCENTS_ALWAYS=1
+  LP_ALWAYS_DISPLAY_VALUES=1
+  LP_DISPLAY_VALUES_AS_PERCENTS=1
+
+  if [[ $reproducible == "true" ]]; then
+    COLUMNS=160
+  fi
 }
 _long_config
 
@@ -251,7 +318,7 @@ PWD="${HOME}/code/liquidprompt/docs/theme"
 
 # Activate and generate
 
-lp_activate --no-config
+lp_activate ${activate_args[@]+"${activate_args[@]}"}
 _long_config
 __lp_set_prompt
 __remove_shell_escapes

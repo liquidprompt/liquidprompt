@@ -20,6 +20,7 @@ function test_theme_preview {
   . ./tools/theme-preview.sh powerline ./themes/powerline/powerline.theme
   . ./tools/theme-preview.sh powerline_full ./themes/powerline/powerline.theme
   . ./tools/theme-preview.sh alternate_vcs ./themes/alternate_vcs/alternate_vcs.theme
+  . ./tools/theme-preview.sh unfold ./themes/unfold/unfold.theme --reproducible
 }
 
 function test_external_tool_tester {

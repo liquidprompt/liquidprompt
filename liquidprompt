@@ -1257,11 +1257,13 @@ _lp_grep_fields() {
 # Adds as much $3 (fillchars) character(s) (e.g. spaces) between $1 (left) and $2 (right),
 # so as to make the resulting string the same width as the current terminal.
 # If $4 (splitends) is true, then will cut $3 (fillchars) so as to perfectly fill the available space.
-# WARNING: this function may be slow if you put escaped characters in $3 (fillchars)
-#          and the width of the gap to fill is large. Thus, any escaped character is
-#          removed from $3 (fillchars) at the beginning.
-#          To color the filling sequence, you can add formating at the end of $1 (left)
-#          and/or at the beginning of $2 (right).
+#
+# This function would have been slow if you put escaped characters in $3 (fillchars)
+# and the width of the gap to fill is large. Thus, any escaped character is
+# removed from $3 (fillchars) at the beginning.
+#
+# To color the filling sequence, you can add formating at the end of $1 (left)
+# and/or at the beginning of $2 (right).
 _lp_fill() {
 
     local left="$1" right="$2" fillchars="${3:-" "}" splitends="${4:-1}"
@@ -1278,7 +1280,7 @@ _lp_fill() {
     local left_as_text="$ret"
     __lp_strip_escapes "${right}"
     local right_as_text="$ret"
-    # Width of the gap is width of the screen minus every printable characters.
+    # Width of the gap is width of the screen minus every printable character.
     local gap_width=$((${COLUMNS:-80}-${#left_as_text}-${#right_as_text}))
     if [[ $gap_width -lt 0 ]] ; then
         lp_fill="${left}${right}"

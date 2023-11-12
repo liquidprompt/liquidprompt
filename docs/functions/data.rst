@@ -329,7 +329,8 @@ Environment
    .. versionadded:: 2.0
 
    .. versionchanged:: 2.2
-      Can be disabled by :attr:`LP_ENABLE_MUX`.
+      Can be disabled by :attr:`LP_ENABLE_MUX`,
+      except if ``--internal`` is passed.
 
 .. function:: _lp_shell_level() -> var:lp_shell_level
 

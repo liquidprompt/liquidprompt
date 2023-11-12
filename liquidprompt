@@ -1257,15 +1257,14 @@ _lp_grep_fields() {
 # Adds as much $3 (fillchars) character(s) (e.g. spaces) between $1 (left) and $2 (right),
 # so as to make the resulting string the same width as the current terminal.
 # If $4 (splitends) is true, then will cut $3 (fillchars) so as to perfectly fill the available space.
-# If $5 (fillprefix) and $6 (fillsuffix) are passed, they will be used as perfix and suffix
-# of the filling sequence of characters.
 # WARNING: this function may be slow if you put escaped characters in $3 (fillchars)
 #          and the width of the gap to fill is large. Thus, any escaped character is
 #          removed from $3 (fillchars) at the beginning.
-#          To color the filling sequence, use $5 (fillprefix) and $6 (fillsuffix).
+#          To color the filling sequence, you can add formating at the end of $1 (left)
+#          and/or at the beginning of $2 (right).
 _lp_fill() {
 
-    local left="$1" right="$2" fillchars="${3:-" "}" splitends="${4:-1}" fillprefix="${5:-""}" fillsuffix="${6:-""}"
+    local left="$1" right="$2" fillchars="${3:-" "}" splitends="${4:-1}"
 
     # Remove any escaped character from fillchars,
     # to avoid any costly __lp_strip_escape call on a potentially long
@@ -1275,9 +1274,9 @@ _lp_fill() {
 
     # Compute the gap between left and right.
     local ret
-    __lp_strip_escapes "${left}${fillprefix}"
+    __lp_strip_escapes "${left}"
     local left_as_text="$ret"
-    __lp_strip_escapes "${fillsuffix}${right}"
+    __lp_strip_escapes "${right}"
     local right_as_text="$ret"
     # Width of the gap is width of the screen minus every printable characters.
     local gap_width=$((${COLUMNS:-80}-${#left_as_text}-${#right_as_text}))
@@ -1322,7 +1321,7 @@ _lp_fill() {
     fi
 
     # shellcheck disable=SC2034
-    lp_fill="${left}${fillprefix}${filled}${fillsuffix}${right}"
+    lp_fill="${left}${filled}${right}"
 }
 
 _lp_version_string() { # [major, [minor, [patch, [string, [number]]]]]

@@ -29,4 +29,8 @@ function test_external_tool_tester {
   . ./tools/external-tool-tester.sh >/dev/null
 }
 
+function test_config_from_doc {
+  . ./tools/config-from-doc.sh >/dev/null
+}
+
 . ./shunit2

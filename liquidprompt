@@ -1254,51 +1254,61 @@ _lp_grep_fields() {
     done <"$file"
 }
 
-# Adds as much $3 character (e.g. spaces) between $1 and $2,
+# Adds as much $3 (fillchars) character(s) (e.g. spaces) between $1 (left) and $2 (right),
 # so as to make the resulting string the same width as the current terminal.
+# If $4 (splitends) is true, then will cut $3 (fillchars) so as to perfectly fill the available space.
+#
+# This function would have been slow if you put escaped characters in $3 (fillchars)
+# and the width of the gap to fill is large. Thus, any escaped character is
+# removed from $3 (fillchars) at the beginning.
+#
+# To color the filling sequence, you can add formating at the end of $1 (left)
+# and/or at the beginning of $2 (right).
 _lp_fill() {
 
     local left="$1" right="$2" fillchars="${3:-" "}" splitends="${4:-1}"
 
+    # Remove any escaped character from fillchars,
+    # to avoid any costly __lp_strip_escape call on a potentially long
+    # sequence of characters.
+    __lp_strip_escapes "$fillchars"
+    fillchars="$ret"
+
     # Compute the gap between left and right.
     local ret
-    __lp_strip_escapes "$left"
+    __lp_strip_escapes "${left}"
     local left_as_text="$ret"
-    __lp_strip_escapes "$right"
+    __lp_strip_escapes "${right}"
     local right_as_text="$ret"
+    # Width of the gap is width of the screen minus every printable character.
     local gap_width=$((${COLUMNS:-80}-${#left_as_text}-${#right_as_text}))
     if [[ $gap_width -lt 0 ]] ; then
         lp_fill="${left}${right}"
         return 1
     fi
 
+    # Assemble a candidate filling sequence of characters.
     local filled=""
-    __lp_strip_escapes "$fillchars"
-    local fillchars_as_text="${ret}"
-    local fillchars_as_text_width=${#fillchars_as_text}
-    local nb_fillchars=$((gap_width/fillchars_as_text_width))
+    local fillchars_width=${#fillchars}
+    local nb_fillchars=$((gap_width/fillchars_width))
     local i
     for (( i=0; i < nb_fillchars; i++ )) ; do
         filled+="$fillchars"
     done
 
-    __lp_strip_escapes "$filled"
-    local actual_width=${#ret}
+    local actual_width=${#filled}
     # If there is still a gap (i.e. we have an unaligned multi-character fillchars).
     if [[ ${actual_width} -lt ${gap_width} ]] ; then
         # User asked for splitends.
         if [[ $splitends -ne 0 ]] ; then
-            # The last occurence is necessarily stripped from escaped sequences,
-            # or else we may have dangling sequences.
-            for (( i=_LP_FIRST_INDEX; i < $((${#fillchars_as_text}+_LP_FIRST_INDEX)); i++ )) ; do
+            for (( i=_LP_FIRST_INDEX; i < $((${#fillchars}+_LP_FIRST_INDEX)); i++ )) ; do
                 # Get one single character.
                 if (( _LP_SHELL_zsh )) ; then
-                    filled+="${fillchars_as_text[i,i]}"
+                    filled+="${fillchars[i,i]}"
                 else
-                    filled+="${fillchars_as_text:i:1}"
+                    filled+="${fillchars:i:1}"
                 fi
-                __lp_strip_escapes "$filled"
-                actual_width=${#ret}
+                actual_width=${#filled}
                 if [[ ${actual_width} -ge ${gap_width} ]] ; then
                     # Stop at this char if we're full.
                     break

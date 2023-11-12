@@ -804,11 +804,20 @@ function test_lp_fill {
     _lp_fill "L" "R" "123" 1
     assertEquals "multi-fill 6 split" "L1231R" "$lp_fill"
 
-    _lp_fill "L" "R" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 0
+    _lp_fill "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" "R" "123" 0
     assertEquals "multi-fill 6 with escape and no split" "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123 R" "$lp_fill"
 
+    _lp_fill "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}R" "123" 0
+    assertEquals "multi-fill 6 with double escapes and no split" "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123 ${_LP_OPEN_ESC}${_LP_CLOSE_ESC}R" "$lp_fill"
+
     _lp_fill "L" "R" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 1
+    assertEquals "multi-fill 6 with wrong escape and split" "L1231R" "$lp_fill"
+
+    _lp_fill "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" "R" "123" 1
     assertEquals "multi-fill 6 with escape and split" "L${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231R" "$lp_fill"
+
+    _lp_fill "L" "R" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" 1
+    assertEquals "multi-fill 6 with double escapes and split" "L1231R" "$lp_fill"
 
     COLUMNS=11
     _lp_fill "Left" "Right" "="
@@ -826,11 +835,11 @@ function test_lp_fill {
     _lp_fill "Le" "Ri" "123" 1
     assertEquals "multi-fill 11 with split" "Le1231231Ri" "$lp_fill"
 
-    _lp_fill "Le" "Ri" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 0
-    assertEquals "multi-fill 11 with escape and no split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123 Ri" "$lp_fill"
+    _lp_fill "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" "Ri" "123" 0
+    assertEquals "multi-fill 11 with escape and no split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123123 Ri" "$lp_fill"
 
-    _lp_fill "Le" "Ri" "${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123" 1
-    assertEquals "multi-fill 11 with escape and split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231Ri" "$lp_fill"
+    _lp_fill "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" "Ri" "123${_LP_OPEN_ESC}${_LP_CLOSE_ESC}" 1
+    assertEquals "multi-fill 11 with double escape and split" "Le${_LP_OPEN_ESC}${_LP_CLOSE_ESC}1231231Ri" "$lp_fill"
 
     # The following tests require a UTF-8 locale to be set.
     # The Windows runners have issues with these Unicode characters.

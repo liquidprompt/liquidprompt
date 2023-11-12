@@ -2,8 +2,6 @@
 #shellcheck disable=SC2317
 set -u
 
-COLUMNS=160
-
 . ./liquidprompt --no-activate
 
 # If a theme was given, use the theme and source all other arguments.
@@ -170,7 +168,6 @@ printf 'Medium prompt:\n\n%s\n\n' "$PS1"
 _long_config() {
   LP_ENABLE_SHORTEN_PATH=1
   LP_PATH_LENGTH=29
-  COLUMNS=100
   LP_PATH_KEEP=1
   LP_PATH_VCS_ROOT=1
   LP_ENABLE_TIME=1

@@ -173,7 +173,7 @@ fi
 __lp_set_prompt
 __remove_shell_escapes
 
-printf 'Short prompt:\n%s' "$PS1"
+printf 'Short prompt:\n\n%s' "$PS1"
 
 
 ## Medium
@@ -239,7 +239,7 @@ _config
 __lp_set_prompt
 __remove_shell_escapes
 
-printf '\n\nMedium prompt:\n%s' "$PS1"
+printf '\n\nMedium prompt:\n\n%s' "$PS1"
 
 
 ## Long
@@ -342,6 +342,6 @@ _long_config
 __lp_set_prompt
 __remove_shell_escapes
 
-printf '\n\nLong prompt:\n%s' "$PS1"
+printf '\n\nLong prompt:\n\n%s' "$PS1"
 
 # vim: ft=sh et sts=2 sw=2 tw=120

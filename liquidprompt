@@ -4689,7 +4689,7 @@ _lp_default_theme_prompt_data() {
 
 _lp_default_theme_prompt_template() {
     if [[ -f "${LP_PS1_FILE-}" ]]; then
-        # shellcheck source=themes/minimal/minimal.ps1
+        # shellcheck source=templates/minimal/minimal.ps1
         source "$LP_PS1_FILE"
     fi
 

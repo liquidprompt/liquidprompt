@@ -10,17 +10,23 @@ Print out example prompts based on a standard set of input conditions. Designed
 to showcase Liquid Prompt themes.
 
 Options:
-  --config-file=<filename> Load <filename> as an additional Liquid Prompt
-                           config file.
-  --user-config            Load the user, or if not found, the system config
-                           file.
-  --reproducible           Set the terminal size to a static value. Load no
-                           config files. Overrides any --config-file or
-                           --user-config arguments.
-  -h, --help               Print this help text.
+  -h, --help                 Print this help text.
+  --reproducible             Set the terminal size to a static value. Load no
+                             config files. Overrides any --config-file or
+                             --user-config arguments.
+  --user-config              Load the user, or if not found, the system config
+                             file.
+  --template-file=<filename> Load <filename> as a default theme template.
+                             Implies "default" theme.
+  --config-file=<filename>   Load <filename> as an additional Liquid Prompt
+                             config file.
 
-Example usage: %s unfold themes/unfold/unfold.theme
-' "$0" "$0"
+Example usage:
+%s alternate_vcs themes/alternate_vcs/alternate_vcs.theme
+%s unfold themes/unfold/unfold.theme --reproducible
+%s unfold themes/unfold/unfold.theme --user-config --config-file contrib/presets/colors/256-colors-dark.conf
+%s default --template-file templates/minimal/minimal.ps1
+' "$0" "$0" "$0" "$0" "$0"
 }
 
 sourced_files=()
@@ -42,6 +48,11 @@ while [[ -n ${1-} ]]; do
       shift
     elif [[ $1 == "--config-file="* ]]; then
       config_files+=("${1#"--config-file="}")
+    elif [[ $1 == "--template-file" ]]; then
+      LP_PS1_FILE="$2"
+      shift
+    elif [[ $1 == "--template-file="* ]]; then
+      LP_PS1_FILE="${1#"--template-file="}"
     elif [[ $1 == "--user-config" ]]; then
       user_config=true
     elif [[ $1 == "--reproducible" ]]; then
@@ -59,8 +70,12 @@ while [[ -n ${1-} ]]; do
 done
 
 if [[ -z ${theme-} ]]; then
-  usage
-  exit 2
+  if [[ -n ${LP_PS1_FILE-} ]]; then
+    theme=default
+  else
+    usage
+    exit 2
+  fi
 fi
 
 activate_args=()
@@ -72,6 +87,10 @@ activate_args+=(${config_files[@]+"${config_files[@]}"})
 if [[ $reproducible == "true" ]]; then
   # Reset args to only no config.
   activate_args=("--no-config")
+
+  if [[ $user_config == "true" || ${#config_files[@]} -gt 0 ]]; then
+    printf "WARNING: the use of '--reproducible' overrides --config-file and --user-config.\n" >&2
+  fi
 fi
 
 . ./liquidprompt --no-activate

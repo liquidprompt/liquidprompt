@@ -451,7 +451,7 @@ Features
    :value: 1
 
    Detect if the connection has X11 support.
-   
+
    In the default theme, display a green ``@`` if it does; a yellow one if not.
 
    See also :attr:`LP_COLOR_X11_ON` and :attr:`LP_COLOR_X11_OFF`.

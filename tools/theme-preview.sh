@@ -2,7 +2,10 @@
 #shellcheck disable=SC2317
 set -u
 
-usage() {
+. $(dirname $0)/../liquidprompt --no-activate
+
+# If a theme was given, use the theme and source all other arguments.
+if [[ -z ${1-} || $1 == --help ]]; then
   printf '
 Usage: %s theme [options...] [sourced files...]
 

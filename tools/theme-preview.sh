@@ -19,14 +19,14 @@ Options:
   --template-file=<filename> Load <filename> as a default theme template.
                              Implies "default" theme.
   --config-file=<filename>   Load <filename> as an additional Liquid Prompt
-                             config file.
+                             config file or config presets.
 
 Example usage:
 %s alternate_vcs themes/alternate_vcs/alternate_vcs.theme
 %s unfold themes/unfold/unfold.theme --reproducible
 %s unfold themes/unfold/unfold.theme --user-config --config-file contrib/presets/colors/256-colors-dark.conf
 %s default --template-file templates/minimal/minimal.ps1
-' "$0" "$0" "$0" "$0" "$0"
+' 1>&2 "$0" "$0" "$0" "$0" "$0"
 }
 
 sourced_files=()

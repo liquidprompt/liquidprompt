@@ -419,6 +419,9 @@ __lp_source_config() {
     LP_DELIMITER_KUBECONTEXT_PREFIX=${LP_DELIMITER_KUBECONTEXT_PREFIX:-""}
     LP_ENV_VARS=( ${LP_ENV_VARS[@]+"${LP_ENV_VARS[@]}"} )
 
+    LP_ENABLE_DISPLAY=${LP_ENABLE_DISPLAY:-1}
+    LP_ENABLE_CHROOT=${LP_ENABLE_CHROOT:-1}
+    LP_ENABLE_MULTIPLEXER=${LP_ENABLE_MULTIPLEXER:-1}
     LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
     LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
@@ -841,7 +844,7 @@ lp_activate() {
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
     # If we are running in a terminal multiplexer, special title escapes
-    if _lp_multiplexer; then
+    if _lp_multiplexer --internal; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         if (( LP_ENABLE_TMUX_TITLE_PANES )) && [[ $lp_multiplexer == tmux ]]; then
             LP_TITLE_OPEN=$'\E]2'
@@ -1607,6 +1610,7 @@ _lp_path_format() {
 
 # If we are connected with a X11 support
 _lp_connected_display() {
+    (( LP_ENABLE_DISPLAY )) || return 2
     [[ -n "${DISPLAY-}" ]]
 }
 
@@ -1628,6 +1632,7 @@ _lp_connection() {
 }
 
 _lp_chroot() {
+    (( LP_ENABLE_CHROOT )) || return 2
     if [[ -r /etc/debian_chroot ]]; then
         IFS= read -r lp_chroot </etc/debian_chroot
         if [[ -n "$lp_chroot" ]]; then
@@ -1848,8 +1853,16 @@ _lp_error_meaning_color() {
     lp_error_meaning_color="${LP_COLOR_ERR_MEANING}(${lp_error_meaning})${NO_COL}"
 }
 
+# Use --internal to avoid being disabled by LP_ENABLE_MULTIPLEXER.
+# Note: this still tests for LP_ENABLE_SCREEN_TITLE and LP_ENABLE_TMUX_TITLE_PANES.
 # shellcheck disable=SC2034
-_lp_multiplexer() {
+_lp_multiplexer() { # [--internal]
+    if [[ ${1-} == "--internal" ]]; then
+        (( LP_ENABLE_SCREEN_TITLE || LP_ENABLE_TMUX_TITLE_PANES )) || return 2
+    else
+        (( LP_ENABLE_MULTIPLEXER )) || return 2
+    fi
+
     if [[ -n ${TMUX-} ]]; then
         lp_multiplexer=tmux
         return 0

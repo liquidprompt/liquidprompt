@@ -23,10 +23,10 @@ _lp_unfold_theme_prompt() {
     left+="${LP_VCS}"
 
     # Add the list of development environments/config/etc.
-    local right+="${LP_DEV_ENV} ${LP_JOBS}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_TIME}"
+    local right="${LP_DEV_ENV} ${LP_JOBS}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_TIME}"
 
     # add return code and prompt mark
-    local main+="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
+    local main="${LP_RUNTIME}${LP_ERR}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
     local n=$'\n'
     _lp_fill "$left" "$right" " " 0 "" ""

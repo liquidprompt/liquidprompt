@@ -20,10 +20,17 @@ function test_theme_preview {
   . ./tools/theme-preview.sh powerline ./themes/powerline/powerline.theme
   . ./tools/theme-preview.sh powerline_full ./themes/powerline/powerline.theme
   . ./tools/theme-preview.sh alternate_vcs ./themes/alternate_vcs/alternate_vcs.theme
+  . ./tools/theme-preview.sh unfold ./themes/unfold/unfold.theme --reproducible
+  . ./tools/theme-preview.sh unfold ./themes/unfold/unfold.theme --config-file contrib/presets/colors/256-colors-dark.conf
+  . ./tools/theme-preview.sh --template-file=templates/minimal/minimal.ps1
 }
 
 function test_external_tool_tester {
   . ./tools/external-tool-tester.sh >/dev/null
+}
+
+function test_config_from_doc {
+  . ./tools/config-from-doc.sh >/dev/null
 }
 
 . ./shunit2

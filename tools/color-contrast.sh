@@ -186,7 +186,7 @@ function print_info() # ansi_color
     echo "ANSI: $ansi"
 
     if [[ "$ansi" -ge 0 && "$ansi" -le "15" ]]; then
-        echo "Warning: this color may appear different on screen, depending on your terminal configuration."
+        echo "Warning: this color may appear different on screen, depending on your terminal configuration. I will use the orignal ANSI definition."
     fi
 
     ansi2rgb $ansi
@@ -281,14 +281,16 @@ function bfg() # bg fg
 }
 
 # Print a color block.
-function print_block() # how panel [contrast_min=7 [contrast_ref=""]]
+function print_block() # how panel [contrast_min=7 [contrast_ref="" [contrast_ref2=""]]]
 {
-    local how contrast_min contrast_ref
+    local how contrast_min contrast_ref contrast_ref2 no
     how=${1}
     local -a panel
     read -ra panel <<< "${2}"
     contrast_min=${3-7}
     contrast_ref=${4-""}
+    contrast_ref2=${5-""}
+    no=$'\033[0m'
 
     IFS='—' read -ra items <<< "${panel[*]}"
     for i in ${items[@]}; do
@@ -296,12 +298,25 @@ function print_block() # how panel [contrast_min=7 [contrast_ref=""]]
             printf " "
         else
             if [[ -n "$contrast_ref" ]]; then
-                contrast $i $contrast_ref
-                if (( $( bc <<< "$contrast >= $contrast_min" ) )); then
-                    printf "%s %03d%s" "$($how $i $contrast_ref)" "${i}" "${no}"
+                if [[ -n "$contrast_ref2" ]]; then
+                    contrast $i $contrast_ref
+                    cont_ref=$contrast
+
+                    contrast $i $contrast_ref2
+                    cont_ref2=$contrast
+
+                    if (( $( bc <<< "$cont_ref >= $contrast_min" ) && $( bc <<< "$cont_ref2 >= $contrast_min" ) )); then
+                        printf "%s %03d%s" "$($how $i $contrast_ref)" "${i}" "${no}"
+                    else
+                        printf " ···"
+                    fi
                 else
-                    # printf " %03d" "$(round $contrast 0)"
-                    printf " ···"
+                    contrast $i $contrast_ref
+                    if (( $( bc <<< "$contrast >= $contrast_min" ) )); then
+                        printf "%s %03d%s" "$($how $i $contrast_ref)" "${i}" "${no}"
+                    else
+                        printf " ···"
+                    fi
                 fi
             else
                 printf "%s %03d%s" "$($how $i $contrast_ref)" "${i}" "${no}"
@@ -312,46 +327,54 @@ function print_block() # how panel [contrast_min=7 [contrast_ref=""]]
 }
 
 # Print columns of color panels.
-function print_panel() # along [contrast_min=7 [contrast_ref=""]]
+function print_panel() # along [contrast_min=7 [contrast_ref="" [contrast_ref2=""]]]
 {
-    local along contrast_min contrast_ref
+    local along contrast_min contrast_ref contrast_ref2
     along="$1"
     contrast_min=${2-7}
     contrast_ref=${3-""}
+    contrast_ref2=${4-""}
 
     IFS='|' read -ra panels <<< "$along"
     for panel in ${panels[@]}; do
-        print_block "fg" "${panel[@]}" $contrast_min $contrast_ref
+        print_block "fg" "${panel[@]}" $contrast_min $contrast_ref $contrast_ref2
         printf "\t"
         if [[ -n "$contrast_ref" ]]; then
-            print_block "bfg" "${panel[@]}" $contrast_min $contrast_ref
+            print_block "bfg" "${panel[@]}" $contrast_min $contrast_ref $contrast_ref2
             printf "\t"
-            print_block "fbg" "${panel[@]}" $contrast_min $contrast_ref
+            print_block "fbg" "${panel[@]}" $contrast_min $contrast_ref $contrast_ref2
+
+            if [[ -n "$contrast_ref2" ]]; then
+                print_block "bfg" "${panel[@]}" $contrast_min $contrast_ref2 $contrast_ref
+                printf "\t"
+                print_block "fbg" "${panel[@]}" $contrast_min $contrast_ref2 $contrast_ref
+            fi
         else
-            print_block "hbg" "${panel[@]}" $contrast_min $contrast_ref
+            print_block "hbg" "${panel[@]}" $contrast_min $contrast_ref $contrast_ref2
         fi
         printf "\n"
     done
 }
 
 # Print the three panels of ANSI.
-function print_ansi() # [contrast_min=7 [contrast_ref=""]]
+function print_ansi() # [contrast_min=7 [contrast_ref="" [contrast_ref2=""]]]
 {
+    local contrast_min contrast_ref contrast_ref2
     contrast_min=${1-7}
     contrast_ref=${2-""}
-    no=$'\033[0m'
+    contrast_ref2=${3-""}
 
     # 16 core colors.
     along_vert 0 8 2
-    print_panel "$along_vert" $contrast_min $contrast_ref
+    print_panel "$along_vert" $contrast_min $contrast_ref $contrast_ref2
 
     # Color cube.
     along_vert 16 6 $((6*6)) 5
-    print_panel "$along_vert" $contrast_min $contrast_ref
+    print_panel "$along_vert" $contrast_min $contrast_ref $contrast_ref2
 
     # Grey scale.
     along_vert $((16+6*6*6)) 8 3
-    print_panel "$along_vert" $contrast_min $contrast_ref
+    print_panel "$along_vert" $contrast_min $contrast_ref $contrast_ref2
 
 }
 
@@ -365,9 +388,9 @@ elif [[ $# -eq 1 ]]; then
     echo "--"
 
     no=$'\033[0m'
-    printf "fg1    : $(fg $1)Logoden biniou degemer mat${no}\n"
-    printf "    bg1: $(bg $1)Mederieg mel dlead keit ur${no}\n"
-    printf " HC/bg1: $(hbg $1)Pempoull vro pomper lezenn${no}\n"
+    printf "fg    : $(fg $1)Logoden biniou degemer mat${no}\n"
+    printf "    bg: $(bg $1)Mederieg mel dlead keit ur${no}\n"
+    printf " HC/bg: $(hbg $1)Pempoull vro pomper lezenn${no}\n"
     echo "--"
 
     echo "Compatible level AAA:"
@@ -379,6 +402,7 @@ elif [[ $# -eq 1 ]]; then
 
 # Two colors passed => print the contrast level and exit on error if below AAA.
 elif [[ $# -eq 2 ]]; then
+
     print_info $1
     echo "--"
     print_info $2
@@ -388,7 +412,7 @@ elif [[ $# -eq 2 ]]; then
     printf "fg1/bg2: $(fg $1)$(bg $2)Logoden biniou degemer mat${no}\n"
     printf "fg2/bg1: $(fg $2)$(bg $1)C’houevr Oskaleg d’a pakad${no}\n"
     printf "fg1    : $(fg $1)An penn ar bed egistomp ur${no}\n"
-    printf "fg2    : $(fg $2)lakaat leue dir rumm Malo!${no}\n"
+    printf "fg2    : $(fg $2)Lakaat leue dir rumm Malo!${no}\n"
     printf "    bg1: $(bg $1)Mederieg mel dlead keit ur${no}\n"
     printf "    bg2: $(bg $2)Gwened broustañ eno sal an${no}\n"
     printf " HC/bg1: $(hbg $1)Pempoull vro pomper lezenn${no}\n"
@@ -405,4 +429,31 @@ elif [[ $# -eq 2 ]]; then
     else
         exit 2
     fi
+
+# Two color and explicit --show passed => print four filtered ANSI tables on AA contrast levels.
+elif [[ $# -eq 3 && "$3" == "--show" ]]; then
+
+    print_info $1
+    echo "--"
+    print_info $2
+    echo "--"
+
+    no=$'\033[0m'
+    printf "fg1/bg2: $(fg $1)$(bg $2)Logoden biniou degemer mat${no}\n"
+    printf "fg2/bg1: $(fg $2)$(bg $1)C’houevr Oskaleg d’a pakad${no}\n"
+    printf "fg1    : $(fg $1)An penn ar bed egistomp ur${no}\n"
+    printf "fg2    : $(fg $2)Lakaat leue dir rumm Malo!${no}\n"
+    printf "    bg1: $(bg $1)Mederieg mel dlead keit ur${no}\n"
+    printf "    bg2: $(bg $2)Gwened broustañ eno sal an${no}\n"
+    printf " HC/bg1: $(hbg $1)Pempoull vro pomper lezenn${no}\n"
+    printf " HC/bg2: $(hbg $2)Seitek da beajourien zoken${no}\n"
+    echo "--"
+
+    # echo "Compatible level AAA:"
+    # print_ansi 7 $1 $2
+    # echo "--"
+
+    echo "Compatible level AA:"
+    print_ansi 4 $1 $2
+
 fi

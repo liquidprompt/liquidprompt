@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # ANSI 256 colors index to [0,255] RGB 3-tuple.
 function ansi2rgb() # ansi_color_index -> RGB array

@@ -2,11 +2,9 @@
 #shellcheck disable=SC2317
 set -u
 
-. $(dirname $0)/../liquidprompt --no-activate
+# . $(dirname $0)/../liquidprompt --no-activate
 
-# If a theme was given, use the theme and source all other arguments.
-if [[ -z ${1-} || $1 == --help ]]; then
-  printf '
+usage() {  printf '
 Usage: %s theme [options...] [sourced files...]
 
 Print out example prompts based on a standard set of input conditions. Designed
@@ -176,7 +174,7 @@ fi
 __lp_set_prompt
 __remove_shell_escapes
 
-printf 'Short prompt:\n\n%s' "$PS1"
+printf 'Short prompt:\n\n%s\n' "$PS1"
 
 
 ## Medium
@@ -242,7 +240,7 @@ _config
 __lp_set_prompt
 __remove_shell_escapes
 
-printf '\n\nMedium prompt:\n\n%s' "$PS1"
+printf '\nMedium prompt:\n\n%s\n' "$PS1"
 
 
 ## Long
@@ -345,6 +343,6 @@ _long_config
 __lp_set_prompt
 __remove_shell_escapes
 
-printf '\n\nLong prompt:\n\n%s' "$PS1"
+printf '\nLong prompt:\n\n%s\n' "$PS1"
 
 # vim: ft=sh et sts=2 sw=2 tw=120

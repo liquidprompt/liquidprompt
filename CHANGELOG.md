@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0-rc.2] - 2023-11-24
+### Added
+- **chroot**: `LP_ENABLE_CHROOT` config option ([#801])
+- **display**: `LP_ENABLE_DISPLAY` config option ([#801])
+- **env**: `end_color` paramater to `_lp_env_vars()` ([#798])
+- **multiplexer**: `LP_ENABLE_MUX` config option ([#801])
+- **temp**: `LP_TEMP_SYSFS_IGNORE_FILES` config option ([#807])
+- **theme**: Extra optional parameters to `theme-preview.sh` ([#805])
+
+### Fixed
+- **theme**: Avoid costly strip escape on filling sequence ([#803])
+- **theme**: Minimal template not working at all ([#805])
+- **zsh**: Zsh crash in Unfold theme ([#805])
+
+### Changed
+- **docs**: Update docs with new features in v2.2 ([#795])
+- **theme**: Minimal template moved from `themes/` to `templates/` ([#805])
+- **theme**: Update Unfold theme ([#795])
+
+
 ## [2.2.0-rc.1] - 2023-10-23
 ### Added
 - **general**: `_lp_fill()` function for use by themes ([#738])
@@ -844,6 +864,12 @@ for help.
 [#784]: https://github.com/liquidprompt/liquidprompt/pull/784
 [#788]: https://github.com/liquidprompt/liquidprompt/pull/788
 [#792]: https://github.com/liquidprompt/liquidprompt/pull/792
+[#795]: https://github.com/liquidprompt/liquidprompt/pull/795
+[#798]: https://github.com/liquidprompt/liquidprompt/pull/798
+[#801]: https://github.com/liquidprompt/liquidprompt/pull/801
+[#803]: https://github.com/liquidprompt/liquidprompt/pull/803
+[#805]: https://github.com/liquidprompt/liquidprompt/pull/805
+[#807]: https://github.com/liquidprompt/liquidprompt/issues/807
 
 [0200b99]: https://github.com/liquidprompt/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/liquidprompt/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553

@@ -1226,7 +1226,7 @@ Features
    :value: ()
 
    Paths to files in the sysfs interface that should be ignored when reading
-   temperature sessors. A path can include globs.
+   temperature sensors. A path can include globs.
 
    See also :attr:`LP_ENABLE_TEMP`.
 

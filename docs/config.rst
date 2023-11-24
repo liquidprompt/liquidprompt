@@ -1006,8 +1006,8 @@ Features
    Will be disabled if neither ``sensors`` nor ``acpi`` are found, or fails to
    read from the Linux sysfs system.
 
-   See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`, and
-   :attr:`LP_COLORMAP`.
+   See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`,
+   :attr:`LP_COLORMAP`, and :attr:`LP_TEMP_SYSFS_IGNORE_FILES`.
 
 .. attribute:: LP_ENABLE_TERRAFORM
    :type: bool
@@ -1220,6 +1220,17 @@ Features
    .. _`RVM prompt`: https://rvm.io/workflow/prompt
 
    .. versionadded:: 2.1
+
+.. attribute:: LP_TEMP_SYSFS_IGNORE_FILES
+   :type: array<string>
+   :value: ()
+
+   Paths to files in the sysfs interface that should be ignored when reading
+   temperature sessors. A path can include globs.
+
+   See also :attr:`LP_ENABLE_TEMP`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_TIME_ANALOG
    :type: bool

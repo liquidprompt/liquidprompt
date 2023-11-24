@@ -463,6 +463,7 @@ __lp_source_config() {
     LP_ENABLE_TMUX_TITLE_PANES=${LP_ENABLE_TMUX_TITLE_PANES:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
+    LP_TEMP_SYSFS_IGNORE_FILES=( ${LP_TEMP_SYSFS_IGNORE_FILES[@]+"${LP_TEMP_SYSFS_IGNORE_FILES[@]}"} )
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
     LP_ENABLE_COLOR=${LP_ENABLE_COLOR:-1}
     LP_ENABLE_ERROR=${LP_ENABLE_ERROR:-1}
@@ -4050,6 +4051,12 @@ __lp_temp_sysfs() {
     local -i temperature
 
     for temp_file in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
+        for ignore_file in ${LP_TEMP_SYSFS_IGNORE_FILES[@]+"${LP_TEMP_SYSFS_IGNORE_FILES[@]}"}; do
+            # We want to glob match here.
+            # shellcheck disable=SC2053
+            [[ "$temp_file" == $ignore_file ]] && continue 2
+        done
+
         if [[ ! -r $temp_file ]]; then
             continue
         fi

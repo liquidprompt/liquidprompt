@@ -112,7 +112,7 @@ code change:
     - [ ] subshells are avoided as much as possible
 - tests and checks have been added, ran, and their warnings fixed:
     - [ ] unit tests have been updated (see `tests/test_*.sh` files)
-    - [ ] ran `test.sh`
+    - [ ] ran `tests.sh`
     - [ ] ran `shellcheck.sh` (requires [shellcheck](https://github.com/koalaman/shellcheck#user-content-installing)).
 - documentation have been updated accordingly:
     - [ ] functions and attributes are documented in alphabetical order

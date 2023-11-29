@@ -321,6 +321,12 @@ theme template and use the following sections.
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_PERL_VENV
+
+   The current Perl virtual environment. See :attr:`LP_ENABLE_PERL_VENV`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_RUBY_VENV
 
    The current Ruby virtual environment. See :attr:`LP_ENABLE_RUBY_VENV`.

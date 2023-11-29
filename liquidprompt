@@ -449,6 +449,7 @@ __lp_source_config() {
     LP_ENABLE_RUBY_VENV=${LP_ENABLE_RUBY_VENV:-1}
     LP_RUBY_RVM_PROMPT_OPTIONS=( ${LP_RUBY_RVM_PROMPT_OPTIONS[@]+"${LP_RUBY_RVM_PROMPT_OPTIONS[@]}"} )
     [[ ${#LP_RUBY_RVM_PROMPT_OPTIONS[@]} == 0 ]] && LP_RUBY_RVM_PROMPT_OPTIONS=(i v g s)
+    LP_ENABLE_PERL_VENV=${LP_ENABLE_PERL_VENV:-1}
     LP_ENABLE_TERRAFORM=${LP_ENABLE_TERRAFORM:-0}
     LP_ENABLE_CONTAINER=${LP_ENABLE_CONTAINER:-0}
     LP_ENABLE_SCLS=${LP_ENABLE_SCLS:-1}
@@ -575,6 +576,7 @@ __lp_source_config() {
     LP_COLOR_VIRTUALENV=${LP_COLOR_VIRTUALENV:-$CYAN}
     LP_COLOR_NODE_VENV=${LP_COLOR_NODE_VENV:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_RUBY_VENV=${LP_COLOR_RUBY_VENV:-$LP_COLOR_VIRTUALENV}
+    LP_COLOR_PERL_VENV=${LP_COLOR_PERL_VENV:-$LP_COLOR_VIRTUALENV}
     LP_COLOR_TERRAFORM=${LP_COLOR_TERRAFORM:-$PINK}
     LP_COLOR_CONTAINER=${LP_COLOR_CONTAINER:-$BOLD_BLUE}
     LP_COLOR_DIRSTACK=${LP_COLOR_DIRSTACK:-$BOLD_YELLOW}
@@ -838,6 +840,16 @@ lp_activate() {
             _LP_RUBY_VENV_PROGRAM=rbenv
         else
             LP_ENABLE_RUBY_VENV=0
+        fi
+    fi
+
+    if (( LP_ENABLE_PERL_VENV )) ; then
+        if command -v perlbrew >/dev/null ; then
+            _LP_PERL_VENV_PROGRAM=perlbrew
+        elif command -v plenv >/dev/null ; then
+            _LP_PERL_VENV_PROGRAM=plenv
+        else
+            LP_ENABLE_PERL_VENV=0
         fi
     fi
 
@@ -2037,6 +2049,34 @@ _lp_node_env_color() {
     _lp_node_env || return "$?"
 
     lp_node_env_color="${LP_COLOR_NODE_VENV}${lp_node_env}${NO_COL}"
+}
+
+_lp_perl_env() {
+    (( LP_ENABLE_PERL_VENV )) || return 2
+
+    local ret
+
+    if [[ "$_LP_PERL_VENV_PROGRAM" = "perlbrew" ]] ; then
+        local perlbrew_perl_ver="$(perlbrew use)"
+
+        # Example: Currently using perl-5.38.0
+        __lp_escape "${perlbrew_perl_ver##*perl-}"
+        lp_perl_env=$ret
+    elif [[ "$_LP_PERL_VENV_PROGRAM" = "plenv" ]] ; then
+        local plenv_ver="$(plenv version)"
+        # Only first word is necessary as for rbenv
+        __lp_escape "${plenv_ver%%" (set"*}"
+        lp_perl_env=$ret
+    else
+        return 1
+    fi
+}
+
+_lp_perl_env_color() {
+    unset lp_perl_env_color
+    _lp_perl_env || return "$?"
+
+    lp_perl_env_color="${LP_COLOR_PERL_VENV}${lp_perl_env}${NO_COL}"
 }
 
 _lp_ruby_env() {
@@ -4425,6 +4465,7 @@ _lp_dev_env_color() {
         "${lp_python_env_color-}"
         "${lp_node_env_color-}"
         "${lp_ruby_env_color-}"
+        "${lp_perl_env_color-}"
         "${lp_terraform_env_color-}"
         "${lp_kubernetes_context_color-}"
         "${lp_cmake_color-}"
@@ -4620,6 +4661,13 @@ _lp_default_theme_prompt_data() {
     else
         LP_RUBY_VENV=
     fi
+
+    if _lp_perl_env_color; then
+        LP_PERL_VENV=" $lp_perl_env_color"
+    else
+        LP_PERL_VENV=
+    fi
+
 
     if _lp_kubernetes_context_color; then
         LP_KUBECONTEXT=" $lp_kubernetes_context_color"

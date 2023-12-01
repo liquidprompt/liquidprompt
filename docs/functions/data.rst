@@ -89,6 +89,15 @@ Development Environment
 
    .. versionadded:: 2.1
 
+.. function:: _lp_perl_env() -> var:lp_perl_env
+
+   Returns ``true`` if a Perlbrew or PLENV Perl environment is detected.
+   Returns the virtual environment name.
+
+   Can be disabled by :attr:`LP_ENABLE_PERL_VENV`.
+
+   .. versionadded:: 2.2
+
 .. function:: _lp_python_env() -> var:lp_python_env
 
    Returns ``true`` if a Python or Conda environment is detected. Returns the

@@ -315,6 +315,7 @@ All Liquid Prompt config options are respected, **except for**:
 * :attr:`LP_COLOR_NOWRITE`
 * :attr:`LP_COLOR_PATH_ROOT`
 * :attr:`LP_COLOR_PATH`
+* :attr:`LP_COLOR_PERL_VENV`
 * :attr:`LP_COLOR_PROXY`
 * :attr:`LP_COLOR_RUBY_VENV`
 * :attr:`LP_COLOR_RUNTIME`
@@ -396,6 +397,13 @@ _______
    environment.
 
    .. versionadded:: 2.1
+
+.. attribute:: POWERLINE_PERL_ENV_MARKER
+   :type: string
+   :value: "perl: "
+
+   The marker string used to indicate the following string is a Perl
+   environment.
 
 .. attribute:: POWERLINE_PROXY_MARKER
    :type: string

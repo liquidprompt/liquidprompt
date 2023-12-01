@@ -162,6 +162,7 @@ specific text and formatting may change.
    - :attr:`LP_CONTAINER`
    - :attr:`LP_VENV`
    - :attr:`LP_NODE_VENV`
+   - :attr:`LP_PERL_VENV`
    - :attr:`LP_RUBY_VENV`
    - :attr:`LP_TFSPACE`
    - :attr:`LP_KUBECONTEXT`
@@ -336,6 +337,12 @@ specific text and formatting may change.
 
    The mark and the value itself are colored with :attr:`LP_COLOR_RAM`, while
    the unit is colored with :attr:`LP_COLOR_RAM_UNITS`.
+
+   .. versionadded:: 2.2
+
+.. function:: _lp_perl_env_color() -> var:lp_perl_env_color
+
+   Returns :func:`_lp_perl_env` with color from :attr:`LP_COLOR_PERL_VENV`.
 
    .. versionadded:: 2.2
 

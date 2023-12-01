@@ -844,6 +844,19 @@ Features
    .. versionadded:: 2.2
       Before this version, this feature was always enabled.
 
+.. attribute:: LP_ENABLE_PERL_VENV
+   :type: bool
+   :value: 1
+
+   Display the currently activated PERLBREW_ or PLENV_ virtual environment.
+
+   See also: :attr:`LP_COLOR_PERL_VENV`.
+
+   .. _PERLBREW: https://perlbrew.pl/
+   .. _PLENV: https://github.com/tokuhirom/plenv
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_ENABLE_PERM
    :type: bool
    :value: 1
@@ -2360,6 +2373,16 @@ Valid preset color variables are:
    :attr:`LP_PATH_VCS_ROOT` must be enabled to have any effect.
 
    .. versionadded:: 2.0
+
+.. attribute:: LP_COLOR_PERL_VENV
+   :type: string
+   :value: $LP_COLOR_VIRTUALENV
+
+   Color used for displaying a Perl virtual environment.
+
+   See also: :attr:`LP_ENABLE_PERL_VENV`.
+
+   .. versionadded:: 2.2
 
 .. attribute:: LP_COLOR_PROXY
    :type: string

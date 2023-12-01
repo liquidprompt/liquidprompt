@@ -151,6 +151,7 @@ _lp_powerline_full_theme_activate() {
     POWERLINE_KUBECONTEXT_MARKER=${POWERLINE_KUBECONTEXT_MARKER:-$LP_MARK_KUBECONTEXT}
     POWERLINE_NODE_ENV_MARKER=${POWERLINE_NODE_ENV_MARKER:-"node: "}
     POWERLINE_PROXY_MARKER=${POWERLINE_PROXY_MARKER:-"proxy: "}
+    POWERLINE_PERL_ENV_MARKER=${POWERLINE_PERL_ENV_MARKER:-"perl: "}
     POWERLINE_RUBY_ENV_MARKER=${POWERLINE_RUBY_ENV_MARKER:-"ruby: "}
     POWERLINE_SOFTWARE_COLLECTION_MARKER=${POWERLINE_SOFTWARE_COLLECTION_MARKER:-"(sc) "}
     POWERLINE_TERRAFORM_ENV_MARKER=${POWERLINE_TERRAFORM_ENV_MARKER:-"(tf) "}
@@ -297,6 +298,11 @@ _lp_powerline_full_theme_prompt() {
     local lp_node_env
     if _lp_node_env; then
         __powerline_section "${POWERLINE_NODE_ENV_MARKER}${lp_node_env}" "${POWERLINE_NODE_ENV_COLOR[@]}"
+    fi
+
+    local lp_perl_env
+    if _lp_perl_env; then
+        __powerline_section "${POWERLINE_PERL_ENV_MARKER}${lp_perl_env}" "${POWERLINE_PERL_ENV_COLOR[@]}"
     fi
 
     local lp_ruby_env

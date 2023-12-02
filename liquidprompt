@@ -295,7 +295,7 @@ _lp_os_color() {
 #################
 
 # Return true if the current Liquid Prompt version is greater than or equal to the specified version.
-# [OPTIONAL?] Return 1 if minor or less version difference, 2 if major difference.
+# Return 1 if minor or less version difference, 2 if major difference.
 _lp_version_greatereq() {  # major, minor, [patch], [string], [number]
     local major="$1" minor="$2" patch="${3-}" string="${4-}" number="${5-}"
     if (( major > _LP_VERSION[_LP_FIRST_INDEX+0] )); then
@@ -5068,30 +5068,42 @@ prompt_OFF() {
 lp_theme() {
     local theme="${1-}"
 
-    LP_THEME="$theme"
+    LP_THEME="${_LP_OLD_THEME-}"
 
     if [[ $theme == '--list' ]]; then
         local -a lp_theme_list
         __lp_theme_list
         printf '%s\n' "${lp_theme_list[@]}"
-        LP_THEME="$_LP_OLD_THEME"
         return
     fi
 
-    local f_prompt="_lp_${theme}_theme_prompt" f_dir="_lp_${theme}_theme_directory" f_activate="_lp_${theme}_theme_activate"
+    local f_prompt="_lp_${theme}_theme_prompt"
+    local f_dir="_lp_${theme}_theme_directory"
+    local f_activate="_lp_${theme}_theme_activate"
+    local f_version="_lp_${theme}_theme_version_check"
 
     if [[ -z $theme ]]; then
         printf '%s\n%s\n' \
             'Must pass in the name of a theme. If you meant the default Liquid Prompt theme, try "default".' \
             'Run "lp_theme --list" to see all loaded and available themes.' 2>&1
-        LP_THEME="$_LP_OLD_THEME"
         return 1
     fi
 
+    if __lp_is_function "$f_version"; then
+        local -a lp_version_check
+        "$f_version"
+        if ! _lp_version_greatereq ${lp_version_check[@]+"${lp_version_check[@]}"}; then
+            local lp_version
+            _lp_version_string ${lp_version_check[@]+"${lp_version_check[@]}"}
+            printf 'ERROR: Loading theme "%s" failed: theme requires version %s or greater of Liquid Prompt.\n' \
+                "$theme" "$lp_version" 2>&1
+            return 2
+        fi
+    fi
+
     if ! __lp_is_function "$f_prompt"; then
-        printf 'Loading theme "%s" failed: cannot find function "%s". Please source the theme file first.\n' \
+        printf 'ERROR: Loading theme "%s" failed: cannot find function "%s". Please source the theme file first.\n' \
             "$theme" "$f_prompt" 2>&1
-        LP_THEME="$_LP_OLD_THEME"
         return 2
     fi
     if ! __lp_is_function "$f_dir"; then
@@ -5104,6 +5116,7 @@ lp_theme() {
     _LP_THEME_ACTIVATE_FUNCTION=$f_activate
     _LP_THEME_DIRECTORY_FUNCTION=$f_dir
     _LP_THEME_PROMPT_FUNCTION=$f_prompt
+    LP_THEME="$theme"
     _LP_OLD_THEME="$theme"
 
     "$f_activate"

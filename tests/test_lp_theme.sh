@@ -41,4 +41,9 @@ function test_lp_theme_var {
   assertEquals "$LP_THEME" "test"
 }
 
+function test_lp_theme_unset {
+  lp_theme invalid_theme
+  assertEquals "$LP_THEME" "default"
+}
+
 . ./shunit2

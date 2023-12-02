@@ -43,6 +43,34 @@ and username) should be generated here. This is also where the theme's default
 values should be set. This function will always be called after the user config
 is already loaded.
 
+Version Check Function
+----------------------
+
+Optionally, a theme can have a Liquid Prompt version check function. It must be
+set to ``_lp_<theme_id>_theme_version_check()``.
+
+This function is called when the theme is first activated. It is used to
+validate that the version of Liquid Prompt is equal to or greater than what the
+theme requires. Liquid Prompt handles the checking and error handling. Simply
+set the array variable ``lp_version_check`` with the version your theme
+requires::
+
+    _lp_custom_theme_version_check() {
+        lp_version_check=(2 2 0 rc 3)
+    }
+
+The format of the ``lp_version_check`` variable matches the inputs of the
+:func:`_lp_version_greatereq` function.
+
+A theme can support more than one version of Liquid Prompt by only enabling
+parts of the theme if the Liquid Prompt version is high enough. For example::
+
+    if _lp_version_greatereq 2 2 0 ; then
+        if _lp_disk ; then
+            PS1+="my disk status: $lp_disk"
+        fi
+    fi
+
 Other Functions
 ---------------
 

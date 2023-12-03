@@ -5,7 +5,7 @@ height="${1-300}"
 shift
 enough=4 # Sleep time in seconds.
 emulator="terminator"
-geometry="--geometry=1250x$height"
+geometry="--geometry=1550x$height"
 title="--title"
 command="--command"
 more="--profile=LPscreen"

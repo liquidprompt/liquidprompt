@@ -5,8 +5,6 @@ set -u
 . $(dirname $0)/../liquidprompt --no-activate
 
 usage() {
-# If a theme was given, use the theme and source all other arguments.
-if [[ -z ${1-} || $1 == --help ]]; then
   printf '
 Usage: %s theme [options...] [sourced files...]
 
@@ -32,6 +30,12 @@ Example usage:
 %s default --template-file templates/minimal/minimal.ps1
 ' 1>&2 "$0" "$0" "$0" "$0" "$0"
 }
+
+# If a theme was given, use the theme and source all other arguments.
+if [[ -z ${1-} || $1 == --help ]]; then
+    usage
+    exit 2
+fi
 
 sourced_files=()
 config_files=()

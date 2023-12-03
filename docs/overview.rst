@@ -7,23 +7,68 @@ It shows you what you need when you need it.
 You will notice what changes *when* it changes, saving time and frustration.
 You can even use it with your favorite shell – Bash or zsh.
 
-Below are screenshots of typical states that you would see in everyday use.
+Screenshot examples
+-------------------
 
-Using the default theme:
+Because Liquid Prompt only shows the important information, each screenshot
+below actually shows three prompts:
 
-.. image:: theme/default-med.png
-   :alt: 1& [user@server:~/liquidprompt] main ±
+- a "short" one, which is what you will see most of the time,
+- a "medium" prompt, which is close to what you would see while working,
+- a "long" prompt, showing a large part of what Liquid Prompt can display,
+  keeping in mind that seeing as much information at the same time is a rare
+  event in practice.
+
+.. note:: You can click on the images to see them at full resolution.
+
+The default theme is using 16 colors, which is guaranteed to work in any
+terminal, on dark or light background, even for (mildly) colorblind people.
+
+.. image:: theme/liquidprompt-screenshot-default.png
+   :target: _images/liquidprompt-screenshot-default.png
+
+Note that the actual colors are depending on your terminal emulator
+configuration and may not look the same than in the following screenshot:
+
+You may load config files altering only a part of the display, like the colors
+and the icons. For instance, here is the default theme, using two of such
+"presets": ``256-colors-dark.conf`` and ``more-unicode.conf``:
+
+.. image:: theme/liquidprompt-screenshot-default-256-dark-unicode.png
+   :target: _images/liquidprompt-screenshot-default-256-dark-unicode.png
+
+And here is the default theme using ``256-colors-light.conf`` and
+``nerd-font.conf``:
+
+.. image:: theme/liquidprompt-screenshot-default-256-light-nerd-font.png
+   :target: _images/liquidprompt-screenshot-default-256-light-nerd-font.png
 
 The Unfold theme, very similar to the default theme,
 but spread on two lines and a right-aligned section:
 
-.. image:: theme/included/unfold-med.png
+.. image:: theme/included/liquidprompt-screenshot-unfold.png
+   :target: _images/liquidprompt-screenshot-unfold.png
 
-Using the Powerline theme:
+The Powerline themes are provided in
+`a side project <https://github.com/liquidprompt/liquidprompt-powerline>`_.
 
-.. image:: theme/included/powerline-med.png
-   :alt:   server  user  ~  liquidprompt  1   main  
+Here is its ``power2lines`` version, which is spread on two lines:
 
+.. image:: theme/included/liquidprompt-screenshot-power2lines.png
+   :target: _images/liquidprompt-screenshot-power2lines.png
+
+and the ``powerpuff`` version, which uses three lines, with right-aligned
+sections as well:
+
+.. image:: theme/included/liquidprompt-screenshot-powerpuff.png
+   :target: _images/liquidprompt-screenshot-powerpuff.png
+
+.. note:: There are many more themes! See the
+   `wiki page dedicated to third party themes <https://github.com/liquidprompt/liquidprompt/wiki/Themes>`_.
+
+
+Killer Features
+---------------
 
 There are many prompts configurations out there, but here is what makes Liquid
 Prompt stand out:
@@ -253,6 +298,12 @@ from left to right, based on their *support* score in the *essentials* section.
 
 .. image:: prompts_comparison.svg
    :alt: A long table with 10 columns and 155 lines.
+
+.. note:: To get an **in-depth** analysis of some the differences of Liquid Prompt
+   with those other projects, you may read the article:
+   `An Opinionated Prompt Systems Comparison <https://github.com/liquidprompt/liquidprompt/wiki/Why>`_
+   (also available
+   `in French <https://github.com/liquidprompt/liquidprompt/wiki/%5BFrench%5D-Pourquoi>`_).
 
 
 License

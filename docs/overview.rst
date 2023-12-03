@@ -128,6 +128,7 @@ you are:
 - **Docker**,
 - **Container**,
 - **Node env**,
+- **Perl venv**,
 - **Ruby venv**,
 - **Software Collections**,
 - **CMake**.

@@ -69,7 +69,7 @@ test_tool tput AB 0
 test_tool tput AB 0 0 0
 
 test_tool who am i
-test_tool ps -o comm= -p "$PPID"
+test_tool ps -o comm= -q "$PPID"
 test_tool logname
 
 test_tool screen -ls

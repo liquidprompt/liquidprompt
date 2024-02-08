@@ -13,8 +13,9 @@ fi
 PS1="$ "
 
 LP_ENABLE_RUBY_VENV=1
+LP_RUBY_RVM_PROMPT_OPTIONS=("i" "v" "g" "s")
 
-typeset -a rbenv_outputs rbenv_return_strings
+typeset -a rbenv_outputs rbenv_return_strings rvm_outputs rvm_return_strings
 
 # Add test cases to these arrays like below
 
@@ -24,6 +25,14 @@ rbenv_outputs+=(
 )
 rbenv_return_strings+=(
 "1.9.3-p327"
+)
+
+# Example from rvm documentation
+rvm_outputs+=(
+"ruby-3.2.2"
+)
+rvm_return_strings+=(
+"ruby-3.2.2"
 )
 
 
@@ -42,5 +51,22 @@ function test_rbenv {
     assertEquals "rbenv returns at index ${index}" "${rbenv_return_strings[$index]}" "$lp_ruby_env"
   done
 }
+
+function test_rvm {
+
+  rvm-prompt() {
+    printf '%s\n' "$__rvm_output"
+  }
+
+  _LP_RUBY_VENV_PROGRAM=rvm
+
+  for (( index=0; index < ${#rvm_outputs[@]}; index++ )); do
+    __rvm_output=${rvm_outputs[$index]}
+
+    _lp_ruby_env
+    assertEquals "rvm-prompt returns at index ${index}" "${rvm_return_strings[$index]}" "$lp_ruby_env"
+  done
+}
+
 
 . ./shunit2

@@ -21,13 +21,18 @@ Install commands
 Archlinux
 ---------
 
+Liquid Prompt is not available in the official repositories. However someone
+provides a ``PKGBUILD`` on AUR. Liquid Prompt is not responsible for this
+recipe, thus use it at your own risk.
+
 .. image:: https://repology.org/badge/version-for-repo/aur/liquidprompt.svg
-   :alt: Archlinux package
+   :alt: Archlinux User package
    :target: https://aur.archlinux.org/packages/liquidprompt
 
-.. code-block::
+Please refer to the `Archlinux documentation`_ to know how to use it, if you
+are unsure.
 
-   pacman -S liquidprompt
+.. _Archlinux documentation: https://wiki.archlinux.org/title/Arch_User_Repository
 
 Debian
 ------

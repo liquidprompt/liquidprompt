@@ -4859,13 +4859,19 @@ __lp_before_command() {
         fi
     fi
 
-    # If this is when the prompt is being drawn, the command is done,
+    # If this is the last thing before prompt is being drawn, the command is done,
     # so mark the next trap. Note these two events could be at the same
     # time, so no elif is used.
-    if [[ "$BASH_COMMAND" == __lp_set_prompt ]]; then
-        _LP_AT_PROMPT=1
+    local command
+    if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+        command=${PROMPT_COMMAND[-1]}
+    else
+        command=$PROMPT_COMMAND
     fi
 
+    if [[ "$command" == *"$BASH_COMMAND" ]]; then
+        _LP_AT_PROMPT=1
+    fi
 }
 
 prompt_tag() {

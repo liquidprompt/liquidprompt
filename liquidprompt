@@ -45,6 +45,7 @@ if test -n "${BASH_VERSION-}"; then
 
     _LP_FIRST_INDEX=0
     _LP_PERCENT='%'    # must be escaped on zsh
+    # shellcheck disable=SC1003
     _LP_BACKSLASH='\\' # must be escaped on bash
 
     # Escape the given strings
@@ -96,6 +97,7 @@ elif test -n "${ZSH_VERSION-}" ; then
       _LP_FIRST_INDEX=1
     fi
     _LP_PERCENT='%%'
+    # shellcheck disable=SC1003
     _LP_BACKSLASH='\'
 
     __lp_escape() {

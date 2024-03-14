@@ -7,6 +7,7 @@ exec shellcheck \
   --shell=bash \
   --exclude=SC2155 \
   --external-sources --check-sourced \
+  liquidprompt \
   tools/* \
   "$0" # Include this script to get the below imports
 

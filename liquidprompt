@@ -4913,8 +4913,10 @@ prompt_on() {
 
             if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
                 # PROMPT_COMMAND is an array since bash 5.1
-                PROMPT_COMMAND+=( "$set_prompt_command" )
-
+                if ! ( __lp_array_contains __lp_set_prompt ${PROMPT_COMMAND[@]+"${PROMPT_COMMAND[@]}"} \
+                  || __lp_array_contains "time __lp_set_prompt" ${PROMPT_COMMAND[@]+"${PROMPT_COMMAND[@]}"} ); then
+                   PROMPT_COMMAND+=( "$set_prompt_command" )
+                fi
             else
                 if [[ -z ${LP_OLD_PROMPT_COMMAND+x} ]]; then
                     LP_OLD_PROMPT_COMMAND="${PROMPT_COMMAND-}"

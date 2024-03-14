@@ -1,0 +1,37 @@
+# EditorConfig configuration for liquidprompt
+# http://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+trim_trailing_whitespace = true
+
+[liquidprompt,*.theme,*.bashrc,.*.conf,*.ps1,*.css,/tools/config-from-doc.sh]
+indent_size = 4
+max_line_length = 120
+
+[*.sh,*.zsh,PKGBUILD]
+indent_size = 2
+max_line_length = 120
+
+[*.py]
+indent_size = 4
+
+[*.md]
+# Apparently trailing whitspaces are meaningfull in Markdown
+trim_trailing_whitespace = false
+
+[*.yml]
+indent_size = 2
+
+[*.bat]
+indent_size = 8
+indent_style = tab
+
+# TODO:
+#
+# *.rst
+# *.txt

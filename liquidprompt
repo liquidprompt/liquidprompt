@@ -32,7 +32,7 @@ _LP_VERSION=(2 2 0 rc 2)
 if test -n "${BASH_VERSION-}"; then
     # Check for recent enough version of bash.
     if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
-        echo "liquidprompt: Bash version $BASH_VERSION not supported" 2>&1
+        echo "liquidprompt: Bash version $BASH_VERSION not supported" >&2
         return
     fi
 
@@ -80,7 +80,7 @@ if test -n "${BASH_VERSION-}"; then
 elif test -n "${ZSH_VERSION-}" ; then
     # Check for recent enough version of zsh.
     if (( ${ZSH_VERSION:0:1} < 5 )); then
-        echo "liquidprompt: Zsh version $ZSH_VERSION not supported" 2>&1
+        echo "liquidprompt: Zsh version $ZSH_VERSION not supported" >&2
         return
     fi
 
@@ -5095,7 +5095,7 @@ lp_theme() {
     if [[ -z $theme ]]; then
         printf '%s\n%s\n' \
             'Must pass in the name of a theme. If you meant the default Liquid Prompt theme, try "default".' \
-            'Run "lp_theme --list" to see all loaded and available themes.' 2>&1
+            'Run "lp_theme --list" to see all loaded and available themes.' >&2
         return 1
     fi
 
@@ -5106,14 +5106,14 @@ lp_theme() {
             local lp_version
             _lp_version_string ${lp_version_check[@]+"${lp_version_check[@]}"}
             printf 'ERROR: Loading theme "%s" failed: theme requires version %s or greater of Liquid Prompt.\n' \
-                "$theme" "$lp_version" 2>&1
+                "$theme" "$lp_version" >&2
             return 2
         fi
     fi
 
     if ! __lp_is_function "$f_prompt"; then
         printf 'ERROR: Loading theme "%s" failed: cannot find function "%s". Please source the theme file first.\n' \
-            "$theme" "$f_prompt" 2>&1
+            "$theme" "$f_prompt" >&2
         return 2
     fi
     if ! __lp_is_function "$f_dir"; then

@@ -4797,10 +4797,17 @@ _lp_default_theme_prompt() {
 # Construct the prompt #
 ########################
 
+_LP_NOT_A_REAL_COMMAND=0
 __lp_set_prompt() {
     # Display the return value of the last command, if different from zero
     # As this get the last returned code, it should be called first
     local -i lp_error="$?"
+
+    if (( _LP_NOT_A_REAL_COMMAND )); then
+        lp_error=0
+    fi
+    # zsh doesn't run __lp_before_command, so we set it here
+    _LP_NOT_A_REAL_COMMAND=1
 
     if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
         __lp_runtime_after
@@ -4847,16 +4854,31 @@ __lp_before_command() {
     # For debugging
     #printf 'XXX %s\n' "$BASH_COMMAND"
 
+    local bash_command="$BASH_COMMAND"
+
     # If this is the first time after the user submitted the command,
     # execute the hooks.
     if (( _LP_AT_PROMPT )); then
         _LP_AT_PROMPT=0
 
+        # If this is the first command and it is in PROMPT_COMMAND, then probably the user has probably
+        # hit ^C and we should ignore $? in __lp_set_prompt and don't show the 130 error.
+        if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+            # PROMPT_COMMAND is an array since bash 5.1
+            if ! ( __lp_array_contains "$bash_command" ${PROMPT_COMMAND[@]+"${PROMPT_COMMAND[@]}"} ); then
+                _LP_NOT_A_REAL_COMMAND=0
+            fi
+        else
+            if [[ "$PROMPT_COMMAND" != "$bash_command"*  ]]; then
+                _LP_NOT_A_REAL_COMMAND=0
+            fi
+        fi
+
         if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
             __lp_runtime_before
         fi
 
-        if (( LP_ENABLE_TITLE_COMMAND )); then
+        if (( ! _LP_NOT_A_REAL_COMMAND && LP_ENABLE_TITLE_COMMAND )); then
             __lp_print_title_command
         fi
     fi
@@ -4874,6 +4896,10 @@ __lp_before_command() {
     if [[ "$command" == *"$BASH_COMMAND" ]]; then
         _LP_AT_PROMPT=1
     fi
+}
+
+__lp_run_real_command() {
+    _LP_NOT_A_REAL_COMMAND=0
 }
 
 prompt_tag() {
@@ -4999,6 +5025,7 @@ prompt_on() {
         if (( LP_ENABLE_TITLE_COMMAND )); then
             add-zsh-hook preexec __lp_print_title_command
         fi
+        add-zsh-hook preexec __lp_run_real_command
     fi
 }
 

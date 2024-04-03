@@ -3854,6 +3854,8 @@ __lp_runtime_after() {
     if [[ -n "${_LP_RUNTIME_LAST_SECONDS-}" ]]; then
         (( _LP_RUNTIME_SECONDS=SECONDS-_LP_RUNTIME_LAST_SECONDS ))
         unset _LP_RUNTIME_LAST_SECONDS
+    else
+        _LP_RUNTIME_SECONDS=0
     fi
 }
 
@@ -4862,25 +4864,30 @@ __lp_before_command() {
     # For debugging
     #printf 'XXX %s\n' "$BASH_COMMAND"
 
-    # If this is the first time after the user submitted the command,
-    # execute the hooks.
-    if (( _LP_AT_PROMPT )); then
-        _LP_AT_PROMPT=0
-        __lp_preexec
-    fi
-
     # If this is the last thing before prompt is being drawn, the command is done,
     # so mark the next trap. Note these two events could be at the same
     # time, so no elif is used.
-    local command
+    local first_command last_command
+    first_command=$PROMPT_COMMAND
     if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
-        command=${PROMPT_COMMAND[-1]}
+        last_command=${PROMPT_COMMAND[-1]}
     else
-        command=$PROMPT_COMMAND
+        last_command=$PROMPT_COMMAND
     fi
 
-    if [[ "$command" == *"$BASH_COMMAND" ]]; then
+    if [[ "$last_command" == *"$BASH_COMMAND" ]]; then
         _LP_AT_PROMPT=1
+        # Return early, because the PROMPT_COMMAND should never trigger preexec hooks.
+        return
+    fi
+
+    # If this is the first time after the user submitted the command,
+    # execute the hooks, unless the user submitted an empty command.
+    if (( _LP_AT_PROMPT )); then
+        _LP_AT_PROMPT=0
+        if [[ "$first_command" != "$BASH_COMMAND"* ]]; then
+            __lp_preexec
+        fi
     fi
 }
 

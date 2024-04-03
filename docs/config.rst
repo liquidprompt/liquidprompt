@@ -1174,6 +1174,18 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_HIDE_EMPTY_ERROR
+   :type: bool
+   :value: 1
+
+   Hide the error code returned by a command if the new prompt is displayed
+   after the user hits Ctrl-C or submits an empty command (i.e. empty string
+   or a comment).
+
+   See also: :attr:`LP_ENABLE_ERROR`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_HOSTNAME_ALWAYS
    :type: int
    :value: 0

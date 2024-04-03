@@ -830,6 +830,12 @@ lp_activate() {
 
     unset -f _lp_require_tool
 
+    _LP_ENABLE_PREEXEC=$((
+        LP_ENABLE_RUNTIME \
+        || LP_ENABLE_RUNTIME_BELL \
+        || LP_ENABLE_TITLE_COMMAND \
+    ))
+
     # LP_ENABLE_RUBY_VENV depends either from rvm or rbenv. Thus we cannot
     # directly use _lp_require_tool for it.
     # Also, to avoid to check twice which is the current ruby virtual env
@@ -4843,6 +4849,15 @@ __lp_set_prompt() {
     fi
 }
 
+__lp_preexec() {
+    if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+        __lp_runtime_before
+    fi
+    if (( LP_ENABLE_TITLE_COMMAND )); then
+        __lp_print_title_command
+    fi
+}
+
 __lp_before_command() {
     # For debugging
     #printf 'XXX %s\n' "$BASH_COMMAND"
@@ -4851,14 +4866,7 @@ __lp_before_command() {
     # execute the hooks.
     if (( _LP_AT_PROMPT )); then
         _LP_AT_PROMPT=0
-
-        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
-            __lp_runtime_before
-        fi
-
-        if (( LP_ENABLE_TITLE_COMMAND )); then
-            __lp_print_title_command
-        fi
+        __lp_preexec
     fi
 
     # If this is the last thing before prompt is being drawn, the command is done,
@@ -4928,7 +4936,7 @@ prompt_on() {
                 PROMPT_COMMAND="$set_prompt_command"
             fi
 
-            if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL || LP_ENABLE_TITLE_COMMAND )); then
+            if (( ${_LP_ENABLE_PREEXEC-0} )); then
                 _LP_AT_PROMPT=0
                 _LP_RUNTIME_LAST_SECONDS=$SECONDS
                 # __lp_before_command gets called just before bash executes a command,
@@ -4955,17 +4963,11 @@ prompt_on() {
                     precmd_functions+=(__lp_set_prompt)
                 fi
             fi
-            if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+            if (( ${_LP_ENABLE_PREEXEC-0} )); then
                 _LP_RUNTIME_LAST_SECONDS=$SECONDS
                 # It's less bad to have this be duped than __lp_set_prompt, but let's be sure
-                if ! ( __lp_array_contains __lp_runtime_before ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
-                    preexec_functions+=(__lp_runtime_before)
-                fi
-            fi
-            if (( LP_ENABLE_TITLE_COMMAND )); then
-                # It's less bad to have this be duped than __lp_set_prompt, but let's be sure
-                if ! ( __lp_array_contains __lp_print_title_command ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
-                    preexec_functions+=(__lp_print_title_command)
+                if ! ( __lp_array_contains __lp_preexec ${preexec_functions[@]+"${preexec_functions[@]}"} ); then
+                    preexec_functions+=(__lp_preexec)
                 fi
             fi
         fi
@@ -4991,13 +4993,10 @@ prompt_on() {
 
         add-zsh-hook precmd __lp_set_prompt
 
-        if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
+        if (( ${_LP_ENABLE_PREEXEC-0} )); then
             _LP_RUNTIME_LAST_SECONDS=$SECONDS
             declare -gi _LP_RUNTIME_SECONDS
-            add-zsh-hook preexec __lp_runtime_before
-        fi
-        if (( LP_ENABLE_TITLE_COMMAND )); then
-            add-zsh-hook preexec __lp_print_title_command
+            add-zsh-hook preexec __lp_preexec
         fi
     fi
 }
@@ -5015,7 +5014,7 @@ __lp_disable_hooks() {
 
             for i in ${preexec_functions[@]+"${!preexec_functions[@]}"}; do
                 local value="${preexec_functions[i]}"
-                if [[ $value == "__lp_runtime_before" || $value == "__lp_print_title_command" ]]; then
+                if [[ $value == "__lp_preexec" ]]; then
                     unset 'preexec_functions[i]'
                 fi
             done
@@ -5033,21 +5032,21 @@ __lp_disable_hooks() {
                     # shellcheck disable=SC2178
                     PROMPT_COMMAND="${LP_OLD_PROMPT_COMMAND-}"
                     unset LP_OLD_PROMPT_COMMAND
+                else
+                    unset PROMPT_COMMAND
                 fi
             fi
 
             # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
-            if (( ${LP_ENABLE_RUNTIME-0} || ${LP_ENABLE_RUNTIME_BELL-0} || ${LP_ENABLE_TITLE_COMMAND-0} )); then
+            # TODO: Fix this: Bash will unset the function's DEBUG trap, not the global one.
+            if (( ${_LP_ENABLE_PREEXEC-0} )); then
                 trap - DEBUG
             fi
         fi
     else # zsh
-        # Disable previous hooks as options that set them
-        # may have changed
         {
             add-zsh-hook -d precmd  __lp_set_prompt
-            add-zsh-hook -d preexec __lp_runtime_before
-            add-zsh-hook -d preexec __lp_print_title_command
+            add-zsh-hook -d preexec __lp_preexec
         } >/dev/null
     fi
 }

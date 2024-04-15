@@ -2213,7 +2213,7 @@ _lp_aws_profile_color() {
     unset lp_aws_profile_color
     _lp_aws_profile || return "$?"
 
-    lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
+    lp_aws_profile_color="${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}"
 }
 
 

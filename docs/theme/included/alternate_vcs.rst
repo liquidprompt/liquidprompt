@@ -2,7 +2,7 @@
 Alternate VCS Details Theme
 ***************************
 
-The included ``themes/powerline/alternate_vcs.theme`` file includes a theme
+The included ``themes/alternate_vcs/alternate_vcs.theme`` file includes a theme
 extending the default theme but replacing the VCS details display.
 
 .. contents::

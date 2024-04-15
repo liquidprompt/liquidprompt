@@ -2151,7 +2151,6 @@ _lp_software_collections_color() {
     lp_software_collections_color="${LP_COLOR_VIRTUALENV}${lp_software_collections}${NO_COL}"
 }
 
-
 _lp_kubernetes_context() {
     (( LP_ENABLE_KUBECONTEXT )) || return 2
 
@@ -2194,6 +2193,27 @@ _lp_kubernetes_context_color() {
     _lp_kubernetes_context || return "$?"
 
     lp_kubernetes_context_color="${LP_MARK_KUBECONTEXT}${LP_COLOR_KUBECONTEXT}${lp_kubernetes_context}${lp_kubernetes_namespace+:}${lp_kubernetes_namespace-}${NO_COL}"
+}
+
+_lp_aws_profile() {
+    (( LP_ENABLE_AWS_PROFILE )) || return 2
+
+    local ret
+
+    local aws_profile="${AWS_PROFILE-${AWS_DEFAULT_PROFILE-${AWS_VAULT-}}}"
+    if [[ -n $aws_profile ]]; then
+        __lp_escape "${aws_profile}"
+        lp_aws_profile=$ret
+    else
+        return 1
+    fi
+}
+
+_lp_aws_profile_color() {
+    unset lp_aws_profile_color
+    _lp_aws_profile || return "$?"
+
+    lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
 }
 
 
@@ -2490,27 +2510,6 @@ _lp_dirstack_color() {
     _lp_dirstack || return "$?"
 
     lp_dirstack_color="${LP_COLOR_DIRSTACK}${LP_MARK_DIRSTACK}${lp_dirstack}${NO_COL}"
-}
-
-_lp_aws_profile() {
-    (( LP_ENABLE_AWS_PROFILE )) || return 2
-
-    local ret
-
-    local aws_profile="${AWS_PROFILE-${AWS_DEFAULT_PROFILE-${AWS_VAULT-}}}"
-    if [[ -n $aws_profile ]]; then
-        __lp_escape "${aws_profile}"
-        lp_aws_profile=$ret
-    else
-        return 1
-    fi
-}
-
-_lp_aws_profile_color() {
-    unset lp_aws_profile_color
-    _lp_aws_profile || return "$?"
-
-    lp_aws_profile_color="[${LP_COLOR_AWS_PROFILE}${lp_aws_profile}${NO_COL}]"
 }
 
 _lp_shell_level() {

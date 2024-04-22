@@ -60,16 +60,10 @@ if test -n "${BASH_VERSION-}"; then
     }
 
     __lp_strip_escapes() {
-        if ! shopt -q extglob ; then
-            local _lp_no_extglob=true
-            shopt -s extglob
-        fi
-
-        ret="${1//"${_LP_OPEN_ESC}"!(*"${_LP_CLOSE_ESC}"*)"${_LP_CLOSE_ESC}"}"
-
-        if [[ -n ${_lp_no_extglob-} ]]; then
-            shopt -u extglob
-        fi
+        ret="$1"
+        while [[ "$ret" == *"$_LP_OPEN_ESC"* ]]; do
+            ret="${ret%%"$_LP_OPEN_ESC"*}${ret#*"$_LP_CLOSE_ESC"}"
+        done
 
         ret="${ret//\\\\/\\}"
         if shopt -q promptvars ; then

@@ -29,9 +29,10 @@ jobs:
       - name: Create release tarball
         run: tar --exclude-vcs --exclude='./.*' --transform 's/^\./liquidprompt/' -zcvf ./.output/liquidprompt-${{ github.ref_name }}.tar.gz .
       - name: Create release and upload release asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Version ${{ github.ref }}
+          body_path: CHANGELOG.md
           draft: true
           prerelease: false
           files: |

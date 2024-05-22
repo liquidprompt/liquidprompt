@@ -1646,7 +1646,7 @@ _lp_connection() {
         return
     fi
 
-    local sess_parent="$(ps -o comm= -p "$PPID" 2> /dev/null)"
+    local sess_parent="$(ps -o comm= -q "$PPID" 2> /dev/null)"
     if [[ "$sess_parent" = "su" || "$sess_parent" = "sudo" ]]; then
         lp_connection=su   # su/sudo
     else

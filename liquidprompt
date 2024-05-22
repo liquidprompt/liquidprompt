@@ -481,6 +481,7 @@ __lp_source_config() {
     LP_ENABLE_OS_VERSION=${LP_ENABLE_OS_VERSION:-1}
     LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-0}
     LP_ENABLE_PATH=${LP_ENABLE_PATH:-1}
+    LP_HIDE_EMPTY_ERROR=${LP_HIDE_EMPTY_ERROR:-1}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -829,6 +830,7 @@ lp_activate() {
         LP_ENABLE_RUNTIME \
         || LP_ENABLE_RUNTIME_BELL \
         || LP_ENABLE_TITLE_COMMAND \
+        || LP_HIDE_EMPTY_ERROR \
     ))
 
     # LP_ENABLE_RUBY_VENV depends either from rvm or rbenv. Thus we cannot
@@ -4804,6 +4806,11 @@ __lp_set_prompt() {
     # As this get the last returned code, it should be called first
     local -i lp_error="$?"
 
+    if (( LP_HIDE_EMPTY_ERROR )); then
+        (( ! ${_LP_REAL_COMMAND:-1} )) && lp_error=0
+        _LP_REAL_COMMAND=0
+    fi
+
     if (( LP_ENABLE_RUNTIME || LP_ENABLE_RUNTIME_BELL )); then
         __lp_runtime_after
     fi
@@ -4851,6 +4858,9 @@ __lp_preexec() {
     fi
     if (( LP_ENABLE_TITLE_COMMAND )); then
         __lp_print_title_command
+    fi
+    if (( LP_HIDE_EMPTY_ERROR )); then
+        _LP_REAL_COMMAND=1
     fi
 }
 

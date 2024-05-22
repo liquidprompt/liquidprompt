@@ -954,11 +954,13 @@ Features
    :type: bool
    :value: 1
 
-   Show the value of ``$SHLVL``, which is the number of nested shells. For
-   example, if one runs ``bash`` inside their shell, it will open a new shell
-   inside their current shell, and this will display "2".
+   Show the value of ``$SHLVL``, which is the number of nested shells, if the
+   value meets the threshold. For example, if one runs ``bash`` inside their
+   shell, it will open a new shell inside their current shell, and this will
+   display "2".
 
-   See also: :attr:`LP_MARK_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+   See also: :attr:`LP_SHLVL_THRESHOLD`, :attr:`LP_MARK_SHLVL`, and
+   :attr:`LP_COLOR_SHLVL`.
 
    .. versionadded:: 2.1
 
@@ -1418,6 +1420,17 @@ Thresholds
 
    .. versionadded:: 1.12
 
+.. attribute:: LP_SHLVL_THRESHOLD
+   :type: int
+   :value: 2
+
+   Number of nested shells before the shell level is shown.
+
+   See also: :attr:`LP_ENABLE_SHLVL`, :attr:`LP_MARK_SHLVL`, and
+   :attr:`LP_COLOR_SHLVL`.
+
+   .. versionadded:: 2.2
+
 .. attribute:: LP_TEMP_THRESHOLD
    :type: int
    :value: 60
@@ -1822,7 +1835,8 @@ Marks
 
    Mark used to indicate the shell is inside another shell.
 
-   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_COLOR_SHLVL`.
+   See also: :attr:`LP_ENABLE_SHLVL`, :attr:`LP_SHLVL_THRESHOLD`, and
+   :attr:`LP_COLOR_SHLVL`.
 
    .. versionadded:: 2.1
 
@@ -2438,7 +2452,8 @@ Valid preset color variables are:
 
    Color used for displaying the nested shell level.
 
-   See also: :attr:`LP_ENABLE_SHLVL` and :attr:`LP_MARK_SHLVL`.
+   See also: :attr:`LP_ENABLE_SHLVL`, :attr:`LP_SHLVL_THRESHOLD`, and
+   :attr:`LP_MARK_SHLVL`.
 
    .. versionadded:: 2.1
 

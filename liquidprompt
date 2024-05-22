@@ -471,6 +471,7 @@ __lp_source_config() {
     LP_ENABLE_KUBE_NAMESPACE=${LP_ENABLE_KUBE_NAMESPACE:-0}
     LP_ENABLE_CMAKE=${LP_ENABLE_CMAKE:-0}
     LP_ENABLE_SHLVL=${LP_ENABLE_SHLVL:-1}
+    LP_SHLVL_THRESHOLD=${LP_SHLVL_THRESHOLD:-2}
     LP_ENABLE_WIFI_STRENGTH=${LP_ENABLE_WIFI_STRENGTH:-0}
     LP_ENABLE_OS=${LP_ENABLE_OS:-0}
     LP_ENABLE_OS_ARCH=${LP_ENABLE_OS_ARCH:-0}
@@ -2517,7 +2518,7 @@ _lp_shell_level() {
 
     lp_shell_level=${SHLVL:-1}
 
-    (( lp_shell_level > 1 ))
+    (( lp_shell_level >= LP_SHLVL_THRESHOLD ))
 }
 
 _lp_shell_level_color() {

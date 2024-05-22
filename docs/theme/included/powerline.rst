@@ -2,6 +2,11 @@
 Powerline Theme
 ***************
 
+.. deprecated:: 2.2
+   Use the spun off project `Liquid Prompt Powerline`_ instead.
+
+.. _`Liquid Prompt Powerline`: https://github.com/liquidprompt/liquidprompt-powerline
+
 The included ``themes/powerline/powerline.theme`` file includes two themes:
 
 .. contents::
@@ -18,6 +23,9 @@ Powerline does, but faster.
 That said, this is a fully usable theme.
 
 .. versionadded:: 2.0
+
+.. deprecated:: 2.2
+   Use the spun off project `Liquid Prompt Powerline`_ instead.
 
 .. _`Powerline prompt`: https://github.com/powerline/powerline
 .. _`default segments`: https://github.com/powerline/powerline/blob/2.8/powerline/config_files/themes/shell/default.json
@@ -262,6 +270,9 @@ sources that Liquid Prompt provides. The ordering is the same as the default
 theme.
 
 .. versionadded:: 2.0
+
+.. deprecated:: 2.2
+   Use the spun off project `Liquid Prompt Powerline`_ instead.
 
 Preview
 =======

@@ -343,6 +343,7 @@ Environment
    .. versionchanged:: 2.2
       Can be disabled by :attr:`LP_ENABLE_MULTIPLEXER`,
       except if ``--internal`` is passed (i.e. for internal use only).
+      Return variable renamed from ``lp_mulitplexer`` to ``lp_multiplexer``.
 
 .. function:: _lp_shell_level() -> var:lp_shell_level
 

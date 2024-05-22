@@ -6,55 +6,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.2.0-rc.2] - 2023-11-24
+## [2.2.0] - 2024-05-22
+### Deprecated
+- **theme**: Powerline themes deprecated. Use split off project
+  [liquidprompt/liquidprompt-powerline](https://github.com/liquidprompt/liquidprompt-powerline)
+  instead ([#830])
+
 ### Added
-- **chroot**: `LP_ENABLE_CHROOT` config option ([#801])
-- **display**: `LP_ENABLE_DISPLAY` config option ([#801])
-- **env**: `end_color` paramater to `_lp_env_vars()` ([#798])
-- **multiplexer**: `LP_ENABLE_MUX` config option ([#801])
-- **temp**: `LP_TEMP_SYSFS_IGNORE_FILES` config option ([#807])
-- **theme**: Extra optional parameters to `theme-preview.sh` ([#805])
-
-### Fixed
-- **theme**: Avoid costly strip escape on filling sequence ([#803])
-- **theme**: Minimal template not working at all ([#805])
-- **zsh**: Zsh crash in Unfold theme ([#805])
-
-### Changed
-- **docs**: Update docs with new features in v2.2 ([#795])
-- **theme**: Minimal template moved from `themes/` to `templates/` ([#805])
-- **theme**: Update Unfold theme ([#795])
-
-
-## [2.2.0-rc.1] - 2023-10-23
-### Added
-- **general**: `_lp_fill()` function for use by themes ([#738])
+- **general**: `_lp_fill()` function for use by themes ([#738], [#803])
 - **general**: `_lp_join()` function for use by themes ([67a4221])
 - **general**: `_lp_version_greatereq()` function for use by themes ([#752])
 - **general**: `_lp_version_string()` function for use by themes ([#752])
 - **general**: `config-from-doc.sh` script ([#772])
 - **general**: Multple config presets ([#755], [#772])
+- **chroot**: `LP_ENABLE_CHROOT` config option ([#801])
 - **cmake**: CMake option display ([d8254c6])
 - **disk**: Disk space display ([#771])
+- **display**: `LP_ENABLE_DISPLAY` config option ([#801])
 - **docs**: List features disabled by default ([#750])
 - **docs**: Spell checking workflow ([787e03e])
-- **env**: User defined env variables section ([#722], [#754])
+- **env**: User defined env variables section ([#722], [#754], [#829])
+- **env**: `end_color` paramater to `_lp_env_vars()` ([#798])
+- **env**: `LP_SHLVL_THRESHOLD` config option ([#821])
 - **error**: Display meaning of exit code ([#729], [#745])
 - **git**: Display of remote for branch ([#784])
 - **jobs**: Configurable jobs separator ([#743])
 - **modules**: Environment modules support ([#763], [#766])
+- **multiplexer**: `LP_ENABLE_MUX` config option ([#801])
 - **os**: Display OS data ([#724], [#756])
 - **path**: Option to disable path display ([#775])
 - **path**: Path sections as hyperlinks ([#659], [#668])
+- **perl**: Support for Perlbrew and plenv display ([#812])
 - **ram**: Display available RAM ([#770], [#788])
+- **ruby**: Tests for rvm support ([#815])
+- **temp**: `LP_TEMP_SYSFS_IGNORE_FILES` config option ([#807])
 - **theme**: Dev env section ([67a4221])
-- **theme**: New Unfold theme ([#746])
-- **theme**: Status bar example scripts ([#775])
+- **theme**: Extra optional parameters to `theme-preview.sh` ([#805])
+- **theme**: New Unfold theme ([#746], [#795], [#805])
+- **theme**: Status bar example scripts ([#775], [#816])
 - **theme**: `LP_THEME` variable to set current theme ([#792])
+- **theme**: `templates/minimal/minimal.ps1`; replacing `liquid.ps1` ([#767],
+  [#805])
+- **theme**: `_lp_<theme_id>_theme_version_check()` hook for themes ([046d830])
 - **tmux**: `LP_ENABLE_TMUX_TITLE_PANES` option ([c74a9e4])
 
 ### Fixed
-- **docs**: Improved docs on theme switching ([#765, [#767])
+- **general**: Some error messages printing to stdout instead of stderr ([#826])
+- **bash**: Avoid running `__lp_set_prompt()` multiple times ([#824])
+- **bash**: Avoid running hooks on empty command line ([436b1b5])
+- **bash**: Runtime of the previous command was still showed on subsequent
+  prompts ([436b1b5])
+- **bash**: Command timing incorrect on Bash 5.1+ when not last to init
+  ([6f2ca7e])
+- **bash**: Slow `__lp_strip_escapes()` in deep directory hierarchy ([#831])
+- **docs**: Improved docs on theme switching ([#765], [#767])
+- **docs**: Incorrect reference to test script in developer docs ([#811])
+- **docs**: Reword Arch Linux install instructions ([#822], [#823])
 - **git**: Printed error if error during interactive rebase ([#758], [#759])
 - **hostname**: Hostname hash on systems without `hostname` binary ([#776])
 - **load**: Load display on Android systems ([#587])
@@ -62,15 +69,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `lp_mulitplexer` ([#748])
 - **python**: Poetry virtualenvs showing "prompt =" ([#760])
 - **tests**: Bash preexec tests not working in screen/tmux ([#773])
+- **tests**: Shellcheck not checking `liquidprompt` file ([ff44057])
+- **theme**: Avoid costly strip escape on filling sequence ([#803])
 - **theme-preview**: Set SSH context for display ([#769])
 - **theme-preview**: Stop indenting prompts to fix multiline prompts ([#744])
 - **zsh**: errors when `ksh_arrays` set ([708635b])
 
 ### Changed
 - **general**: Move project to "liquidprompt" GitHub organization.
-- **docs**: Unifiy project name as "Liquid Prompt" ([#677])
 - **docs**: Improve marketing ([#731])
+- **docs**: Unify project name as "Liquid Prompt" ([#677])
+- **docs**: Update docs with new features in v2.2 ([#795])
+- **error**: Avoid showing the 130 error code after hitting Ctrl-C or empty
+  command line ([#827])
 - **tests**: Print name of failed tests at end of script ([9992fce])
+- **theme**: `liquid.ps1` reworked and moved to `templates/minimal/minimal.ps1`
+  ([#805])
+
+### Removed
+- **theme**: `liquid.ps1`; replaced with `templates/minimal/minimal.ps1`
+  ([#767], [#805])
 
 ## [2.1.2] - 2022-06-08
 ### Fixed
@@ -870,6 +888,19 @@ for help.
 [#803]: https://github.com/liquidprompt/liquidprompt/pull/803
 [#805]: https://github.com/liquidprompt/liquidprompt/pull/805
 [#807]: https://github.com/liquidprompt/liquidprompt/issues/807
+[#811]: https://github.com/liquidprompt/liquidprompt/pull/811
+[#812]: https://github.com/liquidprompt/liquidprompt/pull/812
+[#815]: https://github.com/liquidprompt/liquidprompt/pull/815
+[#816]: https://github.com/liquidprompt/liquidprompt/pull/816
+[#821]: https://github.com/liquidprompt/liquidprompt/issues/821
+[#822]: https://github.com/liquidprompt/liquidprompt/issues/822
+[#823]: https://github.com/liquidprompt/liquidprompt/pull/823
+[#824]: https://github.com/liquidprompt/liquidprompt/pull/824
+[#826]: https://github.com/liquidprompt/liquidprompt/pull/826
+[#827]: https://github.com/liquidprompt/liquidprompt/pull/827
+[#829]: https://github.com/liquidprompt/liquidprompt/pull/829
+[#830]: https://github.com/liquidprompt/liquidprompt/pull/830
+[#831]: https://github.com/liquidprompt/liquidprompt/issues/831
 
 [0200b99]: https://github.com/liquidprompt/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/liquidprompt/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -877,6 +908,7 @@ for help.
 [03434d3]: https://github.com/liquidprompt/liquidprompt/commit/03434d388686792b6ed2aa0bf0e09851c90a7479
 [0368523]: https://github.com/liquidprompt/liquidprompt/commit/036852371680a9e92d7e341be604088e8dc0519b
 [03c73fe]: https://github.com/liquidprompt/liquidprompt/commit/03c73fe05e5a3b48252a9f527e6e62666afbd726
+[046d830]: https://github.com/liquidprompt/liquidprompt/commit/046d8300b2e65337fcecc0f76add818b5f461fcf
 [0548290]: https://github.com/liquidprompt/liquidprompt/commit/05482901fe86788032ab4089525c415384937a24
 [05e0a50]: https://github.com/liquidprompt/liquidprompt/commit/05e0a502e8ae4e2a4711f5222f39c2589c6f582f
 [07be967]: https://github.com/liquidprompt/liquidprompt/commit/07be96765bbd742c5c2846ef6adbb0c253948216
@@ -916,6 +948,7 @@ for help.
 [3f57231]: https://github.com/liquidprompt/liquidprompt/commit/3f57231d73112ea1090e3a607539e515f21de794
 [3fadce9]: https://github.com/liquidprompt/liquidprompt/commit/3fadce962396d6d3a1f7c2c8e23c1d9fdc22c098
 [40c4331]: https://github.com/liquidprompt/liquidprompt/commit/40c4331f6eda1cb836e8ae62426cb7755fdec371
+[436b1b5]: https://github.com/liquidprompt/liquidprompt/commit/436b1b58a44ed8bf4210b6b955d7da6cf707470f
 [44e3a6f]: https://github.com/liquidprompt/liquidprompt/commit/44e3a6fe8ea9aa61f7cedb32286eb321fc93c6ed
 [454112f]: https://github.com/liquidprompt/liquidprompt/commit/454112f385c49e0bdf408ffd6123f8eaa39d0b0c
 [4572bd0]: https://github.com/liquidprompt/liquidprompt/commit/4572bd02fa289b989de3d24e246be187dbd25f65
@@ -958,6 +991,7 @@ for help.
 [6cdb860]: https://github.com/liquidprompt/liquidprompt/commit/6cdb86006e4d2ad6dee06e60e229842144305594
 [6d94db6]: https://github.com/liquidprompt/liquidprompt/commit/6d94db6de7de879c14da842df535163a57dce638
 [6ea54e9]: https://github.com/liquidprompt/liquidprompt/commit/6ea54e91f84be1c491314c3680e82b06d769218e
+[6f2ca7e]: https://github.com/liquidprompt/liquidprompt/commit/6f2ca7e62d0281356bd984957a9c2da41dd228d6
 [708635b]: https://github.com/liquidprompt/liquidprompt/commit/708635b938c643948e83e4f9855410a1a816b082
 [70b4ef6]: https://github.com/liquidprompt/liquidprompt/commit/70b4ef65c034c5050173dbe70178b459e5acddc2
 [70ce708]: https://github.com/liquidprompt/liquidprompt/commit/70ce708b8142d71647c14817cb40801c5dfdb756
@@ -1080,3 +1114,4 @@ for help.
 [fdbd7ca]: https://github.com/liquidprompt/liquidprompt/commit/fdbd7ca545a2847fb3e862a6088740aa2a06c799
 [fe9919f]: https://github.com/liquidprompt/liquidprompt/commit/fe9919f5e7dc01ba59cc85a128fea94e5b2163c4
 [fefbe01]: https://github.com/liquidprompt/liquidprompt/commit/fefbe01d9830a9033bdb008c454c0d0590548638
+[ff44057]: https://github.com/liquidprompt/liquidprompt/commit/ff44057280fa0ce8a559999fc7063c832a31abac

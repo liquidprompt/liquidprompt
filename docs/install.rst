@@ -100,17 +100,27 @@ Adjust the path if you installed to a different location than the suggested
    Check in your ``.bashrc`` that the :envvar:`PROMPT_COMMAND` variable is not
    set, or else the prompt will not be available. If you must set it or use a
    add-on that sets it, make sure to set :envvar:`PROMPT_COMMAND` **before** you
-   source Liquid Prompt to avoid history and timing issues. Do not export
-   :envvar:`PROMPT_COMMAND`.
+   source Liquid Prompt to avoid history, timing, or error display issues. Do
+   not export :envvar:`PROMPT_COMMAND`.
 
 .. warning::
    If you are using `bash-preexec <https://github.com/rcaloras/bash-preexec>`_,
    be aware that bash-preexec **must** come **before** liquidprompt in your
    ``.bashrc``.
+
    This contradicts their documentation, which says
    `"[bash-preexec] must be the last thing imported in your bash profile"
    <https://github.com/rcaloras/bash-preexec/blob/master/README.md#install>`_,
    but since Liquid Prompt special-cases bash-preexec, it must be loaded after
    bash-preexec.
+
+   The order should always be:
+
+   #. Anything that references :envvar:`PROMPT_COMMAND`
+   #. bash-preexec (optional)
+   #. liquidprompt
+   #. Anything that references ``precmd_functions`` or ``preexec_functions``
+      (if using bash-preexec)
+
 
 Next up are the :doc:`config`.

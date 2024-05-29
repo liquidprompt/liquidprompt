@@ -74,7 +74,8 @@ html_css_files = [
 # breezy-vcs.org has been having intermittent dns problems ("Temporary failure in name # resolution") for a while now
 linkcheck_ignore = [
         r'^https://github.com/rcaloras/bash-preexec/blob/master/README.md#install$',
-        r'^https://www.breezy-vcs.org/$'
+        r'^https://www.breezy-vcs.org/$',
+        r'^https://spaceship-prompt.sh/$',
 ]
 
 nitpick_ignore_regex = [

@@ -28,7 +28,7 @@ perlbrew_return_strings+=(
 
 # Example from plenv execution
 plenv_outputs+=(
-"5.10.1 (set by /Users/user/.plenv/version)"
+"5.10.1"
 )
 plenv_return_strings+=(
 "5.10.1"
@@ -51,6 +51,20 @@ function test_perlbrew {
   done
 }
 
+function test_perlbrew_default {
+
+  perlbrew() {
+    printf 'Currently using system perl\n'
+  }
+
+  _LP_PERL_VENV_PROGRAM=perlbrew
+
+  unset lp_perl_env
+  _lp_perl_env
+  [[ "$?" == 1 ]] || fail "perlbrew system returned not 1"
+  assertNull "perlbrew system returned string" "${lp_perl_env+x}"
+}
+
 function test_plenv {
 
   plenv() {
@@ -67,5 +81,18 @@ function test_plenv {
   done
 }
 
+function test_plenv_default {
+
+  plenv() {
+    printf 'system\n'
+  }
+
+  _LP_PERL_VENV_PROGRAM=plenv
+
+  unset lp_perl_env
+  _lp_perl_env
+  [[ "$?" == 1 ]] || fail "plenv system returned not 1"
+  assertNull "plenv system returned string" "${lp_perl_env+x}"
+}
 
 . ./shunit2

@@ -21,7 +21,7 @@ typeset -a rbenv_outputs rbenv_return_strings rvm_outputs rvm_return_strings
 
 # Example from rbenv documentation
 rbenv_outputs+=(
-"1.9.3-p327 (set by /Users/user/.rbenv/version)"
+"1.9.3-p327"
 )
 rbenv_return_strings+=(
 "1.9.3-p327"
@@ -52,6 +52,20 @@ function test_rbenv {
   done
 }
 
+function test_rbenv_default {
+
+  rbenv() {
+    printf 'system\n'
+  }
+
+  _LP_RUBY_VENV_PROGRAM=rbenv
+
+  unset lp_ruby_env
+  _lp_ruby_env
+  assertTrue "rbenv system returned not 1" '[[ "$?" == 1 ]]'
+  assertNull "rbenv system returned string" "${lp_ruby_env+x}"
+}
+
 function test_rvm {
 
   rvm-prompt() {
@@ -68,5 +82,22 @@ function test_rvm {
   done
 }
 
+
+function test_rmv_default {
+
+  rvm-prompt() {
+    printf '%s\n' "$__rvm_output"
+  }
+
+  _LP_RUBY_VENV_PROGRAM=rvm
+
+  for __rvm_output in "system" ""; do
+    echo "$__rvm_output"
+    unset lp_ruby_env
+    _lp_ruby_env
+    [[ "$?" == 1 ]] || fail "rbenv system returned not 1"
+    assertNull "rbenv system returned string" "${lp_ruby_env+x}"
+  done
+}
 
 . ./shunit2

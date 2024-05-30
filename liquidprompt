@@ -2064,13 +2064,21 @@ _lp_perl_env() {
     if [[ "$_LP_PERL_VENV_PROGRAM" = "perlbrew" ]] ; then
         local perlbrew_perl_ver="$(perlbrew use)"
 
+        if [[ "$perlbrew_perl_ver" == "Currently using system perl" ]]; then
+            return 1
+        fi
+
         # Example: Currently using perl-5.38.0
         __lp_escape "${perlbrew_perl_ver##*perl-}"
         lp_perl_env=$ret
     elif [[ "$_LP_PERL_VENV_PROGRAM" = "plenv" ]] ; then
-        local plenv_ver="$(plenv version)"
-        # Only first word is necessary as for rbenv
-        __lp_escape "${plenv_ver%%" (set"*}"
+        local plenv_ver="$(plenv version-name)"
+
+        if [[ "$plenv_ver" == "system" ]]; then
+            return 1
+        fi
+
+        __lp_escape "$plenv_ver"
         lp_perl_env=$ret
     else
         return 1
@@ -2090,12 +2098,23 @@ _lp_ruby_env() {
     local ret
 
     if [[ "$_LP_RUBY_VENV_PROGRAM" = "rvm" ]] ; then
-        __lp_escape "$(rvm-prompt "${LP_RUBY_RVM_PROMPT_OPTIONS[@]}")"
+        local rvm_ver="$(rvm-prompt "${LP_RUBY_RVM_PROMPT_OPTIONS[@]}")"
+
+        # Will return nothing if 's' is not in the options, and "system" if it is.
+        if [[ -z "$rvm_ver" || "$rvm_ver" == "system" ]]; then
+            return 1
+        fi
+
+        __lp_escape "$rvm_ver"
         lp_ruby_env=$ret
     elif [[ "$_LP_RUBY_VENV_PROGRAM" = "rbenv" ]] ; then
-        local rbenv_ver="$(rbenv version)"
-        # Only first word is necessary
-        __lp_escape "${rbenv_ver%%" (set"*}"
+        local rbenv_ver="$(rbenv version-name)"
+
+        if [[ "$rbenv_ver" == "system" ]]; then
+            return 1
+        fi
+
+        __lp_escape "$rbenv_ver"
         lp_ruby_env=$ret
     else
         return 1

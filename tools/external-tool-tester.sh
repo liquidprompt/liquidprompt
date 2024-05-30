@@ -115,9 +115,9 @@ test_tool tty
 test_tool basename -- /dev/pts/0
 
 test_tool perbrew use
-test_tool plenv version
+test_tool plenv version-name
 test_tool rvm-prompt i v g s
-test_tool rbenv version
+test_tool rbenv version-name
 
 # shellcheck disable=SC2016
 printf 'Tests complete.\nMake sure to upload the file directly, do not `cat` and copy paste!\n' >&2

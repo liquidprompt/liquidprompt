@@ -12,8 +12,7 @@ fi
 # Error if the output is a terminal
 if [ -t 1 ]; then
   printf 'This script must be redirected to a file, or special characters will be lost
-  Ex: %s > output.txt\nOr, to upload directly:
-  %s | curl -F "sprunge=<-" "http://sprunge.us"\n' "$0" "$0"
+  Ex: %s > external-tool-results.txt\nAttach the file in a GitHub issue comment.\n' "$0"
   exit 2
 fi
 

@@ -60,6 +60,8 @@ test_tool tput md
 test_tool tput smul
 test_tool tput us
 test_tool tput colors
+test_tool tput bel
+test_tool tput bl
 test_tool tput setaf 0
 test_tool tput AF 0
 test_tool tput AF 0 0 0
@@ -67,7 +69,6 @@ test_tool tput setab 0
 test_tool tput AB 0
 test_tool tput AB 0 0 0
 
-test_tool who am i
 test_tool ps -o comm= -p "$PPID"
 test_tool logname
 
@@ -112,6 +113,11 @@ done
 test_tool date '+%I %M'
 test_tool tty
 test_tool basename -- /dev/pts/0
+
+test_tool perbrew use
+test_tool plenv version
+test_tool rvm-prompt i v g s
+test_tool rbenv version
 
 # shellcheck disable=SC2016
 printf 'Tests complete.\nMake sure to upload the file directly, do not `cat` and copy paste!\n' >&2

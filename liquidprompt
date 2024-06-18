@@ -870,7 +870,7 @@ lp_activate() {
     if _lp_multiplexer --internal; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         if (( LP_ENABLE_TMUX_TITLE_PANES )) && [[ $lp_multiplexer == tmux ]]; then
-            LP_TITLE_OPEN=$'\E]2'
+            LP_TITLE_OPEN=$'\E]2;'
         else
             LP_TITLE_OPEN=$'\Ek'
         fi

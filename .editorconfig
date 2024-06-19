@@ -8,6 +8,8 @@ root = true
 charset = utf-8
 indent_style = space
 trim_trailing_whitespace = true
+insert_final_newline = true
+spelling_language = en-US
 
 [liquidprompt,*.theme,*.bashrc,.*.conf,*.ps1,*.css,/tools/config-from-doc.sh]
 indent_size = 4
@@ -31,7 +33,6 @@ indent_size = 2
 indent_size = 8
 indent_style = tab
 
-# TODO:
-#
-# *.rst
-# *.txt
+[*.rst]
+indent_size = 3
+max_line_length = 80

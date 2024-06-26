@@ -38,6 +38,22 @@ C:/Program Files/cygwin64  1999659004 450860152 1548798852      23% C:/Program F
 values+=(1548798852)
 values_human+=("1.44 TiB")
 
+names+=("FreeBSD special FS")
+outputs+=(
+'Filesystem 1024-blocks Used Avail Capacity  Mounted on
+devfs                1    0     1     0%    /dev'
+)
+values+=("")
+values_human+=("")
+
+names+=("Linux special FS")
+outputs+=(
+'Filesystem     1024-blocks  Used Available Capacity Mounted on
+sysfs                    0     0         0        - /sys'
+)
+values+=("")
+values_human+=("")
+
 function test_disk {
     for (( i=0; i < ${#outputs[@]}; i++ )); do
         df() {
@@ -46,10 +62,15 @@ function test_disk {
 
         LP_DISK_THRESHOLD_PERC=99
         LP_DISK_THRESHOLD=10000000000
-        _lp_disk
-        assertEquals "Parsing of \"${names[i]}\" without error" "0" "$?"
-        assertEquals "Correct parsing of \"${names[i]}\" in KiB" "${values[i]}" "$lp_disk"
-        assertEquals "Correct parsing of \"${names[i]}\" for human" "${values_human[i]}" "$lp_disk_human $lp_disk_human_units"
+        if [ -n "${values[i]}" ]; then
+            _lp_disk
+            assertEquals "Parsing of \"${names[i]}\" without error" "0" "$?"
+            assertEquals "Correct parsing of \"${names[i]}\" in KiB" "${values[i]}" "$lp_disk"
+            assertEquals "Correct parsing of \"${names[i]}\" for human" "${values_human[i]}" "$lp_disk_human $lp_disk_human_units"
+        else
+            _lp_disk
+            assertFalse "Parsing of \"${names[i]}\" skipped" "$?"
+        fi
 
         LP_DISK_THRESHOLD_PERC=0
         LP_DISK_THRESHOLD=0

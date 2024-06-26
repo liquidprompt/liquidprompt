@@ -38,6 +38,14 @@ C:/Program Files/cygwin64  1999659004 450860152 1548798852      23% C:/Program F
 values+=(1548798852)
 values_human+=("1.44 TiB")
 
+names+=("FreeBSD small FS, but over 1MB")
+outputs+=(
+'Filesystem      1024-blocks Used Avail Capacity  Mounted on
+/dev/gpt/efiesp       32764  646 32117     2%    /boot/efi'
+)
+values+=(32117)
+values_human+=("31.36 MiB")
+
 names+=("FreeBSD special FS")
 outputs+=(
 'Filesystem 1024-blocks Used Avail Capacity  Mounted on
@@ -72,9 +80,14 @@ function test_disk {
             assertFalse "Parsing of \"${names[i]}\" skipped" "$?"
         fi
 
-        LP_DISK_THRESHOLD_PERC=0
-        LP_DISK_THRESHOLD=0
-        assertFalse "Above threshold" _lp_disk
+        # Note: percent threshold should be below available space in the least
+        #       available space case ("Simple Linux"), but absolute threshold
+        #       should be slightly larger than "FreeBSD small FS" test case,
+        #       so we can fully test the "total >= LP_DISK_THRESHOLD" condition.
+        LP_DISK_THRESHOLD_PERC=5
+        LP_DISK_THRESHOLD=100000
+        _lp_disk
+        assertFalse "Above threshold for \"${names[i]}\"" "$?"
     done
 }
 

@@ -4287,7 +4287,8 @@ _lp_disk() {
     [[ -z ${lp_disk} || -z ${lp_disk_perc} ]] && return 1
 
     # Comparison in KiB.
-    if (( lp_disk <= LP_DISK_THRESHOLD || lp_disk_perc <= LP_DISK_THRESHOLD_PERC )); then
+    # Ignore absolute threshold if whole FS is smaller than it; otherwise we would always show disk mark
+    if (( ( total >= LP_DISK_THRESHOLD && lp_disk <= LP_DISK_THRESHOLD ) || lp_disk_perc <= LP_DISK_THRESHOLD_PERC )); then
         # df outputs in KiB, but it's more robust to implement lp_human in bytes,
         # so we need to convert b in KiB here.
         local lp_bytes lp_bytes_units

@@ -1320,7 +1320,8 @@ Thresholds
    :value: 100000
 
    Display something if the available space on the hard drive hosting the
-   current directory goes below this absolute threshold *in kilobytes*.
+   current directory goes below this absolute threshold *in kilobytes*. If the
+   filesystem is smaller than :attr:`LP_DISK_THRESHOLD`, this check is skipped.
 
    The threshold for disk can also be set with :attr:`LP_DISK_THRESHOLD_PERC`,
    the first one to be reached triggering the display.

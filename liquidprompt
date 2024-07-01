@@ -4261,20 +4261,25 @@ _lp_disk() {
     # Example output:
     # Filesystem     1024-blocks      Used Available Capacity Mounted on
     # /dev/nvme0n1p2   479608528 425188220  30011332      94% /
+    # For pseudo filesystems (like procfs or sysfs) output can be:
+    # Filesystem     1024-blocks  Used Available Capacity Mounted on
+    # sysfs                    0     0         0        - /sys
 
-    # Placeholder and capacity.
-    local _ capa
+    # Placeholder, total and capacity.
+    local _ total capa
     # Compute location of the targeted column on the safe line.
     local short="${df#*1024-blocks}"
     # Second line.
     local second="${df#*$'\n'}"
     # Consider only targeted columns.
     # This may be extended to get other information if needed:
-    #       +- total
-    #       | +- used        +- mount point (may have spaces)
-    #       | |              |
-    #       v v              v
-    read -r _ _ lp_disk capa _ <<<"${second:${#df}-${#short}-11}"
+    #             +- used        +- mount point (may have spaces)
+    #             |              |
+    #             v              v
+    read -r total _ lp_disk capa _ <<<"${second:${#df}-${#short}-11}"
+
+    # Skip small (under 1MiB) filesystems (probably pseudofs or something weird)
+    (( ${total:-0} < 1024 )) && return 1
 
     # Without percent character.
     lp_disk_perc=$(( 100 - ${capa:0:${#capa}-1} ))
@@ -4282,7 +4287,8 @@ _lp_disk() {
     [[ -z ${lp_disk} || -z ${lp_disk_perc} ]] && return 1
 
     # Comparison in KiB.
-    if (( lp_disk <= LP_DISK_THRESHOLD || lp_disk_perc <= LP_DISK_THRESHOLD_PERC )); then
+    # Ignore absolute threshold if whole FS is smaller than it; otherwise we would always show disk mark
+    if (( ( total >= LP_DISK_THRESHOLD && lp_disk <= LP_DISK_THRESHOLD ) || lp_disk_perc <= LP_DISK_THRESHOLD_PERC )); then
         # df outputs in KiB, but it's more robust to implement lp_human in bytes,
         # so we need to convert b in KiB here.
         local lp_bytes lp_bytes_units

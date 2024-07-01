@@ -971,6 +971,35 @@ function test_version {
     _lp_version_greatereq 0 2 3 beta 4
     assertTrue "greater version major" "$?"
 
+    _LP_VERSION=(1 2 3)
+
+    _lp_version_greatereq 1 2 3 beta 4
+    assertTrue "equal version" "$?"
+
+    _lp_version_greatereq 1 2 3 beta 5
+    assertTrue "lesser version number" "$?"
+    _lp_version_greatereq 1 2 3 rc 1
+    assertTrue "lesser version string" "$?"
+    _lp_version_greatereq 1 2 4 beta 4
+    assertFalse "lesser version patch" "$?"
+    _lp_version_greatereq 1 3 3 beta 4
+    assertFalse "lesser version minor" "$?"
+    _lp_version_greatereq 2 2 3 beta 4
+    assertFalse "lesser version major" "$?"
+
+    _lp_version_greatereq 1 2 3 beta 3
+    assertTrue "greater version number" "$?"
+    _lp_version_greatereq 1 2 3 alpha 4
+    assertTrue "greater version string" "$?"
+    _lp_version_greatereq 1 2 2 beta 4
+    assertTrue "greater version patch" "$?"
+    _lp_version_greatereq 1 1 3 beta 4
+    assertTrue "greater version minor" "$?"
+    _lp_version_greatereq 0 2 3 beta 4
+    assertTrue "greater version major" "$?"
+
+
+    _LP_VERSION=(1 2 3 beta 4)
     _lp_version_string # Defaults to _LP_VERSION
     assertEquals "1.2.3-beta.4" "$lp_version"
 

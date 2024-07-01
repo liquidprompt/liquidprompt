@@ -125,6 +125,8 @@ Thanks again to everyone for all of the help and support!
 * @go2null
 * Łukasz Stelmach (@steelman)
 * @slowpeek
+* TIAN Yuanhao (@tianyuanhao)
+* Michal Gawlik (@dex6)
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -278,3 +280,5 @@ Thanks again to everyone for all of the help and support!
 * Aurélien (@orel1)
 * Eugene Medvedev (@Mihara)
 * Christian Heusel (@christian-heusel)
+* Ross Patterson (@rpatterson)
+* Tomasz Kapias (@tkapias)

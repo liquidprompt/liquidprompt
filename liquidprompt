@@ -5,7 +5,7 @@
 
 # shellcheck shell=bash
 
-_LP_VERSION=(2 2 0)
+_LP_VERSION=(2 2 1)
 
 # Licensed under the AGPL version 3
 #

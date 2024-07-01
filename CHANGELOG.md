@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2024-07-01
+### Added
+- **general**: editorconfig file ([#840], [f47a7cd])
+- **tools**: bug-report.sh ([3d24865])
+
+### Fixed
+- **general**: Bump version number ([2121394])
+- **general**: `_lp_version_greatereq` crash on release version with set -u
+  enabled ([2121394])
+- **disk**: Error on file system with no space ([#841])
+- **perl**: `plenv` and `perlbrew` source displaying "system" ([#834])
+- **ruby**: `rbenv` and `rvm-prompt` source displaying "system" ([#834])
+- **tmux**: Wrong `LP_TITLE_OPEN` for tmux ([#839])
+- **tools**: Remove sprunge.us recommendation ([#837])
+- **tools**: Update external-tool-tester.sh with new tools ([6868057])
+
+### Changed
+- **disk**: Now will never displays if file system is smaller than
+  `LP_DISK_THRESHOLD` ([#841])
+- **docs**: Improve docs around .bashrc ordering ([1139de1])
+
+
 ## [2.2.0] - 2024-05-22
 ### Deprecated
 - **theme**: Powerline themes deprecated. Use split off project
@@ -648,7 +670,8 @@ for help.
 
 ## [1.0] - 2012-08-10 - nojhan
 
-[Unreleased]: https://github.com/liquidprompt/liquidprompt/compare/v2.2.0...master
+[Unreleased]: https://github.com/liquidprompt/liquidprompt/compare/v2.2.1...master
+[2.2.1]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.2.1
 [2.2.0]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.2.0
 [2.1.2]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.1.2
 [2.1.1]: https://github.com/liquidprompt/liquidprompt/releases/tag/v2.1.1
@@ -901,6 +924,11 @@ for help.
 [#829]: https://github.com/liquidprompt/liquidprompt/pull/829
 [#830]: https://github.com/liquidprompt/liquidprompt/pull/830
 [#831]: https://github.com/liquidprompt/liquidprompt/issues/831
+[#834]: https://github.com/liquidprompt/liquidprompt/issues/834
+[#837]: https://github.com/liquidprompt/liquidprompt/issues/837
+[#839]: https://github.com/liquidprompt/liquidprompt/pull/839
+[#840]: https://github.com/liquidprompt/liquidprompt/pull/840
+[#841]: https://github.com/liquidprompt/liquidprompt/pull/841
 
 [0200b99]: https://github.com/liquidprompt/liquidprompt/commit/0200b99ebd8485ba8ba2c91da7703e87c40ec15d
 [0234a58]: https://github.com/liquidprompt/liquidprompt/commit/0234a581d023fb6c40e5339f6dcbd619a33b4553
@@ -922,6 +950,7 @@ for help.
 [0e0cc87]: https://github.com/liquidprompt/liquidprompt/commit/0e0cc870c2dcf3fbfed1b2e187e918d74dd6d3db
 [0f0fd37]: https://github.com/liquidprompt/liquidprompt/commit/0f0fd3739a8dd9821b34b78859de13b47b2d856d
 [0f80162]: https://github.com/liquidprompt/liquidprompt/commit/0f80162f1f22277e497b69f243894a87fcaec643
+[1139de1]: https://github.com/liquidprompt/liquidprompt/commit/1139de199a2bc80da577453b8614776863297736
 [13e128b]: https://github.com/liquidprompt/liquidprompt/commit/13e128bb320034a0303f7354fad66a5674c6b4da
 [145f146]: https://github.com/liquidprompt/liquidprompt/commit/145f146e9cb4fb3c30a22e6c35529120f4650a28
 [1a22e1e]: https://github.com/liquidprompt/liquidprompt/commit/1a22e1ec54ad46a311ed9bdd65ed2bd1459e606e
@@ -931,6 +960,7 @@ for help.
 [1c65748]: https://github.com/liquidprompt/liquidprompt/commit/1c657481fd3481720b54187f9aa464df0e62a3f2
 [1fc0308]: https://github.com/liquidprompt/liquidprompt/commit/1fc030813069ebc0cfc0542d049a9e4998100490
 [1fe1559]: https://github.com/liquidprompt/liquidprompt/commit/1fe1559ebb18ae2ff39e1c4703a06d35f0f6538f
+[2121394]: https://github.com/liquidprompt/liquidprompt/commit/2121394b07d7102857ebc06229dc80f61cedd97d
 [22dd760]: https://github.com/liquidprompt/liquidprompt/commit/22dd760926c3a7b8e4f4fa28902d43b06e68e6a8
 [230c9d7]: https://github.com/liquidprompt/liquidprompt/commit/230c9d7d45c10b8f319b9d5c64b4fd59261c8008
 [239a574]: https://github.com/liquidprompt/liquidprompt/commit/239a5740866962a40a614057065188810830207d
@@ -944,6 +974,7 @@ for help.
 [36ab8fa]: https://github.com/liquidprompt/liquidprompt/commit/36ab8fa8ff7c27284163aebbfcb9f82fc2f572ac
 [37db052]: https://github.com/liquidprompt/liquidprompt/commit/37db052c18d99fc36f4c4a4ede798155e519e2ca
 [3b75185]: https://github.com/liquidprompt/liquidprompt/commit/3b751856bfe701f38f842e8ae96d803a3990f13d
+[3d24865]: https://github.com/liquidprompt/liquidprompt/commit/3d2486578855e92c7cf8c5dc05da5fc6568a1f43
 [3e615cd]: https://github.com/liquidprompt/liquidprompt/commit/3e615cded01b583870a7e6e9529f341280eb40a6
 [3f57231]: https://github.com/liquidprompt/liquidprompt/commit/3f57231d73112ea1090e3a607539e515f21de794
 [3fadce9]: https://github.com/liquidprompt/liquidprompt/commit/3fadce962396d6d3a1f7c2c8e23c1d9fdc22c098
@@ -985,6 +1016,7 @@ for help.
 [66d1d2b]: https://github.com/liquidprompt/liquidprompt/commit/66d1d2ba3baade138d7470317aca527c138732fe
 [67a4221]: https://github.com/liquidprompt/liquidprompt/commit/67a4221a955a83c00c44bca5eb276b9f02074d15
 [67dc0a9]: https://github.com/liquidprompt/liquidprompt/commit/67dc0a9ae9eebf0c2b85b4ee6fc2d6b5562b6412
+[6868057]: https://github.com/liquidprompt/liquidprompt/commit/68680573bc9f198e663587916760d59c98614dd4
 [695d629]: https://github.com/liquidprompt/liquidprompt/commit/695d629dd5cf7109e8892075d4cf7fadd8c17d94
 [6961f99]: https://github.com/liquidprompt/liquidprompt/commit/6961f998b83f491995ce731bd232c5170cf4be5f
 [69c75a3]: https://github.com/liquidprompt/liquidprompt/commit/69c75a3e6c4998d682e480fb3df935e4eb224444
@@ -1103,6 +1135,7 @@ for help.
 [f436867]: https://github.com/liquidprompt/liquidprompt/commit/f4368670bf258257fece5611a9aad17e88f10b5a
 [f445eff]: https://github.com/liquidprompt/liquidprompt/commit/f445eff684558e8bf200df2f3f897c09374b7d6c
 [f4636e6]: https://github.com/liquidprompt/liquidprompt/commit/f4636e66455a80586f20bb1ea9624a15299cea58
+[f47a7cd]: https://github.com/liquidprompt/liquidprompt/commit/f47a7cd482450a0898f8ad3a22dbe0f0ce84fd6d
 [f4afc5d]: https://github.com/liquidprompt/liquidprompt/commit/f4afc5d0a8f776c96308001fcdae4a5aa1dac2bd
 [f681cdf]: https://github.com/liquidprompt/liquidprompt/commit/f681cdf9d8dd1d847aaf5f0b69222606a181c648
 [f86a097]: https://github.com/liquidprompt/liquidprompt/commit/f86a097d5eb9cab2a2fbca7629e9c2c389f1e12e

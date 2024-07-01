@@ -5,7 +5,7 @@
 
 # shellcheck shell=bash
 
-_LP_VERSION=(2 2 0 rc 2)
+_LP_VERSION=(2 2 0)
 
 # Licensed under the AGPL version 3
 #
@@ -303,12 +303,12 @@ _lp_version_greatereq() {  # major, minor, [patch], [string], [number]
             if (( patch > _LP_VERSION[_LP_FIRST_INDEX+2] )); then
                 return 1
             elif (( patch == _LP_VERSION[_LP_FIRST_INDEX+2] )) && [[ -n $string && -n $number ]]; then
-                if [[ $string == "${_LP_VERSION[_LP_FIRST_INDEX+3]}" ]]; then
+                if [[ $string == "${_LP_VERSION[_LP_FIRST_INDEX+3]-}" ]]; then
                     if (( number > _LP_VERSION[_LP_FIRST_INDEX+4] )); then
                         return 1
                     fi
-                elif [[ ${_LP_VERSION[_LP_FIRST_INDEX+3]} == "alpha" || \
-                        ( ${_LP_VERSION[_LP_FIRST_INDEX+3]} == "beta" && \
+                elif [[ ${_LP_VERSION[_LP_FIRST_INDEX+3]-} == "alpha" || \
+                        ( ${_LP_VERSION[_LP_FIRST_INDEX+3]-} == "beta" && \
                         $string == "rc" ) ]]; then
                     return 1
                 fi

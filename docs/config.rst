@@ -34,6 +34,10 @@ by calling the following script::
 Then edit the ``my_liquidpromptrc`` file to suits your needs
 and copy/link it where you want.
 
+If you downloaded Liquid Prompt from a release tarball or a package manager, a
+``liquidpromptrc-dist`` file likely came with it. A package manager likely would
+put it at ``/etc/liquidpromptrc``.
+
 In the event that you synchronize your configuration file across multiple
 computers, or if you have an ``/etc/liquidpromptrc`` system-wide from which
 you'd like to make minor deviations in an individual user account, you can

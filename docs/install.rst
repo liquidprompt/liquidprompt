@@ -27,7 +27,8 @@ Or, if you want to use the development (non-stable) branch::
 
    git clone https://github.com/liquidprompt/liquidprompt.git ~/liquidprompt
 
-If you do not have ``git``, you can download and extract the source in zip or
+If you do not have ``git``, or want a package with an example config file and
+compiled documentation, you can download and extract the source in zip or
 gzip format directly from the `release page
 <https://github.com/liquidprompt/liquidprompt/releases/latest>`_.
 

@@ -24,6 +24,167 @@ _LP_VERSION=(2 2 1)
 
 # See the README.md file for a summary of features.
 
+__LP_PUBLIC_FUNCTIONS=(
+    "lp_activate"
+    "lp_help"
+    "lp_title"
+    "lp_theme"
+    "prompt_on"
+    "prompt_off"
+    "prompt_OFF"
+    "prompt_tag"
+    "lp_terminal_format"
+)
+
+lp_help() {
+    local usage
+    local -a description positional options
+    positional=()
+    options=()
+
+    case "${1-}" in
+        ""|"lp_help"|"-h"|"--help")
+            usage=". liquidprompt
+       lp_help [help_section]"
+            description=(
+                "To use Liquid Prompt every time you start a shell, add the following lines"
+                "to your .bashrc (if you use Bash) or .zshrc (if you use Zsh):"
+                "  [[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt" " "
+                "Liquid Prompt looks for a config file in these locations, in order:"
+                "  ~/.liquidpromptrc"
+                "  \$XDG_CONFIG_HOME/liquidpromptrc"
+                "  \${XDG_CONFIG_DIRS[@]}/liquidpromptrc"
+                "  /etc/liquidpromptrc" ""
+                "See the online documentation for more details:"
+                "https://liquidprompt.readthedocs.io/"
+            )
+            positional=(
+                "help_section" "name of function to print help for. Options are:"
+                "" "${__LP_PUBLIC_FUNCTIONS[*]}"
+            )
+            ;;
+        "lp_activate")
+            usage="$1"
+            description=(
+                "Reload the user config and scan the environment again for programs needed"
+                "for specific features. prompt_on() is then called to enable the prompt."
+            )
+            ;;
+        "lp_title")
+            usage="$1 [title_string]"
+            description=(
+                "Set the terminal title."
+                "If no string is passed, the custom title in unset."
+            )
+            positional=(
+                "title_string" "string to set as the title."
+            )
+            options=(
+                "--" "end matching of options"
+            )
+            ;;
+        "lp_theme")
+            usage="$1 [--list|theme_id]"
+            description=(
+                "Switch to a previously loaded theme."
+                "The theme must be sourced into the current shell before it can be activated."
+            )
+            positional=(
+                "theme_id" "name of the loaded theme to activate"
+            )
+            options=(
+                "--list" "list the names of all loaded themes"
+            )
+            ;;
+        "lp_terminal_format")
+            usage="$1 foreground_color [background_color [bold [underline [fallback_foreground_color [fallback_background_color]]]]]"
+            description=(
+                "Generate a terminal format string."
+                "The returned string is stored in \$lp_terminal_format"
+                "This function is very complicated, please see the online documentation for details:"
+                "https://liquidprompt.readthedocs.io/en/stable/functions/public.html#lp_terminal_format"
+            )
+            ;;
+        "prompt_on")
+            usage="$1"
+            description=(
+                "Enable the prompt generation and setting."
+            )
+            ;;
+        "prompt_off")
+            usage="$1"
+            description=(
+                "Disable the prompt generation and setting, and restore the old \$PS1, \$PROMPT_COMMAND,"
+                "and prompt theme."
+            )
+            ;;
+        "prompt_OFF")
+            usage="$1"
+            description=(
+                "Disable the prompt generation and setting, and set \$PS1 to \"\$ \" on Bash, \"% \" on Zsh."
+            )
+            ;;
+        "prompt_tag")
+            usage="$1 [prefix_string]"
+            description=(
+                "Sets a prefix that will be displayed before every prompt. Postpends a"
+                "space to the input string. To unset the prefix, call prompt_tag() with"
+                "no arguments."
+            )
+            positional=(
+                "prefix_string" "string to tag the prompt with"
+            )
+            options=(
+                "--" "end matching of options"
+            )
+            ;;
+        *)
+            printf 'Error: unknown command "%s"\n' "$1"
+            return 1
+    esac
+
+    options=("-h, --help" "show this help message and exit" "${options[@]}")
+
+    printf 'Usage: %s\n\n' "$usage"
+    printf '%s\n' "${description[@]}"
+
+    # Align all the right side fields.
+    if [[ "${#positional[@]}" != 0 ]]; then
+        printf '\nPositional arguments:\n'
+        printf ' %-14s  %s\n' "${positional[@]}"
+    fi
+    printf '\nOptions:\n'
+    printf ' %-14s  %s\n' "${options[@]}"
+}
+
+__lp_help_bash_complete() {
+    COMPREPLY=()
+    local func partial
+    partial=${2-}
+
+    for func in "${__LP_PUBLIC_FUNCTIONS[@]}"; do
+        [[ -n $partial && $func != "$partial"* ]] && continue
+        COMPREPLY+=("$func")
+    done
+}
+
+__lp_help_zsh_complete() {
+    _describe 'theme' __LP_PUBLIC_FUNCTIONS
+}
+
+# Exit if script is not sourced.
+__lp_error_exec() {
+    printf 'liquidprompt: must be sourced, not executed.\n\n' >&2
+    lp_help
+    exit 1
+}
+
+if [ -n "${ZSH_VERSION-}" ]; then
+   [[ $ZSH_EVAL_CONTEXT =~ :file$ ]] || __lp_error_exec
+else
+   (return 0 2>/dev/null) || __lp_error_exec
+fi
+
 # Issue #161: do not load if not an interactive shell
 # Do not exit if '--no-activate' flag was passed, as it overrides this check
 # shellcheck disable=SC2268
@@ -729,14 +890,23 @@ __lp_source_config() {
 # Initialize features based on the user config.
 # shellcheck disable=SC2120
 lp_activate() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help lp_activate
+        return 0
+    fi
+
     if (( _LP_SHELL_bash )); then
+        complete -F __lp_help_bash_complete lp_help
         complete -F __lp_theme_bash_complete lp_theme
     else # zsh
         # For ZSH, autoload required functions
         autoload -Uz add-zsh-hook
 
         # Enable the autocomplete if the autocomplete system is initialized.
-        __lp_is_function compdef && compdef __lp_theme_zsh_complete lp_theme
+        if __lp_is_function compdef; then
+            compdef __lp_help_zsh_complete lp_help
+            compdef __lp_theme_zsh_complete lp_theme
+        fi
     fi
 
     # Disable hooks that we don't need if features will be disabled.
@@ -1125,6 +1295,11 @@ _lp_sb() {
 
 # Generates a terminal escape sequence to format the terminal.
 lp_terminal_format() {  # fg, bg, bold, underline, fallback_fg, fallback_bg
+    if [[ -z ${1-} || $1 == "--help" || $1 == "-h" ]]; then
+        lp_help lp_terminal_format
+        return 0
+    fi
+
     lp_terminal_format=
     (( LP_ENABLE_COLOR )) || return 2
 
@@ -4327,7 +4502,17 @@ _lp_disk_color() {
 
 # Deprecated since 2.0
 _lp_title() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help lp_title
+        return 0
+    fi
+
     (( LP_ENABLE_TITLE )) || return
+
+    # Allow for ignoring first arg that looks like an option.
+    if [[ ${1-} == "--" ]]; then
+        shift
+    fi
 
     # Get the input as pure text
     local ret
@@ -4921,6 +5106,16 @@ __lp_before_command() {
 }
 
 prompt_tag() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help prompt_tag
+        return 0
+    fi
+
+    # Allow for ignoring first arg that looks like an option.
+    if [[ ${1-} == "--" ]]; then
+        shift
+    fi
+
     if [[ -n "${1-}" ]]; then
         export LP_PS1_PREFIX="$1 "
     else
@@ -4929,7 +5124,13 @@ prompt_tag() {
 }
 
 # Activate Liquid Prompt
+# shellcheck disable=SC2120
 prompt_on() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help prompt_on
+        return 0
+    fi
+
     # Reset so all PWD dependent variables are computed after loading
     LP_OLD_PWD=""
 
@@ -5089,6 +5290,11 @@ __lp_disable_hooks() {
 
 # Come back to the old prompt
 prompt_off() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help prompt_off
+        return 0
+    fi
+
     __lp_disable_hooks
 
     PS1=$LP_OLD_PS1
@@ -5105,6 +5311,11 @@ prompt_off() {
 
 # Use an empty prompt: just the \$ mark
 prompt_OFF() {
+    if [[ ${1-} == "--help" || ${1-} == "-h" ]]; then
+        lp_help prompt_OFF
+        return 0
+    fi
+
     __lp_disable_hooks
 
     PS1="$_LP_MARK_SYMBOL "
@@ -5112,6 +5323,11 @@ prompt_OFF() {
 
 lp_theme() {
     local theme="${1-}"
+
+    if [[ $theme == "--help" || $theme == "-h" ]]; then
+        lp_help lp_theme
+        return 0
+    fi
 
     LP_THEME="${_LP_OLD_THEME-}"
 
@@ -5128,9 +5344,9 @@ lp_theme() {
     local f_version="_lp_${theme}_theme_version_check"
 
     if [[ -z $theme ]]; then
-        printf '%s\n%s\n' \
-            'Must pass in the name of a theme. If you meant the default Liquid Prompt theme, try "default".' \
-            'Run "lp_theme --list" to see all loaded and available themes.' >&2
+        printf '%s\n\n' \
+            'Must pass in the name of a theme. If you meant the default Liquid Prompt theme, try "default".' >&2
+        lp_help theme
         return 1
     fi
 

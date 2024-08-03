@@ -14,9 +14,17 @@ their config.
    The config is sourced, and the environment scanned again for programs needed
    for specific features.
 
-   Lastly, :func:`prompt_on` is called to enabled the prompt.
+   Lastly, :func:`prompt_on` is called to enable the prompt.
 
    .. versionadded:: 2.0
+
+.. function:: lp_help([help_section])
+
+   Print help information for ``liquidprompt`` or any of the public functions.
+
+   *help_section* can be any of the public functions named on this page.
+
+   .. versionadded:: 2.3
 
 .. function:: lp_title([title_string])
 

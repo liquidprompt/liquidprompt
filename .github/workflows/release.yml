@@ -24,6 +24,8 @@ jobs:
       - name: Build manual pages
         working-directory: ./docs
         run: make man
+      - name: Build example config file
+        run: ./tools/config-from-doc.sh > liquidpromptrc-dist
       - name: Create output directory
         run: mkdir -v ./.output
       - name: Create release tarball

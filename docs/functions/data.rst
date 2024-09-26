@@ -337,6 +337,7 @@ Environment
 
    * ``tmux``
    * ``screen``
+   * ``shpool``
 
    .. versionadded:: 2.0
 

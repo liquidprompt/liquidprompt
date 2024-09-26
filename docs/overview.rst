@@ -85,7 +85,7 @@ These are some of the most popular features:
   much.
 - **Sudo**: show if the user currently has *sudo* rights.
 - **Multiplexers**: indicate if you are in a terminal multiplexer session
-  (i.e. tmux or screen).
+  (i.e. tmux, screen, or shpool).
 - **Proxy**: indicate whether a proxy is configured.
 - **Temperature**: warn if the temperature goes too high.
 - **Hot prompt switch**: commands allowing you to rapidly switch the theme,

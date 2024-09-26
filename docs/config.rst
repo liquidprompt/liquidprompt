@@ -430,7 +430,7 @@ Features
 
    Display the number of detached multiplexer sessions.
 
-   Will be disabled if neither ``screen`` nor ``tmux`` are found.
+   Will be disabled if none of ``screen``, ``shpool``, or ``tmux`` are found.
 
    .. note::
       This can be slow on some machines, and prompt speed can be greatly
@@ -739,7 +739,7 @@ Features
    :value: 1
 
    Allows getting the name of the current multiplexer
-   (*screen* or *tmux*), if any.
+   (*screen*, *shpool*, or *tmux*), if any.
 
    If set to ``0``, also disables:
 
@@ -950,7 +950,8 @@ Features
    :type: bool
    :value: 0
 
-   Set the terminal title while in a terminal multiplexer.
+   Set the terminal title while in a terminal multiplexer that can set the
+   title itself: *screen* or *tmux*.
 
    :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
 

@@ -1031,13 +1031,14 @@ lp_activate() {
     if (( LP_ENABLE_DETACHED_SESSIONS )); then
         command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
         command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
+        command -v shpool >/dev/null ; _LP_ENABLE_SHPOOL=$(( ! $? ))
     fi
 
     # Use standard path symbols inside Midnight Commander
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
     # If we are running in a terminal multiplexer, special title escapes
-    if _lp_multiplexer --internal; then
+    if _lp_multiplexer --internal && [[ $lp_multiplexer != "shpool" ]]; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         if (( LP_ENABLE_TMUX_TITLE_PANES )) && [[ $lp_multiplexer == tmux ]]; then
             LP_TITLE_OPEN=$'\E]2;'
@@ -2067,6 +2068,9 @@ _lp_multiplexer() { # [--internal]
     elif [[ "${TERM-}" == screen* ]]; then
         lp_multiplexer=screen
         return 0
+    elif [[ -n ${SHPOOL_SESSION_NAME-} ]]; then
+        lp_multiplexer=shpool
+        return 0
     fi
     return 1
 }
@@ -2727,13 +2731,14 @@ _lp_shell_level_color() {
 # Related jobs #
 ################
 
-# Return the count of detached screen and/or tmux sessions.
+# Return the count of detached screen, tmux, and shpool sessions.
 _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
     local -i count=0
     (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
+    (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c 'disconnected')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))

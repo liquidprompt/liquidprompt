@@ -4654,14 +4654,14 @@ _lp_container() {
             lp_container="Docker"
         elif [[ "$cgroup" == *"lxc"* ]]; then
             lp_container="LXC"
+        elif [[ -r /run/host/container-manager ]]; then
+            local ret
+            IFS='' read -r ret < /run/host/container-manager
+            __lp_escape "${ret#systemd-}"
+            lp_container="$ret"
         else
             return 1
         fi
-    elif [[ -r /run/host/container-manager ]]; then
-        local ret
-        IFS='' read -r ret < /run/host/container-manager
-        __lp_escape "${ret#systemd-}"
-        lp_container="$ret"
     else
         return 1
     fi

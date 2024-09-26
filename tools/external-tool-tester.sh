@@ -73,6 +73,7 @@ test_tool ps -o comm= -p "$PPID"
 test_tool logname
 
 test_tool screen -ls
+test_tool shpool list
 test_tool tmux list-sessions
 
 for power_supply in "/sys/class/power_supply/"*; do

@@ -12,8 +12,9 @@ fi
 LP_ENABLE_DETACHED_SESSIONS=1
 _LP_ENABLE_SCREEN=1
 _LP_ENABLE_TMUX=1
+_LP_ENABLE_SHPOOL=1
 
-typeset -a screen_outputs screen_values tmux_outputs tmux_values
+typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values
 
 # Add test cases to these arrays like below
 
@@ -76,12 +77,26 @@ screen_outputs+=(
 )
 screen_values+=(0)
 
+# Linux 5.14.0-427.28.1.el9_4.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Jul 31 15:28:35 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+shpool_outputs+=(
+"NAME   	STARTED_AT     	STATUS
+"
+)
+shpool_values+=(0)
+shpool_outputs+=(
+"NAME   	STARTED_AT     	STATUS
+test   	2024-09-26T16:06:07.352+00:00  	disconnected
+"
+)
+shpool_values+=(1)
+
 
 function test_screen_sessions {
 
   screen() {
     printf '%s' "$__screen_output"
   }
+  shpool() { : ; }
   tmux() { : ; }
 
   for (( index=0; index < ${#screen_values[@]}; index++ )); do
@@ -91,12 +106,28 @@ function test_screen_sessions {
   done
 }
 
+function test_shpool_sessions {
+
+  shpool() {
+    printf '%s' "$__shpool_output"
+  }
+  screen() { : ; }
+  tmux() { : ; }
+
+  for (( index=0; index < ${#shpool_values[@]}; index++ )); do
+    __shpool_output=${shpool_outputs[$index]}
+    _lp_detached_sessions
+    assertEquals "shpool sessions output at index ${index}" "${shpool_values[$index]}" "$lp_detached_sessions"
+  done
+}
+
 function test_tmux_sessions {
 
   tmux() {
     printf '%s' "$__tmux_output"
   }
   screen() { : ; }
+  shpool() { : ; }
 
   for (( index=0; index < ${#tmux_values[@]}; index++ )); do
     __tmux_output=${tmux_outputs[$index]}

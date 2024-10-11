@@ -5086,12 +5086,15 @@ __lp_before_command() {
     # If this is the last thing before prompt is being drawn, the command is done,
     # so mark the next trap. Note these two events could be at the same
     # time, so no elif is used.
+    # It is possible for PROMPT_COMMAND to be unset, as we could be in the middle
+    # of replacing it in lp_activate().
     local first_command last_command
-    first_command=$PROMPT_COMMAND
-    if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+    first_command=${PROMPT_COMMAND-}
+    if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )) \
+        && [[ -n "${PROMPT_COMMAND[*]+x}" ]]; then
         last_command=${PROMPT_COMMAND[-1]}
     else
-        last_command=$PROMPT_COMMAND
+        last_command=${PROMPT_COMMAND-}
     fi
 
     if [[ "$last_command" == *"$BASH_COMMAND" ]]; then
@@ -5280,7 +5283,6 @@ __lp_disable_hooks() {
             fi
 
             # Disable the DEBUG trap used by the RUNTIME or TITLE_COMMAND features
-            # TODO: Fix this: Bash will unset the function's DEBUG trap, not the global one.
             if (( ${_LP_ENABLE_PREEXEC-0} )); then
                 trap - DEBUG
             fi
@@ -5325,6 +5327,11 @@ prompt_OFF() {
 
     PS1="$_LP_MARK_SYMBOL "
 }
+
+if (( _LP_SHELL_bash )); then
+    # These functions must inherit shell traps to be able to disable them.
+    declare -f -t __lp_disable_hooks lp_activate prompt_off prompt_OFF
+fi
 
 lp_theme() {
     local theme="${1-}"

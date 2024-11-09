@@ -3528,8 +3528,8 @@ _lp_svn_uncommitted_lines() {
     IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\svn diff --internal-diff 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
-        /^(\+[^+])|(\+$)/ { plus+=1 }
-        /^(-[^-])|(-$)/ { minus+=1 }
+        /(^\+[^+])|(^\+$)/ { plus+=1 }
+        /(^-[^-])|(^-$)/ { minus+=1 }
         END {
             print plus" "minus
         }')"
@@ -3643,8 +3643,8 @@ _lp_fossil_uncommitted_lines() {
     IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\fossil diff --internal --verbose 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
-        /^(\+[^+])|(\+$)/ { plus+=1 }
-        /^(-[^-])|(-$)/ { minus+=1 }
+        /(^\+[^+])|(^\+$)/ { plus+=1 }
+        /(^-[^-])|(^-$)/ { minus+=1 }
         END {
             print plus" "minus
         }')"
@@ -3749,8 +3749,8 @@ _lp_bzr_uncommitted_lines() {
     IFS=' ' read -r lp_vcs_uncommitted_i_lines lp_vcs_uncommitted_d_lines \
         <<<"$(\bzr diff 2>/dev/null | awk '
         BEGIN { plus=0; minus=0 }
-        /^(\+[^+])|(\+$)/ { plus+=1 }
-        /^(-[^-])|(-$)/ { minus+=1 }
+        /(^\+[^+])|(^\+$)/ { plus+=1 }
+        /(^-[^-])|(^-$)/ { minus+=1 }
         END {
             print plus" "minus
         }')"

@@ -118,5 +118,7 @@ silent! helptags ALL
 " vi: ft=vim
 ```
 
-<!--vi: ft=markdown-->
+## License
+
+Distributed under the GNU Affero General Public License version 3.
 

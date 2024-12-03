@@ -8,8 +8,8 @@ But, this complicated function takes 6 arguments (fg, bg, bold, underline, fallb
 
 This folder provides 3 new palettes to extend [vim-hexokinase](https://github.com/RRethy/vim-hexokinase):
 
-  - lpcolorsBg2hexTable.json: help highlighting the and 'bg' arguments in a `lp_terminal_format` function.
-  - lpcolorsFg2hexTable.json: help highlighting the and 'fg' arguments in a `lp_terminal_format` function.
+  - lpcolorsBg2hexTable.json: help highlighting the 'bg' argument when using `lp_terminal_format`.
+  - lpcolorsFg2hexTable.json: help highlighting the 'fg' argument when using `lp_terminal_format`.
   - xtermcolors2hexTable.json: optional, correct ANSI colors modified by the terminal emulator configuration.
 
 ## Requirements

@@ -2,13 +2,13 @@
 
 if ! command -v xtermcontrol 1> /dev/null; then
     printf '\033[1;31mRequirement Error\033[0m:\n'
-    printf '  - 'xtermcontrol' not found\n'
+    printf '  - xtermcontrol not found\n'
 fi
 
 declare -a colors
 for i in {0..15}; do
-    color="$(xtermcontrol --get-color$i)"
-    colors[$i]="$(printf '#%s%s%s' ${color:4:2} ${color:9:2} ${color:14:2})"
+    color=$(xtermcontrol --get-color"$i")
+    colors["$i"]=$(printf '#%s%s%s' "${color:4:2}" "${color:9:2}" "${color:14:2}")
 done
 
 real_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|')

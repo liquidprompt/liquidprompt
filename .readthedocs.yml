@@ -13,7 +13,7 @@ formats:
 build:
   os: ubuntu-22.04
   tools:
-    python: "3"
+    python: "3.12"
 
 python:
   install:

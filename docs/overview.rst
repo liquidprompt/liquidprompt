@@ -24,6 +24,11 @@ Using the Powerline theme:
 .. image:: theme/included/powerline-med.png
    :alt:   server  user  ~  liquidprompt  1   main  
 
+If you are lost, there is even a theme that gives you links to the documentation
+about each section:
+
+.. image: theme/included/explain-demo.png
+   :alt: bracket_open perm bracket_close shlvl mark user host pwd envvars dev env vcs err err meaning
 
 There are many prompts configurations out there, but here is what makes Liquid
 Prompt stand out:

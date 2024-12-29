@@ -1,0 +1,258 @@
+
+_lp_explain_theme_activate() {
+    # Defaults to links being enabled.
+    LP_ENABLE_HYPERLINKS=${LP_ENABLE_HYPERLINKS:-1}
+
+    # Disable typographic marks without meaning.
+    LP_MARK_DEV_OPEN=
+    LP_MARK_DEV_CLOSE=
+    LP_MARK_DEV_MID=
+    LP_MARK_MODULES_OPEN=
+    LP_MARK_MODULES_SEP=
+    LP_MARK_MODULES_CLOSE=
+    LP_MARK_ENV_VARS_OPEN=
+    LP_MARK_ENV_VARS_SEP=
+    LP_MARK_ENV_VARS_CLOSE=
+
+    # A prompt starting on the third line looks weird,
+    # so we duplicate the mark and put it on a new line.
+    LP_MARK_PREFIX=${LP_MARK_PREFIX:-$'\n'}
+
+    # Light gray as a default.
+    lp_terminal_format 241 -1
+    LP_EXPLAIN_COLOR=${LP_EXPLAIN_COLOR:-"$lp_terminal_format"}
+
+    LP_EXPLAIN_MARK_TOP=${LP_EXPLAIN_MARK_TOP:-╮╭}
+    LP_EXPLAIN_MARK_MID=${LP_EXPLAIN_MARK_MID:-││}
+    LP_EXPLAIN_MARK_BOTTOM=${LP_EXPLAIN_MARK_BOTTOM:-╯╰}
+    LP_EXPLAIN_MARK_BODY_TOP=${LP_EXPLAIN_MARK_BODY_TOP:-─}
+    LP_EXPLAIN_MARK_BODY_BOTTOM=${LP_EXPLAIN_MARK_BODY_BOTTOM:-─}
+    LP_EXPLAIN_MARK_JOINT=${LP_EXPLAIN_MARK_JOINT:-┴}
+    LP_EXPLAIN_MARK_ELBOW=${LP_EXPLAIN_MARK_ELBOW:-╭}
+
+    # The default notation does not seem to work with explicit newlines
+    if [[ -z "$LP_MARK_PREFIX" ]] ; then
+        LP_MARK_PREFIX=$'\n'
+    fi
+
+    _lp_default_theme_activate
+}
+
+_lp_explain_theme_directory() {
+    _lp_default_theme_directory
+}
+
+_lp_explain_theme_prompt() {
+    _lp_default_theme_prompt_data
+    _lp_explain_theme_prompt_template
+}
+
+
+# Add a boxed section of the prompt, along with the corresponding variable name.
+# Interpret "name" as an LP_* variable, and show lowercase names.
+# E.G. `_lp_explain_box PWD` will show the content of $LP_PWD under the name "pwd".
+#
+# The function add strings to the following output variables,
+# which should be initialized beforehand by the caller:
+# - lp_explain_box_hyp, first line (may be only spaces)
+# - lp_explain_box_sup, second line (may be only spaces)
+# - lp_explain_box_top, third line (top lines of the boxes)
+# - lp_explain_box_mid, fourth line (prompt content, separated with vertical lines)
+# - lp_explain_box_bot, fifth line (bottom line of the boxes)
+#
+_lp_explain_box() { # name [color] -> lp_explain_box_hyp, lp_explain_box_sup, lp_explain_box_top, lp_explain_box_mid, lp_explain_box_bot
+    local name="${1-}"
+    name_len=${#name}
+
+    local label=
+    if (( _LP_SHELL_zsh )) ; then
+        label=${name:l}
+    else
+        label=${name,,}
+    fi
+
+    if _lp_create_link "https://liquidprompt.readthedocs.io/en/stable/theme/default.html#LP_${name}" "${label}" ; then
+        name_link="$lp_link"
+    else
+        name_link="${label}" # To lower case.
+    fi
+
+    # Get LP_ variable from name.
+    local varname="LP_${name}"
+    local var=
+    local what=
+    if (( _LP_SHELL_zsh )) ; then
+        # Get indirection.
+            # From https://www.shellcheck.net/wiki/SC2296 :
+            # "Some Zsh specific parameter expansions like ${(q)value} trigger this warning,
+            # but ShellCheck does not support Zsh."
+            # shellcheck disable=SC2296
+        var=${(P)varname}
+        # Trim spaces from content,
+        # since they are useless here
+        # (added by the default theme,
+        # that uses them as separators).
+        what="${=var}"
+    else # Bash
+        var=${!varname}
+        shopt -s extglob # Enable :space:
+        what="${var##+([[:space:]])}" # Trim spaces before.
+        what="${what%%+([[:space:]])}" # Trim spaces after.
+    fi
+
+    # Get length from text without color/link escapes.
+    __lp_strip_escapes "$what"
+    local raw_data="$ret"
+    local raw_data_len=${#raw_data}
+
+    # If no color, use global var.
+    local color="${2:-$LP_EXPLAIN_COLOR}"
+
+    if [[ -n "$what" ]]; then
+        local i
+        lp_explain_box_top+="${LP_EXPLAIN_MARK_TOP}"
+        lp_explain_box_mid+="${color}${LP_EXPLAIN_MARK_MID}${NO_COL}$what"
+        lp_explain_box_bot+="${LP_EXPLAIN_MARK_BOTTOM}"
+
+        __lp_strip_escapes "$lp_explain_box_mid"
+        local raw_mid="$ret"
+
+        # Fill in missing spaces, using lp_explain_box_mid as reference.
+        __lp_strip_escapes "$lp_explain_box_hyp"
+        local raw_hyp="$ret"
+        for (( i=${#raw_hyp}; i < ${#raw_mid}-raw_data_len; i++ )) ; do
+            lp_explain_box_hyp+=" "
+        done
+        __lp_strip_escapes "$lp_explain_box_sup"
+        local raw_sup="$ret"
+        for (( i=${#raw_sup}; i < ${#raw_mid}-raw_data_len; i++ )) ; do
+            lp_explain_box_sup+=" "
+        done
+        __lp_strip_escapes "$lp_explain_box_top"
+        local raw_top="$ret"
+
+        # Add names.
+        if (( name_len > raw_data_len )); then
+            local top_len=${#raw_top}
+
+            local cursor=
+            if (( _LP_SHELL_zsh )) ; then
+                cursor="${raw_sup[top_len,top_len]}"
+            else
+                cursor="${raw_sup:top_len:1}"
+            fi
+
+            if [[ "$cursor" != " " && "$cursor" != "" ]] ; then
+                lp_explain_box_hyp+="${LP_EXPLAIN_MARK_ELBOW}${name_link}"
+                lp_explain_box_top+="${LP_EXPLAIN_MARK_JOINT}"
+            else
+                lp_explain_box_sup+="${LP_EXPLAIN_MARK_ELBOW}${name_link}"
+                lp_explain_box_top+="${LP_EXPLAIN_MARK_JOINT}"
+            fi
+        else
+            lp_explain_box_top+="$name_link"
+        fi
+
+        # Fill in missing spaces, using lp_explain_box_mid as reference.
+        __lp_strip_escapes "$lp_explain_box_top"
+        local raw_top="$ret"
+        for (( i=${#raw_top}; i < ${#raw_mid}; i++ )) ; do
+            lp_explain_box_top+="${LP_EXPLAIN_MARK_BODY_TOP}"
+        done
+        __lp_strip_escapes "$lp_explain_box_bot"
+        local raw_bot="$ret"
+        for (( i=${#raw_bot}; i < ${#raw_mid}; i++ )) ; do
+            lp_explain_box_bot+="${LP_EXPLAIN_MARK_BODY_BOTTOM}"
+        done
+
+    fi
+}
+
+
+_lp_explain_theme_prompt_template() {
+    if [[ -f "${LP_PS1_FILE-}" ]]; then
+        # shellcheck source=templates/minimal/minimal.ps1
+        source "$LP_PS1_FILE"
+    fi
+
+    if [[ -z "${LP_PS1-}" ]]; then
+        # Initial global variables.
+        lp_explain_box_hyp=""
+        lp_explain_box_sup=""
+        lp_explain_box_top=""
+        lp_explain_box_mid=""
+        lp_explain_box_bot=""
+
+        # Add title escape time, battery, load, temperature, RAM, disk, wifi, jobs.
+        _lp_explain_box PS1_PREFIX
+        _lp_explain_box TIME
+        _lp_explain_box BATT
+        _lp_explain_box LOAD
+        _lp_explain_box TEMP
+        _lp_explain_box RAM
+        _lp_explain_box DISK
+        _lp_explain_box WIFI
+        _lp_explain_box JOBS
+
+        # Add multiplexer brackets, user, host, permissions colon, working directory, dirstack, proxy, watched environment variables and nested shell level.
+
+        _lp_explain_box BRACKET_OPEN
+        _lp_explain_box USER
+        _lp_explain_box HOST
+        _lp_explain_box PERM
+        _lp_explain_box PWD
+        _lp_explain_box DIRSTACK
+        _lp_explain_box BRACKET_CLOSE
+        _lp_explain_box PROXY
+        _lp_explain_box ENVVARS
+        _lp_explain_box SHLVL
+
+        # Add the list of development environments/config/etc.
+        _lp_explain_box DEV_ENV
+        # Add VCS infos
+        # If root, the info has not been collected unless LP_ENABLE_VCS_ROOT
+        # is set.
+        _lp_explain_box VCS
+        # Add last runtime, return code & meaning, prompt mark and user-defined postfix.
+        _lp_explain_box RUNTIME
+        _lp_explain_box ERR
+        _lp_explain_box ERR_MEANING
+
+        # prefix/mark/suffix will be shown twice.
+        _lp_explain_box MARK_PREFIX
+        _lp_explain_box MARK
+        _lp_explain_box PS1_POSTFIX
+
+        # End last segment.
+        lp_explain_box_hyp+=" "
+        lp_explain_box_sup+=" "
+        lp_explain_box_top+="${LP_EXPLAIN_MARK_TOP}"
+        lp_explain_box_mid+="${LP_EXPLAIN_COLOR}${LP_EXPLAIN_MARK_MID}${NO_COL}"
+        lp_explain_box_bot+="${LP_EXPLAIN_MARK_BOTTOM}"
+
+        # Show hyp/sup lines only if needed.
+        PS1="${LP_EXPLAIN_COLOR}"
+        local N=$'\n'
+        if [[ -n ${lp_explain_box_hyp// } ]] ; then # If not just spaces.
+            PS1+="${lp_explain_box_hyp}${N}"
+        fi
+        if [[ -n ${lp_explain_box_sup// } ]] ; then
+            PS1+="${lp_explain_box_sup}${N}"
+        fi
+
+        # Assemble, and add mark+prompt on a new line.
+        PS1+="${lp_explain_box_top}${NO_COL}${N}${lp_explain_box_mid}${N}"
+
+        if [[ -n ${lp_explain_box_bot// } ]] ; then
+            PS1+="${LP_EXPLAIN_COLOR}${lp_explain_box_bot}${NO_COL}"
+        fi
+
+        PS1+="${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+
+        # Get the core sections without prompt escapes and make them into a title.
+        _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+    else
+        PS1=$LP_PS1
+    fi
+}
+

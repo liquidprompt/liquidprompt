@@ -5279,7 +5279,7 @@ __lp_disable_hooks() {
                     unset LP_OLD_PROMPT_COMMAND
                 else
                     # shellcheck disable=SC2128
-                    if [[ $PROMPT_COMMAND == "__lp_set_prompt" || $PROMPT_COMMAND == "time __lp_set_prompt" ]]; then
+                    if [[ ${PROMPT_COMMAND-} == "__lp_set_prompt" || ${PROMPT_COMMAND-} == "time __lp_set_prompt" ]]; then
                         unset PROMPT_COMMAND
                     fi
                 fi

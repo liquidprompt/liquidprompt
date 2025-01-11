@@ -24,6 +24,10 @@ function test_strip_escape {
 
   __lp_strip_escapes "${_LP_OPEN_ESC}"$'\a\b'"${_LP_CLOSE_ESC}st\\\\r${_LP_OPEN_ESC}"$'\001\E'"${_LP_CLOSE_ESC}ing"
   assertEquals "control character escaped removal" $'st\\ring' "$ret"
+
+  local EMPTY="‎" # This holds one Unicode's empty character.
+  __lp_strip_escapes "high${EMPTY}light key${EMPTY}board cross${EMPTY}over"
+  assertEquals "empty characters removal" "highlight keyboard crossover" "$ret"
 }
 
 function test_line_count {

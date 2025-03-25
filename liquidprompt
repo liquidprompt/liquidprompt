@@ -1313,10 +1313,15 @@ __lp_floating_scale() {
 
 # Return $PWD with $HOME at the start replaced by "~".
 __lp_pwd_tilde() {  # [path]
-    # Needs to be in a variable, as different versions of Bash treat '~' in a
-    # substitution differently
-    local _path="${1:-$PWD}" tilde="~"
-    lp_pwd_tilde="${_path/#$HOME/$tilde}"
+    if (( _LP_SHELL_zsh )); then
+        # Use zsh print -D builtin function which support named directories
+        print -v lp_pwd_tilde -n -r -D "${1:-$PWD}"
+    else
+        # Needs to be in a variable, as different versions of Bash treat '~' in a
+        # substitution differently
+        local _path="${1:-$PWD}" tilde="~"
+        lp_pwd_tilde="${_path/#$HOME/$tilde}"
+    fi
 }
 
 # insert a space on the right

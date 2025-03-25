@@ -152,6 +152,23 @@ function test_pwd_tilde {
   assertEquals "shorted home path" "~/a/different/path" "$lp_pwd_tilde"
 }
 
+function test_pwd_tilde_named_directory {
+  # Named directory feature in https://zsh.sourceforge.io/Doc/Release/Expansion.html#Static-named-directories
+  if (( _LP_SHELL_zsh )); then
+      pathSetUp
+      hash -d nd=/tmp/_lp/a/very
+      __lp_pwd_tilde "/tmp/_lp/a/very/"
+      assertEquals "named directory path" "~nd/" "$lp_pwd_tilde"
+
+      hash -d nd=/tmp/_lp/a/very
+      __lp_pwd_tilde "/tmp/_lp/a/very/long/pathname"
+
+      assertEquals "subnamed directory path" "~nd/long/pathname" "$lp_pwd_tilde"
+      pathTearDown
+      hash -d nd=
+  fi
+}
+
 function pathSetUp {
   # We cannot use SHUNIT_TMPDIR because we need to know the start of the path
   typeset long_path="/tmp/_lp/a/very/long/pathname"

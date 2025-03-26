@@ -309,10 +309,8 @@ function test_advanced_test {
 
   assertTrue "[[ -r file" '[[ -r ./shunit2 ]]'
   assertTrue "[[ -r dir" '[[ -r / ]]'
-  assertFalse "[[ -r locked file" '[[ -r /root ]]'
 
   assertTrue "[[ -w file" '[[ -w ./shunit2 ]]'
-  assertFalse "[[ -w locked file" '[[ -w /root ]]'
 
   assertTrue "[[ -d dir" '[[ -d / ]]'
   assertFalse "[[ -d dir" '[[ -d ./shunit2 ]]'

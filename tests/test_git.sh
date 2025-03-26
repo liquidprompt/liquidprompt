@@ -15,7 +15,7 @@ function test_git {
     LP_ENABLE_FOSSIL=0
     LP_ENABLE_SVN=0
     LP_ENABLE_BZR=0
-    LP_ENABLE_VCS_ROOT=0
+    LP_ENABLE_VCS_ROOT=1
     LP_ENABLE_VCS_REMOTE=1
 
     PS1=""

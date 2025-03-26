@@ -8,17 +8,44 @@ jobs:
   tests:
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-    runs-on: ${{ matrix.os }}
+        shell:
+        - bash:3.2
+        - bash:4.0
+        - bash:4.1
+        - bash:4.2
+        - bash:4.3
+        - bash:4.4
+        - bash:5.0
+        - bash:5.1
+        - bash:5.2
+        - bash:5.3-rc
+        - zsh:5.0.8
+        - zsh:5.1
+        - zsh:5.2
+        - zsh:5.3
+        - zsh:5.4
+        - zsh:5.5
+        - zsh:5.6
+        - zsh:5.7
+        - zsh:5.8
+        - zsh:5.9
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ format('{0}/{1}', startsWith(matrix.shell, 'bash') && 'docker.io/library' || 'ghcr.io/zsh-users', matrix.shell) }}
+    env:
+      SHELL: ${{ startsWith(matrix.shell, 'bash') && 'bash' || 'zsh' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Install zsh
-        run: sudo apt-get --yes install zsh
-        if: runner.os == 'Linux'
-      - run: ./tests.sh
-        shell: bash
+      - name: Install Alpine packages
+        if: env.SHELL == 'bash'
+        run: |
+          set -x
+          apk add ncurses ca-certificates curl git
+      - name: Install Debian packages
+        if: env.SHELL == 'zsh'
+        run: |
+          set -x
+          install_packages ncurses-bin ca-certificates curl git
+      - run: ./tests.sh ${{ env.SHELL }}

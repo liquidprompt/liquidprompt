@@ -332,10 +332,13 @@ Utility
 
 .. function:: __lp_strip_escapes(string) -> var:ret
 
-   Remove shell escape characters so *string* prints correctly in a terminal
-   title, or can be measured for printing character length.
+   Remove shell escape characters and the Unicode's empty character so *string*
+   prints correctly in a terminal title, or can be measured for printing
+   character length.
 
    .. versionadded:: 2.1
+   .. versionchanged:: 2.3
+      Remove the empty character.
 
 Wireless
 --------

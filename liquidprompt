@@ -231,6 +231,15 @@ if test -n "${BASH_VERSION-}"; then
             ret="${ret//\\\$/\$}"
             ret="${ret//\\\`/\`}"
         fi
+
+        # Remove any Unicode empty character
+        # because it may be used as a placeholder
+        # to overwrite a space character
+        # used as default.
+        #
+        # There is an empty character here.
+        #         -><-
+        ret="${ret//‎/}"
     }
 elif test -n "${ZSH_VERSION-}" ; then
     # Check for recent enough version of zsh.
@@ -279,6 +288,10 @@ elif test -n "${ZSH_VERSION-}" ; then
             ret="${ret//\\\$/\$}"
             ret="${ret//\\\`/\`}"
         fi
+
+        # There is an empty character here.
+        #         -><-
+        ret="${ret//‎/}"
     }
 else
     echo "liquidprompt: shell not supported" >&2
@@ -534,8 +547,13 @@ __lp_source_config() {
     local WHITE="${_LP_OPEN_ESC}${af_color}${_LP_CLOSE_ESC}"
     local BOLD_WHITE="${_LP_OPEN_ESC}${_LP_TI_BOLD-}${af_color}${_LP_CLOSE_ESC}"
 
+    # EMPTY can be used to force a configuration variable
+    # that defaults to space(s) to be an empty string.
+    local EMPTY="‎" # This holds one Unicode's empty character.
+
     # NO_COL is special: it will be used at runtime, not just during config loading
     NO_COL="${_LP_OPEN_ESC}${_LP_TI_RESET-}${_LP_CLOSE_ESC}"
+
 
     # compute the hash of the hostname and get the corresponding number in
     # [1-6] (red,green,yellow,blue,purple or cyan)

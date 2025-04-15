@@ -1315,7 +1315,13 @@ __lp_floating_scale() {
 __lp_pwd_tilde() {  # [path]
     if (( _LP_SHELL_zsh )); then
         # Use zsh print -D builtin function which support named directories
-        print -v lp_pwd_tilde -n -r -D "${1:-$PWD}"
+        local minor_version=${ZSH_VERSION#*.}
+        local minor_version=${minor_version%%.*}
+        if (( minor_version >= 3 )); then
+            print -v lp_pwd_tilde -n -r -D "${1:-$PWD}"
+        else
+            lp_pwd_tilde=$(print -n -r -D "${1:-$PWD}")
+        fi
     else
         # Needs to be in a variable, as different versions of Bash treat '~' in a
         # substitution differently

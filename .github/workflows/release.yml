@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.13'
       - name: Install Python dependencies
         working-directory: ./docs
         run: python3 -m pip install -r requirements.txt

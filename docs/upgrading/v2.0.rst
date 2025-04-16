@@ -576,8 +576,8 @@ Not to be confused with the new :func:`_lp_temperature`.
 _lp_time()
 ----------
 
-Split into :func:`_lp_time()`, :func:`_lp_time_color()`,
-:func:`_lp_analog_time()`, and :func:`_lp_analog_time_color()`.
+Split into :func:`_lp_time`, :func:`_lp_time_color`, :func:`_lp_analog_time`,
+and :func:`_lp_analog_time_color`.
 
 The return value is no longer stored in ``LP_TIME``.
 

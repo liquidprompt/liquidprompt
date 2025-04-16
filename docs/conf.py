@@ -76,6 +76,7 @@ linkcheck_ignore = [
         r'^https://github.com/rcaloras/bash-preexec/blob/master/README.md#install$',
         r'^https://www.breezy-vcs.org/$',
         r'^https://spaceship-prompt.sh/$',
+        r'^https://dn-works.com/',
 ]
 
 nitpick_ignore_regex = [

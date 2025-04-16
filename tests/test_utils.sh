@@ -1027,4 +1027,22 @@ function test_substitute {
     assertEquals "OK" "$lp_substitute"
 }
 
+# We cannot test _lp_bash_version_greatereq, as BASH_VERSINFO is read only.
+
+function test_zsh_version_check {
+  if (( _LP_SHELL_bash )); then
+    startSkipping
+  fi
+
+  local ZSH_VERSION="5.0.8"
+
+  assertTrue "Compare same major+minor" '_lp_zsh_version_greatereq 5 0'
+  assertTrue "Compare same major+minor+patch" '_lp_zsh_version_greatereq 5 0 8'
+  assertFalse "Compare greater patch" '_lp_zsh_version_greatereq 5 0 9'
+  assertTrue "Compare lesser patch" '_lp_zsh_version_greatereq 5 0 0'
+  assertFalse "Compare greater major" '_lp_zsh_version_greatereq 6 0'
+  assertTrue "Compare lesser major" '_lp_zsh_version_greatereq 4 0'
+  assertTrue "Compare lesser major, greater minor" '_lp_zsh_version_greatereq 4 3'
+}
+
 . ./shunit2

@@ -10,6 +10,16 @@ These functions are designed to be used by themes.
 
    Return *string* with all shell escaped substrings removed.
 
+.. function:: _lp_bash_version_greatereq(major, minor, [patch])
+
+   Returns true (0) if the Bash shell version is greater than or equal to the
+   the given version.  Returns 1 (false) if there is a *minor* or less version
+   difference, and 2 (false) if it is a *major* difference.
+
+   This function is only defined if the running shell is Bash.
+
+   .. versionadded:: 2.3
+
 .. function:: _lp_bool(variable, [code])
 
    .. deprecated:: 2.0
@@ -253,4 +263,14 @@ These functions are designed to be used by themes.
    See also :func:`_lp_version_greatereq`.
 
    .. versionadded:: 2.2
+
+.. function:: _lp_zsh_version_greatereq(major, minor, [patch])
+
+   Returns true (0) if the Zsh shell version is greater than or equal to the
+   the given version.  Returns 1 (false) if there is a *minor* or less version
+   difference, and 2 (false) if it is a *major* difference.
+
+   This function is only defined if the running shell is Zsh.
+
+   .. versionadded:: 2.3
 

@@ -191,9 +191,28 @@ fi
 [ "x${-##*i}" = "x$-" ] || [ -z "${TERM-}" ] || [ "x${TERM-}" = xdumb ] || [ "x${TERM-}" = xunknown ] && [ "x${1-}" != "x--no-activate" ] && return
 
 if test -n "${BASH_VERSION-}"; then
+    # Return true if the current Bash version is greater than or equal to the specified version.
+    # Return 1 if minor or less version difference, 2 if major difference.
+    _lp_bash_version_greatereq() {  # major, minor, [patch]
+        local major="$1" minor="$2" patch="${3-}"
+        if (( major > BASH_VERSINFO[0] )); then
+            return 2
+        elif (( major == BASH_VERSINFO[0] )); then
+            if (( minor > BASH_VERSINFO[1] )); then
+                return 1
+            elif (( minor == BASH_VERSINFO[1] )) && [[ -n $patch ]]; then
+                if (( patch > BASH_VERSINFO[2] )); then
+                    return 1
+                fi
+            fi
+        fi
+
+        return 0
+    }
+
     # Check for recent enough version of bash.
-    if (( ${BASH_VERSINFO[0]:-0} < 3 || ( ${BASH_VERSINFO[0]:-0} == 3 && ${BASH_VERSINFO[1]:-0} < 2 ) )); then
-        echo "liquidprompt: Bash version $BASH_VERSION not supported" >&2
+    if ! _lp_bash_version_greatereq 3 2; then
+        echo "liquidprompt: Bash version $BASH_VERSION not supported. Must be at least 3.2" >&2
         return
     fi
 
@@ -233,9 +252,38 @@ if test -n "${BASH_VERSION-}"; then
         fi
     }
 elif test -n "${ZSH_VERSION-}" ; then
+    # Return true if the current Zsh version is greater than or equal to the specified version.
+    # Return 1 if minor or less version difference, 2 if major difference.
+    _lp_zsh_version_greatereq() {  # major, minor, [patch]
+        local major="$1" minor="$2" patch="${3-}"
+        local zsh_version_parts
+        # shellcheck disable=SC2296
+        zsh_version_parts=("${(@s/./)ZSH_VERSION}")
+
+        if (( major > zsh_version_parts[_LP_FIRST_INDEX+0] )); then
+            return 2
+        elif (( major == zsh_version_parts[_LP_FIRST_INDEX+0] )); then
+            if (( minor > zsh_version_parts[_LP_FIRST_INDEX+1] )); then
+                return 1
+            elif (( minor == zsh_version_parts[_LP_FIRST_INDEX+1] )) && [[ -n $patch ]]; then
+                if (( patch > ${zsh_version_parts[_LP_FIRST_INDEX+2]:-0} )); then
+                    return 1
+                fi
+            fi
+        fi
+
+        return 0
+    }
+
+    if [[ -o ksh_arrays ]]; then
+      _LP_FIRST_INDEX=0
+    else
+      _LP_FIRST_INDEX=1
+    fi
+
     # Check for recent enough version of zsh.
-    if (( ${ZSH_VERSION:0:1} < 5 )); then
-        echo "liquidprompt: Zsh version $ZSH_VERSION not supported" >&2
+    if ! _lp_zsh_version_greatereq 5 0; then
+        echo "liquidprompt: Zsh version $ZSH_VERSION not supported. Must be at least 5.0" >&2
         return
     fi
 
@@ -246,11 +294,6 @@ elif test -n "${ZSH_VERSION-}" ; then
 
     _LP_MARK_SYMBOL='%%'
 
-    if [[ -o ksh_arrays ]]; then
-      _LP_FIRST_INDEX=0
-    else
-      _LP_FIRST_INDEX=1
-    fi
     _LP_PERCENT='%%'
     # shellcheck disable=SC1003
     _LP_BACKSLASH='\'
@@ -5090,8 +5133,7 @@ __lp_before_command() {
     # of replacing it in lp_activate().
     local first_command last_command
     first_command=${PROMPT_COMMAND-}
-    if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )) \
-        && [[ -n "${PROMPT_COMMAND[*]+x}" ]]; then
+    if _lp_bash_version_greatereq 5 1 && [[ -n "${PROMPT_COMMAND[*]+x}" ]]; then
         last_command=${PROMPT_COMMAND[-1]}
     else
         last_command=${PROMPT_COMMAND-}
@@ -5153,7 +5195,7 @@ prompt_on() {
         # incorrectly export it from their profile/bashrc (GitHub #450),
         # so we preventively UNexport it.
         # TODO: warn the user if it was exported
-        if (( ${BASH_VERSINFO[0]:-0} > 4 || ( ${BASH_VERSINFO[0]:-0} == 4 && ${BASH_VERSINFO[1]:-0} >= 2 ) )); then
+        if _lp_bash_version_greatereq 4 2; then
             # -g is only available since bash 4.2
             declare -g +x PROMPT_COMMAND
         fi
@@ -5166,7 +5208,7 @@ prompt_on() {
                 set_prompt_command=__lp_set_prompt
             fi
 
-            if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+            if _lp_bash_version_greatereq 5 1; then
                 # PROMPT_COMMAND is an array since bash 5.1
                 if ! ( __lp_array_contains __lp_set_prompt ${PROMPT_COMMAND[@]+"${PROMPT_COMMAND[@]}"} \
                   || __lp_array_contains "time __lp_set_prompt" ${PROMPT_COMMAND[@]+"${PROMPT_COMMAND[@]}"} ); then
@@ -5264,7 +5306,7 @@ __lp_disable_hooks() {
                 fi
             done
         else
-            if (( ${BASH_VERSINFO[0]:-0} > 5 || ( ${BASH_VERSINFO[0]:-0} == 5 && ${BASH_VERSINFO[1]:-0} >= 1 ) )); then
+            if _lp_bash_version_greatereq 5 1; then
                 # PROMPT_COMMAND is an array since bash 5.1
                 for i in ${PROMPT_COMMAND[@]+"${!PROMPT_COMMAND[@]}"}; do
                     local value="${PROMPT_COMMAND[i]}"

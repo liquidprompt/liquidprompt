@@ -1314,10 +1314,8 @@ __lp_floating_scale() {
   # Return $PWD with $HOME at the start replaced by "~".
   if (( _LP_SHELL_zsh )); then
       # Zsh-specific version, use zsh print -D builtin function which support named directories
-      zsh_minor_version=${ZSH_VERSION#*.}
-      zsh_minor_version=${zsh_minor_version%%.*}
       # Print -v was introduced in ZSH 5.3
-      if (( zsh_minor_version >= 3 )); then
+      if _lp_zsh_version_greatereq 5 3; then
           __lp_pwd_tilde() {
               print -v lp_pwd_tilde -n -r -D "${1:-$PWD}"
           }
@@ -1327,7 +1325,7 @@ __lp_floating_scale() {
           }
       fi
   else
-      # Bash-compatible fallback
+      # Bash version
       __lp_pwd_tilde() {
           # Needs to be in a variable, as different versions of Bash treat '~' in a
           # substitution differently

@@ -1311,13 +1311,28 @@ __lp_floating_scale() {
     ret=$(( integer * $2 + decimal ))
 }
 
-# Return $PWD with $HOME at the start replaced by "~".
-__lp_pwd_tilde() {  # [path]
-    # Needs to be in a variable, as different versions of Bash treat '~' in a
-    # substitution differently
-    local _path="${1:-$PWD}" tilde="~"
-    lp_pwd_tilde="${_path/#$HOME/$tilde}"
-}
+  # Return $PWD with $HOME at the start replaced by "~".
+  if (( _LP_SHELL_zsh )); then
+      # Zsh-specific version, use zsh print -D builtin function which support named directories
+      # Print -v was introduced in ZSH 5.3
+      if _lp_zsh_version_greatereq 5 3; then
+          __lp_pwd_tilde() {
+              print -v lp_pwd_tilde -n -r -D "${1:-$PWD}"
+          }
+      else
+          __lp_pwd_tilde() {
+              lp_pwd_tilde=$(print -n -r -D "${1:-$PWD}")
+          }
+      fi
+  else
+      # Bash version
+      __lp_pwd_tilde() {
+          # Needs to be in a variable, as different versions of Bash treat '~' in a
+          # substitution differently
+          local _path="${1:-$PWD}" tilde="~"
+          lp_pwd_tilde="${_path/#$HOME/$tilde}"
+      }
+  fi
 
 # insert a space on the right
 # Deprecated since v2.0.

@@ -173,8 +173,10 @@ Path
       Optional parameter *path* added.
 
    .. versionchanged:: 2.3
-      Added support for `Zsh named directories <https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-hash-1>`_.
+      Added support for `Zsh named directories`_.
       Use `print -D` internal function on Zsh.
+
+   .. _Zsh named directories: https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-hash-1
 
 Prompt
 ------

@@ -172,6 +172,10 @@ Path
       Return method changed from stdout.
       Optional parameter *path* added.
 
+   .. versionchanged:: 2.3
+      Added support for `Zsh named directories <https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-hash-1>`_.
+      Use `print -D` internal function on Zsh.
+
 Prompt
 ------
 

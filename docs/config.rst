@@ -1037,7 +1037,7 @@ Features
 
    See also: :attr:`LP_COLOR_TERRAFORM`.
 
-   .. _Terraform: https://www.terraform.io/docs/language/index.html
+   .. _Terraform: https://developer.hashicorp.com/terraform/intro
 
    .. versionadded:: 2.1
 

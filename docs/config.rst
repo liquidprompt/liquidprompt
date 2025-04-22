@@ -75,6 +75,11 @@ General
 
       LP_MARK_PREFIX=$'\n'
 
+   To change the default value to an empty string, you need to pass an empty
+   Unicode character, this can be done at configuration time with ``EMPTY``::
+
+      LP_MARK_PREFIX="$EMPTY"
+
 .. attribute:: LP_PATH_CHARACTER_KEEP
    :type: int
    :value: 3
@@ -1472,6 +1477,14 @@ Thresholds
 Marks
 -----
 
+Marks usually default to a single character, but may be multi-character strings.
+It may be necessary to add a space after wide Unicode characters, to avoid
+overlapping with the next character.
+
+To change a mark that defaults to a single space character into an empty string,
+you must use the ``EMPTY`` character (available during configuration since
+version 2.3). For example: ``LP_MARK_PREFIX="$EMPTY"``.
+
 .. attribute:: LP_MARK_ADAPTER
    :type: string
    :value: "⏚"
@@ -1611,6 +1624,11 @@ Marks
 
    Mark used to separate items of the user-defined
    environment variables watch list.
+
+   To change the default value to an empty string, you need to pass an empty
+   Unicode character, this can be done at configuration time with ``EMPTY``::
+
+      LP_MARK_ENV_VARS_SEP="$EMPTY"
 
    See also:
 

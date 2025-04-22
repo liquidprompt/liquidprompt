@@ -102,8 +102,8 @@ These functions are designed to be used by themes.
 .. function:: _lp_formatted_title(title)
 
    Sets the theme generated title to *title*. The input is escaped using
-   :func:`__lp_strip_escapes` to strip terminal formatting from being added to
-   the title.
+   :func:`__lp_strip_escapes` to strip terminal formatting and the empty
+   character from being added to the title.
 
    This function will do nothing and return ``2`` if :attr:`LP_ENABLE_TITLE`
    is disabled.
@@ -232,9 +232,9 @@ These functions are designed to be used by themes.
       Use :attr:`_lp_formatted_title` instead.
 
    Formats *title* with title escape codes. The input is escaped using
-   :func:`__lp_strip_escapes` to strip terminal formatting from being added to
-   the title. The output should be added to :envvar:`PS1` to be printed as a
-   title.
+   :func:`__lp_strip_escapes` to strip terminal formatting and the
+   empty character from being added to the title.
+   The output should be added to :envvar:`PS1` to be printed as a title.
 
    This function will do nothing if :attr:`LP_ENABLE_TITLE` is disabled.
 

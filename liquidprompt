@@ -3162,21 +3162,22 @@ _lp_git_active() {
 
 # Get the branch name of the Git repo in the current directory.
 _lp_git_branch() {
-    if (( _LP_GITSTATUS_DATA )); then
-        lp_vcs_branch="${VCS_STATUS_LOCAL_BRANCH-}"
-        [[ -n "$lp_vcs_branch" ]] && return || return 1
-    fi
-
-    lp_vcs_branch=""
     local branch ret
+
+    if (( _LP_GITSTATUS_DATA )); then
+        branch="${VCS_STATUS_LOCAL_BRANCH-}"
     # Recent versions of Git support the --short option for symbolic-ref, but
     # not 1.7.9 (Ubuntu 12.04)
-    if branch="$(\git symbolic-ref -q HEAD 2>/dev/null)"; then
-        __lp_escape "${branch#refs/heads/}"
-        lp_vcs_branch="$ret"
+    elif branch="$(\git symbolic-ref -q HEAD 2>/dev/null)"; then
+        branch="${branch#refs/heads/}"
     else
+        lp_vcs_branch=""
         return 1
     fi
+
+    __lp_escape "$branch"
+    lp_vcs_branch="$ret"
+    [[ -n "$lp_vcs_branch" ]]
 }
 
 # Git does not support bookmarks.
@@ -3184,18 +3185,18 @@ _lp_git_bookmark() { return 2 ; }
 
 # Get a tag name of the Git repo in the current directory.
 _lp_git_tag() {
-    if (( _LP_GITSTATUS_DATA )); then
-        lp_vcs_tag="${VCS_STATUS_TAG-}"
-        [[ -n "$lp_vcs_tag" ]] && return || return 1
-    fi
-
     local tag ret
-    if tag="$(\git describe --tags --exact-match 2>/dev/null)"; then
-        __lp_escape "$tag"
-        lp_vcs_tag="$ret"
-    else
+
+    if (( _LP_GITSTATUS_DATA )); then
+        tag="${VCS_STATUS_TAG-}"
+    elif ! tag="$(\git describe --tags --exact-match 2>/dev/null)"; then
+        lp_vcs_tag=""
         return 1
     fi
+
+    __lp_escape "$tag"
+    lp_vcs_tag="$ret"
+    [[ -n "$lp_vcs_tag" ]]
 }
 
 # Get the current full commit hash of the repo in the current directory.

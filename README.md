@@ -41,21 +41,21 @@ Of course, Liquid Prompt may display much more information, depending on the sta
 
 ## Why Liquidprompt?
 
-There are many prompts configurations out there, but here is what makes Liquid Prompt stand out:
+There are many prompt configurations out there, but here is what makes Liquid Prompt stand out:
 
-- **UX Design**: The Liquid Prompt was very carefully design from the beginning, to allow for the best user experience.
+- **UX Design**: The Liquid Prompt was very carefully designed from the beginning to allow for the best user experience.
   That is, it displays *meaningful* information with *minimal visual clutter* and *maximum readability*.
-  While most of the other prompts are focused on aligning as much colored "segments" as possible on top of each others to look fancy,
-  Liquid Prompt focus on what really matters.
+  While most of the other prompts are focused on aligning as many colored "segments" as possible on top of each other to look fancy,
+  Liquid Prompt focuses on what really matters.
 - **Ease of use**: The Liquid Prompt is written in (*heavily optimized*) portable Shell, and its installation is as easy as copying files.
-  It also provides pre-defined themes, enabled by a simple command in your shell configuration.
-  Configuration is as simple as editing text file with key/value pairs. No complex format to learn.
-- **Shell features first**: The Liquid Prompt helps you being aware of all the powerfull features a modern shell can provide.
+  It also provides predefined themes, enabled by a simple command in your shell configuration.
+  Configuration is as simple as editing a text file with key/value pairs. No complex format to learn.
+- **Shell features first**: The Liquid Prompt helps you be aware of all the powerful features a modern shell can provide.
   While most of the other prompts focus on covering a lot of (boring) software version tags,
   Liquid Prompt shows you the features that are actually useful while you actually use the shell.
 - **Configurability**: All aspects of Liquid Prompt are configurable, down to the core.
 
-To see what that entails, see the [latest features overview](https://liquidprompt.readthedocs.io/en/latest/overview.html)
+To see what that entails, see the [latest features overview](https://liquidprompt.readthedocs.io/en/latest/overview.html).
 (which also presents a comparison with other prompt systems).
 
 You may also take a closer look at this screenshot of a session showing various features, in the default theme:

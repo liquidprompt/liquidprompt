@@ -82,6 +82,8 @@ linkcheck_ignore = [
 
     # Seems to block non-browser user agents.
     r'^https://developers.redhat.com/',
+    r'^https://zsh.sourceforge.io/Doc/',
+    r'^https://www.freedesktop.org/software/systemd/man/',
 
     # Always rate limited.
     r'^https://developer.hashicorp.com/',

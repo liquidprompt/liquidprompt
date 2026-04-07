@@ -18,7 +18,7 @@ jobs:
         - bash:5.0
         - bash:5.1
         - bash:5.2
-        - bash:5.3-rc
+        - bash:5.3
         - zsh:5.0.8
         - zsh:5.1
         - zsh:5.2

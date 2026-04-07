@@ -12,5 +12,5 @@ The versions here are currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Please report vulnerabilites on [the GitHub repo under Security](https://github.com/liquidprompt/liquidprompt/security).
+Please report vulnerabilities on [the GitHub repo under Security](https://github.com/liquidprompt/liquidprompt/security).
 Please include the output of the `tools/bug-report.sh` script if at all relevant.

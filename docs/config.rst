@@ -1102,6 +1102,17 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENABLE_TITLE_COMMAND_ONLY
+   :type: bool
+   :value: 0
+
+   Use only the currently running command for the terminal title while the
+   command is running.
+
+   :attr:`LP_ENABLE_TITLE` must be enabled to have any effect.
+
+   .. versionadded:: master
+
 .. attribute:: LP_ENABLE_TMUX_TITLE_PANES
    :type: bool
    :value: 1

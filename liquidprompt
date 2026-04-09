@@ -663,6 +663,7 @@ __lp_source_config() {
     LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_TITLE_COMMAND=${LP_ENABLE_TITLE_COMMAND:-1}
+    LP_ENABLE_TITLE_COMMAND_ONLY=${LP_ENABLE_TITLE_COMMAND:-0}
     LP_ENABLE_TMUX_TITLE_PANES=${LP_ENABLE_TMUX_TITLE_PANES:-1}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATHS=( ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"} )
@@ -1101,6 +1102,7 @@ lp_activate() {
 
     # Can not show title command if the title feature is disabled.
     (( LP_ENABLE_TITLE )) || LP_ENABLE_TITLE_COMMAND=0
+    (( LP_ENABLE_TITLE_COMMAND )) || LP_ENABLE_TITLE_COMMAND_ONLY=0
 
     # update_terminal_cwd is a shell function available on MacOS X Lion that
     # will update an icon of the directory displayed in the title of the terminal
@@ -4701,8 +4703,12 @@ fi
 __lp_print_title_command() {
     local command
     __lp_get_last_command_line
-
-    printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL+"$SHELL \$ "}}}${command}${LP_TITLE_CLOSE}"
+    # If $command is not set or is empty fallback to the original behavior
+    if [[ -n "$command" ]] && (( LP_ENABLE_TITLE_COMMAND_ONLY )); then
+        printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title}${command}${LP_TITLE_CLOSE}"
+    else
+        printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL+"$SHELL \$ "}}}${command}${LP_TITLE_CLOSE}"
+    fi
 }
 
 ###################

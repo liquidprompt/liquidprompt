@@ -1112,7 +1112,7 @@ Features
    :attr:`LP_ENABLE_TITLE` and :attr:`LP_ENABLE_TITLE_COMMAND` must be
    enabled to have any effect.
 
-   .. versionadded:: master
+   .. versionadded:: 2.3
 
 .. attribute:: LP_ENABLE_TMUX_TITLE_PANES
    :type: bool

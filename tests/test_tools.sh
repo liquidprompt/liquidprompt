@@ -23,6 +23,13 @@ function test_theme_preview {
   . ./tools/theme-preview.sh unfold ./themes/unfold/unfold.theme --reproducible
   . ./tools/theme-preview.sh unfold ./themes/unfold/unfold.theme --config-file contrib/presets/colors/256-colors-dark.conf
   . ./tools/theme-preview.sh --template-file=templates/minimal/minimal.ps1
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --reproducible
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-bold.conf
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-square.conf
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-chevrons.conf
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-double.conf
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-round.conf
+  . ./tools/theme-preview.sh explain ./themes/explain/explain.theme --config-file themes/explain/preset-top.conf
 }
 
 function test_external_tool_tester {

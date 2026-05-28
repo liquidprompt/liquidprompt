@@ -1258,7 +1258,7 @@ _lp_create_link_path() { # path
             local client_ip client_port server_ip server_port
             IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
             local username=${USER:-${USERNAME:-${LOGNAME-}}}
-            _lp_create_link "sftp://${username}@${server_ip}:${client_port}/${PWD}/" "$_path"
+            _lp_create_link "sftp://${username:+"${username}@"}${server_ip}:${server_port}${PWD}/" "$_path"
             lp_link_path="$lp_link"
 
         elif [[ "$lp_connection" == "su" || "$lp_connection" == "lcl" ]]; then
@@ -1684,6 +1684,7 @@ __lp_end_path_left_shortening() {
 #   truncate_chars_from_dir_right
 #   truncate_chars_to_unique_dir
 #   truncate_to_last_dir
+#   truncate_to_vcs_dir
 _lp_path_format() {
     ((LP_ENABLE_PATH)) || return 2
 

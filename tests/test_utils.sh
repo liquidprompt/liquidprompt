@@ -777,7 +777,7 @@ function test_path_links() {
   typeset USER="nojhan"
 
   typeset SSH_CLIENT="ssh"
-  typeset expected_url="sftp://$USER@5.6.7.8:111/$PWD/"
+  typeset expected_url="sftp://$USER@5.6.7.8:222$PWD/"
   expected_link="$_LP_OPEN_ESC"$'\E]8;;'"${expected_url}"$'\E'"${_LP_BACKSLASH}${_LP_CLOSE_ESC}home${_LP_OPEN_ESC}"$'\E]8;;\E'"${_LP_BACKSLASH}$_LP_CLOSE_ESC"
   _lp_create_link_path "$pathword"
   assertEquals "SSH: path element linked to SFTP" "$expected_link" "$lp_link_path"

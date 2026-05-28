@@ -56,15 +56,19 @@ These functions are designed to be used by themes.
 
    See :attr:`LP_ENABLE_HYPERLINKS`.
 
-.. function:: _lp_create_link_path(path) -> lp_link_path
+.. function:: _lp_create_link_path(display_text, absolute_path=$PWD) -> var:lp_link_path
 
-   Adds a link on the given path, with the protocol scheme
-   depending on the current connection type.
+   Adds a link on the given path using *display_text* as the link text, with
+   the protocol scheme depending on the current connection type. If
+   *absolute_path* is not supplied, ``$PWD`` is used.
 
    If the current connection is *SSH*, adds an ``SFTP://`` URL,
    if it is *su* or *lcl* (see :func:`_lp_connection`), adds a ``file://`` one.
 
    See also :attr:`LP_ENABLE_HYPERLINKS` and :func:`_lp_create_link`.
+
+   .. versionchanged:: 2.3
+      Added *absolute_path* argument.
 
 .. function:: _lp_fill(left, right, [fillstring, [splitends]]) -> var:lp_fill
 

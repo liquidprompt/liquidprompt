@@ -1248,8 +1248,8 @@ _lp_create_link() {  # url, text
 }
 
 # Add a link to a path element, with protocol depending on the connection.
-_lp_create_link_path() { # path
-    local _path="$1"
+_lp_create_link_path() { # display_text, absolute_path
+    local display_path="$1" _path="${2:-$PWD}"
     if (( LP_ENABLE_HYPERLINKS )); then
         _lp_connection
 
@@ -1258,19 +1258,19 @@ _lp_create_link_path() { # path
             local client_ip client_port server_ip server_port
             IFS=" " read -r client_ip client_port server_ip server_port <<<"$SSH_CONNECTION"
             local username=${USER:-${USERNAME:-${LOGNAME-}}}
-            _lp_create_link "sftp://${username:+"${username}@"}${server_ip}:${server_port}${PWD}/" "$_path"
+            _lp_create_link "sftp://${username:+"${username}@"}${server_ip}:${server_port}${_path}/" "$display_path"
             lp_link_path="$lp_link"
 
         elif [[ "$lp_connection" == "su" || "$lp_connection" == "lcl" ]]; then
             # Reach local host with the `file` protocol.
-            _lp_create_link "file://${PWD}/" "$_path"
+            _lp_create_link "file://${_path}/" "$display_path"
             lp_link_path="$lp_link"
 
         else # no link for telnet.
-            lp_link_path="$_path"
+            lp_link_path="$display_path"
         fi
     else # No link.
-        lp_link_path="$_path"
+        lp_link_path="$display_path"
     fi
 }
 

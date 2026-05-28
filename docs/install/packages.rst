@@ -43,8 +43,8 @@ Debian
    :alt: Debian Unstable package
    :target: https://packages.debian.org/source/liquidprompt
 
-.. image:: https://repology.org/badge/version-for-repo/ubuntu_24_04/liquidprompt.svg
-   :alt: Ubuntu 24.04 package
+.. image:: https://repology.org/badge/version-for-repo/ubuntu_26_04/liquidprompt.svg
+   :alt: Ubuntu 26.04 package
    :target: https://packages.ubuntu.com/source/liquidprompt
 
 .. code-block::

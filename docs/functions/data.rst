@@ -567,6 +567,10 @@ Path
    .. versionchanged:: 2.1
       Changed *lp_path* to no longer contain shell escapes.
 
+   .. versionchanged:: 2.3
+      Embedded path links now link to each directory by name instead of all to
+      the current working directory.
+
 Runtime
 -------
 

@@ -1722,12 +1722,11 @@ _lp_path_format() {
         fi
 
         __lp_escape "$lp_path"
+        _lp_create_link_path "${ret}"
 
         if [[ $display_path == "$vcs_root_directory" ]]; then
-            _lp_create_link_path "${ret}"
             lp_path_format="${vcs_root_format}$lp_link_path"
         else
-            _lp_create_link_path "${ret}"
             lp_path_format="${last_directory_format}$lp_link_path"
         fi
 
@@ -1853,8 +1852,10 @@ _lp_path_format() {
         fi
 
         if (( ! is_shortening )); then
-
-            _lp_create_link_path "$ret"
+            # Remove the parts of the path that haven't been printed yet from PWD. Due to how we add a '/' to the
+            # tracking to handle the root directory, we need to move it from the end of the string to the beginning to
+            # work correctly with PWD.
+            _lp_create_link_path "$ret" "${PWD%"${path_to_proccess:+"/${path_to_proccess%/}"}"}"
             lp_path_format+="$lp_link_path"
 
             if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then

@@ -4,17 +4,27 @@ Theming
 Liquid Prompt has a strong data and theming engine, allowing it to be extremely
 flexible and customizable.
 
-The :doc:`theme/default` has a templating engine (previously called "themes" in
-Liquid Prompt version 1), that allows for custom prompt ordering in the default
-theme.
+There are multiple methods of customizing your prompt that are easy to
+get confused. These are:
 
-If you just want to change icons and/or colors, you can just rely on "presets",
-which are just regular configuration files.
-Presets can generally be combined, and some themes may use
-—or be compatible with— different presets. See :doc:`config`.
-
-Liquid Prompt ships with some :doc:`theme/included` other than the default as
-well.
+* Presets: a preset is simply an example config file. Parts or all of a preset
+  can be copied to your own config file, or you can source the presets inside
+  your config file, letting you combine, extend, or override any of the
+  configuration options. If you just want to change icons and/or colors,
+  presets are a good starting place. See ``contrib/presets`` for examples.
+  Presets can generally be combined, and some themes may use —or be compatible
+  with— different presets. See :doc:`config`.
+* Themes: a theme is a set of shell functions that control everything about
+  prompt generation. Liquid Prompt ships with a theme named ``default`` enabled
+  by default, as well as a few more (see :doc:`theme/included`). This is a
+  layer beyond simple configuration options. You can write your own themes, but
+  this is complicated and generally not necessary to make the modifications
+  most users want to make.
+* Templates: a template (previously called "themes" in Liquid Prompt version 1)
+  is specific to the :doc:`theme/default`, allowing for a user to re-order the
+  sections of the default theme. This gives more control than just the
+  configuration options can give, but is much simpler to do than writing a full
+  theme.
 
 See the `Liquid Prompt Theme List`_ on the wiki for user created themes.
 

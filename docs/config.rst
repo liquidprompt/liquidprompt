@@ -6,7 +6,8 @@ Config Options
 
 Almost every feature in Liquid Prompt can be turned on or off using these config
 options. They can either be set before sourcing Liquid Prompt (in ``.bashrc`` or
-``.zshrc``, or sourcing a preset), or set in a Liquid Prompt config file.
+``.zshrc``, or sourcing a preset), or more simply set in a Liquid Prompt config
+file.
 
 .. note::
    Config variables set in a config file take precedence over variables set in
@@ -53,8 +54,10 @@ as these::
    this page.
 
 Several example of configurations are given in the ``contrib/presets``
-directory. Some of these presets can be combined, for instance for changing
-the icons, along with the colors.
+directory. Some of these presets can be combined, for instance changing the
+icons, along with the colors. Parts or all of a preset can be copied to your
+own config file, or you can source the presets inside your config file, letting
+you combine, extend, or override any of the configuration options.
 
 Each config option is documented with its default value.
 Options of type ``bool`` accept values of ``1`` for true and ``0`` for false.

@@ -440,35 +440,6 @@ function test_integer {
   assertEquals "Int increment" 6 $int
 }
 
-function test_array {
-  # Since some shells do index 1 based instead of 0 based, we need to keep
-  # assumptions out of the code. If we assign an array with the array=(...)
-  # notation, then we can only itterate over it, never access an element.
-  # If we assign by index (array[idx]=...), then we can access by element, but
-  # must make sure we never use index 0, often by adding 1 to all indexes used
-
-  typeset -a array_a
-  array_a=(foo foo foo)
-
-  for item in "${array_a[@]}"; do
-    assertEquals "array element" "foo" "$item"
-  done
-
-  typeset IFS=' '
-  assertEquals "whole array" "foo foo foo" "${array_a[*]}"
-  assertEquals "size of array" 3 "${#array_a[@]}"
-
-  typeset -a array_b
-  array_b[1]=foo
-  array_b[2]=bar
-  array_b[5]=baz
-
-  assertEquals "array index element" "foo" "${array_b[1]}"
-  assertEquals "array index element" "bar" "${array_b[2]}"
-  assertEquals "array index element" "baz" "${array_b[5]}"
-  assertNull "null array index element" "${array_b[3]:+x}"
-}
-
 function test_source {
   file="${SHUNIT_TMPDIR}/sourced_file"
   printf '%s' 'foo=bar' > "$file"

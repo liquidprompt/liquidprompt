@@ -265,8 +265,8 @@ function test_path_format_from_path_left() {
 
   LP_PATH_LENGTH=13
   _lp_path_format '{n}' '{l}' '{v}' '{s}'
-  assertEquals "medium directory" ".../_lp/a/very" "$lp_path"
-  assertEquals "medium directory formatting" "{s}.../{n}_lp/{n}a/{l}very" "$lp_path_format"
+  assertEquals "medium directory" "..._lp/a/very" "$lp_path"
+  assertEquals "medium directory formatting" "{s}..._lp/{n}a/{l}very" "$lp_path_format"
 
   LP_PATH_KEEP=2
   _lp_path_format '{n}' '{l}' '{v}' '{s}'
@@ -726,6 +726,68 @@ function test_path_format_last_dir() {
   _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
   assertEquals "full directory with multichar separator" "pathname" "$lp_path"
   assertEquals "full directory formatting with multichar separator" "{l}pathname" "$lp_path_format"
+}
+
+function test_path_format_vcs_dir() {
+  typeset HOME="/home/user"
+  typeset PWD="/"
+
+  LP_ENABLE_PATH=1
+  LP_ENABLE_SHORTEN_PATH=1
+  LP_ENABLE_HYPERLINKS=0
+  LP_PATH_VCS_ROOT=1
+  LP_PATH_METHOD=truncate_to_vcs_dir
+
+  typeset lp_path lp_path_format vcs_root
+
+  _lp_find_vcs() {
+    lp_vcs_root=$vcs_root
+    [[ -n $lp_vcs_root ]]
+  }
+  vcs_root=
+
+  _lp_path_format '{format}'
+  assertEquals "root directory" '/' "$lp_path"
+  assertEquals "root directory formatting" '{format}/' "$lp_path_format"
+
+  _lp_path_format '{format}' '' '' '' '['
+  assertEquals "root directory ignore separator" '/' "$lp_path"
+  assertEquals "root directory formatting ignore separator" '{format}/' "$lp_path_format"
+
+  PWD="/tmp"
+  _lp_path_format ''
+  assertEquals "tmp directory" '/tmp' "$lp_path"
+  assertEquals "tmp directory no formatting" '/tmp' "$lp_path_format"
+
+  _lp_path_format '' '' '' '' '^'
+  assertEquals "tmp directory no custom separator" '/tmp' "$lp_path"
+  assertEquals "tmp directory no formatting custom separator" '/^tmp' "$lp_path_format"
+
+  PWD=$HOME
+  _lp_path_format '{format}'
+  assertEquals "home directory" '~' "$lp_path"
+  assertEquals "home directory formatting" '{format}~' "$lp_path_format"
+
+  PWD="/tmp/_lp/a/very"
+  vcs_root="$PWD"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory vcs" "very" "$lp_path"
+  assertEquals "full directory vcs formatting" "{v}very" "$lp_path_format"
+
+  LP_PATH_VCS_ROOT=0
+  _lp_path_format '{n}' '{l}' '{v}' '{s}'
+  assertEquals "full directory" "very" "$lp_path"
+  assertEquals "full directory formatting" "{l}very" "$lp_path_format"
+
+  LP_PATH_VCS_ROOT=1
+  PWD="/tmp/_lp/a/very/long/pathname"
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '^' '{^}'
+  assertEquals "full directory with separator" "very/long/pathname" "$lp_path"
+  assertEquals "full directory formatting with separator" "{v}very{^}^{n}long{^}^{l}pathname" "$lp_path_format"
+
+  _lp_path_format '{n}' '{l}' '{v}' '{s}' '///'
+  assertEquals "full directory with multichar separator" "very/long/pathname" "$lp_path"
+  assertEquals "full directory formatting with multichar separator" "{v}very///{n}long///{l}pathname" "$lp_path_format"
 }
 
 function test_no_path_format() {

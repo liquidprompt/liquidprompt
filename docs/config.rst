@@ -146,6 +146,8 @@ General
      the path, showing consecutive directories as one shortened section. E.g. in
      a directory named ``~/MyProjects/liquidprompt/tests``, it will be shortened
      to ``...prompt/tests``. The shortened mark is :attr:`LP_MARK_SHORTEN_PATH`.
+     If not the first priority, it can end up removing multiple directories in
+     a row if the higher priority methods did not shorten enough.
    * **truncate_chars_from_dir_right**: Leaves the beginning of a directory name
      untouched. E.g. directories will be shortened like so: ``~/Doc.../Office``.
      How many characters will be untouched is set by
@@ -163,14 +165,36 @@ General
      there is no other directory starting with 'd' in the home directory.
    * **truncate_to_last_dir**: Only display the last directory in the path. In
      other words, the current directory name.
+   * **truncate_to_vcs_dir**: Start the path display at the root of the VCS
+     directory. Other path methods can shorten remaining path parts. If
+     :attr:`LP_PATH_KEEP` is set, it starts from the VCS root instead.
 
-   All methods (other than `truncate_to_last_dir`) start at the far left of the
-   path (limited by :attr:`LP_PATH_KEEP`). Only the minimum number of
-   directories needed to fit inside :attr:`LP_PATH_LENGTH` will be shortened.
+   All methods (other than `truncate_to_last_dir` and `truncate_to_vcs_dir`)
+   start at the far left of the path (limited by :attr:`LP_PATH_KEEP`). Only
+   the minimum number of directories needed to fit inside
+   :attr:`LP_PATH_LENGTH` will be shortened.
+
+   Multiple methods can be specified at once, separated by ``,``. They will be
+   used in order, starting from the beginning of the path, later methods only
+   being applied if the first method did not reduce the length of the displayed
+   path enough. If a earlier method reduced the length of a directory name by
+   more than a later method would, the earlier reduction is kept.
+
+   Each method can have an optional ``:<int>`` suffix, where `<int>` is an
+   integer that overrides the value of :attr:`LP_PATH_LENGTH` for that method.
+   If set to ``-1``, the method will be applied as many times as possible
+   regardless of the terminal size. If unset or set to ``0``, the value of
+   :attr:`LP_PATH_LENGTH` is used, except for `truncate_to_last_dir` and
+   `truncate_to_vcs_dir`, which default to ``-1``.
 
    :attr:`LP_ENABLE_SHORTEN_PATH` must be enabled to have any effect.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.3
+      * Added `truncate_to_vcs_dir` option.
+      * Added ability to specify multiple options at once.
+      * Added control of path length per option.
 
 .. attribute:: LP_PATH_VCS_ROOT
    :type: bool

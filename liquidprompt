@@ -1663,16 +1663,24 @@ __lp_get_unique_directory() {
 __lp_end_path_left_shortening() {
     if (( is_shortening )); then
         shortened_path_length+=${#separator}
-        if (( shortened_path_length < unshortened_path_length )); then
-            lp_path_format+="${shortened_directory_format}${LP_MARK_SHORTEN_PATH}"
-            # This indescriminate adding of a separator can sometimes mean the path
+        if (( shortened_path_length < unshortened_path_length && i > 0 )); then
+            # This will indiscriminately add a separator, which can sometimes mean the path
             # is slightly longer than it should be, but it is more clear.
-            lp_path_format+="${separator_format}${separator}"
-            lp_path+="${LP_MARK_SHORTEN_PATH}/"
+            shortened_parts[_LP_FIRST_INDEX+i-1]=$LP_MARK_SHORTEN_PATH
+            # We need to display this dir, the shortened version.
+            cut_dirs[_LP_FIRST_INDEX+i-1]=""
         else
-            lp_path+=$unshortened_path_shorten_string
-            lp_path_format+=$unshortened_path_format_shorten_string
+            # We didn't actually do anything, so just unset the skip flag on the directories.
             shortened_path_length=$unshortened_path_length
+            local -i j
+            for (( j = i - 1; j >= 0; j-- )); do
+                # shellcheck disable=SC2199
+                if [[ -n ${cut_dirs[@]+"${cut_dirs[_LP_FIRST_INDEX+j]-}"} ]]; then
+                    cut_dirs[_LP_FIRST_INDEX+j]=""
+                else
+                    break
+                fi
+            done
         fi
         is_shortening=0
     fi
@@ -1695,175 +1703,224 @@ _lp_path_format() {
     local separator="${5-"/"}"
     local separator_format="${6-}"
 
-    lp_path=
-    lp_path_format=
-
-    local ret lp_link_path
-
     local lp_pwd_tilde
     __lp_pwd_tilde
     local display_path="$lp_pwd_tilde"
 
-    local -i path_length="${#display_path}"
+    local -i shortened_path_length="${#display_path}"
+    local slash_count="${display_path//[!\/]}"
+
+    if [[ $separator != "/" && ${display_path:0:1} == "/" ]]; then
+        # The root directory ('/') becomes a directory name instead of a leading separator
+        # Add one to account for the first / needing to be both replaced and shown
+        shortened_path_length+=1
+    fi
+    if [[ ${#separator} -gt 1 ]]; then
+        # Add length to account for multichar separators
+        (( shortened_path_length += ${#slash_count} * ( ${#separator} - 1 ) ))
+    fi
 
     local lp_vcs_root lp_vcs_dir lp_vcs_specific_dir lp_vcs_type lp_vcs_subtype
     local vcs_root_directory=
-    if (( LP_PATH_VCS_ROOT )) && _lp_find_vcs; then
-        __lp_pwd_tilde "$lp_vcs_root"
-        vcs_root_directory=$lp_pwd_tilde
+    if (( LP_PATH_VCS_ROOT )) || [[ "$LP_PATH_METHOD" == *"truncate_to_vcs_dir"* ]]; then
+        if _lp_find_vcs; then
+            __lp_pwd_tilde "$lp_vcs_root"
+            vcs_root_directory=$lp_pwd_tilde
+        fi
     fi
 
-    if [[ $path_length -eq 1 || $LP_PATH_METHOD == "truncate_to_last_dir" ]]; then
-        if [[ $path_length -gt 1 ]]; then
-            lp_path=${display_path##*/}
-        else
-            # only root or home to show
-            lp_path=$display_path
-        fi
-
-        __lp_escape "$lp_path"
-        _lp_create_link_path "${ret}"
-
-        if [[ $display_path == "$vcs_root_directory" ]]; then
-            lp_path_format="${vcs_root_format}$lp_link_path"
-        else
-            lp_path_format="${last_directory_format}$lp_link_path"
-        fi
-
-        return
+    local IFS="/"
+    local -a dir_parts shortened_parts methods current_path_parts
+    # Splitting on a string that starts with the IFS character leads to the first array element being the empty string.
+    # shellcheck disable=SC2206
+    if [[ $display_path == "/" ]]; then
+        # Some shells split this into two array fields. Both have upsides, but we want only one.
+        dir_parts=("")
     else
-        if [[ $separator != "/" && ${display_path:0:1} == "/" ]]; then
-            # The root directory ('/') becomes a directory name instead of a leading separator
-            # Add one to account for the first / needing to be both replaced and shown
-            path_length+=1
-        fi
-        if [[ ${#separator} -gt 1 ]]; then
-            # Add length to account for multichar separators
-            local slash_count="${display_path//[!\/]}"
-            path_length+=$(( ${#slash_count} * ( ${#separator} - 1 ) ))
-        fi
+        dir_parts=($display_path)
     fi
 
-    local path_to_proccess="${display_path}/" current_path="" current_directory="" lp_unique_directory
+    shortened_parts=()
+    if (( LP_ENABLE_SHORTEN_PATH )); then
+        IFS=","
+        # shellcheck disable=SC2206
+        methods=( $LP_PATH_METHOD )
+    fi
 
-    local -i max_len=$(( ${COLUMNS:-80} * LP_PATH_LENGTH / 100 )) directory_count=0 needed_length
-    local -i shortened_path_length="$path_length" is_shortening=0 unshortened_path_length
-    local unshortened_path_shorten_string unshortened_path_format_shorten_string shortened_path
+    # First char is used for separating [*] arrays. The space is to prevent a bug on Bash 3.2 when expanding an array
+    # into an array.
+    IFS="/ "
+    local -i i max_len dir_offset=0
+    local method threshold
 
-    while [[ -n $path_to_proccess ]]; do
+    local -a cut_dirs
 
-        if [[ ${path_to_proccess:0:1} == "/" ]]; then
-            # Start of root
-            current_directory="/"
-        else
-            current_directory=${path_to_proccess%%/*}
-            if [[ -n $current_path && $current_path != "/" ]]; then
-                current_path+="/"
+    for method in ${methods[@]+"${methods[@]}"}; do
+        IFS=":" read -r method threshold <<<"$method"
+        if [[ -z "$threshold" ]]; then
+            if [[ "$method" == "truncate_to_last_dir" || "$method" == "truncate_to_vcs_dir" ]]; then
+                threshold="-1"
             fi
         fi
+        if [[ -z "$threshold" || "$threshold" == "0" ]]; then
+            threshold=$LP_PATH_LENGTH
+        fi
 
-        directory_count+=1
-        current_path+=${current_directory}
-        path_to_proccess=${path_to_proccess#*/}
+        (( max_len = ${COLUMNS:-80} * threshold / 100 ))
+        if (( shortened_path_length <= max_len )); then
+            # This method does not meet the threshold to be used.
+            continue
+        fi
 
-        if [[ $current_path == "$vcs_root_directory" ]]; then
-            __lp_end_path_left_shortening
-            # No shortening
-            lp_path+=$current_directory
-            __lp_escape "$current_directory"
-            lp_path_format+="${vcs_root_format}"
-        elif [[ -z $path_to_proccess ]]; then
-            __lp_end_path_left_shortening
-            # Last directory
-            lp_path+=$current_directory
-            __lp_escape "$current_directory"
-            lp_path_format+="${last_directory_format}"
-        elif (( LP_ENABLE_SHORTEN_PATH && directory_count > LP_PATH_KEEP \
-            && ( shortened_path_length > max_len || ( shortened_path_length >= max_len && is_shortening ) ) )); then
+        if [[ $method == "truncate_to_last_dir" ]]; then
+            if [[ "$display_path" != "/" ]]; then
+                # Remove this many directories
+                (( dir_offset=${#slash_count} ))
+            fi
+            break
+        elif [[ $method == "truncate_to_vcs_dir" ]]; then
+            if [[ -n "$vcs_root_directory" ]]; then
+                local slash_count="${vcs_root_directory//[!\/]}"
+                (( dir_offset=${#slash_count} ))
+                local dir_length="${vcs_root_directory%/*}/"
+                # This is actually incorrect if any previous method has shortened any bits before this directory, as now
+                # they are being thrown away.
+                (( shortened_path_length -= ${#dir_length} ))
+                for (( i = _LP_FIRST_INDEX; i < dir_offset + _LP_FIRST_INDEX; i++ )); do
+                    if [[ -n "${shortened_parts[i]-}" ]]; then
+                        (( shortened_path_length += ${#dir_parts[i]} - ${#shortened_parts[i]} ))
+                    fi
+                done
+            fi
+            continue
+        fi
 
-            if [[ $LP_PATH_METHOD == "truncate_chars_to_unique_dir" ]] && \
-                __lp_get_unique_directory "$current_path"; then
+        local current_path current_directory attempt chars_to_cut override unshortened_path_length is_shortening=0
+        # Don't shorten the last (current) directory.
+        for (( i = LP_PATH_KEEP + dir_offset; i < ${#dir_parts[@]} - 1; i++ )); do
+            # shellcheck disable=SC2199
+            if [[ -n ${cut_dirs[@]+"${cut_dirs[_LP_FIRST_INDEX+i]-}"} ]]; then
+                # This dir was cut by chars_from_path_left, anything else can't beat that.
+                continue
+            fi
 
-                lp_path+=$lp_unique_directory
-                __lp_escape "$lp_unique_directory"
-                lp_path_format+="${shortened_directory_format}"
-                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#lp_unique_directory} ))
-            elif [[ $LP_PATH_METHOD == "truncate_chars_from_path_left" ]]; then
-                # The only way to know if this consecutive directory shortening
-                # will actually shorten the path is to both do it and do not and
-                # compare at the end.
-
+            # Arrays are buggy across all our different shells. The only way to expand and join a slice of an array is
+            # to do it in two steps.
+            current_path_parts=("${dir_parts[@]:0:$i+1}")
+            current_path="${current_path_parts[*]}"
+            if [[ $i == "0" && "$current_path" == "" ]]; then
+                # This is actually the root.
+                current_path="/"
+            fi
+            if (( LP_PATH_VCS_ROOT )) && [[ "$current_path" == "$vcs_root_directory" ]]; then
+                __lp_end_path_left_shortening
+                continue
+            fi
+            current_directory="${dir_parts[_LP_FIRST_INDEX+i]}"
+            attempt=""
+            override=0
+            if [[ $method == "truncate_chars_to_unique_dir" ]]; then
+                __lp_get_unique_directory "$current_path" && attempt=$lp_unique_directory
+            elif [[ $method == "truncate_chars_from_path_left" ]]; then
+                # This method is difficult. There are a number of ways it can be interupted, and when it is, we need to
+                # make sure that it actually did shorten instead of lengthen. Instead of "undoing" shortening in that
+                # case, put the shortening in a "staging area", and only save it once it becomes shorter.
                 if (( ! is_shortening )); then
-                    unshortened_path_shorten_string=
-                    unshortened_path_format_shorten_string=
                     unshortened_path_length=$shortened_path_length
                     shortened_path_length+=${#LP_MARK_SHORTEN_PATH}
                 fi
-                needed_length=$(( shortened_path_length - max_len ))
+                (( chars_to_cut = shortened_path_length - max_len ))
 
-                unshortened_path_shorten_string+="${current_directory}/"
-                unshortened_path_format_shorten_string+="${path_format}${current_directory}${separator_format}${separator}"
-
-                if (( needed_length >= ${#current_directory} )); then
+                # We have to check if a previous method has shortened this directory already.
+                local target="${#current_directory}"
+                # shellcheck disable=SC2199
+                if [[ -n ${shortened_parts[@]+"${shortened_parts[_LP_FIRST_INDEX+i]-}"} ]] && ((
+                    ${shortened_parts[_LP_FIRST_INDEX+i]} < target )); then
+                    target=${#shortened_parts[_LP_FIRST_INDEX+i]}
+                fi
+                if (( chars_to_cut > target )); then
                     # One directory was not enough, need to shorten more.
                     # Shorten by current directory length plus separator.
-                    shortened_path_length=$(( shortened_path_length - ${#current_directory} - ${#separator} ))
+                    (( shortened_path_length -= target + ${#separator} ))
+                    cut_dirs[_LP_FIRST_INDEX+i]=1
                     is_shortening=1
                 else
                     # Do not need to check if the shortened version is actually shorter.
                     # If we got to here, it wasn't a forced ending, which means it is.
-                    shortened_path_length=$(( shortened_path_length - needed_length ))
-
-                    shortened_path="${LP_MARK_SHORTEN_PATH}${current_directory:$needed_length}"
-                    lp_path+=$shortened_path
-                    __lp_escape "$shortened_path"
-                    lp_path_format+="${shortened_directory_format}"
-
+                    (( shortened_path_length -= chars_to_cut ))
+                    # The attempt check only checks the current directory length, but we operate on a string of them.
+                    override=1
+                    attempt="${LP_MARK_SHORTEN_PATH}${current_directory:$chars_to_cut}"
                     is_shortening=0
                 fi
-            elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_right" ]] && \
-                (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP < ${#current_directory} )); then
-
-                shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
-                lp_path+=$shortened_path
-                __lp_escape "$shortened_path"
-                lp_path_format+="${shortened_directory_format}"
-                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP ))
-            elif [[ $LP_PATH_METHOD == "truncate_chars_from_dir_middle" ]] && \
-                (( ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 < ${#current_directory} )); then
-
-                shortened_path="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
-                lp_path+=$shortened_path
-                __lp_escape "$shortened_path"
-                lp_path_format+="${shortened_directory_format}"
-                shortened_path_length=$(( shortened_path_length - ${#current_directory} + ${#LP_MARK_SHORTEN_PATH} + LP_PATH_CHARACTER_KEEP * 2 ))
-            else
-                # Need to shorten, but no method matched, or the matched method
-                # did not make the string any shorter.
-                lp_path+=$current_directory
-                __lp_escape "$current_directory"
-                lp_path_format+="${path_format}"
+            elif [[ $method == "truncate_chars_from_dir_right" ]]; then
+                attempt="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}"
+            elif [[ $method == "truncate_chars_from_dir_middle" ]]; then
+                attempt="${current_directory:0:$LP_PATH_CHARACTER_KEEP}${LP_MARK_SHORTEN_PATH}${current_directory: -$LP_PATH_CHARACTER_KEEP}"
             fi
+
+            if [[ -n "${attempt-}" ]] && (( ${#attempt} < ${#current_directory} || override )); then
+                if [[ -z "${shortened_parts[_LP_FIRST_INDEX+i]-}" ]]; then
+                    (( shortened_path_length += ${#attempt} - ${#current_directory} ))
+                    shortened_parts[_LP_FIRST_INDEX+i]=$attempt
+                elif (( ${#shortened_parts[_LP_FIRST_INDEX+i]} > ${#attempt} )); then
+                    (( shortened_path_length += ${#attempt} - ${#shortened_parts[_LP_FIRST_INDEX+i]} ))
+                    shortened_parts[_LP_FIRST_INDEX+i]=$attempt
+                fi
+            fi
+
+            if (( shortened_path_length <= max_len && ! is_shortening )); then
+                break
+            fi
+        done
+        __lp_end_path_left_shortening
+    done
+
+    lp_path=
+    lp_path_format=
+    local format
+    local -i end="${#dir_parts[@]}"
+    for (( i = dir_offset; i < end; i++ )); do
+        current_directory="${dir_parts[_LP_FIRST_INDEX+i]}"
+        if [[ $i == "0" && "$current_directory" == "" ]]; then
+            # This is actually the root.
+            current_directory="/"
+        fi
+        current_path_parts=( "${dir_parts[@]:0:$i+1}" )
+        # This array is quoted correctly.
+        # shellcheck disable=SC2199
+        if (( LP_PATH_VCS_ROOT )) && [[ -n "$vcs_root_directory" \
+            && ${current_path_parts[@]+"${current_path_parts[*]}"} == "$vcs_root_directory" ]]; then
+            format=$vcs_root_format
+        elif (( i + 1 == end)); then
+            format=$last_directory_format
+        elif [[ -n ${cut_dirs[@]+"${cut_dirs[_LP_FIRST_INDEX+i]-}"} ]]; then
+            # The shortening removed this directory entirely, so don't do any formatting or separators.
+            continue
+        elif [[ -n ${shortened_parts[@]+"${shortened_parts[_LP_FIRST_INDEX+i]-}"} ]]; then
+            current_directory="${shortened_parts[_LP_FIRST_INDEX+i]}"
+            format=$shortened_directory_format
         else
-            __lp_end_path_left_shortening
-            lp_path+=$current_directory
-            __lp_escape "$current_directory"
-            lp_path_format+="${path_format}"
+            format=$path_format
         fi
 
-        if (( ! is_shortening )); then
-            # Remove the parts of the path that haven't been printed yet from PWD. Due to how we add a '/' to the
-            # tracking to handle the root directory, we need to move it from the end of the string to the beginning to
-            # work correctly with PWD.
-            _lp_create_link_path "$ret" "${PWD%"${path_to_proccess:+"/${path_to_proccess%/}"}"}"
-            lp_path_format+="$lp_link_path"
+        lp_path+=$current_directory
+        __lp_escape "$current_directory"
 
-            if [[ -n $path_to_proccess && ( $current_path != "/" || $separator != "/" ) ]]; then
-                if [[ $current_path != "/" ]]; then
-                    lp_path+="/"
-                fi
-                lp_path_format+="${separator_format}${separator}"
+        # Remove the parts of the path that haven't been printed yet from PWD. Due to how we add a '/' to the
+        # tracking to handle the root directory, we need to move it from the end of the string to the beginning to
+        # work correctly with PWD.
+        current_path_parts=( "${dir_parts[@]:$i+1:$end}" )
+        # This array is quoted correctly.
+        # shellcheck disable=SC2295
+        _lp_create_link_path "$ret" "${PWD%${current_path_parts[@]+"/${current_path_parts[*]}"}}"
+        lp_path_format+="${format}${lp_link_path}"
+
+        if (( i + 1 < end )) && [[ $current_directory != "/" || $separator != "/" ]]; then
+            if [[ $current_directory != "/" ]]; then
+                lp_path+="/"
             fi
+            lp_path_format+="${separator_format}${separator}"
         fi
     done
 }

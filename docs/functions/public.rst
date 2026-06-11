@@ -150,10 +150,11 @@ their config.
 
 .. function:: prompt_tag([prefix_string])
 
-   Sets a prefix that will be displayed before every prompt. Postpends a space
-   to the input string.
+   Sets a prefix that will be displayed before every prompt.
 
    Internally, this function sets :attr:`LP_PS1_PREFIX` to *prefix_string*.
-   If a trailing space is not wanted, set :attr:`LP_PS1_PREFIX` manually.
 
    To unset the prefix, call :func:`prompt_tag` with no arguments.
+
+   .. versionchanged: 2.3
+      No longer postpends a space.

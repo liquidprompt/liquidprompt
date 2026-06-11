@@ -127,9 +127,8 @@ lp_help() {
         "prompt_tag")
             usage="$1 [prefix_string]"
             description=(
-                "Sets a prefix that will be displayed before every prompt. Postpends a"
-                "space to the input string. To unset the prefix, call prompt_tag() with"
-                "no arguments."
+                "Sets a prefix that will be displayed before every prompt. To unset "
+                "the prefix, call prompt_tag() with no arguments."
             )
             positional=(
                 "prefix_string" "string to tag the prompt with"
@@ -5180,7 +5179,7 @@ _lp_default_theme_prompt_template() {
 
     if [[ -z "${LP_PS1-}" ]]; then
         # Add title escape time, battery, load, temperature, RAM, disk, wifi, jobs.
-        PS1="${LP_PS1_PREFIX}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_JOBS}"
+        PS1="${LP_PS1_PREFIX:+"${LP_PS1_PREFIX} "}${LP_TIME}${LP_BATT}${LP_LOAD}${LP_TEMP}${LP_RAM}${LP_DISK}${LP_WIFI}${LP_JOBS}"
 
         # Add multiplexer brackets, user, host, permissions colon, working directory, dirstack, proxy, watched environment variables and nested shell level.
         PS1+="${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_PERM}${LP_PWD}${LP_DIRSTACK}${LP_BRACKET_CLOSE}${LP_PROXY}${LP_ENVVARS}${LP_SHLVL}"
@@ -5197,7 +5196,7 @@ _lp_default_theme_prompt_template() {
         PS1+="${LP_RUNTIME}${LP_ERR}${LP_ERR_MEANING}${LP_MARK_PREFIX}${LP_COLOR_MARK}${LP_MARK}${LP_PS1_POSTFIX}"
 
         # Get the core sections without prompt escapes and make them into a title.
-        _lp_formatted_title "${LP_PS1_PREFIX}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
+        _lp_formatted_title "${LP_PS1_PREFIX:+"${LP_PS1_PREFIX} "}${LP_BRACKET_OPEN}${LP_USER}${LP_HOST}${LP_MARK_PERM}${lp_path-}${LP_BRACKET_CLOSE}${LP_MARK_PREFIX}${LP_MARK}${LP_PS1_POSTFIX}"
     else
         PS1=$LP_PS1
     fi
@@ -5328,11 +5327,7 @@ prompt_tag() {
         shift
     fi
 
-    if [[ -n "${1-}" ]]; then
-        export LP_PS1_PREFIX="$1 "
-    else
-        export LP_PS1_PREFIX=
-    fi
+    export LP_PS1_PREFIX="${1-}"
 }
 
 # Activate Liquid Prompt

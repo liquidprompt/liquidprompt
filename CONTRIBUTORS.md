@@ -127,6 +127,11 @@ Thanks again to everyone for all of the help and support!
 * @slowpeek
 * TIAN Yuanhao (@tianyuanhao)
 * Michal Gawlik (@dex6)
+* Tomasz Kapias (@tkapias)
+* @haxwithaxe
+* Natasha Kerensikova (@faelys)
+* Ognyan Kulev (@okulev)
+* @shadowwa
 
 ### Code cleanup
 * Aurélien Requiem (@aureq)
@@ -151,6 +156,7 @@ Thanks again to everyone for all of the help and support!
 * Aleksey Tsalolikhin (@atsalolikhin-spokeo)
 * Otto Kekäläinen (@ottok)
 * Jonas Brømsø (@jonasbn)
+* David Schmidt (@sxpl-DavidSchmidt)
 
 ### Bug reports / Feature requests
 * @skanx
@@ -282,3 +288,8 @@ Thanks again to everyone for all of the help and support!
 * Christian Heusel (@christian-heusel)
 * Ross Patterson (@rpatterson)
 * Tomasz Kapias (@tkapias)
+* @CouldBeThis
+* Arkadiusz Bokowy (@arkq)
+* Virgil (@sisoe24)
+* @Johann-Tree
+* Tim Siegel (@softmoth)

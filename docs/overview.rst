@@ -260,7 +260,7 @@ License
 -------
 
 Liquid Prompt is distributed under the `GNU Affero General Public License
-version 3 <https://www.gnu.org/licenses/agpl-3.0.en.html>`_.
+version 3 <https://spdx.org/licenses/AGPL-3.0-only>`_.
 
 To comply with the AGPL clauses, anybody offering Liquid Prompt over the network
 is *required* to also offer access to the source code of it and allow further

@@ -192,9 +192,9 @@ General
    .. versionadded:: 2.0
 
    .. versionchanged:: 2.3
-      * Added `truncate_to_vcs_dir` option.
-      * Added ability to specify multiple options at once.
-      * Added control of path length per option.
+      Added `truncate_to_vcs_dir` option.
+      Added ability to specify multiple options at once.
+      Added control of path length per option.
 
 .. attribute:: LP_PATH_VCS_ROOT
    :type: bool

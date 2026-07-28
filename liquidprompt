@@ -608,6 +608,7 @@ __lp_source_config() {
     LP_PATH_VCS_ROOT=${LP_PATH_VCS_ROOT:-1}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
     LP_HOSTNAME_METHOD=${LP_HOSTNAME_METHOD:-short}
+    LP_HOSTNAME_TRIM=${LP_HOSTNAME_TRIM:-2}
     LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
     LP_ALWAYS_DISPLAY_VALUES=${LP_ALWAYS_DISPLAY_VALUES:-1}
     LP_DISPLAY_VALUES_AS_PERCENTS=${LP_DISPLAY_VALUES_AS_PERCENTS:-0}
@@ -2731,7 +2732,7 @@ _lp_hostname() {
             return 1
         fi
 
-        if [[ $LP_HOSTNAME_METHOD == fqdn ]]; then
+        if [[ $LP_HOSTNAME_METHOD == fqdn || $LP_HOSTNAME_METHOD == fqdn_trimmed ]]; then
             lp_hostname=$(hostname -f 2>/dev/null)
         elif [[ $LP_HOSTNAME_METHOD == pretty ]]; then
             if [[ $LP_OS == Darwin ]]; then
@@ -2748,6 +2749,12 @@ _lp_hostname() {
         # Truncate to the first subdomain
         if [[ $LP_HOSTNAME_METHOD == short ]]; then
             lp_hostname=${lp_hostname%%.*}
+        # Truncate domain sections from the end
+        elif [[ $LP_HOSTNAME_METHOD == fqdn_trimmed ]]; then
+            local i
+            for (( i=0; i < LP_HOSTNAME_TRIM; i++ )); do
+                lp_hostname=${lp_hostname%.*}
+            done
         fi
 
         local ret

@@ -1289,6 +1289,19 @@ Features
 
    See also: :attr:`LP_COLOR_HOST` and :attr:`LP_ENABLE_SSH_COLORS`.
 
+.. attribute:: LP_HOSTNAME_FQDN_TRIM
+   :type: int or string
+   :value: 0
+
+   The number of domain sections to remove from the end of the fully qualified
+   domain name when :attr:`LP_HOSTNAME_METHOD` is set to `fqdn`. If set to a
+   string instead of a number, remove that domain suffix from the end (e.g.
+   ``example.net`` turns ``foo.bar.example.net`` into ``foo.bar``).
+
+   See also: :attr:`LP_HOSTNAME_METHOD`.
+
+   .. versionadded:: 2.4
+
 .. attribute:: LP_HOSTNAME_METHOD
    :type: string
    :value: "short"
@@ -1300,7 +1313,8 @@ Features
    * **full**: show the full hostname, without any domain name. Equal to ``\H``
      in Bash or ``%M`` in Zsh.
    * **fqdn**: show the fully qualified domain name, if it exists. Defaults to
-     **full** if not.
+     **full** if not. See :attr:`LP_HOSTNAME_FQDN_TRIM` to remove domain
+     sections from the end.
    * **pretty**: show the pretty hostname, also called "machine display name".
      Defaults to **full** if one does not exist.
 

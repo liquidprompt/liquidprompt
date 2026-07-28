@@ -9,46 +9,66 @@ fi
 
 . ../liquidprompt --no-activate
 
-function test_hostname_method_fqdn_trimmed {
+function test_hostname_method_fqdn_trim {
 
   hostname() {
     printf 'foo.bar.example.com\n'
   }
 
   LP_HOSTNAME_ALWAYS=1
-  LP_HOSTNAME_METHOD=fqdn_trimmed
+  LP_HOSTNAME_METHOD=fqdn
 
   typeset lp_hostname
 
-  LP_HOSTNAME_TRIM=2
+  LP_HOSTNAME_FQDN_TRIM=0
   lp_hostname=
   _lp_hostname
-  assertEquals "fqdn_trimmed trim of 2 (default)" "foo.bar" "$lp_hostname"
+  assertEquals "fqdn trim of 0 (default)" "foo.bar.example.com" "$lp_hostname"
 
-  LP_HOSTNAME_TRIM=1
+  LP_HOSTNAME_FQDN_TRIM=1
   lp_hostname=
   _lp_hostname
-  assertEquals "fqdn_trimmed trim of 1" "foo.bar.example" "$lp_hostname"
+  assertEquals "fqdn trim of 1" "foo.bar.example" "$lp_hostname"
 
-  LP_HOSTNAME_TRIM=0
+  LP_HOSTNAME_FQDN_TRIM=2
   lp_hostname=
   _lp_hostname
-  assertEquals "fqdn_trimmed trim of 0" "foo.bar.example.com" "$lp_hostname"
+  assertEquals "fqdn trim of 2" "foo.bar" "$lp_hostname"
 
-  LP_HOSTNAME_TRIM=5
+  LP_HOSTNAME_FQDN_TRIM=5
   lp_hostname=
   _lp_hostname
-  assertEquals "fqdn_trimmed trim longer than domain" "foo" "$lp_hostname"
+  assertEquals "fqdn trim longer than domain" "foo" "$lp_hostname"
+
+  LP_HOSTNAME_FQDN_TRIM=example.com
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of matching domain string" "foo.bar" "$lp_hostname"
+
+  LP_HOSTNAME_FQDN_TRIM=.example.com
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of domain string with leading dot" "foo.bar" "$lp_hostname"
+
+  LP_HOSTNAME_FQDN_TRIM=example.org
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of non-matching domain string" "foo.bar.example.com" "$lp_hostname"
+
+  LP_HOSTNAME_FQDN_TRIM=foo.bar.example.com
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of entire hostname string" "foo.bar.example.com" "$lp_hostname"
 
   hostname() {
     return 1
   }
 
   HOSTNAME=srv.example.com
-  LP_HOSTNAME_TRIM=2
+  LP_HOSTNAME_FQDN_TRIM=2
   lp_hostname=
   _lp_hostname
-  assertEquals "fqdn_trimmed fallback to full hostname" "srv" "$lp_hostname"
+  assertEquals "fqdn trim fallback to full hostname" "srv" "$lp_hostname"
 }
 
 . ./shunit2

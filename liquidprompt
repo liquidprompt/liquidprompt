@@ -5216,6 +5216,15 @@ __lp_set_prompt() {
     # As this get the last returned code, it should be called first
     local -i lp_error="$?"
 
+    # In Bash, hitting Ctrl^C during prompt generation starts PROMPT_COMMAND (this function) again. If the prompt was
+    # hanging for some reason, this will happen again and again.
+    if (( _LP_SHELL_bash)) && [[ -n ${LP_START_SET_PROMPT-} ]]; then
+        unset LP_START_SET_PROMPT
+        PS1="[${USER:-${USERNAME:-${LOGNAME-}}}@${HOSTNAME:-${HOST-}}:${PWD}]: \$ "
+        return
+    fi
+    LP_START_SET_PROMPT=1
+
     if (( LP_HIDE_EMPTY_ERROR )); then
         (( ! ${_LP_REAL_COMMAND:-1} )) && lp_error=0
         _LP_REAL_COMMAND=0
@@ -5269,6 +5278,8 @@ __lp_set_prompt() {
     if (( LP_ENABLE_TITLE )); then
         printf '%s' "${LP_TITLE_OPEN}${_lp_manual_title:-${_lp_generated_title-${SHELL-}}}${LP_TITLE_CLOSE}"
     fi
+
+    unset LP_START_SET_PROMPT
 }
 
 __lp_preexec() {

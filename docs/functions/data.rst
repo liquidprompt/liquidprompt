@@ -458,7 +458,7 @@ OS
       Added :attr:`LP_HOSTNAME_METHOD` to configure display method.
 
    .. versionchanged:: 2.4
-      Added :attr:`LP_HOSTNAME_FQDN_TRIM` to remove domain sections from the
+      Added :attr:`LP_HOSTNAME_TRIM` to remove domain sections from the
       `fqdn` method.
 
 .. function:: _lp_os() -> var:lp_os_arch, var:lp_os_family, var:lp_os_kernel, var:lp_os_distrib, var:lp_os_version

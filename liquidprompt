@@ -2755,7 +2755,7 @@ _lp_hostname() {
         # Truncate domain sections from the end
         if [[ $LP_HOSTNAME_TRIM == -* ]]; then
             # Negative: keep that many sections from the start instead
-            local i=$LP_HOSTNAME_TRIM domain=$lp_hostname
+            local i="$LP_HOSTNAME_TRIM" domain="$lp_hostname"
             while (( i < 0 )) && [[ $domain == *.* ]]; do
                 domain=${domain#*.}
                 (( i++ ))

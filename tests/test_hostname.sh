@@ -9,6 +9,9 @@ fi
 
 . ../liquidprompt --no-activate
 
+# Liquidprompt depends on PS1 being set to detect if it has installed itself.
+PS1="$ "
+
 function test_hostname_method_fqdn_trim {
 
   hostname() {
@@ -124,19 +127,19 @@ function test_hostname_method_short_trim {
 
   LP_HOSTNAME_ALWAYS=1
   LP_HOSTNAME_METHOD=short
+  LP_HOSTNAME_TRIM=2
   HOSTNAME=foo.bar.example.com
 
+  # short is aliased to full with LP_HOSTNAME_TRIM=-1 at config load
+  lp_activate --no-config
+
+  assertEquals "short is aliased to full" "full" "$LP_HOSTNAME_METHOD"
+  assertEquals "short overrides LP_HOSTNAME_TRIM" "-1" "$LP_HOSTNAME_TRIM"
+
   typeset lp_hostname
-
-  LP_HOSTNAME_TRIM=0
   lp_hostname=
   _lp_hostname
-  assertEquals "short trim of 0 (default)" "foo" "$lp_hostname"
-
-  LP_HOSTNAME_TRIM=2
-  lp_hostname=
-  _lp_hostname
-  assertEquals "short trim of 2 is a no-op" "foo" "$lp_hostname"
+  assertEquals "short shows the first section" "foo" "$lp_hostname"
 }
 
 . ./shunit2

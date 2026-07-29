@@ -1296,7 +1296,8 @@ Features
    Determine the method for displaying the hostname.
 
    * **short**: show the first section of the hostname, what is before the first
-     dot. Equal to ``\h`` in Bash or ``%m`` in Zsh.
+     dot. Equal to ``\h`` in Bash or ``%m`` in Zsh. An alias for **full** with
+     :attr:`LP_HOSTNAME_TRIM` set to ``-1``, overriding any configured value.
    * **full**: show the full hostname, without any domain name. Equal to ``\H``
      in Bash or ``%M`` in Zsh.
    * **fqdn**: show the fully qualified domain name, if it exists. Defaults to
@@ -1308,6 +1309,10 @@ Features
 
    .. versionadded:: 2.1
 
+   .. versionchanged:: 2.4
+      The **short** method is now an alias for **full** with
+      :attr:`LP_HOSTNAME_TRIM` set to ``-1``.
+
 .. attribute:: LP_HOSTNAME_TRIM
    :type: int or string
    :value: 0
@@ -1318,6 +1323,9 @@ Features
    ``foo``). If set to a string instead of a number, remove that domain suffix
    from the end (e.g. ``example.net`` turns ``foo.bar.example.net`` into
    ``foo.bar``).
+
+   Ignored when :attr:`LP_HOSTNAME_METHOD` is set to **short**, which forces
+   this option to ``-1``.
 
    See also: :attr:`LP_HOSTNAME_METHOD`.
 

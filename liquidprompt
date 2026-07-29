@@ -925,6 +925,12 @@ __lp_source_config() {
         LP_HOSTNAME_METHOD="full"
     fi
 
+    # short is an alias for the full method keeping only the first section
+    if [[ $LP_HOSTNAME_METHOD == short ]]; then
+        LP_HOSTNAME_METHOD="full"
+        LP_HOSTNAME_TRIM=-1
+    fi
+
     if [[ -n ${LP_PERCENTS_ALWAYS-} ]]; then
         echo "liquidprompt: LP_PERCENTS_ALWAYS is deprecated. Update your config to set LP_ALWAYS_DISPLAY_VALUES and LP_DISPLAY_VALUES_AS_PERCENTS instead." >&2
         LP_ALWAYS_DISPLAY_VALUES=${LP_PERCENTS_ALWAYS}
@@ -2744,11 +2750,6 @@ _lp_hostname() {
 
         if [[ -z ${lp_hostname-} ]]; then
             lp_hostname=${HOSTNAME:-${HOST-}}
-        fi
-
-        # Truncate to the first subdomain
-        if [[ $LP_HOSTNAME_METHOD == short ]]; then
-            lp_hostname=${lp_hostname%%.*}
         fi
 
         # Truncate domain sections from the end

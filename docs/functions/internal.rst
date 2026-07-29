@@ -27,6 +27,10 @@ Config
       Renamed from ``_lp_source_config``.
       Added ``--no-config`` flag.
 
+   .. versionchanged:: 2.4
+      The **short** :attr:`LP_HOSTNAME_METHOD` is aliased to **full** with
+      :attr:`LP_HOSTNAME_TRIM` set to ``-1``.
+
 Formatting
 ----------
 

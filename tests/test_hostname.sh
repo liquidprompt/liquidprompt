@@ -40,6 +40,26 @@ function test_hostname_method_fqdn_trim {
   _lp_hostname
   assertEquals "fqdn trim longer than domain" "foo" "$lp_hostname"
 
+  LP_HOSTNAME_TRIM=-1
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of -1 keeps first section" "foo" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=-2
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of -2 keeps two sections" "foo.bar" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=-4
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn trim of -4 keeps all sections" "foo.bar.example.com" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=-5
+  lp_hostname=
+  _lp_hostname
+  assertEquals "fqdn negative trim longer than domain" "foo.bar.example.com" "$lp_hostname"
+
   LP_HOSTNAME_TRIM=example.com
   lp_hostname=
   _lp_hostname
@@ -93,6 +113,11 @@ function test_hostname_method_full_trim {
   lp_hostname=
   _lp_hostname
   assertEquals "full trim of matching domain string" "foo.bar" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=-1
+  lp_hostname=
+  _lp_hostname
+  assertEquals "full trim of -1 keeps first section" "foo" "$lp_hostname"
 }
 
 function test_hostname_method_short_trim {

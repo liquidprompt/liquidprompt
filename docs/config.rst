@@ -1313,9 +1313,11 @@ Features
    :value: 0
 
    The number of domain sections to remove from the end of the hostname, after
-   :attr:`LP_HOSTNAME_METHOD` is applied. If set to a string instead of a
-   number, remove that domain suffix from the end (e.g. ``example.net`` turns
-   ``foo.bar.example.net`` into ``foo.bar``).
+   :attr:`LP_HOSTNAME_METHOD` is applied. If negative, keep that many sections
+   from the start instead (e.g. ``-1`` turns ``foo.bar.example.net`` into
+   ``foo``). If set to a string instead of a number, remove that domain suffix
+   from the end (e.g. ``example.net`` turns ``foo.bar.example.net`` into
+   ``foo.bar``).
 
    See also: :attr:`LP_HOSTNAME_METHOD`.
 

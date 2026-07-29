@@ -2752,7 +2752,17 @@ _lp_hostname() {
         fi
 
         # Truncate domain sections from the end
-        if [[ $LP_HOSTNAME_TRIM == *[!0-9]* ]]; then
+        if [[ $LP_HOSTNAME_TRIM == -* ]]; then
+            # Negative: keep that many sections from the start instead
+            local i=$LP_HOSTNAME_TRIM domain=$lp_hostname
+            while (( i < 0 )) && [[ $domain == *.* ]]; do
+                domain=${domain#*.}
+                (( i++ ))
+            done
+            if (( i == 0 )); then
+                lp_hostname=${lp_hostname%".$domain"}
+            fi
+        elif [[ $LP_HOSTNAME_TRIM == *[!0-9]* ]]; then
             # Remove a literal domain suffix and the dot before it
             lp_hostname=${lp_hostname%".${LP_HOSTNAME_TRIM#.}"}
         else

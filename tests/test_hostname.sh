@@ -71,4 +71,47 @@ function test_hostname_method_fqdn_trim {
   assertEquals "fqdn trim fallback to full hostname" "srv" "$lp_hostname"
 }
 
+function test_hostname_method_full_trim {
+
+  LP_HOSTNAME_ALWAYS=1
+  LP_HOSTNAME_METHOD=full
+  HOSTNAME=foo.bar.example.com
+
+  typeset lp_hostname
+
+  LP_HOSTNAME_TRIM=0
+  lp_hostname=
+  _lp_hostname
+  assertEquals "full trim of 0 (default)" "foo.bar.example.com" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=2
+  lp_hostname=
+  _lp_hostname
+  assertEquals "full trim of 2" "foo.bar" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=example.com
+  lp_hostname=
+  _lp_hostname
+  assertEquals "full trim of matching domain string" "foo.bar" "$lp_hostname"
+}
+
+function test_hostname_method_short_trim {
+
+  LP_HOSTNAME_ALWAYS=1
+  LP_HOSTNAME_METHOD=short
+  HOSTNAME=foo.bar.example.com
+
+  typeset lp_hostname
+
+  LP_HOSTNAME_TRIM=0
+  lp_hostname=
+  _lp_hostname
+  assertEquals "short trim of 0 (default)" "foo" "$lp_hostname"
+
+  LP_HOSTNAME_TRIM=2
+  lp_hostname=
+  _lp_hostname
+  assertEquals "short trim of 2 is a no-op" "foo" "$lp_hostname"
+}
+
 . ./shunit2

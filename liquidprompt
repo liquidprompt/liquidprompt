@@ -2749,17 +2749,17 @@ _lp_hostname() {
         # Truncate to the first subdomain
         if [[ $LP_HOSTNAME_METHOD == short ]]; then
             lp_hostname=${lp_hostname%%.*}
+        fi
+
         # Truncate domain sections from the end
-        elif [[ $LP_HOSTNAME_METHOD == fqdn ]]; then
-            if [[ $LP_HOSTNAME_TRIM == *[!0-9]* ]]; then
-                # Remove a literal domain suffix and the dot before it
-                lp_hostname=${lp_hostname%".${LP_HOSTNAME_TRIM#.}"}
-            else
-                local i
-                for (( i=0; i < LP_HOSTNAME_TRIM; i++ )); do
-                    lp_hostname=${lp_hostname%.*}
-                done
-            fi
+        if [[ $LP_HOSTNAME_TRIM == *[!0-9]* ]]; then
+            # Remove a literal domain suffix and the dot before it
+            lp_hostname=${lp_hostname%".${LP_HOSTNAME_TRIM#.}"}
+        else
+            local i
+            for (( i=0; i < LP_HOSTNAME_TRIM; i++ )); do
+                lp_hostname=${lp_hostname%.*}
+            done
         fi
 
         local ret

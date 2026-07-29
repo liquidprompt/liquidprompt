@@ -1300,12 +1300,11 @@ Features
    * **full**: show the full hostname, without any domain name. Equal to ``\H``
      in Bash or ``%M`` in Zsh.
    * **fqdn**: show the fully qualified domain name, if it exists. Defaults to
-     **full** if not. See :attr:`LP_HOSTNAME_TRIM` to remove domain sections
-     from the end.
+     **full** if not.
    * **pretty**: show the pretty hostname, also called "machine display name".
      Defaults to **full** if one does not exist.
 
-   See also: :attr:`LP_HOSTNAME_ALWAYS`.
+   See also: :attr:`LP_HOSTNAME_ALWAYS` and :attr:`LP_HOSTNAME_TRIM`.
 
    .. versionadded:: 2.1
 
@@ -1313,10 +1312,10 @@ Features
    :type: int or string
    :value: 0
 
-   The number of domain sections to remove from the end of the fully qualified
-   domain name when :attr:`LP_HOSTNAME_METHOD` is set to `fqdn`. If set to a
-   string instead of a number, remove that domain suffix from the end (e.g.
-   ``example.net`` turns ``foo.bar.example.net`` into ``foo.bar``).
+   The number of domain sections to remove from the end of the hostname, after
+   :attr:`LP_HOSTNAME_METHOD` is applied. If set to a string instead of a
+   number, remove that domain suffix from the end (e.g. ``example.net`` turns
+   ``foo.bar.example.net`` into ``foo.bar``).
 
    See also: :attr:`LP_HOSTNAME_METHOD`.
 

@@ -338,6 +338,7 @@ Environment
    * ``tmux``
    * ``screen``
    * ``shpool``
+   * ``herdr``
 
    .. versionadded:: 2.0
 
@@ -345,6 +346,9 @@ Environment
       Can be disabled by :attr:`LP_ENABLE_MULTIPLEXER`,
       except if ``--internal`` is passed (i.e. for internal use only).
       Return variable renamed from ``lp_mulitplexer`` to ``lp_multiplexer``.
+
+   .. versionchanged:: 2.4
+      Added support for ``herdr``.
 
 .. function:: _lp_shell_level() -> var:lp_shell_level
 
@@ -379,6 +383,9 @@ Jobs
    Can be disabled by :attr:`LP_ENABLE_DETACHED_SESSIONS`.
 
    .. versionadded:: 2.0
+
+   .. versionchanged:: 2.4
+      Added support for ``herdr``.
 
 .. function:: _lp_jobcount() -> var:lp_running_jobs, var:lp_stopped_jobs
 

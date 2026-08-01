@@ -13,8 +13,10 @@ LP_ENABLE_DETACHED_SESSIONS=1
 _LP_ENABLE_SCREEN=1
 _LP_ENABLE_TMUX=1
 _LP_ENABLE_SHPOOL=1
+_LP_ENABLE_HERDR=1
+unset HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV
 
-typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values
+typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values herdr_outputs herdr_values
 
 # Add test cases to these arrays like below
 
@@ -90,6 +92,18 @@ test   	2024-09-26T16:06:07.352+00:00  	disconnected
 )
 shpool_values+=(1)
 
+herdr_outputs+=(
+"NAME   STATUS
+"
+)
+herdr_values+=(0)
+herdr_outputs+=(
+"NAME   STATUS
+main   detached
+"
+)
+herdr_values+=(1)
+
 
 function test_screen_sessions {
 
@@ -98,6 +112,7 @@ function test_screen_sessions {
   }
   shpool() { : ; }
   tmux() { : ; }
+  herdr() { : ; }
 
   for (( index=0; index < ${#screen_values[@]}; index++ )); do
     __screen_output=${screen_outputs[$index]}
@@ -113,6 +128,7 @@ function test_shpool_sessions {
   }
   screen() { : ; }
   tmux() { : ; }
+  herdr() { : ; }
 
   for (( index=0; index < ${#shpool_values[@]}; index++ )); do
     __shpool_output=${shpool_outputs[$index]}
@@ -128,12 +144,45 @@ function test_tmux_sessions {
   }
   screen() { : ; }
   shpool() { : ; }
+  herdr() { : ; }
 
   for (( index=0; index < ${#tmux_values[@]}; index++ )); do
     __tmux_output=${tmux_outputs[$index]}
     _lp_detached_sessions
     assertEquals "Tmux sessions output at index ${index}" "${tmux_values[$index]}" "$lp_detached_sessions"
   done
+}
+
+function test_herdr_sessions {
+
+  herdr() {
+    printf '%s' "$__herdr_output"
+  }
+  screen() { : ; }
+  shpool() { : ; }
+  tmux() { : ; }
+
+  for (( index=0; index < ${#herdr_values[@]}; index++ )); do
+    __herdr_output=${herdr_outputs[$index]}
+    _lp_detached_sessions
+    assertEquals "herdr sessions output at index ${index}" "${herdr_values[$index]}" "$lp_detached_sessions"
+  done
+}
+
+function test_herdr_attached_session {
+
+  herdr() {
+    printf '%s' "NAME   STATUS
+main   running
+sub    detached
+"
+  }
+  screen() { : ; }
+  shpool() { : ; }
+  tmux() { : ; }
+
+  _lp_detached_sessions
+  assertEquals "herdr detached sessions count" "1" "$lp_detached_sessions"
 }
 
 . ./shunit2

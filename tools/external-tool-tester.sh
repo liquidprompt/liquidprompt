@@ -75,6 +75,7 @@ test_tool logname
 test_tool screen -ls
 test_tool shpool list
 test_tool tmux list-sessions
+test_tool herdr session list
 
 for power_supply in "/sys/class/power_supply/"*; do
   for interface in "${power_supply}/"*; do

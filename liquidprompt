@@ -1085,13 +1085,14 @@ lp_activate() {
         command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
         command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
         command -v shpool >/dev/null ; _LP_ENABLE_SHPOOL=$(( ! $? ))
+        command -v herdr >/dev/null  ; _LP_ENABLE_HERDR=$(( ! $? ))
     fi
 
     # Use standard path symbols inside Midnight Commander
     [[ -n "${MC_SID-}" ]] && LP_ENABLE_SHORTEN_PATH=0
 
     # If we are running in a terminal multiplexer, special title escapes
-    if _lp_multiplexer --internal && [[ $lp_multiplexer != "shpool" ]]; then
+    if _lp_multiplexer --internal && [[ $lp_multiplexer == "screen" || $lp_multiplexer == "tmux" ]]; then
         (( LP_ENABLE_TITLE = LP_ENABLE_TITLE && LP_ENABLE_SCREEN_TITLE ))
         if (( LP_ENABLE_TMUX_TITLE_PANES )) && [[ $lp_multiplexer == tmux ]]; then
             LP_TITLE_OPEN=$'\E]2;'
@@ -2199,6 +2200,9 @@ _lp_multiplexer() { # [--internal]
     elif [[ -n ${SHPOOL_SESSION_NAME-} ]]; then
         lp_multiplexer=shpool
         return 0
+    elif [[ -n ${HERDR_SESSION-} || -n ${HERDR_SESSION_NAME-} || -n ${HERDR_ENV-} ]]; then
+        lp_multiplexer=herdr
+        return 0
     fi
     return 1
 }
@@ -2875,7 +2879,7 @@ _lp_shell_level_color() {
 # Related jobs #
 ################
 
-# Return the count of detached screen, tmux, and shpool sessions.
+# Return the count of detached screen, tmux, shpool, and herdr sessions.
 _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
@@ -2883,6 +2887,7 @@ _lp_detached_sessions() {
     (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c 'disconnected')
+    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]detached$')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))

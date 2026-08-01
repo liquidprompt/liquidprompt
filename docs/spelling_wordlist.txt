@@ -29,6 +29,7 @@ dBm
 deprecations
 filename
 filepath
+herdr
 hostname
 incrementing
 js
@@ -52,7 +53,6 @@ runtime
 shareable
 shpool
 startup
-stdout
 stdout
 subdirectory
 subshells

@@ -457,7 +457,8 @@ Features
 
    Display the number of detached multiplexer sessions.
 
-   Will be disabled if none of ``screen``, ``shpool``, or ``tmux`` are found.
+   Will be disabled if none of ``screen``, ``shpool``, ``tmux``, or
+   ``herdr`` are found.
 
    .. note::
       This can be slow on some machines, and prompt speed can be greatly
@@ -795,7 +796,7 @@ Features
    :value: 1
 
    Allows getting the name of the current multiplexer
-   (*screen*, *shpool*, or *tmux*), if any.
+   (*screen*, *shpool*, *tmux*, or *herdr*), if any.
 
    If set to ``0``, also disables:
 

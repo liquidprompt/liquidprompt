@@ -1,0 +1,20 @@
+FROM registry.fedoraproject.org/fedora:44
+
+RUN dnf install -y \
+    bash \
+    zsh \
+    cargo \
+    gcc \
+    git \
+    procps-ng \
+    perl \
+    && dnf clean all
+
+RUN cargo install herdr
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /liquidprompt
+COPY . /liquidprompt
+
+CMD ["/bin/bash"]

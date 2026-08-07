@@ -246,17 +246,21 @@ specific text and formatting may change.
 
 .. function:: _lp_jobcount_color() -> var:lp_jobcount_color
 
-   Returns :func:`_lp_detached_sessions` with color from :attr:`LP_COLOR_JOB_D`
+   Returns :func:`_lp_detached_sessions` with color from :attr:`LP_COLOR_JOB_D`,
+   :func:`_lp_attached_sessions` with color from :attr:`LP_COLOR_JOB_A`,
    and :func:`_lp_jobcount` with colors from :attr:`LP_COLOR_JOB_R` and
    :attr:`LP_COLOR_JOB_Z`.
 
    Return code is :func:`_lp_detached_sessions` `ORed` with
-   :func:`_lp_jobcount`: both must return no data for
-   :func:`_lp_jobcount_color` to return no data.
+   :func:`_lp_attached_sessions` `ORed` with :func:`_lp_jobcount`: all must
+   return no data for :func:`_lp_jobcount_color` to return no data.
 
    .. versionchanged:: 2.0
       Return code matches data function.
       Return method changed from stdout.
+
+   .. versionchanged:: 2.4
+      Includes attached sessions count from :func:`_lp_attached_sessions`.
 
 .. function:: _lp_kubernetes_context_color() -> var:lp_kubernetes_context_color
 

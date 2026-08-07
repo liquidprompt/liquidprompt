@@ -1,0 +1,15 @@
+FROM registry.fedoraproject.org/fedora:44
+
+RUN dnf install -y \
+    bash \
+    zsh \
+    screen \
+    git \
+    procps-ng \
+    perl \
+    && dnf clean all
+
+WORKDIR /liquidprompt
+COPY . /liquidprompt
+
+CMD ["/bin/bash"]

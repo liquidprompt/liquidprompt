@@ -9,6 +9,9 @@ fi
 . ../liquidprompt --no-activate
 
 LP_ENABLE_ATTACHED_SESSIONS=1
+LP_ENABLE_DETACHED_SESSIONS=1
+LP_ENABLE_JOBS=1
+LP_MARK_JOBS_SEPARATOR="/"
 _LP_ENABLE_SCREEN=1
 _LP_ENABLE_TMUX=1
 _LP_ENABLE_SHPOOL=1
@@ -166,6 +169,23 @@ function test_herdr_attached_sessions {
     _lp_attached_sessions
     assertEquals "herdr attached sessions output at index ${index}" "${herdr_values[$index]}" "$lp_attached_sessions"
   done
+}
+
+function test_jobcount_color_attached {
+  screen() { : ; }
+  shpool() { : ; }
+  tmux() { : ; }
+  herdr() {
+    printf '%s' "NAME   STATUS
+main   running
+sub    detached
+"
+  }
+  LP_COLOR_JOB_D="[D]"
+  LP_COLOR_JOB_A="[A]"
+  NO_COL=""
+  _lp_jobcount_color
+  assertEquals "Jobcount color with attached and detached sessions" "[D]1d/[A]1r" "$lp_jobcount_color"
 }
 
 . ./shunit2

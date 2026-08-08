@@ -451,6 +451,23 @@ Features
 
    .. versionadded:: 2.1
 
+.. attribute:: LP_ENABLE_ATTACHED_SESSIONS
+   :type: bool
+   :value: 0
+
+   Display the number of attached running multiplexer sessions.
+
+   Will be disabled if none of ``screen``, ``shpool``, ``tmux``, or
+   ``herdr`` are found.
+
+   .. note::
+      This can be slow on some machines, and prompt speed can be greatly
+      improved by disabling it.
+
+   See also: :attr:`LP_COLOR_JOB_A`.
+
+   .. versionadded:: 2.4
+
 .. attribute:: LP_ENABLE_DETACHED_SESSIONS
    :type: bool
    :value: 1
@@ -2319,6 +2336,16 @@ Valid preset color variables are:
 
    .. versionchanged:: 2.2
       Can be disabled by :attr:`LP_ENABLE_MULTIPLEXER`.
+
+.. attribute:: LP_COLOR_JOB_A
+   :type: string
+   :value: $BOLD_YELLOW
+
+   Color used for attached running multiplexer sessions.
+
+   See also: :attr:`LP_ENABLE_ATTACHED_SESSIONS`.
+
+   .. versionadded:: 2.4
 
 .. attribute:: LP_COLOR_JOB_D
    :type: string

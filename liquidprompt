@@ -629,6 +629,7 @@ __lp_source_config() {
     LP_ENABLE_TEMP=${LP_ENABLE_TEMP:-1}
     LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
     LP_ENABLE_DETACHED_SESSIONS=${LP_ENABLE_DETACHED_SESSIONS:-1}
+    LP_ENABLE_ATTACHED_SESSIONS=${LP_ENABLE_ATTACHED_SESSIONS:-0}
     LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
     LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
     LP_ENABLE_RAM=${LP_ENABLE_RAM:-1}
@@ -748,6 +749,7 @@ __lp_source_config() {
     LP_COLOR_ENV_VARS_UNSET=${LP_COLOR_ENV_VARS_UNSET:-$BLUE}
     LP_COLOR_ENV_VARS_SET=${LP_COLOR_ENV_VARS_SET:-$BOLD_BLUE}
     LP_COLOR_JOB_D=${LP_COLOR_JOB_D:-$YELLOW}
+    LP_COLOR_JOB_A=${LP_COLOR_JOB_A:-$BOLD_YELLOW}
     LP_COLOR_JOB_R=${LP_COLOR_JOB_R:-$BOLD_YELLOW}
     LP_COLOR_JOB_Z=${LP_COLOR_JOB_Z:-$BOLD_YELLOW}
     LP_COLOR_ERR=${LP_COLOR_ERR:-$PURPLE}
@@ -2884,13 +2886,27 @@ _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
     local -i count=0
-    (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
+    (( _LP_ENABLE_SCREEN )) && count+=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c 'disconnected')
-    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]detached$')
+    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -E -c '[[:space:]]detached([[:space:]]|$)')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))
+}
+
+# Return the count of attached running screen, tmux, shpool, and herdr sessions.
+_lp_attached_sessions() {
+    (( LP_ENABLE_ATTACHED_SESSIONS )) || return 2
+
+    local -i count=0
+    (( _LP_ENABLE_SCREEN )) && count+=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Aa]ttach[^)]*)$')
+    (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -c '(attached)$')
+    (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]attached$')
+    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -E -c '[[:space:]](running|attached)([[:space:]]|$)')
+    lp_attached_sessions=$count
+
+    (( lp_attached_sessions ))
 }
 
 # Return the count of attached running shell jobs (started with $ myjob &) and/or
@@ -2915,13 +2931,18 @@ _lp_jobcount() {
     (( lp_running_jobs || lp_stopped_jobs ))
 }
 
-# Display the count of detached sessions and shell jobs if not zero.
+# Display the count of detached sessions, attached sessions, and shell jobs if not zero.
 _lp_jobcount_color() {
-    (( LP_ENABLE_JOBS || LP_ENABLE_DETACHED_SESSIONS )) || return 2
+    (( LP_ENABLE_JOBS || LP_ENABLE_DETACHED_SESSIONS || LP_ENABLE_ATTACHED_SESSIONS )) || return 2
 
     lp_jobcount_color=
 
     _lp_detached_sessions && lp_jobcount_color="${LP_COLOR_JOB_D}${lp_detached_sessions}d${NO_COL}"
+
+    if _lp_attached_sessions; then
+        [[ -n "$lp_jobcount_color" ]] && lp_jobcount_color+="$LP_MARK_JOBS_SEPARATOR"
+        lp_jobcount_color+="${LP_COLOR_JOB_A}${lp_attached_sessions}r${NO_COL}"
+    fi
 
     if _lp_jobcount; then
         if (( lp_running_jobs > 0 )); then

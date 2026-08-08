@@ -375,6 +375,15 @@ Environment
 Jobs
 ----
 
+.. function:: _lp_attached_sessions() -> var:lp_attached_sessions
+
+   Returns ``true`` if any attached running multiplexer sessions are found.
+   Returns an integer count of how many sessions were found.
+
+   Can be disabled by :attr:`LP_ENABLE_ATTACHED_SESSIONS`.
+
+   .. versionadded:: 2.4
+
 .. function:: _lp_detached_sessions() -> var:lp_detached_sessions
 
    Returns ``true`` if any detached multiplexer sessions are found. Returns an

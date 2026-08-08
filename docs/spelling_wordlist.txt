@@ -4,6 +4,7 @@ Ctrl
 Cygwin
 DragonFly
 FreeBSD
+Georges
 Github
 Homebrew
 KiB
@@ -39,6 +40,7 @@ liquidprompt
 lowlighted
 multi
 namespace
+percents
 podman
 postpend
 postpended

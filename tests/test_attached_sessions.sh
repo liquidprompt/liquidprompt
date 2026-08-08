@@ -100,6 +100,13 @@ sub    attached
 )
 herdr_values+=(2)
 
+herdr_outputs+=(
+"name                 status   directory                                        socket
+default              running  /root/.config/herdr                              /root/.config/herdr/herdr.sock
+"
+)
+herdr_values+=(1)
+
 
 function test_screen_attached_sessions {
   screen() {

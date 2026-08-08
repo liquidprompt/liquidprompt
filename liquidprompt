@@ -2889,7 +2889,7 @@ _lp_detached_sessions() {
     (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Dd]etach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c 'disconnected')
-    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]detached$')
+    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -E -c '[[:space:]]detached([[:space:]]|$)')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))
@@ -2903,7 +2903,7 @@ _lp_attached_sessions() {
     (( _LP_ENABLE_SCREEN )) && count=$(screen -ls 2> /dev/null | GREP_OPTIONS='' \grep -c '[Aa]ttach[^)]*)$')
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -c '(attached)$')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]attached$')
-    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -E -c '[[:space:]](running|attached)$')
+    (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -E -c '[[:space:]](running|attached)([[:space:]]|$)')
     lp_attached_sessions=$count
 
     (( lp_attached_sessions ))

@@ -339,6 +339,7 @@ Environment
    * ``screen``
    * ``shpool``
    * ``herdr``
+   * ``zellij``
 
    .. versionadded:: 2.0
 
@@ -348,7 +349,7 @@ Environment
       Return variable renamed from ``lp_mulitplexer`` to ``lp_multiplexer``.
 
    .. versionchanged:: 2.4
-      Added support for ``herdr``.
+      Added support for ``herdr`` and ``zellij``.
 
 .. function:: _lp_shell_level() -> var:lp_shell_level
 
@@ -397,7 +398,7 @@ Jobs
    .. versionadded:: 2.0
 
    .. versionchanged:: 2.4
-      Added support for ``herdr``.
+      Added support for ``herdr`` and ``zellij``.
 
 .. function:: _lp_jobcount() -> var:lp_running_jobs, var:lp_stopped_jobs
 

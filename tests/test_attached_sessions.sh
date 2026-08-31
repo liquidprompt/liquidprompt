@@ -17,13 +17,14 @@ _LP_ENABLE_SCREEN=1
 _LP_ENABLE_TMUX=1
 _LP_ENABLE_SHPOOL=1
 _LP_ENABLE_HERDR=1
+_LP_ENABLE_ZELLIJ=1
 
 function setUp {
-  unset TMUX SHPOOL_SESSION_NAME HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV
+  unset TMUX SHPOOL_SESSION_NAME HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV ZELLIJ ZELLIJ_SESSION_NAME
   TERM=dumb
 }
 
-typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values herdr_outputs herdr_values
+typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values herdr_outputs herdr_values zellij_outputs zellij_values
 
 # Screen outputs
 screen_outputs+=(
@@ -116,6 +117,40 @@ default              running  /root/.config/herdr                              /
 )
 herdr_values+=(1)
 
+# Zellij outputs
+zellij_outputs+=(
+""
+)
+zellij_values+=(0)
+
+zellij_outputs+=(
+"session1 [Created 10s ago] (current)
+"
+)
+zellij_values+=(1)
+
+zellij_outputs+=(
+"session1 [Created 10s ago]
+"
+)
+zellij_values+=(0)
+
+zellij_outputs+=(
+"session1 [Created 10s ago] (current)
+session2 [Created 5s ago]
+"
+)
+zellij_values+=(1)
+
+zellij_outputs+=(
+"s1 [Created 10s ago] (current)
+s2 [Created 8s ago]
+s3 [Created 5s ago] (current)
+s4 [Created 1s ago] (EXITED - attach to resurrect)
+"
+)
+zellij_values+=(2)
+
 
 function test_screen_attached_sessions {
   screen() {
@@ -124,6 +159,7 @@ function test_screen_attached_sessions {
   shpool() { : ; }
   tmux() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#screen_values[@]}; index++ )); do
     __screen_output=${screen_outputs[$index]}
@@ -139,6 +175,7 @@ function test_shpool_attached_sessions {
   screen() { : ; }
   tmux() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#shpool_values[@]}; index++ )); do
     __shpool_output=${shpool_outputs[$index]}
@@ -154,6 +191,7 @@ function test_tmux_attached_sessions {
   screen() { : ; }
   shpool() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#tmux_values[@]}; index++ )); do
     __tmux_output=${tmux_outputs[$index]}
@@ -169,11 +207,28 @@ function test_herdr_attached_sessions {
   screen() { : ; }
   shpool() { : ; }
   tmux() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#herdr_values[@]}; index++ )); do
     __herdr_output=${herdr_outputs[$index]}
     _lp_attached_sessions
     assertEquals "herdr attached sessions output at index ${index}" "${herdr_values[$index]}" "$lp_attached_sessions"
+  done
+}
+
+function test_zellij_attached_sessions {
+  zellij() {
+    printf '%s' "$__zellij_output"
+  }
+  screen() { : ; }
+  shpool() { : ; }
+  tmux() { : ; }
+  herdr() { : ; }
+
+  for (( index=0; index < ${#zellij_values[@]}; index++ )); do
+    __zellij_output=${zellij_outputs[$index]}
+    _lp_attached_sessions
+    assertEquals "zellij attached sessions output at index ${index}" "${zellij_values[$index]}" "$lp_attached_sessions"
   done
 }
 
@@ -187,6 +242,7 @@ main   running
 sub    detached
 "
   }
+  zellij() { : ; }
   LP_COLOR_JOB_D="[D]"
   LP_COLOR_JOB_A="[A]"
   NO_COL=""
@@ -195,6 +251,9 @@ sub    detached
 }
 
 function test_attached_sessions_exclude_current {
+  local -i total_sessions=10
+  local -i inside_sessions=$(( total_sessions - 1 ))
+
   tmux() {
     printf '%s' "0: 1 windows [179x96] (attached)
 1: 1 windows [179x96] (attached)
@@ -216,40 +275,51 @@ h1     attached
 h2     attached
 "
   }
+  zellij() {
+    printf '%s' "z1 (current)
+z2 (current)
+"
+  }
 
-  # 1. Inside tmux (subtract 1)
+  # Inside tmux (subtract 1)
   TMUX=1
   _lp_attached_sessions
-  assertEquals "Exclude current session inside tmux" "7" "$lp_attached_sessions"
+  assertEquals "Exclude current session inside tmux" "$inside_sessions" "$lp_attached_sessions"
 
-  # 2. Inside screen (subtract 1)
+  # Inside screen (subtract 1)
   unset TMUX
   TERM=screen-256color
   _lp_attached_sessions
-  assertEquals "Exclude current session inside screen" "7" "$lp_attached_sessions"
+  assertEquals "Exclude current session inside screen" "$inside_sessions" "$lp_attached_sessions"
 
-  # 3. Inside shpool (subtract 1)
+  # Inside shpool (subtract 1)
   TERM=dumb
   SHPOOL_SESSION_NAME=s1
   _lp_attached_sessions
-  assertEquals "Exclude current session inside shpool" "7" "$lp_attached_sessions"
+  assertEquals "Exclude current session inside shpool" "$inside_sessions" "$lp_attached_sessions"
 
-  # 4. Inside herdr (subtract 1)
+  # Inside herdr (subtract 1)
   unset SHPOOL_SESSION_NAME
   HERDR_SESSION=h1
   _lp_attached_sessions
-  assertEquals "Exclude current session inside herdr" "7" "$lp_attached_sessions"
+  assertEquals "Exclude current session inside herdr" "$inside_sessions" "$lp_attached_sessions"
 
-  # 5. Outside any multiplexer (do not subtract)
+  # Inside zellij (subtract 1)
   unset HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV
+  ZELLIJ=1
   _lp_attached_sessions
-  assertEquals "Do not exclude current session when outside multiplexer" "8" "$lp_attached_sessions"
+  assertEquals "Exclude current session inside zellij" "$inside_sessions" "$lp_attached_sessions"
 
-  # 6. Inside tmux but LP_ENABLE_MULTIPLEXER=0 (multiplexer detection disabled, do not subtract)
-  TMUX=1
+  # Outside any multiplexer (do not subtract)
+  unset ZELLIJ ZELLIJ_SESSION_NAME
+  _lp_attached_sessions
+  assertEquals "Do not exclude current session when outside multiplexer" "$total_sessions" "$lp_attached_sessions"
+
+  # Inside zellij but LP_ENABLE_MULTIPLEXER=0 (multiplexer detection disabled, do not subtract)
+  ZELLIJ=1
   LP_ENABLE_MULTIPLEXER=0
   _lp_attached_sessions
-  assertEquals "Do not exclude current session when LP_ENABLE_MULTIPLEXER=0" "8" "$lp_attached_sessions"
+  assertEquals "Do not exclude current session when LP_ENABLE_MULTIPLEXER=0" "$total_sessions" "$lp_attached_sessions"
   LP_ENABLE_MULTIPLEXER=1
 }
 

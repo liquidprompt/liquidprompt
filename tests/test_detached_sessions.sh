@@ -14,9 +14,10 @@ _LP_ENABLE_SCREEN=1
 _LP_ENABLE_TMUX=1
 _LP_ENABLE_SHPOOL=1
 _LP_ENABLE_HERDR=1
-unset HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV
+_LP_ENABLE_ZELLIJ=1
+unset HERDR_SESSION HERDR_SESSION_NAME HERDR_ENV ZELLIJ ZELLIJ_SESSION_NAME
 
-typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values herdr_outputs herdr_values
+typeset -a screen_outputs screen_values shpool_outputs shpool_values tmux_outputs tmux_values herdr_outputs herdr_values zellij_outputs zellij_values
 
 # Add test cases to these arrays like below
 
@@ -104,6 +105,46 @@ main   detached
 )
 herdr_values+=(1)
 
+# Zellij outputs
+zellij_outputs+=(
+""
+)
+zellij_values+=(0)
+
+zellij_outputs+=(
+"session1 [Created 10s ago] (current)
+"
+)
+zellij_values+=(0)
+
+zellij_outputs+=(
+"session1 [Created 10s ago]
+"
+)
+zellij_values+=(1)
+
+zellij_outputs+=(
+"session1 [Created 10s ago] (current)
+session2 [Created 5s ago]
+"
+)
+zellij_values+=(1)
+
+zellij_outputs+=(
+"session1 [Created 10s ago] (EXITED - attach to resurrect)
+"
+)
+zellij_values+=(0)
+
+zellij_outputs+=(
+"s1 [Created 10s ago] (current)
+s2 [Created 8s ago]
+s3 [Created 5s ago]
+s4 [Created 1s ago] (EXITED - attach to resurrect)
+"
+)
+zellij_values+=(2)
+
 
 function test_screen_sessions {
 
@@ -113,6 +154,7 @@ function test_screen_sessions {
   shpool() { : ; }
   tmux() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#screen_values[@]}; index++ )); do
     __screen_output=${screen_outputs[$index]}
@@ -129,6 +171,7 @@ function test_shpool_sessions {
   screen() { : ; }
   tmux() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#shpool_values[@]}; index++ )); do
     __shpool_output=${shpool_outputs[$index]}
@@ -145,6 +188,7 @@ function test_tmux_sessions {
   screen() { : ; }
   shpool() { : ; }
   herdr() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#tmux_values[@]}; index++ )); do
     __tmux_output=${tmux_outputs[$index]}
@@ -161,6 +205,7 @@ function test_herdr_sessions {
   screen() { : ; }
   shpool() { : ; }
   tmux() { : ; }
+  zellij() { : ; }
 
   for (( index=0; index < ${#herdr_values[@]}; index++ )); do
     __herdr_output=${herdr_outputs[$index]}
@@ -180,9 +225,27 @@ sub    detached
   screen() { : ; }
   shpool() { : ; }
   tmux() { : ; }
+  zellij() { : ; }
 
   _lp_detached_sessions
   assertEquals "herdr detached sessions count" "1" "$lp_detached_sessions"
+}
+
+function test_zellij_sessions {
+
+  zellij() {
+    printf '%s' "$__zellij_output"
+  }
+  screen() { : ; }
+  shpool() { : ; }
+  tmux() { : ; }
+  herdr() { : ; }
+
+  for (( index=0; index < ${#zellij_values[@]}; index++ )); do
+    __zellij_output=${zellij_outputs[$index]}
+    _lp_detached_sessions
+    assertEquals "zellij sessions output at index ${index}" "${zellij_values[$index]}" "$lp_detached_sessions"
+  done
 }
 
 . ./shunit2

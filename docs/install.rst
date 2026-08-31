@@ -70,7 +70,7 @@ they require.
    * Terminal formatting requires ``tput``.
    * Time display requires ``date``.
    * Detached session status looks for ``screen``, ``shpool``, ``tmux``,
-     and/or ``herdr``.
+     ``herdr``, and/or ``zellij``.
    * VCS support features require ``git``, ``hg``, ``svn``, ``bzr`` or
      ``fossil`` for their respective repositories.
 

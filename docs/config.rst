@@ -460,8 +460,8 @@ Features
    If currently running inside an active multiplexer session, the current
    session is excluded from the count.
 
-   Will be disabled if none of ``screen``, ``shpool``, ``tmux``, or
-   ``herdr`` are found.
+   Will be disabled if none of ``screen``, ``shpool``, ``tmux``,
+   ``herdr``, or ``zellij`` are found.
 
    .. note::
       This can be slow on some machines, and prompt speed can be greatly
@@ -477,8 +477,8 @@ Features
 
    Display the number of detached multiplexer sessions.
 
-   Will be disabled if none of ``screen``, ``shpool``, ``tmux``, or
-   ``herdr`` are found.
+   Will be disabled if none of ``screen``, ``shpool``, ``tmux``,
+   ``herdr``, or ``zellij`` are found.
 
    .. note::
       This can be slow on some machines, and prompt speed can be greatly
@@ -816,7 +816,7 @@ Features
    :value: 1
 
    Allows getting the name of the current multiplexer
-   (*screen*, *shpool*, *tmux*, or *herdr*), if any.
+   (*screen*, *shpool*, *tmux*, *herdr*, or *zellij*), if any.
 
    If set to ``0``, also disables:
 

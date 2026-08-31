@@ -78,3 +78,4 @@ workspace
 worktree
 worktrees
 zsh
+zellij

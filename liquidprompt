@@ -1084,11 +1084,12 @@ lp_activate() {
         fi
     fi
 
-    if (( LP_ENABLE_DETACHED_SESSIONS )); then
+    if (( LP_ENABLE_DETACHED_SESSIONS || LP_ENABLE_ATTACHED_SESSIONS )); then
         command -v screen >/dev/null ; _LP_ENABLE_SCREEN=$(( ! $? ))
         command -v tmux >/dev/null   ; _LP_ENABLE_TMUX=$(( ! $? ))
         command -v shpool >/dev/null ; _LP_ENABLE_SHPOOL=$(( ! $? ))
         command -v herdr >/dev/null  ; _LP_ENABLE_HERDR=$(( ! $? ))
+        command -v zellij >/dev/null ; _LP_ENABLE_ZELLIJ=$(( ! $? ))
     fi
 
     # Use standard path symbols inside Midnight Commander
@@ -2207,6 +2208,9 @@ _lp_multiplexer() { # [--internal]
     elif [[ -n ${HERDR_SESSION-} || -n ${HERDR_SESSION_NAME-} || -n ${HERDR_ENV-} ]]; then
         lp_multiplexer=herdr
         return 0
+    elif [[ -n ${ZELLIJ-} || -n ${ZELLIJ_SESSION_NAME-} ]]; then
+        lp_multiplexer=zellij
+        return 0
     fi
     return 1
 }
@@ -2882,7 +2886,7 @@ _lp_shell_level_color() {
 # Related jobs #
 ################
 
-# Return the count of detached screen, tmux, shpool, and herdr sessions.
+# Return the count of detached screen, tmux, shpool, herdr, and zellij sessions.
 _lp_detached_sessions() {
     (( LP_ENABLE_DETACHED_SESSIONS )) || return 2
 
@@ -2891,12 +2895,13 @@ _lp_detached_sessions() {
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -cv 'attached')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c 'disconnected')
     (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]detached\([[:space:]]\|$\)')
+    (( _LP_ENABLE_ZELLIJ )) && count+=$(zellij list-sessions -n 2> /dev/null | GREP_OPTIONS='' \grep -vce '(EXITED' -e '(current)' -e '^[[:space:]]*$')
     lp_detached_sessions=$count
 
     (( lp_detached_sessions ))
 }
 
-# Return the count of attached running screen, tmux, shpool, and herdr sessions.
+# Return the count of attached running screen, tmux, shpool, herdr, and zellij sessions.
 _lp_attached_sessions() {
     (( LP_ENABLE_ATTACHED_SESSIONS )) || return 2
 
@@ -2905,6 +2910,7 @@ _lp_attached_sessions() {
     (( _LP_ENABLE_TMUX )) && count+=$(tmux list-sessions 2> /dev/null | GREP_OPTIONS='' \grep -c '(attached)$')
     (( _LP_ENABLE_SHPOOL )) && count+=$(shpool list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]attached$')
     (( _LP_ENABLE_HERDR )) && count+=$(herdr session list 2> /dev/null | GREP_OPTIONS='' \grep -c '[[:space:]]\(running\|attached\)\([[:space:]]\|$\)')
+    (( _LP_ENABLE_ZELLIJ )) && count+=$(zellij list-sessions -n 2> /dev/null | GREP_OPTIONS='' \grep -c '(current)')
 
     if _lp_multiplexer && (( count > 0 )); then
         (( count-- ))

@@ -334,7 +334,7 @@ __lp_use_bash_preexec() {
 }
 
 __lp_array_contains() {
-    local target="$1"
+    local element target="$1"
     shift
 
     for element; do
@@ -466,7 +466,7 @@ _lp_os_color() {
     _lp_os || return "$?"
 
     local lp_substitute lp_hash_color lp_join
-    local active
+    local active value
     active=()
     for value in \
         "$lp_os_arch" "$lp_os_family" "$lp_os_kernel" "$lp_os_distrib" "$lp_os_version"; do
@@ -860,6 +860,7 @@ __lp_source_config() {
         done
     fi
 
+    local file
     for file in "$@"; do
         # shellcheck disable=SC1090
         . "$file"
@@ -1514,6 +1515,7 @@ _lp_grep_fields() {
     fields=("$@")
 
     lp_grep_fields=()
+    local i
     # We test for $line in the loop is here to ensure that we read the last line,
     # even if the file does not ends with a \n.
     # This bypass a known behavior of the C standard, not fixed in POSIX.
@@ -2617,14 +2619,13 @@ _lp_modules() {
     lp_modules=()
     # # Module sets the LOADEDMODULES environment variable.
     if [[ -n "${LOADEDMODULES-}" ]]; then
+        local mod IFS=':'
         # Outer test should be faster.
         if (( LP_ENABLE_MODULES_VERSIONS )); then
-            local IFS=':'
             for mod in $LOADEDMODULES; do
                 lp_modules+=("${mod}")
             done
         else
-            local IFS=':'
             for mod in $LOADEDMODULES; do
                 # Simply remove the part after the slash.
                 # Should work on both Bash and Zsh.
@@ -2643,7 +2644,7 @@ _lp_modules_color() {
     lp_modules_color=
     if _lp_modules; then
         if (( LP_ENABLE_COLOR )); then
-            local lp_join
+            local lp_join mod
             if (( LP_ENABLE_MODULES_HASHCOLOR )); then
                 local modules=()
                 for mod in "${lp_modules[@]}"; do
@@ -4540,6 +4541,7 @@ _lp_ram_color() {
 __lp_temp_sysfs() {
     local -i temperature
 
+    local temp_file ignore_file
     for temp_file in ${_LP_LINUX_TEMPERATURE_FILES[@]+"${_LP_LINUX_TEMPERATURE_FILES[@]}"}; do
         for ignore_file in ${LP_TEMP_SYSFS_IGNORE_FILES[@]+"${LP_TEMP_SYSFS_IGNORE_FILES[@]}"}; do
             # We want to glob match here.
@@ -4600,6 +4602,7 @@ __lp_temp_detect() {
         [[ -n "${lp_temperature-}" ]] && return 0
     fi
 
+    local cmd
     for cmd in acpi sensors ; do
         command -v "$cmd" >/dev/null || continue
 
@@ -4943,9 +4946,10 @@ _lp_dev_env_color() {
     )
     local -a dev_active
     dev_active=()
-    for i in "${dev_all[@]}"; do
-        if [[ "$i" ]]; then
-            dev_active+=("$i")
+    local str
+    for str in "${dev_all[@]}"; do
+        if [[ "$str" ]]; then
+            dev_active+=("$str")
         fi
     done
     if [[ ${#dev_active[@]} -gt 0 ]] ; then
@@ -5512,6 +5516,7 @@ prompt_on() {
 
 __lp_disable_hooks() {
     if (( _LP_SHELL_bash )); then
+        local i
         if __lp_use_bash_preexec; then
             # Disable previous hooks as options that set them may have changed.
             for i in ${precmd_functions[@]+"${!precmd_functions[@]}"}; do

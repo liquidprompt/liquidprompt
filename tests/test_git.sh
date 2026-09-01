@@ -75,4 +75,72 @@ function test_git {
     assertEquals "Remote foo is found." "foo" "$lp_vcs_remote"
 }
 
+function test_git_symlinks {
+    LP_ENABLE_GIT=1
+    LP_ENABLE_FOSSIL=0
+    LP_ENABLE_SVN=0
+    LP_ENABLE_BZR=0
+    LP_ENABLE_VCS_ROOT=1
+    LP_ENABLE_VCS_REMOTE=0
+    _LP_GITSTATUS_DATA=0
+
+    lp_activate
+
+    repo_dir="${SHUNIT_TMPDIR}/symlink_repo"
+    mkdir -p "${repo_dir}/subdir"
+    cd "$repo_dir"
+
+    git init -q
+    git config --local user.email "author@example.com"
+    git config --local user.name "A U Thor"
+    touch test.txt
+    git add test.txt
+    git commit -q -m "initial commit" --no-verify --no-gpg-sign
+    git branch -m main
+
+    outside_dir="${SHUNIT_TMPDIR}/outside"
+    mkdir -p "$outside_dir"
+    ln -s "${repo_dir}" "${outside_dir}/link_to_repo"
+    ln -s "${repo_dir}/subdir" "${outside_dir}/link_to_sub"
+
+    # Test 1: Symlink pointing directly to repo root works even without LP_ENABLE_VCS_RESOLVE_SYMLINKS
+    cd "${outside_dir}/link_to_repo"
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=0
+    _lp_find_vcs
+    assertTrue "Direct symlink to repo root detects VCS." "$?"
+    assertEquals "git" "$lp_vcs_type"
+
+    # Test 2: Symlink to subdirectory fails when LP_ENABLE_VCS_RESOLVE_SYMLINKS=0
+    cd "${outside_dir}/link_to_sub"
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=0
+    _lp_find_vcs
+    assertFalse "Symlinked subdir should not detect VCS when resolution is disabled." "$?"
+
+    # Test 3: Symlink to subdirectory succeeds when LP_ENABLE_VCS_RESOLVE_SYMLINKS=1
+    cd "${outside_dir}/link_to_sub"
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=1
+    _lp_find_vcs
+    assertTrue "Symlinked subdir detects VCS when LP_ENABLE_VCS_RESOLVE_SYMLINKS=1." "$?"
+    assertEquals "git" "$lp_vcs_type"
+    _lp_vcs_branch
+    assertEquals "Branch detected in symlinked subdir." "main" "$lp_vcs_branch"
+
+    # Test 4: Symlinked subdirectory respects LP_DISABLED_VCS_PATHS on physical path
+    cd "${outside_dir}/link_to_sub"
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=1
+    LP_DISABLED_VCS_PATHS=("${repo_dir}")
+    _lp_find_vcs
+    assertEquals "Returns code 2 when physical target is disabled." "2" "$?"
+    assertEquals "VCS type is set to disabled for physical target." "disabled" "$lp_vcs_type"
+
+    # Test 5: Symlinked subdirectory respects LP_DISABLED_VCS_PATHS on logical path
+    cd "${outside_dir}/link_to_sub"
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=1
+    LP_DISABLED_VCS_PATHS=("${outside_dir}")
+    _lp_find_vcs
+    assertEquals "Returns code 2 when logical symlink path is disabled." "2" "$?"
+    assertEquals "VCS type is set to disabled for logical path." "disabled" "$lp_vcs_type"
+    LP_DISABLED_VCS_PATHS=()
+}
+
 . ./shunit2

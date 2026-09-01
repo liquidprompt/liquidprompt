@@ -15,7 +15,7 @@ a theme can provide a common look for all VCS types.
 See the default theme function :func:`_lp_vcs_details_color` for an example of
 this.
 
-.. function:: _lp_find_vcs() -> var:lp_vcs_type, var:lp_vcs_root, \
+.. function:: _lp_find_vcs([directory]) -> var:lp_vcs_type, var:lp_vcs_root, \
    var:lp_vcs_dir, var:lp_vcs_specific_dir, var:lp_vcs_subtype
 
    Returns ``true`` if the current directory is part of a version control
@@ -65,7 +65,11 @@ this.
    .. versionchanged:: 2.2
       Added the *lp_vcs_specific_dir* return value.
 
-.. function:: _lp_are_vcs_enabled()
+   .. versionchanged:: 2.4
+      Added support for resolving symbolic links via
+      :attr:`LP_ENABLE_VCS_RESOLVE_SYMLINKS`.
+
+.. function:: _lp_are_vcs_enabled([directory])
 
    Returns ``true`` if the current directory is not excluded by the config
    option :attr:`LP_DISABLED_VCS_PATHS`.

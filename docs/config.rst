@@ -1204,6 +1204,19 @@ Features
 
    .. versionadded:: 2.2
 
+.. attribute:: LP_ENABLE_VCS_RESOLVE_SYMLINKS
+   :type: bool
+   :value: 0
+
+   Resolve symbolic links when searching for VCS repositories.
+
+   If enabled, Liquid Prompt will search the physical directory hierarchy
+   if no VCS repository is found in the logical path hierarchy. This allows
+   VCS information (such as Git branch, dirty status, stashes) to be displayed
+   when navigating into a symbolic link to a repository subdirectory.
+
+   .. versionadded:: 2.4
+
 .. attribute:: LP_ENABLE_VCS_ROOT
    :type: bool
    :value: 0

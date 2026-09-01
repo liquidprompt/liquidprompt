@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in path. ([#858])
 - **path**: `LP_PATH_METHOD` supports more than one method at once ([#761])
 - **title**: `LP_ENABLE_TITLE_COMMAND_ONLY` config option ([#864])
+- **vcs**: `LP_ENABLE_VCS_RESOLVE_SYMLINKS` config option to resolve symbolic links when searching for repositories ([#873])
 
 ### Fixed
 - **general**: Unset deprecated variable access ([63a0408])

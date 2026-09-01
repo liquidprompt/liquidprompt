@@ -643,6 +643,7 @@ __lp_source_config() {
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_VCS_LINES=${LP_ENABLE_VCS_LINES:-1}
     LP_ENABLE_VCS_REMOTE=${LP_ENABLE_VCS_REMOTE:-0}
+    LP_ENABLE_VCS_RESOLVE_SYMLINKS=${LP_ENABLE_VCS_RESOLVE_SYMLINKS:-0}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
     LP_TIME_ANALOG=${LP_TIME_ANALOG:-0}
     LP_ENABLE_RUNTIME=${LP_ENABLE_RUNTIME:-1}
@@ -1340,6 +1341,10 @@ __lp_floating_scale() {
               lp_pwd_tilde=$(print -n -r -D "${1:-$PWD}")
           }
       fi
+
+      __lp_physical_pwd() {
+          lp_physical_pwd="${PWD:A}"
+      }
   else
       # Bash version
       __lp_pwd_tilde() {
@@ -1348,6 +1353,14 @@ __lp_floating_scale() {
           local _path="${1:-$PWD}" tilde="~"
           lp_pwd_tilde="${_path/#$HOME/$tilde}"
       }
+
+      if _lp_bash_version_greatereq 5 3; then
+          eval '__lp_physical_pwd() { lp_physical_pwd=${ pwd -P ; }; }'
+      else
+          __lp_physical_pwd() {
+              lp_physical_pwd="$(pwd -P 2>/dev/null)"
+          }
+      fi
   fi
 
 # insert a space on the right
@@ -2975,9 +2988,9 @@ _lp_jobcount_color() {
 ######################
 
 _lp_are_vcs_enabled() {
-    local _path
+    local _path _current="${1:-$PWD}"
     for _path in ${LP_DISABLED_VCS_PATHS[@]+"${LP_DISABLED_VCS_PATHS[@]}"}; do
-        if [[ -n "$_path" && "$PWD" == "$_path"* ]]; then
+        if [[ -n "$_path" && "$_current" == "$_path"* ]]; then
             return 1
         fi
     done
@@ -2986,8 +2999,9 @@ _lp_are_vcs_enabled() {
 
 # Search upwards through a directory structure looking for a sign of a VCS
 # repository. Used to avoid invoking VCS binaries to discover if in a repo.
-_lp_find_vcs() {
-    if ! _lp_are_vcs_enabled; then
+_lp_find_vcs() {  # [directory]
+    local search_path="${1:-$PWD}"
+    if ! _lp_are_vcs_enabled "$search_path"; then
         lp_vcs_type="disabled"
         lp_vcs_root=""
         return 2
@@ -3005,7 +3019,7 @@ _lp_find_vcs() {
 
     if [[ -z $lp_vcs_type ]]; then
         local vcs
-        lp_vcs_root="$PWD"
+        lp_vcs_root="$search_path"
         while [[ -n "$lp_vcs_root" ]]; do
             for vcs in ${_LP_ENABLED_VCSS[@]+"${_LP_ENABLED_VCSS[@]}"}; do
                 lp_vcs_dir="$lp_vcs_root/.$vcs"
@@ -3044,6 +3058,16 @@ _lp_find_vcs() {
             lp_vcs_subtype="svn"
         else
             lp_vcs_subtype=""
+        fi
+    fi
+
+    # Add the $1 check to prevent double checking for symlinks.
+    if [[ -z "$lp_vcs_type" && -z "${1-}" ]] && (( LP_ENABLE_VCS_RESOLVE_SYMLINKS )); then
+        local lp_physical_pwd
+        __lp_physical_pwd
+        if [[ -n "$lp_physical_pwd" && "$lp_physical_pwd" != "$search_path" ]]; then
+            _lp_find_vcs "$lp_physical_pwd"
+            return "$?"
         fi
     fi
 

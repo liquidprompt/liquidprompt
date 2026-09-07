@@ -4632,7 +4632,6 @@ __lp_temp_detect() {
         [[ -n "${lp_temperature-}" ]] && return 0
     fi
 
-    local cmd
     for cmd in acpi sensors ; do
         command -v "$cmd" >/dev/null || continue
 

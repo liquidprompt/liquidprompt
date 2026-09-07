@@ -103,6 +103,8 @@ test_tool cat /var/run/dmesg.boot
 
 test_tool sensors -u
 test_tool acpi -t
+test_tool smctemp -c
+test_tool iSMC temp --output influx
 for interface in \
     /sys/class/hwmon/hwmon*/temp*_input \
     /sys/class/hwmon/hwmon*/device/temp*_input \

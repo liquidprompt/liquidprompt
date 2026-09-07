@@ -257,6 +257,8 @@ function test_sensors {
   }
   # Stub needed to test sensors with no output.
   acpi() { :; }
+  smctemp() { :; }
+  iSMC() { :; }
 
   for (( index=0; index < ${#values[@]}; index++ )); do
     __output=${outputs[$index]}

@@ -96,6 +96,8 @@ function test_acpi_temperature {
   }
   # Stub needed to test acpi with no output.
   sensors() { :; }
+  smctemp() { :; }
+  iSMC() { :; }
 
   typeset valid
 

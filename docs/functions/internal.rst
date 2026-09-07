@@ -286,6 +286,12 @@ Temperature
       Renamed from ``_lp_temp_acpi``.
       Return variable changed from ``temperature``.
 
+.. function:: __lp_temp_iSMC() -> var:lp_temperature
+
+   A temperature backend using ``iSMC``.
+
+   .. versionadded:: 2.4
+
 .. function:: __lp_temp_sensors() -> var:lp_temperature
 
    A temperature backend using `lm-sensors` provided ``sensors``.
@@ -293,6 +299,12 @@ Temperature
    .. versionchanged:: 2.0
       Renamed from ``_lp_temp_sensors``.
       Return variable changed from ``temperature``.
+
+.. function:: __lp_temp_smctemp() -> var:lp_temperature
+
+   A temperature backend using ``smctemp``.
+
+   .. versionadded:: 2.4
 
 .. function:: __lp_temp_sysfs() -> var:lp_temperature
 

@@ -4607,7 +4607,6 @@ __lp_temp_sensors() {
     done
 }
 
-# Implementation using 'acpi -t'
 __lp_temp_acpi() {
     local -i i
     local IFS=$' \t\n'
@@ -4620,25 +4619,46 @@ __lp_temp_acpi() {
     done
 }
 
+__lp_temp_smctemp() {
+    local raw
+    raw="$(\smctemp -c 2>/dev/null)" || return 1
+    lp_temperature="${raw%%.*}"
+}
+
+__lp_temp_iSMC() {
+    local raw
+    raw="$(LC_ALL=C \iSMC temp --output influx 2>/dev/null \
+        | GREP_OPTIONS='' \grep -e '^cpu_die_max,' -e '^cpu_core')"
+    [[ -n $raw ]] || return 1
+    # Prefer cpu_die_max.
+    if [[ $raw == *"cpu_die_max,"* ]]; then
+        raw="${raw#*cpu_die_max,*value=}"
+    else
+        raw="${raw#*value=}"
+    fi
+    # iSMC sometimes will return whole integer temps.
+    lp_temperature="${raw%%[. ]*}"
+}
+
 # Dynamic selection of backend
 __lp_temp_detect() {
-    local lp_temperature cmd
-
-    if [[ $LP_OS == 'Linux' ]]; then
-        _LP_TEMP_FUNCTION="__lp_temp_sysfs"
+    __lp_temp_test() {
+        _LP_TEMP_FUNCTION="$1"
         # Check that we can retrieve temperature at least once
         "$_LP_TEMP_FUNCTION" 2>/dev/null
         # If $lp_temperature is set, success!
-        [[ -n "${lp_temperature-}" ]] && return 0
+        [[ -n "${lp_temperature-}" ]]
+    }
+
+    local lp_temperature cmd
+
+    if [[ $LP_OS == 'Linux' ]]; then
+        __lp_temp_test "__lp_temp_sysfs" && return 0
     fi
 
-    for cmd in acpi sensors ; do
+    for cmd in acpi sensors smctemp iSMC ; do
         command -v "$cmd" >/dev/null || continue
-
-        _LP_TEMP_FUNCTION="__lp_temp_$cmd"
-        "$_LP_TEMP_FUNCTION" 2>/dev/null
-
-        [[ -n "${lp_temperature-}" ]] && return 0
+        __lp_temp_test "__lp_temp_$cmd" && return 0
     done
 
     unset _LP_TEMP_FUNCTION

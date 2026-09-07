@@ -1100,8 +1100,8 @@ Features
 
    Display the highest system temperature if above the threshold.
 
-   Will be disabled if neither ``sensors`` nor ``acpi`` are found, or fails to
-   read from the Linux sysfs system.
+   Will be disabled if none of ``sensors``, ``acpi``, ``smctemp``, or ``iSMC``
+   are found, or fails to read from the Linux sysfs system.
 
    See also: :attr:`LP_TEMP_THRESHOLD`, :attr:`LP_MARK_TEMP`,
    :attr:`LP_COLORMAP`, and :attr:`LP_TEMP_SYSFS_IGNORE_FILES`.
@@ -1594,6 +1594,11 @@ Thresholds
 
    Display the highest system temperature when the temperature is above this
    threshold (in degrees Celsius).
+
+   Note that different temperature provider backends will read different
+   temperature sensors and will use different statistical methods to report
+   the temperature than others. Keep that in mind while picking a threshold
+   value.
 
    :attr:`LP_ENABLE_TEMP` must be enabled to have any effect.
 

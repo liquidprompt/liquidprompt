@@ -89,6 +89,8 @@ function test_git_symlinks {
     repo_dir="${SHUNIT_TMPDIR}/symlink_repo"
     mkdir -p "${repo_dir}/subdir"
     cd "$repo_dir"
+    # Resolve all symlinks, to fix issues where the temp directory is a symlink itself.
+    repo_dir="$(pwd -P)"
 
     git init -q
     git config --local user.email "author@example.com"
